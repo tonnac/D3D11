@@ -15,7 +15,7 @@ WClass::WClass() : m_hWnd(nullptr), m_hInstance(nullptr)
 {
 	g_pWindow = this;
 }
-bool WClass::Set(HINSTANCE hInstance, LONG iWidth, LONG iHeight, const TCHAR* winName)
+bool WClass::Set(HINSTANCE hInstance, const LONG& iWidth, const LONG& iHeight, const TCHAR* winName)
 {
 	WNDCLASSEX wndclass;
 	ZeroMemory(&wndclass, sizeof(WNDCLASSEX));
@@ -85,9 +85,67 @@ LRESULT CALLBACK WClass::WndProc(HWND hWnd, UINT msg, WPARAM WParam, LPARAM LPar
 {
 	switch (msg)
 	{
+	case WM_KEYDOWN:
+	{
+		IDXGISwapChain * pSwapChain = getSwapChain();
+		switch (WParam)
+		{
+			if (pSwapChain == nullptr) break;
+			case '0':
+			{
+				BOOL isFullScreen = FALSE;
+				pSwapChain->GetFullscreenState(&isFullScreen, nullptr);
+				pSwapChain->SetFullscreenState(!isFullScreen, nullptr);
+				if (isFullScreen == TRUE)
+				{
+					ShowWindow(m_hWnd, SW_SHOW);
+				}
+				break;
+			}
+			case '1':
+			{
+				DXGI_MODE_DESC ModeDesc;
+				ZeroMemory(&ModeDesc, sizeof(DXGI_MODE_DESC));
+				ModeDesc.RefreshRate.Numerator = 60;
+				ModeDesc.RefreshRate.Denominator = 1;
+				ModeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				ModeDesc.Width = 800;
+				ModeDesc.Height = 600;
+				pSwapChain->ResizeTarget(&ModeDesc);
+				break;
+			}
+			case '2':
+			{
+				DXGI_MODE_DESC ModeDesc;
+				ZeroMemory(&ModeDesc, sizeof(DXGI_MODE_DESC));
+				ModeDesc.RefreshRate.Numerator = 60;
+				ModeDesc.RefreshRate.Denominator = 1;
+				ModeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				ModeDesc.Width = 1024;
+				ModeDesc.Height = 768;
+				pSwapChain->ResizeTarget(&ModeDesc);
+				break;
+			}	
+		}
+		break;
+	}
+	case WM_SIZE:
+	{
+		if (WParam != SIZE_MINIMIZED)
+		{
+			UINT iWidth = LOWORD(LParam);
+			UINT iHeight = HIWORD(LParam);
+			ResizeDevice(iWidth, iHeight);
+			m_rtClient = g_rtClient;
+			GetWindowRect(m_hWnd, &m_rtWindow);
+		}
+		break;
+	}
 	case WM_DESTROY:
+	{
 		PostQuitMessage(0);
 		break;
+	}
 	}
 	return DefWindowProc(hWnd, msg, WParam, LParam);
 }

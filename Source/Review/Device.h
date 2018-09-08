@@ -11,12 +11,16 @@ public:
 	HRESULT					CreateSwapChain();
 	HRESULT					SetRenderTargetView();
 	void					SetViewPort();
+	bool					CleanupDevice();
+public:
+	HRESULT					ResizeDevice(const UINT& iWidth, const UINT& iHeight);
 public:
 	ID3D11Device *			getDevice();
 	ID3D11DeviceContext*	getContext();
 	IDXGISwapChain*			getSwapChain();
 	ID3D11RenderTargetView*	getRenderTargetView();
 	IDXGIFactory*			getDXGIFactory();
+	DXGI_SWAP_CHAIN_DESC	getSwapChainDesc();
 private:
 	ID3D11Device *			m_pd11Device;
 

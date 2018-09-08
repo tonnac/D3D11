@@ -6,7 +6,7 @@ class WClass : public Device
 public:
 	WClass();
 public:
-	bool	Set(HINSTANCE hInstance, LONG iWidth, LONG iHeight, const TCHAR* winName);
+	bool	Set(HINSTANCE hInstance, const LONG& iWidth, const LONG& iHeight, const TCHAR* winName);
 	bool	Run();
 	virtual LRESULT	CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM WParam, LPARAM LParam);
 public:

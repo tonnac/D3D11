@@ -10,17 +10,25 @@ bool Core::GameInit()
 	if (FAILED(SetRenderTargetView())) return false;
 	SetViewPort();
 
+	IDXGIFactory * pFactory = getDXGIFactory();
+
+	//Alt+Enter 와 윈도우 메시지 막음
+	UINT Flags = DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER;
+	pFactory->MakeWindowAssociation(g_hWnd, Flags);
+
 	Init();
 	return true;
 }
 bool Core::GameRun()
 {
+	
 	GameFrame();
 	GameRender();
 	return true;
 }
 bool Core::GameRelease()
 {
+	CleanupDevice();
 	Release();
 	return true;
 }

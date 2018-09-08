@@ -11,6 +11,8 @@
 #define VOIDPTR(x) (LPVOID*)&(x)
 #define GETPTR(x) if((x) == nullptr) {return nullptr;} return (x)
 #define CASTING(x, y) static_cast<x>((y)) 
+#define RELEASE(x) (x)->Release(); (x) = nullptr
+#define DXFAIL(x) hr = (x); if(FAILED(hr)) {return false;}
 
 extern HINSTANCE g_hInstance;
 extern HWND		 g_hWnd;

@@ -56,13 +56,13 @@ HRESULT	Device::CreateDevice()
 }
 HRESULT	Device::CreateFactory()
 {
-	if (m_pd11Device == nullptr) return S_FALSE;
-	HRESULT hr;// = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&m_pGIFactory) );
+	if (m_pd11Device == nullptr) return E_FAIL;
+	HRESULT hr;
 
-	IDXGIDevice * pDXGIDevice;
+	IDXGIDevice * pDXGIDevice = nullptr;
 	hr = m_pd11Device->QueryInterface(__uuidof(IDXGIDevice), VOIDPTR(pDXGIDevice));
 	     
-	IDXGIAdapter * pDXGIAdapter;
+	IDXGIAdapter * pDXGIAdapter = nullptr;
 	hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), VOIDPTR(pDXGIAdapter));
 
 	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), VOIDPTR(m_pDXGIFactory));
@@ -90,12 +90,9 @@ HRESULT	Device::CreateSwapChain()
 	m_SwapChainDesc.BufferCount = 1;
 	m_SwapChainDesc.OutputWindow = g_hWnd;
 	m_SwapChainDesc.Windowed = TRUE;
+	m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	hr = m_pDXGIFactory->CreateSwapChain(m_pd11Device, &m_SwapChainDesc, &m_pSwapChain);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
+	DXFAIL(m_pDXGIFactory->CreateSwapChain(m_pd11Device, &m_SwapChainDesc, &m_pSwapChain));
 	return hr;
 }
 HRESULT	Device::SetRenderTargetView()
@@ -103,10 +100,8 @@ HRESULT	Device::SetRenderTargetView()
 	HRESULT hr;
 	ID3D11Texture2D* pBackBuffer;
 
-	hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer));
-	if (FAILED(hr)) return hr;
-	hr = m_pd11Device->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
-	if (FAILED(hr)) return hr;
+	DXFAIL(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer)));
+	DXFAIL(m_pd11Device->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView));
 	pBackBuffer->Release();
 
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
@@ -122,8 +117,34 @@ void Device::SetViewPort()
 	m_ViewPort.MaxDepth = 1.0f;
 
 	m_pImmediateContext->RSSetViewports(1, &m_ViewPort);
-	g_rtClient.right = m_SwapChainDesc.BufferDesc.Width;
-	g_rtClient.bottom = m_SwapChainDesc.BufferDesc.Height;
+}
+bool Device::CleanupDevice()
+{
+	m_pImmediateContext->ClearState();
+	RELEASE(m_pRenderTargetView);
+	RELEASE(m_pSwapChain);
+	RELEASE(m_pImmediateContext);
+	RELEASE(m_pDXGIFactory);
+	RELEASE(m_pd11Device);
+	return true;
+}
+
+HRESULT Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
+{
+	if (m_pd11Device == nullptr) return E_FAIL;
+	HRESULT hr;
+
+	m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+	if (m_pRenderTargetView) m_pRenderTargetView->Release();
+	
+	m_pSwapChain->ResizeBuffers(m_SwapChainDesc.BufferCount, iWidth, iHeight, m_SwapChainDesc.BufferDesc.Format, 0);
+
+	GetClientRect(g_hWnd, &g_rtClient);
+
+	DXFAIL(SetRenderTargetView());
+	SetViewPort();
+
+	return hr;
 }
 
 ID3D11Device *	Device::getDevice()
@@ -145,4 +166,8 @@ ID3D11RenderTargetView*	Device::getRenderTargetView()
 IDXGIFactory* Device::getDXGIFactory()
 {
 	GETPTR(m_pDXGIFactory);
+}
+DXGI_SWAP_CHAIN_DESC Device::getSwapChainDesc()
+{
+	return m_SwapChainDesc;
 }
