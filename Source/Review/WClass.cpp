@@ -126,6 +126,11 @@ LRESULT CALLBACK WClass::WndProc(HWND hWnd, UINT msg, WPARAM WParam, LPARAM LPar
 				pSwapChain->ResizeTarget(&ModeDesc);
 				break;
 			}	
+			case VK_ESCAPE:
+			{
+				PostQuitMessage(0);
+				break;
+			}
 		}
 		break;
 	}

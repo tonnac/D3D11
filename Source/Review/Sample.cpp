@@ -1,6 +1,9 @@
 #include "Sample.h"
 
-
+bool Sample::Init()
+{
+	return true;
+}
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevhInstance, LPWSTR szCmdLine, int nCmdShow)
 {

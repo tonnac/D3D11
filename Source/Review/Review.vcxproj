@@ -151,14 +151,18 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="WClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="Sample.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="WClass.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

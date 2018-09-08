@@ -4,7 +4,7 @@
 class Sample : public Core
 {
 public:
-
+	bool	Init();
 private:
 
 };

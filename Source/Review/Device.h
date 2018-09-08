@@ -18,6 +18,7 @@ public:
 	ID3D11Device *			getDevice();
 	ID3D11DeviceContext*	getContext();
 	IDXGISwapChain*			getSwapChain();
+	IDXGISwapChain**		getSwapChainPtr();
 	ID3D11RenderTargetView*	getRenderTargetView();
 	IDXGIFactory*			getDXGIFactory();
 	DXGI_SWAP_CHAIN_DESC	getSwapChainDesc();

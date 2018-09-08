@@ -12,6 +12,7 @@ HRESULT	Device::CreateDevice()
 
 	UINT Flags = 0;
 
+	Flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #ifdef _DEBUG
 	Flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -158,6 +159,10 @@ ID3D11DeviceContext* Device::getContext()
 IDXGISwapChain*	Device::getSwapChain()
 {
 	GETPTR(m_pSwapChain);
+}
+IDXGISwapChain** Device::getSwapChainPtr()
+{
+	return &m_pSwapChain;
 }
 ID3D11RenderTargetView*	Device::getRenderTargetView()
 {
