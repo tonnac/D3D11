@@ -1,5 +1,6 @@
 #include "DirectWrite.h"
 
+
 DirectWrite::DirectWrite() : m_pD2DFactory(nullptr), m_pWriteFactory(nullptr), m_pRenderTarget(nullptr)
 {}
 bool DirectWrite::Begin()
@@ -23,6 +24,10 @@ bool DirectWrite::Init(IDXGISwapChain** pSwapChain)
 	this->m_pSwapChain = pSwapChain;
 	CreateFactory();
 	CreateRenderTarget();
+	ScaleTransFunc = [this](const TCHAR* Key, const FLOAT& fScale, const D2D1_POINT_2F& Pos = { CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }) 
+	{Transform(Key, 0.0f, fScale, Pos);};
+	RotateTransFunc = [this](const TCHAR* Key, const FLOAT& fAngle, const D2D1_POINT_2F& Pos = { CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }) 
+	{Transform(Key, fAngle, 1.0f, Pos);};
 	return true;
 }
 bool DirectWrite::Render()
@@ -44,10 +49,12 @@ bool DirectWrite::RenderText(const TCHAR* Key)
 {
 	if (m_TextMap[Key]._pTextLayout == nullptr)
 	{
+		m_pRenderTarget->SetTransform(m_TextMap[Key]._World);
 		m_pRenderTarget->DrawText(m_TextMap[Key]._Text.c_str(), CASTING(UINT, m_TextMap[Key]._Text.length()), m_TextMap[Key]._pTextFormat, m_TextMap[Key]._TextPos, m_TextMap[Key]._pColorBrush);
 	}
 	else
 	{
+		m_pRenderTarget->SetTransform(m_TextMap[Key]._World);
 		m_pRenderTarget->DrawTextLayout({ m_TextMap[Key]._TextPos.left, m_TextMap[Key]._TextPos.top }, m_TextMap[Key]._pTextLayout, m_TextMap[Key]._pColorBrush);
 	}
 	return true;
@@ -108,19 +115,26 @@ void DirectWrite::SetText(const TCHAR* Key, const std::tstring& Text)
 		IDWriteTypography * pTypography = nullptr;
 		hr = m_pWriteFactory->CreateTypography(&pTypography);
 		if (FAILED(hr)) return;
+
 		hr = pTypography->AddFontFeature(m_TextMap[Key]._FontFeature);
 		if (FAILED(hr)) return;
+
 		DWRITE_TEXT_RANGE textRange = { 0, CASTING(UINT32, Text.length()) };
 		hr = m_TextMap[Key]._pTextLayout->SetTypography(pTypography, textRange);
 		if (FAILED(hr)) return;
+
 		hr = SetFont(Key, m_TextMap[Key]._FontFamily.c_str());
 		if (FAILED(hr)) return;
+
 		hr = SetFontSize(Key, m_TextMap[Key]._FontSize);
 		if (FAILED(hr)) return;
+
 		hr = SetStyle(Key, m_TextMap[Key]._FontStyle);
 		if (FAILED(hr)) return;
+
 		hr = SetWeight(Key, m_TextMap[Key]._FontWeight);
 		if (FAILED(hr)) return;
+
 		RELEASE(pTypography);
 	}
 }
@@ -208,6 +222,14 @@ void DirectWrite::SetTypography(const TCHAR* Key, const DWRITE_FONT_FEATURE& fon
 	if (FAILED(hr)) return;
 	RELEASE(pTypography);
 }
+void DirectWrite::SetRotate(const TCHAR* Key, const FLOAT& fAngle, const D2D1_POINT_2F& CenterPos)
+{
+	RotateTransFunc(Key, fAngle, CenterPos);
+}
+void DirectWrite::SetScale(const TCHAR* Key, const FLOAT& fScale, const D2D1_POINT_2F& CenterPos)
+{
+	ScaleTransFunc(Key, fScale, CenterPos);
+}
 HRESULT DirectWrite::CreateFactory()
 {
 	HRESULT hr;
@@ -259,4 +281,10 @@ void DirectWrite::ResizeCreate()
 		m_pRenderTarget->CreateSolidColorBrush(color, &iter.second._pColorBrush);
 		iter.second._pColorBrush->SetColor(color);
 	}
+}
+void DirectWrite::Transform(const TCHAR* Key, const FLOAT& fAngle, const FLOAT& fScale, const D2D1_POINT_2F& CenterPos)
+{
+	D2D1::Matrix3x2F Rot = D2D1::Matrix3x2F::Identity().Rotation(fAngle, CenterPos);
+	D2D1::Matrix3x2F Scale = D2D1::Matrix3x2F::Identity().Scale(fScale, fScale, CenterPos);
+	m_TextMap[Key]._World = Rot * Scale;
 }

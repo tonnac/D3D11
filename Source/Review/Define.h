@@ -11,6 +11,7 @@
 #include <map>
 #include <iomanip>
 #include <cmath>
+#include <functional>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -48,7 +49,7 @@ extern HINSTANCE g_hInstance;
 extern HWND		 g_hWnd;
 extern RECT		 g_rtClient;
 extern FLOAT	 g_fSecPerFrame;
-
+extern FLOAT	 g_fGameTime;
 
 template <class K>
 class Singleton

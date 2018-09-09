@@ -6,10 +6,14 @@
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "dwrite.lib")
 
+using ScaleTrans = std::function<void(const TCHAR*, const FLOAT&, const D2D1_POINT_2F&) > ;
+using RotateTrans = std::function<void(const TCHAR*, const FLOAT&, const D2D1_POINT_2F&)>;
+
 struct TextStruct
 {
-	TextStruct() : _pTextFormat(nullptr), _pTextLayout(nullptr), _pColorBrush(nullptr), _Text(std::tstring()), _Color(0.0f,0.0f,0.0f,0.0f)
+	TextStruct() : _World(D2D1::Matrix3x2F::Identity()), _pTextFormat(nullptr), _pTextLayout(nullptr), _pColorBrush(nullptr), _Text(std::tstring()), _Color(0.0f,0.0f,0.0f,0.0f)
 	{}
+	D2D1::Matrix3x2F		_World;
 	std::tstring			_Text;
 	IDWriteTextFormat*		_pTextFormat;
 	IDWriteTextLayout*		_pTextLayout;
@@ -65,6 +69,8 @@ public:
 	void					ResizeDiscard();
 	void					ResizeCreate();
 public:
+	void					Transform(const TCHAR* Key, const FLOAT& fAngle, const FLOAT& fScale, const D2D1_POINT_2F& CenterPos = { CASTING(FLOAT,g_rtClient.right / 2), CASTING(FLOAT,g_rtClient.bottom / 2) });
+public:
 	void					SetText(const TCHAR* Key, const std::tstring& Text);
 	HRESULT					SetFont(const TCHAR* Key,const TCHAR *fontFamily);
 	HRESULT					SetFontSize(const TCHAR* Key,const FLOAT& size);
@@ -75,7 +81,11 @@ public:
 	void					SetAlignment(const TCHAR* Key, const DWRITE_TEXT_ALIGNMENT& Text, const DWRITE_PARAGRAPH_ALIGNMENT& Paragraph);
 	void					SetTextPos(const TCHAR* Key, const D2D1_RECT_F& rt);
 	void					SetTypography(const TCHAR* Key, const DWRITE_FONT_FEATURE& fontFeature);
+	void					SetRotate(const TCHAR* Key, const FLOAT& fAngle, const D2D1_POINT_2F& CenterPos = { CASTING(FLOAT,g_rtClient.right / 2), CASTING(FLOAT,g_rtClient.bottom / 2) });
+	void					SetScale(const TCHAR* Key, const FLOAT& fScale, const D2D1_POINT_2F& CenterPos = { CASTING(FLOAT,g_rtClient.right / 2), CASTING(FLOAT,g_rtClient.bottom / 2) });
 private:
+	ScaleTrans				ScaleTransFunc;
+	RotateTrans				RotateTransFunc;
 	ID2D1Factory *			m_pD2DFactory;
 	IDWriteFactory*			m_pWriteFactory;
 	ID2D1RenderTarget*		m_pRenderTarget;

@@ -2,6 +2,7 @@
 #include "DirectWrite.h"
 
 FLOAT g_fSecPerFrame = 0.0f;
+FLOAT g_fGameTime = 0.0f;
 
 Timer::Timer() : m_fSecPerFrame(0.0f), m_fGameTime(0.0f), m_FPS(0)
 {
@@ -36,7 +37,7 @@ bool Timer::Frame()
 
 	m_fSecPerFrame = g_fSecPerFrame = (m_CurrentTick.LowPart - m_BeforeTick.LowPart) / CASTING(FLOAT,m_Frequency.LowPart);
 	m_fGameTime += m_fSecPerFrame;
-
+	g_fGameTime = m_fGameTime;
 	if ((m_CurrentTick.LowPart - m_OneSecTick.LowPart) / m_Frequency.LowPart >= 1)
 	{
 
@@ -63,6 +64,7 @@ bool Timer::Render()
 	if (co[1] >= 1.0f) co[1] = rand() % 10000 / 10000.0f;
 	if (co[2] >= 1.0f) co[2] = rand() % 10000 / 10000.0f;
 
+	S_Write.SetRotate(L"FPS", g_fGameTime * 10.0f);
 	S_Write.SetColor(L"FPS", D2D1::ColorF(co[0], co[1], co[2], co[3]));
 	S_Write.RenderText(L"FPS");
 	return true;
