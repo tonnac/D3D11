@@ -35,8 +35,20 @@ bool DirectWrite::Render()
 		}
 		else
 		{
-			m_pRenderTarget->DrawTextLayout({ iter.second._pTextLayout->GetMaxWidth(), iter.second._pTextLayout->GetMaxHeight() }, iter.second._pTextLayout, iter.second._pColorBrush);
+			m_pRenderTarget->DrawTextLayout({ iter.second._TextPos.left, iter.second._TextPos.top }, iter.second._pTextLayout, iter.second._pColorBrush);
 		}
+	}
+	return true;
+}
+bool DirectWrite::RenderText(const TCHAR* Key)
+{
+	if (m_TextMap[Key]._pTextLayout == nullptr)
+	{
+		m_pRenderTarget->DrawText(m_TextMap[Key]._Text.c_str(), CASTING(UINT, m_TextMap[Key]._Text.length()), m_TextMap[Key]._pTextFormat, m_TextMap[Key]._TextPos, m_TextMap[Key]._pColorBrush);
+	}
+	else
+	{
+		m_pRenderTarget->DrawTextLayout({ m_TextMap[Key]._TextPos.left, m_TextMap[Key]._TextPos.top }, m_TextMap[Key]._pTextLayout, m_TextMap[Key]._pColorBrush);
 	}
 	return true;
 }
@@ -51,81 +63,98 @@ bool DirectWrite::Release()
 	DiscardFactory();
 	return true;
 }
-void DirectWrite::AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F& rt, const D2D1::ColorF& Color, const TCHAR* FontName,
+HRESULT DirectWrite::AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F& rt, const D2D1::ColorF& Color, const TCHAR* FontName,
 	const FLOAT& fontSize, const TCHAR* localeName,	const DWRITE_FONT_WEIGHT& FontWeight, const DWRITE_FONT_STYLE& FontStyle, const DWRITE_FONT_STRETCH& FontStretch)
 {
 	HRESULT hr;
-	if (m_TextMap.find(Key) != m_TextMap.end()) return;
+	if (m_TextMap.find(Key) != m_TextMap.end()) return E_FAIL;
 	TextStruct AddText;
 	AddText._Text = Text;
-	hr = m_pWriteFactory->CreateTextFormat(FontName, nullptr, FontWeight, FontStyle, FontStretch, fontSize, localeName, &AddText._pTextFormat);
-	if (FAILED(hr)) return;
-	hr = m_pRenderTarget->CreateSolidColorBrush(Color, &AddText._pColorBrush);
-	if (FAILED(hr)) return;
+	DXFAIL(m_pWriteFactory->CreateTextFormat(FontName, nullptr, FontWeight, FontStyle, FontStretch, fontSize, localeName, &AddText._pTextFormat));
+	DXFAIL(m_pRenderTarget->CreateSolidColorBrush(Color, &AddText._pColorBrush));
+	AddText._Color = Color;
 	AddText._TextPos = rt;
 	m_TextMap.insert(std::make_pair(Key, AddText));
+	return hr;
 }
-void DirectWrite::AddLayout(const TCHAR* Key, const D2D1_POINT_2F& Point)
+HRESULT DirectWrite::AddLayout(const TCHAR* Key, const D2D1_POINT_2F& Point, const DWRITE_FONT_FEATURE& fontFeature)
 {
 	HRESULT hr;
-	hr = m_pWriteFactory->CreateTextLayout(m_TextMap[Key]._Text.c_str(), m_TextMap[Key]._Text.length(), m_TextMap[Key]._pTextFormat, Point.x, Point.y, &m_TextMap[Key]._pTextLayout);
-	if (FAILED(hr)) return;
+	if (m_TextMap.find(Key) == m_TextMap.end()) return E_FAIL;
+	RELEASE(m_TextMap[Key]._pTextLayout);
+	DXFAIL(m_pWriteFactory->CreateTextLayout(m_TextMap[Key]._Text.c_str(), CASTING(UINT32,m_TextMap[Key]._Text.length()), m_TextMap[Key]._pTextFormat, Point.x, Point.y, &m_TextMap[Key]._pTextLayout));
 	IDWriteTypography* pTypography = nullptr;
-	hr = m_pWriteFactory->CreateTypography(&pTypography);
-	if (FAILED(hr)) return;
-	hr = pTypography->AddFontFeature({ DWRITE_FONT_FEATURE_TAG_STYLISTIC_SET_7, 1 });
-	if (FAILED(hr)) return;
-	hr = m_TextMap[Key]._pTextLayout->SetTypography(pTypography, { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) });
-	if (FAILED(hr)) return;
+	DXFAIL(m_pWriteFactory->CreateTypography(&pTypography));
+	DXFAIL(pTypography->AddFontFeature(fontFeature));
+	m_TextMap[Key]._FontFeature = fontFeature;
+	DXFAIL(m_TextMap[Key]._pTextLayout->SetTypography(pTypography, { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) }));
 	RELEASE(pTypography);
+	return hr;
 }
-void DirectWrite::ChangeText(const TCHAR* Key, const std::tstring& Text)
+void DirectWrite::SetText(const TCHAR* Key, const std::tstring& Text)
 {
 	if (m_TextMap.find(Key) == m_TextMap.end()) return;
 	m_TextMap[Key]._Text = Text;
+	if (m_TextMap[Key]._pTextLayout != nullptr)
+	{
+		HRESULT hr;
+		FLOAT x, y;
+		x = m_TextMap[Key]._pTextLayout->GetMaxWidth();
+		y = m_TextMap[Key]._pTextLayout->GetMaxHeight();
+
+		RELEASE(m_TextMap[Key]._pTextLayout);
+		hr = m_pWriteFactory->CreateTextLayout(Text.c_str(), CASTING(UINT32, Text.length()), m_TextMap[Key]._pTextFormat, x, y, &m_TextMap[Key]._pTextLayout);
+		if (FAILED(hr)) return;
+		IDWriteTypography * pTypography = nullptr;
+		hr = m_pWriteFactory->CreateTypography(&pTypography);
+		if (FAILED(hr)) return;
+		hr = pTypography->AddFontFeature(m_TextMap[Key]._FontFeature);
+		if (FAILED(hr)) return;
+		DWRITE_TEXT_RANGE textRange = { 0, CASTING(UINT32, Text.length()) };
+		hr = m_TextMap[Key]._pTextLayout->SetTypography(pTypography, textRange);
+		if (FAILED(hr)) return;
+		hr = SetFont(Key, m_TextMap[Key]._FontFamily.c_str());
+		if (FAILED(hr)) return;
+		hr = SetFontSize(Key, m_TextMap[Key]._FontSize);
+		if (FAILED(hr)) return;
+		hr = SetStyle(Key, m_TextMap[Key]._FontStyle);
+		if (FAILED(hr)) return;
+		hr = SetWeight(Key, m_TextMap[Key]._FontWeight);
+		if (FAILED(hr)) return;
+		RELEASE(pTypography);
+	}
 }
 HRESULT	DirectWrite::SetFont(const TCHAR* Key, const TCHAR *fontFamily)
 {
 	HRESULT hr;
 	DWRITE_TEXT_RANGE TextRange = { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) };
 
+	m_TextMap[Key]._FontFamily = fontFamily;
 	DXFAIL(m_TextMap[Key]._pTextLayout->SetFontFamilyName(fontFamily, TextRange));
 	return hr;
 }
-HRESULT	DirectWrite::SetFontSize(const TCHAR* Key, const float& size)
+HRESULT	DirectWrite::SetFontSize(const TCHAR* Key, const FLOAT& size)
 {
 	HRESULT hr;
 	DWRITE_TEXT_RANGE TextRange = { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) };
-
+	m_TextMap[Key]._FontSize = size;
 	DXFAIL(m_TextMap[Key]._pTextLayout->SetFontSize(size, TextRange));
 	return hr;
 }
-HRESULT	DirectWrite::SetWeight(const TCHAR* Key, const bool& bold)
+HRESULT	DirectWrite::SetWeight(const TCHAR* Key, const DWRITE_FONT_WEIGHT& fontWeight)
 {
 	HRESULT hr;
 	DWRITE_TEXT_RANGE TextRange = { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) };
-	if (bold == true)
-	{
-		DXFAIL(m_TextMap[Key]._pTextLayout->SetFontWeight(DWRITE_FONT_WEIGHT_BOLD, TextRange));
-	}
-	else
-	{
-		DXFAIL(m_TextMap[Key]._pTextLayout->SetFontWeight(DWRITE_FONT_WEIGHT_NORMAL, TextRange));
-	}
+	m_TextMap[Key]._FontWeight = fontWeight;
+	DXFAIL(m_TextMap[Key]._pTextLayout->SetFontWeight(fontWeight, TextRange));
 	return hr;
 }
-HRESULT	DirectWrite::SetStyle(const TCHAR* Key, const bool& italic)
+HRESULT	DirectWrite::SetStyle(const TCHAR* Key, const DWRITE_FONT_STYLE& fontStyle)
 {
 	HRESULT hr;
 	DWRITE_TEXT_RANGE TextRange = { 0, CASTING(UINT32,m_TextMap[Key]._Text.length()) };
-	if (italic == true)
-	{
-		DXFAIL(m_TextMap[Key]._pTextLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, TextRange));
-	}
-	else
-	{
-		DXFAIL(m_TextMap[Key]._pTextLayout->SetFontStyle(DWRITE_FONT_STYLE_NORMAL, TextRange));
-	}
+	m_TextMap[Key]._FontStyle = fontStyle;
+	DXFAIL(m_TextMap[Key]._pTextLayout->SetFontStyle(fontStyle, TextRange));
 	return hr;
 }
 HRESULT	DirectWrite::SetUnderline(const TCHAR* Key, const bool& underline)
@@ -146,12 +175,38 @@ void DirectWrite::SetColor(const TCHAR* Key, const D2D1::ColorF& Color)
 {
 	if (m_TextMap.find(Key) == m_TextMap.end()) return;
 	m_TextMap[Key]._pColorBrush->SetColor(Color);
+	m_TextMap[Key]._Color = Color;
 }
 void DirectWrite::SetAlignment(const TCHAR* Key, const DWRITE_TEXT_ALIGNMENT& Text, const DWRITE_PARAGRAPH_ALIGNMENT& Paragraph)
 {
 	if (m_TextMap.find(Key) == m_TextMap.end()) return;
 	m_TextMap[Key]._pTextFormat->SetTextAlignment(Text);
 	m_TextMap[Key]._pTextFormat->SetParagraphAlignment(Paragraph);
+}
+void DirectWrite::SetTextPos(const TCHAR* Key, const D2D1_RECT_F& rt)
+{
+	if (m_TextMap.find(Key) == m_TextMap.end()) return;
+	m_TextMap[Key]._TextPos = rt;
+}
+void DirectWrite::SetTypography(const TCHAR* Key, const DWRITE_FONT_FEATURE& fontFeature)
+{
+	HRESULT hr;
+	FLOAT x, y;
+	x = m_TextMap[Key]._pTextLayout->GetMaxWidth();
+	y = m_TextMap[Key]._pTextLayout->GetMaxHeight();
+	RELEASE(m_TextMap[Key]._pTextLayout);
+	hr = m_pWriteFactory->CreateTextLayout(m_TextMap[Key]._Text.c_str(), CASTING(UINT32, m_TextMap[Key]._Text.length()), m_TextMap[Key]._pTextFormat, x, y, &m_TextMap[Key]._pTextLayout);
+	if (FAILED(hr)) return;
+	IDWriteTypography * pTypography = nullptr;
+	hr = m_pWriteFactory->CreateTypography(&pTypography);
+	if (FAILED(hr)) return;
+	m_TextMap[Key]._FontFeature = fontFeature;
+	hr = pTypography->AddFontFeature(m_TextMap[Key]._FontFeature);
+	if (FAILED(hr)) return;
+	DWRITE_TEXT_RANGE textRange = { 0, CASTING(UINT32, m_TextMap[Key]._Text.length()) };
+	hr = m_TextMap[Key]._pTextLayout->SetTypography(pTypography, textRange);
+	if (FAILED(hr)) return;
+	RELEASE(pTypography);
 }
 HRESULT DirectWrite::CreateFactory()
 {
@@ -187,7 +242,21 @@ void DirectWrite::DiscardRenderTarget()
 {
 	RELEASE(m_pRenderTarget);
 }
-void DirectWrite::OnResize()
+void DirectWrite::ResizeDiscard()
 {
-	return;
+	DiscardRenderTarget();
+	for (auto& iter : m_TextMap)
+	{
+		iter.second.BrushRelease();
+	}
+}
+void DirectWrite::ResizeCreate()
+{
+	CreateRenderTarget();
+	for (auto& iter : m_TextMap)
+	{
+		D2D1::ColorF color = iter.second._Color;
+		m_pRenderTarget->CreateSolidColorBrush(color, &iter.second._pColorBrush);
+		iter.second._pColorBrush->SetColor(color);
+	}
 }

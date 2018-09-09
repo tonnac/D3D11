@@ -23,6 +23,10 @@ public:
 	IDXGIFactory*			getDXGIFactory();
 	DXGI_SWAP_CHAIN_DESC	getSwapChainDesc();
 private:
+	//DirectWrite 장치 재생성
+	virtual void			ResizeDiscard();
+	virtual void			ResizeCreate();
+private:
 	ID3D11Device *			m_pd11Device;
 
 	IDXGIFactory*			m_pDXGIFactory;

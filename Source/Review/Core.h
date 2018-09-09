@@ -28,5 +28,8 @@ private:
 	bool			PreRender();
 	bool			PostRender();
 private:
+	virtual void	ResizeDiscard() override;
+	virtual void	ResizeCreate() override;
+private:
 	Timer			m_Timer;
 };

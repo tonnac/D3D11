@@ -99,7 +99,7 @@ HRESULT	Device::CreateSwapChain()
 HRESULT	Device::SetRenderTargetView()
 {
 	HRESULT hr;
-	ID3D11Texture2D* pBackBuffer;
+	ID3D11Texture2D* pBackBuffer = nullptr;
 
 	DXFAIL(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer)));
 	DXFAIL(m_pd11Device->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView));
@@ -136,18 +136,33 @@ HRESULT Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
 	HRESULT hr;
 
 	m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
+
+	//DirectWrite
+	ResizeDiscard();
+
 	if (m_pRenderTargetView) m_pRenderTargetView->Release();
 	
-	m_pSwapChain->ResizeBuffers(m_SwapChainDesc.BufferCount, iWidth, iHeight, m_SwapChainDesc.BufferDesc.Format, 0);
+	m_SwapChainDesc.BufferDesc.Height = iHeight;
+	m_SwapChainDesc.BufferDesc.Width = iWidth;
+	m_pSwapChain->ResizeBuffers(m_SwapChainDesc.BufferCount, iWidth, iHeight, m_SwapChainDesc.BufferDesc.Format, m_SwapChainDesc.Flags);
 
 	GetClientRect(g_hWnd, &g_rtClient);
 
 	DXFAIL(SetRenderTargetView());
 	SetViewPort();
 
+	//DirectWrite
+	ResizeCreate();
 	return hr;
 }
-
+void Device::ResizeDiscard()
+{
+	return;
+}
+void Device::ResizeCreate()
+{
+	return;
+}
 ID3D11Device *	Device::getDevice()
 {
 	GETPTR(m_pd11Device);

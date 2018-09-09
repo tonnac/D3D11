@@ -11,7 +11,6 @@
 #include <map>
 #include <iomanip>
 #include <cmath>
-#include <DirectXMath.h>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
