@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="Device.h" />
+    <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="Sample.h" />
     <ClInclude Include="Timer.h" />

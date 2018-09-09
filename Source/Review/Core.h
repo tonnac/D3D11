@@ -2,6 +2,7 @@
 #include "WClass.h"
 #include "Timer.h"
 #include "DirectWrite.h"
+#include "DirectInput.h"
 
 class Core : public WClass
 {

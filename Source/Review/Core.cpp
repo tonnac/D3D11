@@ -19,6 +19,7 @@ bool Core::GameInit()
 	UINT Flags = DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER;
 	pFactory->MakeWindowAssociation(g_hWnd, Flags);
 	S_Write.Init(getSwapChainPtr());
+	S_Input.Init();
 	m_Timer.Init();
 	Init();
 	return true;
@@ -61,6 +62,7 @@ void Core::AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F
 }
 bool Core::GameFrame()
 {
+	S_Input.Frame();
 	m_Timer.Frame();
 	Frame();
 	return true;
@@ -69,6 +71,7 @@ bool Core::GameRender()
 {
 	if (PreRender() == false) return false;
 	Render();
+	S_Input.Render();
 	m_Timer.Render();
 	if (PostRender() == false) return false;
 	return true;
@@ -91,6 +94,7 @@ bool Core::PostRender()
 {
 	S_Write.End();
 	IDXGISwapChain* pSwapChain = getSwapChain();
+	S_Input.CopytoBefore();
 	pSwapChain->Present(0, 0);
 	return true;
 }

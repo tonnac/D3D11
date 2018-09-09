@@ -13,6 +13,7 @@ public:
 public:
 	std::tstring	getTimeInfo();
 private:
+	bool			FrameShow;
 	LARGE_INTEGER	m_Frequency;
 	LARGE_INTEGER	m_CurrentTick;
 	LARGE_INTEGER	m_BeforeTick;

@@ -1,9 +1,11 @@
 #include "WClass.h"
+#include "DirectInput.h"
 
 HINSTANCE g_hInstance = nullptr;
 HWND	  g_hWnd = nullptr;
 WClass*	  g_pWindow = nullptr;
 RECT	  g_rtClient;
+bool	  g_bActive = false;
 
 LRESULT CALLBACK StaticWndProc(HWND hwnd, UINT msg, WPARAM Wparam, LPARAM LParam)
 {
@@ -85,6 +87,19 @@ LRESULT CALLBACK WClass::WndProc(HWND hWnd, UINT msg, WPARAM WParam, LPARAM LPar
 {
 	switch (msg)
 	{
+	case WM_ACTIVATE:
+	{
+		if (WParam == WA_INACTIVE)
+		{
+			g_bActive = false;
+		}
+		else
+		{
+			g_bActive = true;
+		}
+		S_Input.SetAcquire(g_bActive);
+		return 0;
+	}
 	case WM_KEYDOWN:
 	{
 		IDXGISwapChain * pSwapChain = getSwapChain();

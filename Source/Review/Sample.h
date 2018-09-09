@@ -5,6 +5,7 @@ class Sample : public Core
 {
 public:
 	bool	Init();
+	bool	Frame();
 private:
 
 };

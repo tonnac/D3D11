@@ -1,6 +1,11 @@
 #include "Sample.h"
+#include "DirectInput.h"
 
 bool Sample::Init()
+{
+	return true;
+}
+bool Sample::Frame()
 {
 	return true;
 }

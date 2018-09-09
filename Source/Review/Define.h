@@ -16,6 +16,15 @@
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 
+#define DIRECTINPUT_VERSION 0x800
+
+enum class KEYSTATE
+{
+	KEY_FREE,
+	KEY_PUSH,
+	KEY_HOLD,
+	KEY_UP
+};
 namespace std
 {
 	using tstring = std::basic_string<TCHAR>;
@@ -39,6 +48,7 @@ namespace std
 	}
 }
 
+#define MAXKEYNUM 256
 #define VOIDPTR(x) (LPVOID*)&(x)
 #define GETPTR(x) if((x) == nullptr) {return nullptr;} return (x)
 #define CASTING(x, y) static_cast<x>((y)) 
@@ -50,6 +60,7 @@ extern HWND		 g_hWnd;
 extern RECT		 g_rtClient;
 extern FLOAT	 g_fSecPerFrame;
 extern FLOAT	 g_fGameTime;
+extern bool		 g_bActive;
 
 template <class K>
 class Singleton
