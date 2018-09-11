@@ -60,13 +60,9 @@ bool Timer::Render()
 	{
 		static FLOAT co[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-		co[0] += m_fSecPerFrame / 10;
-		co[1] += m_fSecPerFrame / 10;
-		co[2] += m_fSecPerFrame / 10;
-
-		if (co[0] >= 1.0f) co[0] = rand() % 10000 / 10000.0f;
-		if (co[1] >= 1.0f) co[1] = rand() % 10000 / 10000.0f;
-		if (co[2] >= 1.0f) co[2] = rand() % 10000 / 10000.0f;
+		co[0] = cos(m_fGameTime) * 0.5f + 0.5f;
+		co[1] = sin(m_fGameTime) * 0.5f + 0.5f;
+		co[2] = sin(-m_fGameTime) * 0.5f + 0.5f;
 
 		S_Write.SetRotate(L"FPS", g_fGameTime * 10.0f);
 		S_Write.SetColor(L"FPS", D2D1::ColorF(co[0], co[1], co[2], co[3]));

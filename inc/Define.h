@@ -26,17 +26,9 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
-#ifndef V
-#define V(x) {hr = (x);}
-#endif
-
-#ifndef V_RETURN
-#define V_RETURN(x) {hr = (x); if(FAILED(hr)) {return hr;}}
-#endif
-
 #define DIRECTINPUT_VERSION 0x800
 
-enum class KEYSTATE
+enum class KEYSTATE : unsigned char
 {
 	KEY_FREE,
 	KEY_PUSH,
@@ -70,6 +62,7 @@ namespace std
 #define VOIDPTR(x) (LPVOID*)&(x)
 #define GETPTR(x) if((x) == nullptr) {return nullptr;} return (x)
 #define CASTING(x, y) static_cast<x>((y)) 
+#define RE_CASTING(x, y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {(x)->Release();} (x) = nullptr
 #define DXFAIL(x) hr = (x); if(FAILED(hr)) {return false;}
 

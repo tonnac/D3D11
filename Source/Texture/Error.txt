@@ -1,0 +1,1 @@
+C:\Users\a\source\repos\D3D11\Source\Texture\VertexShader.txt(46,2): error X3000: syntax error: unexpected token 'return'

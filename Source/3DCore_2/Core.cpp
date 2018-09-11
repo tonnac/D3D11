@@ -67,6 +67,7 @@ bool Core::GameFrame()
 	S_Input.Frame();
 	m_Timer.Frame();
 	Frame();
+	S_Input.CopytoBefore();
 	return true;
 }
 bool Core::GameRender()
@@ -95,7 +96,6 @@ bool Core::PreRender()
 bool Core::PostRender()
 {
 	S_Write.End();
-	S_Input.CopytoBefore();
 	IDXGISwapChain* pSwapChain = getSwapChain();
 	pSwapChain->Present(0, 0);
 	return true;
