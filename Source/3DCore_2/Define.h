@@ -66,6 +66,7 @@ namespace std
 #define RELEASE(x) if((x)) {(x)->Release();} (x) = nullptr
 #define DXFAIL(x) hr = (x); if(FAILED(hr)) {return false;}
 
+
 extern HINSTANCE g_hInstance;
 extern HWND		 g_hWnd;
 extern RECT		 g_rtClient;
