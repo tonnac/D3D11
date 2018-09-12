@@ -85,17 +85,21 @@ HRESULT Sample::LoadShaderAndInputLayout()
 	ID3DBlob* pVSBlob = nullptr;
 	ID3DBlob* pErrBlob = nullptr;
 	DWORD dwFlag = D3DCOMPILE_DEBUG;
-	if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
-		NULL, "VS", "vs_5_0", dwFlag, NULL, NULL, &pVSBlob, &pErrBlob, NULL)))
-	{
-		std::string Error((char*)pErrBlob->GetBufferPointer());
-		std::ofstream pe("Error.txt");
-		if (pe.is_open())
-		{
-			pe << Error;
-		}
-	}
-	DXFAIL(pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
+
+	ThrowifFailed((D3DX11CompileFromFile(L"VertexShader.txt", NULL,
+		NULL, "VS", "vs_5_0", dwFlag, NULL, NULL, &pVSBlob, &pErrBlob, NULL)));
+
+	//if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
+	//	NULL, "VS", "vs_5_0", dwFlag, NULL, NULL, &pVSBlob, &pErrBlob, NULL)))
+	//{
+	//	std::string Error((char*)pErrBlob->GetBufferPointer());
+	//	std::ofstream pe("Error.txt");
+	//	if (pe.is_open())
+	//	{
+	//		pe << Error;
+	//	}
+	//}
+	ThrowifFailed(pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), nullptr, &m_pVertexShader));
 
 	//D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -109,7 +113,7 @@ HRESULT Sample::LoadShaderAndInputLayout()
 
 	int iNum = sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC);
 
-	DXFAIL(pDevice->CreateInputLayout(layout, iNum, pVSBlob->GetBufferPointer(),
+	ThrowifFailed(pDevice->CreateInputLayout(layout, iNum, pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), &m_pVertexLayout));
 
 
@@ -276,8 +280,15 @@ bool Sample::Release()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevhInstance, LPWSTR szCmdLine, int nCmdShow)
 {
-	Sample sd;
-	sd.Set(hInstance, 800, 600, L"Sample");
-	sd.Run();
-	return 0;
+	try
+	{
+		Sample sd;
+		sd.Set(hInstance, 800, 600, L"Sample");
+		return sd.Run();
+	}
+	catch (DxException& e)
+	{
+		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+		return 0;
+	}
 }

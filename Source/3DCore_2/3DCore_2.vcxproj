@@ -173,6 +173,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Define.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
