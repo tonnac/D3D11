@@ -22,7 +22,7 @@ public:
 private:
 	bool					DeviceUnacquire();
 	bool					DeviceAcquire();
-	HRESULT					InitSet();
+	void					InitSet();
 private:
 	LPDIRECTINPUT8			m_pDi;
 	LPDIRECTINPUTDEVICE8	m_pKey;

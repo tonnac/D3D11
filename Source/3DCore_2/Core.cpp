@@ -7,10 +7,10 @@ bool Core::GameInit()
 {
 	PreInit();
 
-	if (FAILED(CreateDevice())) return false;
-	if (FAILED(CreateFactory())) return false;
-	if (FAILED(CreateSwapChain())) return false;
-	if (FAILED(SetRenderTargetView())) return false;
+	CreateDevice();
+	CreateFactory();
+	CreateSwapChain();
+	SetRenderTargetView();
 	SetViewPort();
 
 	IDXGIFactory * pFactory = getDXGIFactory();
@@ -56,11 +56,6 @@ bool Core::Render()
 bool Core::Release()
 {
 	return true;
-}
-void Core::AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F& rt, const D2D1::ColorF& Color, const TCHAR* FontName,
-	const FLOAT& fontSize, const TCHAR* localeName, const DWRITE_FONT_WEIGHT& FontWeight, const DWRITE_FONT_STYLE& FontStyle, const DWRITE_FONT_STRETCH& FontStretch)
-{
-	S_Write.AddText(Key, Text, rt, Color, FontName, fontSize, localeName, FontWeight, FontStyle, FontStretch);
 }
 bool Core::GameFrame()
 {

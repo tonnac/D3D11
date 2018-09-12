@@ -6,14 +6,14 @@ class Device
 public:
 	Device();
 public:
-	HRESULT					CreateDevice();
-	HRESULT					CreateFactory();
-	HRESULT					CreateSwapChain();
-	HRESULT					SetRenderTargetView();
+	void					CreateDevice();
+	void					CreateFactory();
+	void					CreateSwapChain();
+	void					SetRenderTargetView();
 	void					SetViewPort();
 	bool					CleanupDevice();
 public:
-	HRESULT					ResizeDevice(const UINT& iWidth, const UINT& iHeight);
+	void					ResizeDevice(const UINT& iWidth, const UINT& iHeight);
 public:
 	ID3D11Device *			getDevice();
 	ID3D11DeviceContext*	getContext();

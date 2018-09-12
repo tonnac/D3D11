@@ -28,12 +28,12 @@ public:
 	Sample();
 	~Sample();
 public:
-	HRESULT						CreateVertexBuffer();
-	HRESULT						CreateIndexBuffer();
-	HRESULT						CreateConstantBuffer();
-	HRESULT						LoadShaderAndInputLayout();
-	HRESULT						LoadTextureFile(ID3D11ShaderResourceView** pTexSRV, const TCHAR* szFileName);
-	HRESULT						setBlendState();
+	void						CreateVertexBuffer();
+	void						CreateIndexBuffer();
+	void						CreateConstantBuffer();
+	void						LoadShaderAndInputLayout();
+	void						LoadTextureFile(ID3D11ShaderResourceView** pTexSRV, const TCHAR* szFileName);
+	void						setBlendState();
 public:
 	bool						Init();
 	bool						Frame();

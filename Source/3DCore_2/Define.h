@@ -105,7 +105,7 @@ public:
 
 	HRESULT ErrorCode = S_OK;
 	std::tstring FunctionName;
-	std::tstring FileName;
+	std::tstring Filename;
 	int LineNumber = -1;
 };
 
@@ -116,4 +116,20 @@ public:
 	std::tstring wfn = AnsiToWString(__FILE__);											\
 	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }					\
 }
+#endif
+
+#ifndef ifShaderFailed
+#define ifShaderFailed(x)																\
+{																						\
+	HRESULT hr__ = (x);																	\
+	if(FAILED(hr__))																	\
+	{																					\
+		std::string Error = "\n\n\n";													\
+		Error += (char*)pErrBlob->GetBufferPointer();									\
+		Error += "\n\n\n";																\
+		OutputDebugStringA((LPCSTR)Error.c_str());										\
+		std::tstring wfn = AnsiToWString(__FILE__);										\
+		throw DxException(hr__, L#x, wfn, __LINE__);									\
+	}																					\
+}																						
 #endif

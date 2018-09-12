@@ -52,14 +52,14 @@ public:
 	bool					RenderText(const TCHAR* Key);
 	bool					Release();
 public:
-	HRESULT					AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F& rt, const D2D1::ColorF& Color, const TCHAR* FontName,
+	void					AddText(const TCHAR* Key, const std::tstring& Text, const D2D1_RECT_F& rt, const D2D1::ColorF& Color, const TCHAR* FontName,
 									const FLOAT& fontSize, const TCHAR* localeName = L"en-us",
 									const DWRITE_FONT_WEIGHT& FontWeight = DWRITE_FONT_WEIGHT_NORMAL, const DWRITE_FONT_STYLE& FontStyle = DWRITE_FONT_STYLE_NORMAL,
 									const DWRITE_FONT_STRETCH& FontStretch = DWRITE_FONT_STRETCH_NORMAL);
-	HRESULT					AddLayout(const TCHAR* Key, const D2D1_POINT_2F& Point, const DWRITE_FONT_FEATURE& fontFeature = { DWRITE_FONT_FEATURE_TAG_DEFAULT, 1 });
+	void					AddLayout(const TCHAR* Key, const D2D1_POINT_2F& Point, const DWRITE_FONT_FEATURE& fontFeature = { DWRITE_FONT_FEATURE_TAG_DEFAULT, 1 });
 public:
-	HRESULT					CreateFactory();
-	HRESULT					CreateRenderTarget();
+	void					CreateFactory();
+	void					CreateRenderTarget();
 	void					DiscardFactory();
 	void					DiscardRenderTarget();
 public:
@@ -69,11 +69,11 @@ public:
 	void					Transform(const TCHAR* Key, const FLOAT& fAngle, const FLOAT& fScale, const D2D1_POINT_2F& CenterPos = { CASTING(FLOAT,g_rtClient.right / 2), CASTING(FLOAT,g_rtClient.bottom / 2) });
 public:
 	void					SetText(const TCHAR* Key, const std::tstring& Text);
-	HRESULT					SetFont(const TCHAR* Key,const TCHAR *fontFamily);
-	HRESULT					SetFontSize(const TCHAR* Key,const FLOAT& size);
-	HRESULT					SetWeight(const TCHAR* Key,const DWRITE_FONT_WEIGHT& fontWeight = DWRITE_FONT_WEIGHT_NORMAL);
-	HRESULT					SetStyle(const TCHAR* Key,const DWRITE_FONT_STYLE& fontStyle = DWRITE_FONT_STYLE_NORMAL);
-	HRESULT					SetUnderline(const TCHAR* Key,const bool& underline);
+	void					SetFont(const TCHAR* Key,const TCHAR *fontFamily);
+	void					SetFontSize(const TCHAR* Key,const FLOAT& size);
+	void					SetWeight(const TCHAR* Key,const DWRITE_FONT_WEIGHT& fontWeight = DWRITE_FONT_WEIGHT_NORMAL);
+	void					SetStyle(const TCHAR* Key,const DWRITE_FONT_STYLE& fontStyle = DWRITE_FONT_STYLE_NORMAL);
+	void					SetUnderline(const TCHAR* Key,const bool& underline);
 	void					SetColor(const TCHAR* Key, const D2D1::ColorF& Color);
 	void					SetAlignment(const TCHAR* Key, const DWRITE_TEXT_ALIGNMENT& Text, const DWRITE_PARAGRAPH_ALIGNMENT& Paragraph);
 	void					SetTextPos(const TCHAR* Key, const D2D1_RECT_F& rt);

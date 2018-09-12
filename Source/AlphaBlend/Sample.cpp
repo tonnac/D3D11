@@ -4,14 +4,13 @@ Sample::Sample() : m_pVertexBuffer(nullptr), m_pVertexLayout(nullptr), m_pVertex
 {}
 Sample::~Sample() {}
 
-HRESULT Sample::CreateVertexBuffer()
+void Sample::CreateVertexBuffer()
 {
 	m_VertexList.push_back({ -0.5f,	0.5f,	0.5f,	1.0f, 0.0f, 0.0f, 1.0f,		0.0f, 0.0f });
 	m_VertexList.push_back({ 0.5f,	0.5f,	0.5f,	0.0f, 1.0f, 0.0f, 1.0f,		1.0f, 0.0f });
 	m_VertexList.push_back({ -0.5f,	-0.5f,	0.5f,	0.0f, 0.0f, 1.0f, 1.0f,		0.0f, 1.0f });
 	m_VertexList.push_back({ 0.5f,	-0.5f,	0.5f,	1.0f, 1.0f, 1.0f, 1.0f,		1.0f, 1.0f });
 
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 
 	D3D11_BUFFER_DESC bd;
@@ -25,11 +24,8 @@ HRESULT Sample::CreateVertexBuffer()
 	initdata.pSysMem = &m_VertexList.at(0);
 
 	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pVertexBuffer));
-
-
-	return hr;
 }
-HRESULT	Sample::CreateIndexBuffer()
+void Sample::CreateIndexBuffer()
 {
 	m_IndexList.push_back(0);
 	m_IndexList.push_back(1);
@@ -37,7 +33,6 @@ HRESULT	Sample::CreateIndexBuffer()
 	m_IndexList.push_back(1);
 	m_IndexList.push_back(3);
 	m_IndexList.push_back(2);
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 
 	D3D11_BUFFER_DESC bd;
@@ -51,12 +46,9 @@ HRESULT	Sample::CreateIndexBuffer()
 	initdata.pSysMem = &m_IndexList.at(0);
 
 	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pIndexBuffer));
-
-	return hr;
 }
-HRESULT	Sample::CreateConstantBuffer()
+void Sample::CreateConstantBuffer()
 {
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 
 	D3D11_BUFFER_DESC bd;
@@ -75,27 +67,18 @@ HRESULT	Sample::CreateConstantBuffer()
 	initdata.pSysMem = &m_IndexList.at(0);
 
 	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pConstantBuffer));
-
-	return hr;
 }
-HRESULT Sample::LoadShaderAndInputLayout()
+void Sample::LoadShaderAndInputLayout()
 {
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 	ID3DBlob* pVSBlob = nullptr;
 	ID3DBlob* pErrBlob = nullptr;
 	DWORD dwFlag = D3DCOMPILE_DEBUG;
-	if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
-		NULL, "VS", "vs_5_0", dwFlag, NULL, NULL, &pVSBlob, &pErrBlob, NULL)))
-	{
-		std::string Error((char*)pErrBlob->GetBufferPointer());
-		std::ofstream pe("Error.txt");
-		if (pe.is_open())
-		{
-			pe << Error;
-		}
-	}
-	DXFAIL(pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
+
+	ifShaderFailed(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
+		NULL, "VS", "vs_5_0", dwFlag, NULL, NULL, &pVSBlob, &pErrBlob, NULL));
+
+	ThrowifFailed(pDevice->CreateVertexShader(pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), nullptr, &m_pVertexShader));
 
 	//D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -109,44 +92,25 @@ HRESULT Sample::LoadShaderAndInputLayout()
 
 	int iNum = sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC);
 
-	DXFAIL(pDevice->CreateInputLayout(layout, iNum, pVSBlob->GetBufferPointer(),
+	ThrowifFailed(pDevice->CreateInputLayout(layout, iNum, pVSBlob->GetBufferPointer(),
 		pVSBlob->GetBufferSize(), &m_pVertexLayout));
 
-
 	ID3DBlob* pPSBlob = nullptr;
-	if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
-		NULL, "PS", "ps_5_0", dwFlag, NULL, NULL, &pPSBlob, &pErrBlob, NULL)))
-	{
-		std::string Error((char*)pErrBlob->GetBufferPointer());
-		std::fstream pe("Error.txt");
-		if (pe.is_open())
-		{
-			pe << Error;
-		}
-	}
+	ifShaderFailed(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
+		NULL, "PS", "ps_5_0", dwFlag, NULL, NULL, &pPSBlob, &pErrBlob, NULL));
 	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
 		pPSBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 
-	if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
-		NULL, "PS1", "ps_5_0", dwFlag, NULL, NULL, &pPSBlob, &pErrBlob, NULL)))
-	{
-		std::string Error((char*)pErrBlob->GetBufferPointer());
-		std::fstream pe("Error.txt");
-		if (pe.is_open())
-		{
-			pe << Error;
-		}
-	}
+	ifShaderFailed(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
+		NULL, "PS1", "ps_5_0", dwFlag, NULL, NULL, &pPSBlob, &pErrBlob, NULL));
 	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
 		pPSBlob->GetBufferSize(), nullptr, &m_pPixelShader1));
 
 	RELEASE(pVSBlob);
 	RELEASE(pPSBlob);
-	return hr;
 }
-HRESULT	Sample::LoadTextureFile(ID3D11ShaderResourceView** pTexSRV ,const TCHAR* szFileName)
+void Sample::LoadTextureFile(ID3D11ShaderResourceView** pTexSRV ,const TCHAR* szFileName)
 {
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 
 	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, szFileName, nullptr, nullptr, pTexSRV, nullptr));
@@ -163,12 +127,9 @@ HRESULT	Sample::LoadTextureFile(ID3D11ShaderResourceView** pTexSRV ,const TCHAR*
 	{
 		ThrowifFailed(pDevice->CreateSamplerState(&samplerdesc, &m_pSamplerState));
 	}
-
-	return hr;
 }
-HRESULT	Sample::setBlendState()
+void Sample::setBlendState()
 {
-	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 	D3D11_BLEND_DESC BlendState;
 	ZeroMemory(&BlendState, sizeof(BlendState));
@@ -182,7 +143,6 @@ HRESULT	Sample::setBlendState()
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	ThrowifFailed(pDevice->CreateBlendState(&BlendState, &m_pBlendState));
-	return hr;
 }
 bool Sample::Init()
 {
@@ -193,10 +153,7 @@ bool Sample::Init()
 	CreateVertexBuffer();
 	CreateIndexBuffer();
 	CreateConstantBuffer();
-	if (FAILED(LoadShaderAndInputLayout()))
-	{
-		return false;
-	}
+	LoadShaderAndInputLayout();
 
 	return true;
 }
@@ -276,8 +233,15 @@ bool Sample::Release()
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevhInstance, LPWSTR szCmdLine, int nCmdShow)
 {
-	Sample sd;
-	sd.Set(hInstance, 800, 600, L"Sample");
-	sd.Run();
-	return 0;
+	try
+	{
+		Sample sd;
+		sd.Set(hInstance, 800, 600, L"Sample");
+		return sd.Run();
+	}
+	catch (DxException & e)
+	{
+		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
+		return 0;
+	}
 }

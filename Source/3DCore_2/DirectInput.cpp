@@ -11,10 +11,7 @@ DirectInput::DirectInput() : m_pDi(nullptr), m_pKey(nullptr), m_pMouse(nullptr)
 
 bool DirectInput::Init()
 {
-	if (FAILED(InitSet()))
-	{
-		return false;
-	}
+	InitSet();
 	return true;
 }
 bool DirectInput::Frame()
@@ -98,9 +95,8 @@ bool DirectInput::DeviceAcquire()
 	if (m_pMouse) m_pMouse->Acquire();
 	return true;
 }
-HRESULT	DirectInput::InitSet()
+void DirectInput::InitSet()
 {
-	HRESULT hr;
 	ThrowifFailed(DirectInput8Create(g_hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, VOIDPTR(m_pDi), nullptr));
 
 	ThrowifFailed(m_pDi->CreateDevice(GUID_SysKeyboard, &m_pKey, nullptr));
@@ -112,6 +108,4 @@ HRESULT	DirectInput::InitSet()
 	ThrowifFailed(m_pMouse->SetDataFormat(&c_dfDIMouse));
 	ThrowifFailed(m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
 	while (m_pMouse->Acquire() == DIERR_INPUTLOST);
-
-	return hr;
 }

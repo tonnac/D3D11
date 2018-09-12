@@ -6,10 +6,8 @@ m_pRenderTargetView(nullptr)
 	ZeroMemory(&m_SwapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 }
 
-HRESULT	Device::CreateDevice()
+void Device::CreateDevice()
 {
-	HRESULT hr;
-
 	UINT Flags = 0;
 
 	Flags |= D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -37,46 +35,30 @@ HRESULT	Device::CreateDevice()
 	for (int idriver = 0; idriver < driverNum; ++idriver)
 	{
 		D3D_DRIVER_TYPE dType = driverType[idriver];
-		hr = D3D11CreateDevice(nullptr, 
+		ThrowifFailed(D3D11CreateDevice(nullptr,
 			dType, nullptr, 
 			Flags, featureLevel, 
 			featureNum, D3D11_SDK_VERSION, &m_pd11Device, &m_FeatureLevel, 
-			&m_pImmediateContext);
-		if (SUCCEEDED(hr))
-		{
-			if (m_FeatureLevel < D3D_FEATURE_LEVEL_11_0)
-			{
-				if (m_pd11Device) m_pd11Device->Release();
-				if (m_pImmediateContext) m_pImmediateContext->Release();
-				continue;
-			}
-			break;
-		}
+			&m_pImmediateContext));
 	}
-	return hr;
 }
-HRESULT	Device::CreateFactory()
+void Device::CreateFactory()
 {
-	if (m_pd11Device == nullptr) return E_FAIL;
-	HRESULT hr;
+	if (m_pd11Device == nullptr) return;
 
 	IDXGIDevice * pDXGIDevice = nullptr;
-	hr = m_pd11Device->QueryInterface(__uuidof(IDXGIDevice), VOIDPTR(pDXGIDevice));
+	ThrowifFailed(m_pd11Device->QueryInterface(__uuidof(IDXGIDevice), VOIDPTR(pDXGIDevice)));
 	     
 	IDXGIAdapter * pDXGIAdapter = nullptr;
-	hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), VOIDPTR(pDXGIAdapter));
+	ThrowifFailed(pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), VOIDPTR(pDXGIAdapter)));
 
-	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), VOIDPTR(m_pDXGIFactory));
+	ThrowifFailed(pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), VOIDPTR(m_pDXGIFactory)));
 	
 	pDXGIDevice->Release();
 	pDXGIAdapter->Release();
-
-	return hr;
 }
-HRESULT	Device::CreateSwapChain()
+void Device::CreateSwapChain()
 {
-	HRESULT hr;
-
 	DXGI_MODE_DESC ModeDesc;
 	ZeroMemory(&ModeDesc, sizeof(DXGI_MODE_DESC));
 	ModeDesc.Width = g_rtClient.right - g_rtClient.left;
@@ -94,11 +76,9 @@ HRESULT	Device::CreateSwapChain()
 	m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	ThrowifFailed(m_pDXGIFactory->CreateSwapChain(m_pd11Device, &m_SwapChainDesc, &m_pSwapChain));
-	return hr;
 }
-HRESULT	Device::SetRenderTargetView()
+void Device::SetRenderTargetView()
 {
-	HRESULT hr;
 	ID3D11Texture2D* pBackBuffer = nullptr;
 
 	ThrowifFailed(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer)));
@@ -106,7 +86,6 @@ HRESULT	Device::SetRenderTargetView()
 	pBackBuffer->Release();
 
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
-	return hr;
 }
 void Device::SetViewPort()
 {
@@ -130,11 +109,9 @@ bool Device::CleanupDevice()
 	return true;
 }
 
-HRESULT Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
+void Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
 {
-	if (m_pd11Device == nullptr) return E_FAIL;
-	HRESULT hr;
-
+	if (m_pd11Device == nullptr) return;
 	m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 
 	//DirectWrite
@@ -148,12 +125,11 @@ HRESULT Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
 
 	GetClientRect(g_hWnd, &g_rtClient);
 
-	ThrowifFailed(SetRenderTargetView());
+	SetRenderTargetView();
 	SetViewPort();
 
 	//DirectWrite
 	ResizeCreate();
-	return hr;
 }
 void Device::ResizeDiscard()
 {
