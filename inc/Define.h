@@ -66,6 +66,7 @@ namespace std
 #define RELEASE(x) if((x)) {(x)->Release();} (x) = nullptr
 #define ThrowifFailed(x) hr = (x); if(FAILED(hr)) {return false;}
 
+#define ZERO(x) memset((x),0,sizeof((x)))
 
 extern HINSTANCE g_hInstance;
 extern HWND		 g_hWnd;
@@ -86,40 +87,3 @@ public:
 		return inst;
 	}
 };
-
-
-inline std::tstring AnsiToWString(const std::string& str)
-{
-	TCHAR buffer[512] = { 0, };
-	MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
-	return std::tstring(buffer);
-}
-
-class DxException
-{
-public:
-	DxException() = default;
-	DxException(HRESULT hr, const std::tstring& functionName, const std::tstring& fileName, int lineNumber);
-
-	std::tstring ToString() const;
-
-	HRESULT ErrorCode = S_OK;
-	std::tstring FunctionName;
-	std::tstring FileName;
-	int LineNumber = -1;
-};
-
-#ifndef ThrowifFailed
-#define ThrowifFailed(x)																\
-{																						\
-	HRESULT hr__ = (x);																	\
-	std::tstring wfn = AnsiToWString(__FILE__);											\
-	if (pErrBlob)																		\
-	{																					\
-		std::string error = (char*)pErrBlob->GetBufferPointer();						\
-		std::fstream err("Error.txt", std::ios::out);									\
-		err << error;																	\
-	}																					\
-	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }					\
-}
-#endif

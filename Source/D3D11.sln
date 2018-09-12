@@ -63,9 +63,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Part_06_Blend", "Part_06_Blend", "{637CD307-CA7F-4B00-A974-BA8B99340C7B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_AlphaBlend", "AlphaBlend\AlphaBlend.vcxproj", "{599B3FDF-F2EF-4092-82D7-02F3ED678457}"
-	ProjectSection(ProjectDependencies) = postProject
-		{AD497FC2-4D51-478F-A83D-53FA9E8A1379} = {AD497FC2-4D51-478F-A83D-53FA9E8A1379}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
