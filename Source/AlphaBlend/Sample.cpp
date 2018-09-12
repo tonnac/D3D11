@@ -22,8 +22,8 @@ void Sample::CreateVertexBuffer()
 	D3D11_SUBRESOURCE_DATA initdata;
 	ZeroMemory(&initdata, sizeof(D3D11_SUBRESOURCE_DATA));
 	initdata.pSysMem = &m_VertexList.at(0);
-
 	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pVertexBuffer));
+
 }
 void Sample::CreateIndexBuffer()
 {

@@ -1,6 +1,6 @@
 cbuffer VS_CB
 {
-	float4 g_Color : packoffset(c0);
+	float4 g_Color : packoffset(c0)
 	float g_Angle : packoffset(c1.x);
 	float g_Time : packoffset(c1.y);
 	float g_Index : packoffset(c1.z);
