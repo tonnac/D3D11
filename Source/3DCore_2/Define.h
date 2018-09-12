@@ -114,12 +114,6 @@ public:
 {																						\
 	HRESULT hr__ = (x);																	\
 	std::tstring wfn = AnsiToWString(__FILE__);											\
-	if (pErrBlob)																		\
-	{																					\
-		std::string error = (char*)pErrBlob->GetBufferPointer();						\
-		std::fstream err("Error.txt", std::ios::out);									\
-		err << error;																	\
-	}																					\
 	if (FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); }					\
 }
 #endif

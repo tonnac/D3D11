@@ -93,7 +93,7 @@ HRESULT	Device::CreateSwapChain()
 	m_SwapChainDesc.Windowed = TRUE;
 	m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
-	DXFAIL(m_pDXGIFactory->CreateSwapChain(m_pd11Device, &m_SwapChainDesc, &m_pSwapChain));
+	ThrowifFailed(m_pDXGIFactory->CreateSwapChain(m_pd11Device, &m_SwapChainDesc, &m_pSwapChain));
 	return hr;
 }
 HRESULT	Device::SetRenderTargetView()
@@ -101,8 +101,8 @@ HRESULT	Device::SetRenderTargetView()
 	HRESULT hr;
 	ID3D11Texture2D* pBackBuffer = nullptr;
 
-	DXFAIL(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer)));
-	DXFAIL(m_pd11Device->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView));
+	ThrowifFailed(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), VOIDPTR(pBackBuffer)));
+	ThrowifFailed(m_pd11Device->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView));
 	pBackBuffer->Release();
 
 	m_pImmediateContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
@@ -148,7 +148,7 @@ HRESULT Device::ResizeDevice(const UINT& iWidth, const UINT& iHeight)
 
 	GetClientRect(g_hWnd, &g_rtClient);
 
-	DXFAIL(SetRenderTargetView());
+	ThrowifFailed(SetRenderTargetView());
 	SetViewPort();
 
 	//DirectWrite

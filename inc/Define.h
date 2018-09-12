@@ -64,7 +64,7 @@ namespace std
 #define CASTING(x, y) static_cast<x>((y)) 
 #define RE_CASTING(x, y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {(x)->Release();} (x) = nullptr
-#define DXFAIL(x) hr = (x); if(FAILED(hr)) {return false;}
+#define ThrowifFailed(x) hr = (x); if(FAILED(hr)) {return false;}
 
 
 extern HINSTANCE g_hInstance;

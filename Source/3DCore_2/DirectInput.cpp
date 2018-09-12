@@ -101,16 +101,16 @@ bool DirectInput::DeviceAcquire()
 HRESULT	DirectInput::InitSet()
 {
 	HRESULT hr;
-	DXFAIL(DirectInput8Create(g_hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, VOIDPTR(m_pDi), nullptr));
+	ThrowifFailed(DirectInput8Create(g_hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, VOIDPTR(m_pDi), nullptr));
 
-	DXFAIL(m_pDi->CreateDevice(GUID_SysKeyboard, &m_pKey, nullptr));
-	DXFAIL(m_pKey->SetDataFormat(&c_dfDIKeyboard));
-	DXFAIL(m_pKey->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY));
+	ThrowifFailed(m_pDi->CreateDevice(GUID_SysKeyboard, &m_pKey, nullptr));
+	ThrowifFailed(m_pKey->SetDataFormat(&c_dfDIKeyboard));
+	ThrowifFailed(m_pKey->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY));
 	while (m_pKey->Acquire() == DIERR_INPUTLOST);
 
-	DXFAIL(m_pDi->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr));
-	DXFAIL(m_pMouse->SetDataFormat(&c_dfDIMouse));
-	DXFAIL(m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
+	ThrowifFailed(m_pDi->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr));
+	ThrowifFailed(m_pMouse->SetDataFormat(&c_dfDIMouse));
+	ThrowifFailed(m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
 	while (m_pMouse->Acquire() == DIERR_INPUTLOST);
 
 	return hr;

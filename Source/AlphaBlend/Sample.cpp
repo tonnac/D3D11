@@ -24,7 +24,7 @@ HRESULT Sample::CreateVertexBuffer()
 	ZeroMemory(&initdata, sizeof(D3D11_SUBRESOURCE_DATA));
 	initdata.pSysMem = &m_VertexList.at(0);
 
-	DXFAIL(pDevice->CreateBuffer(&bd, &initdata, &m_pVertexBuffer));
+	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pVertexBuffer));
 
 
 	return hr;
@@ -50,7 +50,7 @@ HRESULT	Sample::CreateIndexBuffer()
 	ZeroMemory(&initdata, sizeof(D3D11_SUBRESOURCE_DATA));
 	initdata.pSysMem = &m_IndexList.at(0);
 
-	DXFAIL(pDevice->CreateBuffer(&bd, &initdata, &m_pIndexBuffer));
+	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pIndexBuffer));
 
 	return hr;
 }
@@ -74,7 +74,7 @@ HRESULT	Sample::CreateConstantBuffer()
 	ZeroMemory(&initdata, sizeof(D3D11_SUBRESOURCE_DATA));
 	initdata.pSysMem = &m_IndexList.at(0);
 
-	DXFAIL(pDevice->CreateBuffer(&bd, &initdata, &m_pConstantBuffer));
+	ThrowifFailed(pDevice->CreateBuffer(&bd, &initdata, &m_pConstantBuffer));
 
 	return hr;
 }
@@ -128,7 +128,7 @@ HRESULT Sample::LoadShaderAndInputLayout()
 			pe << Error;
 		}
 	}
-	DXFAIL(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
+	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
 		pPSBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 
 	if (FAILED(D3DX11CompileFromFile(L"VertexShader.txt", NULL,
@@ -141,7 +141,7 @@ HRESULT Sample::LoadShaderAndInputLayout()
 			pe << Error;
 		}
 	}
-	DXFAIL(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
+	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(),
 		pPSBlob->GetBufferSize(), nullptr, &m_pPixelShader1));
 
 	RELEASE(pVSBlob);
@@ -153,7 +153,7 @@ HRESULT	Sample::LoadTextureFile(ID3D11ShaderResourceView** pTexSRV ,const TCHAR*
 	HRESULT hr;
 	ID3D11Device* pDevice = getDevice();
 
-	DXFAIL(D3DX11CreateShaderResourceViewFromFile(pDevice, szFileName, nullptr, nullptr, pTexSRV, nullptr));
+	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, szFileName, nullptr, nullptr, pTexSRV, nullptr));
 
 
 	D3D11_SAMPLER_DESC samplerdesc;
@@ -165,7 +165,7 @@ HRESULT	Sample::LoadTextureFile(ID3D11ShaderResourceView** pTexSRV ,const TCHAR*
 
 	if (m_pSamplerState == nullptr)
 	{
-		DXFAIL(pDevice->CreateSamplerState(&samplerdesc, &m_pSamplerState));
+		ThrowifFailed(pDevice->CreateSamplerState(&samplerdesc, &m_pSamplerState));
 	}
 
 	return hr;
@@ -185,7 +185,7 @@ HRESULT	Sample::setBlendState()
 	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	DXFAIL(pDevice->CreateBlendState(&BlendState, &m_pBlendState));
+	ThrowifFailed(pDevice->CreateBlendState(&BlendState, &m_pBlendState));
 	return hr;
 }
 bool Sample::Init()
