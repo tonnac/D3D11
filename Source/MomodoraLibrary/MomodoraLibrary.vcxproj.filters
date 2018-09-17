@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일\Sprite">
+      <UniqueIdentifier>{57dac625-9584-4020-a2b5-47bda9235f47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Sprite">
+      <UniqueIdentifier>{3f7ef034-0db0-4892-a2ae-8b302b46f661}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object">
+      <UniqueIdentifier>{6a32d163-8c78-4c92-90f5-210999c9596d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object">
+      <UniqueIdentifier>{e541ca31-98f0-496b-83af-cbde71746aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object\EffectObj">
+      <UniqueIdentifier>{3cd688b8-dfbe-4194-b2e3-b5b77daec59d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\BasicStructure">
+      <UniqueIdentifier>{8754f2ee-bc86-4af8-a547-42e8fe8c61aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\BasicStructure">
+      <UniqueIdentifier>{a60f7b5d-f61f-44e9-99eb-87e050f07ae6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\State">
+      <UniqueIdentifier>{f59322c1-4746-47cf-a3b4-c3078f8544f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\State\PlayerState">
+      <UniqueIdentifier>{9e24bfd0-a5cb-4137-b895-b034bc81576a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\State">
+      <UniqueIdentifier>{95e5dae7-a097-41dd-b555-24beda25d044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\State\PlayerState">
+      <UniqueIdentifier>{040669d6-02fc-4cd1-95a0-25717172d197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{301a9b9e-e6a5-4e3d-bae9-47012b89beb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Scene">
+      <UniqueIdentifier>{97af6b90-9cd5-4d5a-8fa0-140f1789a151}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Character">
+      <UniqueIdentifier>{cb8a40de-d5cf-4197-bff7-286575572344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Terrain">
+      <UniqueIdentifier>{d9f13407-9815-4e18-8dde-dd0461914dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object\Terrain">
+      <UniqueIdentifier>{f83ceaab-55f2-4e3c-b1ab-72b23a00c2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object\Character">
+      <UniqueIdentifier>{11423bcb-7c71-4a4e-a869-051cf6044e94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\State\EnemyState">
+      <UniqueIdentifier>{4c753077-97b4-4834-adbb-e9b09411bfa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\State\EnemyState">
+      <UniqueIdentifier>{3047ac2c-99a1-4402-8499-33c843f1b297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Character\EffectObj">
+      <UniqueIdentifier>{3fad93e0-2585-45c6-aa8a-58e4d16f9451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\FSM">
+      <UniqueIdentifier>{b00f8828-1967-409b-9af2-315499bc3de7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\FSM">
+      <UniqueIdentifier>{6a9f23ec-8bf8-45e2-a288-df545721a948}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Kaho.txt" />
+    <Text Include="Monkey.txt" />
+    <Text Include="FSM.txt" />
+    <Text Include="FSM1.txt" />
+    <Text Include="Sound.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bitmap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapMgr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>헤더 파일\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteMgr.h">
+      <Filter>헤더 파일\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="BKObject.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectObj.h">
+      <Filter>헤더 파일\Object\Character\EffectObj</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerAttack.h">
+      <Filter>헤더 파일\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBasicState.h">
+      <Filter>헤더 파일\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="KahoAttack.h">
+      <Filter>헤더 파일\Object\Character\EffectObj</Filter>
+    </ClInclude>
+    <ClInclude Include="Scroll.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="wClass.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Std.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>헤더 파일\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Rendering.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LadderObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="DownableObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="FadeObject.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterObject.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBasicState.h">
+      <Filter>헤더 파일\State\EnemyState</Filter>
+    </ClInclude>
+    <ClInclude Include="TrapObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="mSound.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FinateStateMachine.h">
+      <Filter>헤더 파일\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMMgr.h">
+      <Filter>헤더 파일\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Bitmap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapMgr.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteMgr.cpp">
+      <Filter>소스 파일\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>소스 파일\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="BKObject.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectObj.cpp">
+      <Filter>소스 파일\Object\EffectObj</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerAttack.cpp">
+      <Filter>소스 파일\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBasicState.cpp">
+      <Filter>소스 파일\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="KahoAttack.cpp">
+      <Filter>소스 파일\Object\EffectObj</Filter>
+    </ClCompile>
+    <ClCompile Include="Scroll.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="wClass.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>소스 파일\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Rendering.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="LadderObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="DownableObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="FadeObject.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterObject.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBasicState.cpp">
+      <Filter>소스 파일\State\EnemyState</Filter>
+    </ClCompile>
+    <ClCompile Include="TrapObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="OrbObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="ScrollObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="mSound.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FinateStateMachine.cpp">
+      <Filter>소스 파일\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="FSMMgr.cpp">
+      <Filter>소스 파일\FSM</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+</Project>

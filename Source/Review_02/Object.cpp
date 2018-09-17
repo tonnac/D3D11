@@ -9,6 +9,7 @@ bool Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std:
 	CreateTexture(pDevice, Name, TexFilepath);
 	CreateShader(pDevice, Name, ShaderFilepath);
 	setBlendState(pDevice);
+	Init();
 	return true;
 }
 bool Object::Init()
@@ -26,7 +27,7 @@ bool Object::PreRender(ID3D11DeviceContext* pContext)
 	ID3D11SamplerState* pSamplerState = m_pTexture->getSamplerState();
 	ID3D11ShaderResourceView* m_TexSRV = m_pTexture->getResourceView();
 #ifdef GPU
-	pContext->UpdateSubresource(m_pVertexBuffer, 0, &pee, &m_VertexList, 0, 0);
+	pContext->UpdateSubresource(m_pVertexBuffer, 0, nullptr, &m_VertexList[0], 0, 0);
 	pContext->UpdateSubresource(m_pConstantBuffer, 0, nullptr, &m_ConstantData, 0, 0);
 #elif defined CPU
 	D3D11_MAPPED_SUBRESOURCE SubRe;
@@ -35,11 +36,6 @@ bool Object::PreRender(ID3D11DeviceContext* pContext)
 	VS_CB* pe = (VS_CB*)SubRe.pData;
 	*pe = m_ConstantData;
 	pContext->Unmap(m_pConstantBuffer, 0);
-
-	ZeroMemory(&SubRe, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	ThrowifFailed(pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubRe));
-	memcpy(SubRe.pData, &m_VertexList, sizeof(std::vector<P3_VERTEX>));
-	pContext->Unmap(m_pVertexBuffer, 0);
 #endif
 
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

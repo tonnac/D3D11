@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "PlaneObject.h"
 #include "TriangleObject.h"
+#include "SpriteMgr.h"
 
 
 class Sample : public Core
@@ -13,4 +14,5 @@ public:
 	bool				Release() override;
 private:
 	PlaneObject			m_object;
+	Sprite*				m_Sprite;
 };

@@ -3,15 +3,10 @@
 
 void PlaneObject::CreateVertexBuffer(ID3D11Device* pDevice)
 {
-	D2D1_RECT_F rt = { 10 / 980.0f, 87 / 3869.0f, 10 / 980.0f + 25 / 980.0f, 87 / 3869.0f + 36 / 3869.0f };
-	//for (auto &iter : m_VertexList)
-	//{
-	//	iter.Pos.x += 0.001f;
-	//}
-	m_VertexList.push_back({ DirectX::XMFLOAT3(-0.15f, 0.15f, 0.5f), DirectX::XMFLOAT2(rt.left, rt.top) });
-	m_VertexList.push_back({ DirectX::XMFLOAT3(0.15f,0.15f,0.5f), DirectX::XMFLOAT2(rt.right, rt.top) });
-	m_VertexList.push_back({ DirectX::XMFLOAT3(-0.15f,-0.15f,0.5f), DirectX::XMFLOAT2(rt.left, rt.bottom) });
-	m_VertexList.push_back({ DirectX::XMFLOAT3(0.15f,-0.15f,0.5f), DirectX::XMFLOAT2(rt.right, rt.bottom) });
+	m_VertexList.push_back({ DirectX::XMFLOAT3(-0.15f, 0.15f, 0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) });
+	m_VertexList.push_back({ DirectX::XMFLOAT3(0.15f,0.15f,0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) });
+	m_VertexList.push_back({ DirectX::XMFLOAT3(-0.15f,-0.15f,0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) });
+	m_VertexList.push_back({ DirectX::XMFLOAT3(0.15f,-0.15f,0.5f), DirectX::XMFLOAT2(0.0f, 0.0f) });
 	Object::CreateVertexBuffer(pDevice);
 }
 void PlaneObject::CreateIndexBuffer(ID3D11Device* pDevice)
@@ -25,17 +20,43 @@ void PlaneObject::CreateIndexBuffer(ID3D11Device* pDevice)
 	
 	Object::CreateIndexBuffer(pDevice);
 }
+bool PlaneObject::Init()
+{
+	Sprite.push_back({ 10,87,25,36 });
+	Sprite.push_back({ 58,87,26,36 });
+	Sprite.push_back({ 109,87,26,36 });
+	Sprite.push_back({ 163,87,27,36 });
+	Sprite.push_back({ 212,87,27,36 });
+	Sprite.push_back({ 261,87,27,36 });
+	Sprite.push_back({ 310,87,27,36 });
+	return Object::Init();
+}
 bool PlaneObject::Frame()
 {
-	for (auto& iter : m_VertexList)
+	static int iNum = 0;
+	static float fTimer = 0.0f;
+	if (iNum == Sprite.size() - 1) iNum = 0;
+
+//	D2D1_RECT_F rt = { 10 / 980.0f, 87 / 3869.0f, 10 / 980.0f + 25 / 980.0f, 87 / 3869.0f + 36 / 3869.0f };
+	DirectX::XMFLOAT2 x1 = { Sprite[iNum].left / 980.f, Sprite[iNum].top / 3869.0f };
+	DirectX::XMFLOAT2 x2 = { (Sprite[iNum].left + Sprite[iNum].right) / 980.f, Sprite[iNum].top / 3869.0f };
+	DirectX::XMFLOAT2 x3 = { Sprite[iNum].left / 980.f, (Sprite[iNum].top + Sprite[iNum].bottom) / 3869.0f };
+	DirectX::XMFLOAT2 x4 = { (Sprite[iNum].left + Sprite[iNum].right) / 980.f, (Sprite[iNum].top + Sprite[iNum].bottom) / 3869.0f };
+	m_VertexList[0].TexPos = x1;
+	m_VertexList[1].TexPos = x2;
+	m_VertexList[2].TexPos = x3;
+	m_VertexList[3].TexPos = x4;
+	fTimer += g_fSecPerFrame;
+	if (fTimer >= 0.3f)
 	{
-		iter.Pos.x += 0.03f;
+		fTimer -= 0.3f;
+		iNum++;
 	}
-	
+
 	m_ConstantData.Color.x = cosf(g_fGameTime) * 0.5f + 0.5f;
 	m_ConstantData.Color.y = sinf(g_fGameTime) * 0.5f + 0.5f;
 	m_ConstantData.Color.z = cosf(g_fGameTime) * 0.5f + 0.5f;
 	m_ConstantData.Color.w = 1.0f;
 	m_ConstantData.Util.x = g_fGameTime * 50.0f, m_ConstantData.Util.y = 1.0f, m_ConstantData.Util.z = 1.0f, m_ConstantData.Util.w = 1.0f;
-	return true;
+	return Object::Frame();
 }

@@ -1,0 +1,16 @@
+15
+../../data/snd/Title.mp3
+../../data/snd/Stage1.mp3
+../../data/snd/Attack1.mp3
+../../data/snd/Attack2.mp3
+../../data/snd/Attack3.mp3
+../../data/snd/AirAttack.mp3
+../../data/snd/Arrow.mp3
+../../data/snd/Jump.mp3
+../../data/snd/Roll.mp3
+../../data/snd/MenuCancle.mp3
+../../data/snd/MenuMove.mp3
+../../data/snd/MenuSelect.mp3
+../../data/snd/PressAnyKey.mp3
+../../data/snd/SettingMove.mp3
+../../data/snd/Hurt.mp3

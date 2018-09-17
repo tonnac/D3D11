@@ -4,8 +4,8 @@
 #include "Texture.h"
 #include <DirectXMath.h>
 
-//#define GPU
-#define CPU
+#define GPU
+//#define CPU
 
 struct P3_VERTEX
 {
