@@ -12,12 +12,13 @@ public:
 	void						CreateSamplerState(ID3D11Device* pDevice);
 	ID3D11SamplerState*			getSamplerState();
 	ID3D11ShaderResourceView*	getResourceView();
+	DirectX::XMFLOAT2			getImageSize();
 private:
+	DirectX::XMFLOAT2			m_ImageSize;
 	std::tstring				m_Name;
 	D3D11_SAMPLER_DESC			m_SamplerDesc;
 	ID3D11ShaderResourceView *	m_pTexSRV = nullptr;
 	ID3D11SamplerState*			m_pSamplerState = nullptr;
-
 };
 
 

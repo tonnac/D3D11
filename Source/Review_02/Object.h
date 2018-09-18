@@ -2,7 +2,6 @@
 #include "d3dUtil.h"
 #include "Shader.h"
 #include "Texture.h"
-#include <DirectXMath.h>
 
 #define GPU
 //#define CPU

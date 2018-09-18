@@ -2,7 +2,7 @@
 #include "d3dUtil.h"
 #include "Shader.h"
 #include "Texture.h"
-#include <DirectXMath.h>
+
 
 #define GPU
 //#define CPU
@@ -30,10 +30,12 @@ public:
 	virtual bool				PostRender(ID3D11DeviceContext* pContext);
 	virtual bool				Release();
 public:
-	RECT*						getCollisionRT();
-	POINT*						getCenterPos();
+	D2D1_RECT_F *				getCollisionRT();
+	D2D1_POINT_2F*				getCenterPos();
+	size_t						getVertexSize();
 public:
-	void						setTexturePos(const DirectX::XMFLOAT2& pos, const int& index);
+	void						setPosition(const D2D1_POINT_2F& pos);
+	void						setTexturePos(const RECT& rt, const int& index);
 protected:
 	virtual void				CreateVertexBuffer(ID3D11Device* pDevice);
 	virtual void				CreateIndexBuffer(ID3D11Device* pDevice);
@@ -43,8 +45,8 @@ protected:
 	virtual void				setBlendState(ID3D11Device* pDevice);
 	virtual void				CreateaInputLayout(ID3D11Device* pDevice);
 protected:
-	POINT						m_CenterPos;
-	RECT						m_rtColiision;
+	D2D1_POINT_2F				m_CenterPos;
+	D2D1_RECT_F					m_rtColiision;
 	std::vector<P3_VERTEX>		m_VertexList;
 	std::vector<DWORD>			m_indiciesList;
 	VS_CB						m_ConstantData;

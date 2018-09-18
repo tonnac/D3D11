@@ -4,9 +4,7 @@
 #include "mSound.h"
 
 PlayerState::PlayerState(Player * pPlayer) : State(pPlayer), m_pCharObj(pPlayer)
-{
-	m_CenterPos = pPlayer->getCenterPos();
-}
+{}
 bool PlayerState::Render()
 {
 	return true;
@@ -46,25 +44,24 @@ bool PlayerIdle::Frame()
 		m_pCharObj->setState(L"Attack1");
 		return true;
 	}
-	if (S_Input.GetKey('Q') == Input::KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState(DIK_Q) == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect::ROLL);
 		m_pCharObj->setState(L"Roll");
 		return true;
 	}
-	if (S_Input.GetKey('D') == Input::KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_PUSH)
 	{
 		EffectObj * Arrow = new KahoBowAttack;
 		Arrow->Init();
 		if (m_pCharObj->getDir() == -1)
 		{
-			Arrow->Set(m_pCharObj->getCenterPos()->x - 20, m_pCharObj->getCenterPos()->y - 13);
-			Arrow->setRendering(2.8f, INVERSE::LR_ROTATION);
+			Arrow->setPosition({ m_pCharObj->getCenterPos()->x - 20, m_pCharObj->getCenterPos()->y - 13 });
 			Arrow->setSpeed(-200.0f);
 		}
 		else
 		{
-			Arrow->Set(m_pCharObj->getCenterPos()->x + 20, m_pCharObj->getCenterPos()->y - 13);
+			Arrow->setPosition({ m_pCharObj->getCenterPos()->x + 20, m_pCharObj->getCenterPos()->y - 13 });
 			Arrow->setSpeed(200.0f);
 		}
 		m_pCharObj->addEffect(Arrow);
@@ -72,7 +69,7 @@ bool PlayerIdle::Frame()
 		m_pCharObj->setState(L"Bow");
 		return true;
 	}
-	if (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == -1)		// 방향 같으면
 		{
@@ -85,7 +82,7 @@ bool PlayerIdle::Frame()
 			return true;
 		}
 	}
-	if (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == 1)
 		{
@@ -98,17 +95,17 @@ bool PlayerIdle::Frame()
 			return true;
 		}
 	}
-	if (S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_PUSH && m_pCharObj->getLadder())
+	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH && m_pCharObj->getLadder())
 	{
 		m_pCharObj->setState(L"LadderEnter");
 		return true;
 	}
-	if (S_Input.GetKey(VK_UP) == KEYSTATE::KEY_PUSH && m_pCharObj->getLadder())
+	if (S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_PUSH && m_pCharObj->getLadder())
 	{
 		m_pCharObj->setState(L"LadderUp");
 		return true;
 	}
-	if (S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_pCharObj->setState(L"Crouch");
 		return true;
@@ -143,34 +140,34 @@ bool PlayerRun::Frame()
 		return true;
 	}
 
-	if (S_Input.GetKey('S') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_pSprite->setIndex(0);
 		m_pCharObj->setState(L"Attack1");
 		return true;
 	}
-	if (S_Input.GetKey('A') == KEYSTATE::KEY_PUSH || S_Input.GetKey('A') == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState('A') == Input::KEYSTATE::KEY_HOLD)
 	{
 		S_Sound.Play(Effect::JUMP);
 		m_pSprite->setIndex(0);
 		m_pCharObj->setState(L"Jump");
 		return true;
 	}
-	if ((m_pCharObj->getDir() == 1 && (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD))
-		|| (m_pCharObj->getDir() == -1 && (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)))
+	if ((m_pCharObj->getDir() == 1 && (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD))
+		|| (m_pCharObj->getDir() == -1 && (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)))
 	{
 		FLOAT fSpeed = m_pCharObj->getSpeed();
 		m_CenterPos->x += m_pCharObj->getDir() * g_fSecPerFrame * fSpeed;
 		*m_rtDraw = m_pSprite->getSpriteRt();
 	}
-	else if ((S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_UP || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_FREE) ||
-		(S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_UP || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_FREE))
+	else if ((S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_FREE) ||
+		(S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_FREE))
 	{
 		m_pSprite->setIndex(0);
 		m_pCharObj->setState(L"Brake");
 		return true;
 	}
-	if (S_Input.GetKey('Q') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('Q') == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_pSprite->setIndex(0);
 		m_pCharObj->setState(L"Roll");
@@ -202,7 +199,7 @@ bool PlayerBrake::Frame()
 		m_pCharObj->setState(L"Idle");
 		return true;
 	}
-	if (S_Input.GetKey('S') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_pCharObj->setState(L"Attack1");
 		return true;
@@ -259,7 +256,7 @@ bool PlayerJump::Frame()
 	m_fJumpSpeed += g_fSecPerFrame * 9.8 * m_fAcceleration / 2;
 	INT iJumpNumber = m_pCharObj->getJumpNum();
 	m_CenterPos->y -= g_fSecPerFrame * m_fJumpSpeed;
-	if (S_Input.GetKey('S') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect::AIRATTACK);
 		m_fTimer = 0.0f;
@@ -274,7 +271,7 @@ bool PlayerJump::Frame()
 		m_pCharObj->setState(L"Fall");
 		return true;
 	}
-	if (iJumpNumber == 0 && (S_Input.GetKey('A') == KEYSTATE::KEY_PUSH))
+	if (iJumpNumber == 0 && (S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH))
 	{
 		S_Sound.Play(Effect::JUMP);
 		m_fTimer = 0.0f;
@@ -285,7 +282,7 @@ bool PlayerJump::Frame()
 		return true;
 	}
 	FLOAT fSpeed = m_pCharObj->getSpeed();
-	if (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == -1)
 		{
@@ -295,7 +292,7 @@ bool PlayerJump::Frame()
 		else
 			m_CenterPos->x += g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == 1)
 		{
@@ -305,7 +302,7 @@ bool PlayerJump::Frame()
 		else
 			m_CenterPos->x -= g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey('D') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect::ARROW);
 		EffectObj * Arrow = new KahoBowAttack;
@@ -351,7 +348,7 @@ bool PlayerJump2::Frame()
 	INT iJumpNumber = m_pCharObj->getJumpNum();
 	m_CenterPos->y -= g_fSecPerFrame * m_fJumpSpeed;
 
-	if (S_Input.GetKey('S') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect::AIRATTACK);
 		m_fTimer = 0.0f;
@@ -368,15 +365,15 @@ bool PlayerJump2::Frame()
 		m_pCharObj->setState(L"Fall");
 		return true;
 	}
-	if (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->x += g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->x -= g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey('D') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
 	{
 		EffectObj * Arrow = new KahoBowAttack;
 		Arrow->Init();
@@ -419,20 +416,20 @@ bool PlayerFall::Frame()
 	m_fTimer += g_fSecPerFrame;
 	INT iJumpNum = m_pCharObj->getJumpNum();
 	FLOAT fSpeed = m_pCharObj->getSpeed();
-	if (S_Input.GetKey('S') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_pCharObj->setState(L"AirAttack");
 		return true;
 	}
-	if (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->x += g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->x -= g_fSecPerFrame * fSpeed;
 	}
-	if (S_Input.GetKey('D') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
 	{
 		EffectObj * Arrow = new KahoBowAttack;
 		Arrow->Init();
@@ -452,7 +449,7 @@ bool PlayerFall::Frame()
 		return true;
 	}
 	if (m_fTimer >= 0.1f && iJumpNum == 0 &&
-		(S_Input.GetKey('A') == KEYSTATE::KEY_PUSH))
+		(S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH))
 	{
 		m_pCharObj->setJumpNum(1);
 		m_pSprite->setIndex(0);
@@ -498,7 +495,7 @@ bool PlayerRise::Frame()
 		m_pCharObj->setState(L"Idle");
 		return true;
 	}
-	if (S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_LEFT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == -1)		// 방향 같으면
 		{
@@ -506,7 +503,7 @@ bool PlayerRise::Frame()
 			return true;
 		}
 	}
-	if (S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_RIGHT) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharObj->getDir() == 1)
 		{
@@ -536,11 +533,11 @@ bool PlayerCrouch::Frame()
 		m_pSprite->setIndex(2);
 		return true;
 	}
-	if (S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_UP || S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_FREE)
+	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_FREE)
 	{
 		m_pCharObj->setState(L"Rise");
 	}
-	if (m_pCharObj->getDownable() && S_Input.GetKey('A') == KEYSTATE::KEY_PUSH)
+	if (m_pCharObj->getDownable() && S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_CenterPos->y += 40.0f;
 		m_pCharObj->setDownable(false);
@@ -548,7 +545,7 @@ bool PlayerCrouch::Frame()
 		m_pSprite->setIndex(0);
 		return true;
 	}
-	if (S_Input.GetKey('D') == KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect::ARROW);
 		EffectObj * Arrow = new KahoBowAttack;
@@ -636,12 +633,12 @@ bool PlayerLadderUp::Init()
 bool PlayerLadderUp::Frame()
 {
 	FLOAT fSpeed = m_pCharObj->getSpeed();
-	if (S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_pCharObj->setState(L"LadderDown");
 		return true;
 	}
-	if (S_Input.GetKey(VK_UP) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_UP) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->y -= g_fSecPerFrame * fSpeed * 0.67;
 		if (!m_pSprite->Frame())
@@ -666,7 +663,7 @@ bool PlayerLadderDown::Init()
 bool PlayerLadderDown::Frame()
 {
 	FLOAT fSpeed = m_pCharObj->getSpeed();
-	if (S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_DOWN) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_CenterPos->y += g_fSecPerFrame * fSpeed * 0.9;
 		if (!m_pSprite->Frame())
@@ -674,7 +671,7 @@ bool PlayerLadderDown::Frame()
 			m_pSprite->setIndex(0);
 		}
 	}
-	if (S_Input.GetKey(VK_UP) == KEYSTATE::KEY_PUSH || S_Input.GetKey(VK_UP) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_pCharObj->setState(L"LadderUp");
 		return true;

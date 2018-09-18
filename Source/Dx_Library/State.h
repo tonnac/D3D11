@@ -18,10 +18,10 @@ public:
 public:
 	void				setSprite	(const std::tstring& Name, const std::tstring Sprite);
 public:
-	RECT				getEffectRT	();
+	D2D1_RECT_F			getEffectRT	();
 protected:
 	Sprite *			m_pSprite;
-	POINT*				m_CenterPos;
+	CharacterObject*	m_pCharObj;
 	EffectObj *			m_pEffectObj;
 	FLOAT				m_fTimer;
 };

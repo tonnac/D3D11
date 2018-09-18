@@ -18,6 +18,7 @@
 #include <D3DX11.h>
 #include <DXGI.h>
 #include <D3Dcompiler.h>
+#include <DirectXMath.h>
 
 #pragma region DirectWrite
 #include "D2D1.h"

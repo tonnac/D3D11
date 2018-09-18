@@ -2,19 +2,19 @@
 #include "CharacterObject.h"
 #include "EffectObj.h"
 
-State::State(CharacterObject* pObject) : m_pEffectObj(nullptr), m_fTimer(0.0f)
+State::State(CharacterObject* pObject) : m_pEffectObj(nullptr), m_fTimer(0.0f), m_pCharObj(pObject)
 {}
 void State::setSprite(const std::tstring& Name, const std::tstring Sprite)
 {
 	m_pSprite = S_Sprite.LoadSprite(Name, Sprite);
 }
-RECT State::getEffectRT()
+D2D1_RECT_F State::getEffectRT()
 {
 	if (m_pEffectObj)
 	{
-		return *m_pEffectObj->getCollisionRt();
+		return *m_pEffectObj->getCollisionRT();
 	}
-	return RECT();
+	return D2D1_RECT_F();
 }
 bool State::Frame()
 {

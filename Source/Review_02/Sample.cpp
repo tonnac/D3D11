@@ -3,8 +3,6 @@
 bool Sample::Init()
 {
 	m_object.InitSet(m_pDevice, L"Kaho", L"../../data/character/kaho.png", L"vertexshader.txt");
-	S_Sprite.SpriteSet(L"../../data/txt/Kaho.txt");
-	m_Sprite = S_Sprite.LoadSprite(L"Kaho", L"Attack1");
 	return true;
 }
 bool Sample::Frame()

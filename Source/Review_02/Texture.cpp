@@ -13,7 +13,12 @@ bool Texture::Release()
 void Texture::LoadTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath)
 {
 	m_Name = Name;
+	D3DX11_IMAGE_INFO Imageinfo;
+	D3DX11GetImageInfoFromFile(Filepath.c_str(), nullptr, &Imageinfo, nullptr);
+	m_ImageSize.x = CASTING(float, Imageinfo.Width);
+	m_ImageSize.y = CASTING(float, Imageinfo.Height);
 	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, Filepath.c_str(), nullptr, nullptr, &m_pTexSRV, nullptr));
+
 	CreateSamplerState(pDevice);
 }
 void Texture::CreateSamplerState(ID3D11Device* pDevice)
@@ -33,7 +38,10 @@ ID3D11ShaderResourceView* Texture::getResourceView()
 {
 	GETPTR(m_pTexSRV);
 }
-
+DirectX::XMFLOAT2 Texture::getImageSize()
+{
+	return m_ImageSize;
+}
 bool TextureMgr::Release()
 {
 	for (auto& iter : m_DataMap)

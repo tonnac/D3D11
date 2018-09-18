@@ -8,16 +8,17 @@ public:
 public:
 	bool						Release();
 public:
-	void						LoadTexture(ID3D11Device* pDevice ,const std::tstring& Name, const std::tstring& Filepath);
+	void						LoadTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath);
 	void						CreateSamplerState(ID3D11Device* pDevice);
 	ID3D11SamplerState*			getSamplerState();
 	ID3D11ShaderResourceView*	getResourceView();
+	D2D1_POINT_2F				getImageSize();
 private:
+	D2D1_POINT_2F				m_ImageSize;
 	std::tstring				m_Name;
 	D3D11_SAMPLER_DESC			m_SamplerDesc;
 	ID3D11ShaderResourceView *	m_pTexSRV = nullptr;
 	ID3D11SamplerState*			m_pSamplerState = nullptr;
-
 };
 
 
@@ -32,7 +33,7 @@ private:
 public:
 	bool				Release();
 public:
-	void				AddCache(const std::tstring& Name ,Texture* pTexture);
+	void				AddCache(const std::tstring& Name, Texture* pTexture);
 	Texture*			LoadTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath);
 	Texture*			getTexture(const std::tstring& Name);
 private:

@@ -78,17 +78,34 @@ bool Object::Release()
 	RELEASE(m_pBlendState);
 	return true;
 }
-RECT* Object::getCollisionRT()
+D2D1_RECT_F* Object::getCollisionRT()
 {
 	return &m_rtColiision;
 }
-POINT* Object::getCenterPos()
+D2D1_POINT_2F* Object::getCenterPos()
 {
 	return &m_CenterPos;
 }
-void Object::setTexturePos(const DirectX::XMFLOAT2& pos, const int& index)
+size_t Object::getVertexSize()
 {
-	m_VertexList[index].TexPos = pos;
+	return m_VertexList.size();
+}
+void Object::setPosition(const D2D1_POINT_2F& pos)
+{
+	m_CenterPos = pos;
+}
+void Object::setTexturePos(const RECT& rt, const int& index)
+{
+	D2D1_POINT_2F imageinfo = m_pTexture->getImageSize();
+	D2D1_RECT_F texrt = { rt.left / imageinfo.x, rt.top / imageinfo.y, (texrt.left + rt.right) / imageinfo.x, (texrt.top + rt.bottom) / imageinfo.y };
+	m_VertexList[0].TexPos.x = texrt.left;
+	m_VertexList[0].TexPos.y = texrt.top;
+	m_VertexList[1].TexPos.x = texrt.left;
+	m_VertexList[1].TexPos.y = texrt.top;
+	m_VertexList[2].TexPos.x = texrt.left;
+	m_VertexList[2].TexPos.y = texrt.top;
+	m_VertexList[3].TexPos.x = texrt.left;
+	m_VertexList[3].TexPos.y = texrt.top;
 }
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {
