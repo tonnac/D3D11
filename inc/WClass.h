@@ -1,25 +1,24 @@
 #pragma once
 #include "Device.h"
 
-class WClass : public Device
+class wClass : public Device
 {
 public:
-	WClass();
+	wClass();
 public:
-	bool	Set(HINSTANCE hInstance, const LONG& iWidth, const LONG& iHeight, const TCHAR* winName);
-	bool	Run();
-	virtual LRESULT	CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM WParam, LPARAM LParam);
+	static wClass*	getWin();
 public:
-	virtual	bool	GameInit();
-	virtual	bool	GameRun();
-	virtual	bool	GameRelease();
+	bool			Set(HINSTANCE hInstance, const LONG& Width, const LONG& Height, const std::tstring& WindowName);
+	bool			Run();
+public:
+	virtual LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+public:
+	virtual bool	GameInit();
+	virtual bool	GameRun();
+	virtual bool	GameRelease();
 private:
-	void		CenterWindow();
-private:
-	HINSTANCE	m_hInstance;
-	HWND		m_hWnd;
-	RECT		m_rtClient;
-	RECT		m_rtWindow;
-	LONG		m_iWidth;
-	LONG		m_iHeight;
+	void			CenterWindow(const RECT& rt);
+protected:
+	static wClass*	g_Window;
+	RECT			m_rtWindow;
 };
