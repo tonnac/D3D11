@@ -3,7 +3,7 @@
 bool Sample::Init()
 {
 	m_object.Init();
-	m_object.SetPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f }, { 400.0f,300.0f });
+	m_object.SetPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f }, { 600.0f,400.0f });
 	m_object.InitSet(m_pDevice, L"EE", L"../../data/ui/popup_normal.png", L"VertexShader.txt");
 	return true;
 }

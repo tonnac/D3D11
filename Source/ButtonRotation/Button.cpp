@@ -5,133 +5,7 @@ Button::Button()
 }
 void Button::SetPos(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
 {
-	fWidth = Size.x;
-	fHeight = Size.y;
-	m_Centerpos = CenterPos;
-
-	for (int i = 0; i < 9; ++i)
-	{
-		pButton[i]->m_VertexList.resize(4);
-	}
-
-	pButton[0]->fWidth = Size.x * 0.1f;
-	pButton[0]->fHeight = Size.y * 0.1f;
-	pButton[0]->m_Centerpos.x = CenterPos.x - Size.x * 0.5f + pButton[0]->fWidth * 0.5f;
-	pButton[0]->m_Centerpos.y = CenterPos.y - Size.y * 0.5f + pButton[0]->fHeight * 0.5f;
-
-	pButton[1]->fWidth = Size.x * 0.8f;
-	pButton[1]->fHeight = pButton[0]->fHeight;
-	pButton[1]->m_Centerpos.x = pButton[0]->m_Centerpos.x + pButton[0]->fWidth * 0.5f + pButton[1]->fWidth * 0.5f;
-	pButton[1]->m_Centerpos.y = pButton[0]->m_Centerpos.y;
-
-	pButton[2]->fWidth = Size.x * 0.1f;
-	pButton[2]->fHeight = pButton[0]->fHeight;
-	pButton[2]->m_Centerpos.x = pButton[1]->m_Centerpos.x + pButton[1]->fWidth * 0.5f + pButton[2]->fWidth * 0.5f;
-	pButton[2]->m_Centerpos.y = pButton[1]->m_Centerpos.y;
-	/////////////////////////////////////////////////////
-	pButton[3]->fWidth = pButton[0]->fWidth;
-	pButton[3]->fHeight = Size.y * 0.8f;
-	pButton[3]->m_Centerpos.x = pButton[0]->m_Centerpos.x;
-	pButton[3]->m_Centerpos.y = pButton[0]->m_Centerpos.y + pButton[0]->fHeight * 0.5f + pButton[3]->fHeight * 0.5f;
-
-	pButton[4]->fWidth = pButton[1]->fWidth;
-	pButton[4]->fHeight = pButton[3]->fHeight;
-	pButton[4]->m_Centerpos.x = pButton[1]->m_Centerpos.x;
-	pButton[4]->m_Centerpos.y = pButton[3]->m_Centerpos.y;
-
-	pButton[5]->fWidth = pButton[2]->fWidth;
-	pButton[5]->fHeight = pButton[3]->fHeight;
-	pButton[5]->m_Centerpos.x = pButton[2]->m_Centerpos.x;
-	pButton[5]->m_Centerpos.y = pButton[4]->m_Centerpos.y;
-	//////////////////////////////////////////////////////
-	pButton[6]->fWidth = pButton[0]->fWidth;
-	pButton[6]->fHeight = pButton[0]->fHeight;
-	pButton[6]->m_Centerpos.x = pButton[0]->m_Centerpos.x;
-	pButton[6]->m_Centerpos.y = pButton[3]->m_Centerpos.y + pButton[3]->fHeight * 0.5f + pButton[6]->fHeight * 0.5f;
-
-	pButton[7]->fWidth = pButton[1]->fWidth;
-	pButton[7]->fHeight = pButton[1]->fHeight;
-	pButton[7]->m_Centerpos.x = pButton[4]->m_Centerpos.x;
-	pButton[7]->m_Centerpos.y = pButton[6]->m_Centerpos.y;
-
-	pButton[8]->fWidth = pButton[2]->fWidth;
-	pButton[8]->fHeight = pButton[2]->fHeight;
-	pButton[8]->m_Centerpos.x = pButton[5]->m_Centerpos.x;
-	pButton[8]->m_Centerpos.y = pButton[7]->m_Centerpos.y;
-
-	pButton[0]->m_VertexList[0].TexPos.x = 0.0f;
-	pButton[0]->m_VertexList[0].TexPos.y = 0.0f;
-	pButton[0]->m_VertexList[1].TexPos.x = 0.33f;
-	pButton[0]->m_VertexList[1].TexPos.y = 0.0f;
-	pButton[0]->m_VertexList[2].TexPos.x = 0.0f;
-	pButton[0]->m_VertexList[2].TexPos.y = 0.33f;
-	pButton[0]->m_VertexList[3].TexPos.x = 0.33f;
-	pButton[0]->m_VertexList[3].TexPos.y = 0.33f;
-
-	pButton[1]->m_VertexList[0].TexPos.x = 0.33f;
-	pButton[1]->m_VertexList[0].TexPos.y = 0.0f;
-	pButton[1]->m_VertexList[1].TexPos.x = 0.67f;
-	pButton[1]->m_VertexList[1].TexPos.y = 0.0f;
-	pButton[1]->m_VertexList[2].TexPos.x = 0.33f;
-	pButton[1]->m_VertexList[2].TexPos.y = 0.33f;
-	pButton[1]->m_VertexList[3].TexPos.x = 0.67f;
-	pButton[1]->m_VertexList[3].TexPos.y = 0.33f;
-
-	pButton[2]->m_VertexList[0].TexPos.x = 0.67f;
-	pButton[2]->m_VertexList[0].TexPos.y = 0.0f;
-	pButton[2]->m_VertexList[1].TexPos.x = 1.0f;
-	pButton[2]->m_VertexList[1].TexPos.y = 0.0f;
-	pButton[2]->m_VertexList[2].TexPos.x = 0.67f;
-	pButton[2]->m_VertexList[2].TexPos.y = 0.33f;
-	pButton[2]->m_VertexList[3].TexPos.x = 1.0f;
-	pButton[2]->m_VertexList[3].TexPos.y = 0.33f;
-
-	////////////////////////////////////////////
-
-	pButton[3]->m_VertexList[0].TexPos = pButton[0]->m_VertexList[2].TexPos;
-	pButton[3]->m_VertexList[1].TexPos = pButton[0]->m_VertexList[3].TexPos;
-	pButton[3]->m_VertexList[2].TexPos.x = 0.0f;
-	pButton[3]->m_VertexList[2].TexPos.y = 0.67f;
-	pButton[3]->m_VertexList[3].TexPos.x = 0.33f;
-	pButton[3]->m_VertexList[3].TexPos.y = 0.67f;
-
-	pButton[4]->m_VertexList[0].TexPos = pButton[1]->m_VertexList[2].TexPos;
-	pButton[4]->m_VertexList[1].TexPos = pButton[1]->m_VertexList[3].TexPos;
-	pButton[4]->m_VertexList[2].TexPos.x = 0.33f;
-	pButton[4]->m_VertexList[2].TexPos.y = 0.67f;
-	pButton[4]->m_VertexList[3].TexPos.x = 0.67f;
-	pButton[4]->m_VertexList[3].TexPos.y = 0.67f;
-
-	pButton[5]->m_VertexList[0].TexPos = pButton[2]->m_VertexList[2].TexPos;
-	pButton[5]->m_VertexList[1].TexPos = pButton[2]->m_VertexList[3].TexPos;
-	pButton[5]->m_VertexList[2].TexPos.x = 0.67f;
-	pButton[5]->m_VertexList[2].TexPos.y = 0.67f;
-	pButton[5]->m_VertexList[3].TexPos.x = 1.0f;
-	pButton[5]->m_VertexList[3].TexPos.y = 0.67f;
-
-	//////////////////////////////////////////////
-
-	pButton[6]->m_VertexList[0].TexPos = pButton[3]->m_VertexList[2].TexPos;
-	pButton[6]->m_VertexList[1].TexPos = pButton[3]->m_VertexList[3].TexPos;
-	pButton[6]->m_VertexList[2].TexPos.x = 0.0f;
-	pButton[6]->m_VertexList[2].TexPos.y = 1.0f;
-	pButton[6]->m_VertexList[3].TexPos.x = 0.33f;
-	pButton[6]->m_VertexList[3].TexPos.y = 1.0f;
-
-	pButton[7]->m_VertexList[0].TexPos = pButton[4]->m_VertexList[2].TexPos;
-	pButton[7]->m_VertexList[1].TexPos = pButton[4]->m_VertexList[3].TexPos;
-	pButton[7]->m_VertexList[2].TexPos.x = 0.33f;
-	pButton[7]->m_VertexList[2].TexPos.y = 1.0f;
-	pButton[7]->m_VertexList[3].TexPos.x = 0.67f;
-	pButton[7]->m_VertexList[3].TexPos.y = 1.0f;
-
-	pButton[8]->m_VertexList[0].TexPos = pButton[5]->m_VertexList[2].TexPos;
-	pButton[8]->m_VertexList[1].TexPos = pButton[5]->m_VertexList[3].TexPos;
-	pButton[8]->m_VertexList[2].TexPos.x = 0.67f;
-	pButton[8]->m_VertexList[2].TexPos.y = 1.0f;
-	pButton[8]->m_VertexList[3].TexPos.x = 1.0f;
-	pButton[8]->m_VertexList[3].TexPos.y = 1.0f;
-
+	DivideButton(CenterPos, Size);
 	CreateButtonVertex();
 	for (int i = 0; i < 9; ++i)
 	{
@@ -167,6 +41,17 @@ bool Button::Init()
 	}
 	return true;
 }
+bool Button::Frame()
+{
+	for (int i = 0; i < m_VertexList.size(); ++i)
+	{
+		DirectX::XMFLOAT3 pos = m_VertexList[i].Pos;
+		m_VertexList[i].Pos.x = cosf(g_fGameTime) * pos.x + sinf(g_fGameTime) * pos.y;
+		m_VertexList[i].Pos.y = cosf(g_fGameTime) * pos.y - sinf(g_fGameTime) * pos.x;
+	}
+
+	return true;
+}
 bool Button::Release()
 {
 	for (int i = 0; i < 9; ++i)
@@ -174,6 +59,85 @@ bool Button::Release()
 		delete pButton[i];
 	}
 	return true;
+}
+void Button::DivideButton(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
+{
+	fWidth = Size.x;
+	fHeight = Size.y;
+	m_Centerpos = CenterPos;
+
+	for (int i = 0; i < 9; ++i)
+	{
+		pButton[i]->m_VertexList.resize(4);
+	}
+
+	pButton[0]->fWidth = Size.x * 0.1f;
+	pButton[0]->fHeight = Size.y * 0.1f;
+	pButton[0]->m_Centerpos.x = CenterPos.x - Size.x * 0.5f + pButton[0]->fWidth * 0.5f;
+	pButton[0]->m_Centerpos.y = CenterPos.y - Size.y * 0.5f + pButton[0]->fHeight * 0.5f;
+	pButton[0]->m_VertexList[0].TexPos.x = 0.0f;
+	pButton[0]->m_VertexList[0].TexPos.y = 0.0f;
+	pButton[0]->m_VertexList[1].TexPos.x = 0.33f;
+	pButton[0]->m_VertexList[1].TexPos.y = pButton[0]->m_VertexList[0].TexPos.y;
+	pButton[0]->m_VertexList[2].TexPos.x = pButton[0]->m_VertexList[0].TexPos.x;
+	pButton[0]->m_VertexList[2].TexPos.y = 0.33f;
+	pButton[0]->m_VertexList[3].TexPos.x = 0.33f;
+	pButton[0]->m_VertexList[3].TexPos.y = 0.33f;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		for (int j = 0; j < 3; ++j)
+		{
+			int k = 3 * i + j;
+			if (k == 0) continue;
+			switch (k % 3)
+			{
+			case 0:
+			{
+				if (i == 1)
+				{
+					pButton[k]->fHeight = Size.y * 0.8f;
+				}
+				else
+				{
+					pButton[k]->fHeight = Size.y * 0.1f;
+				}
+				pButton[k]->fWidth = Size.x * 0.1f;
+				pButton[k]->m_Centerpos.x = CenterPos.x - Size.x * 0.5f + pButton[k]->fWidth * 0.5f;
+				pButton[k]->m_Centerpos.y = pButton[k - 3]->m_Centerpos.y + pButton[k - 3]->fHeight * 0.5f + pButton[k]->fHeight * 0.5f;
+
+				pButton[k]->m_VertexList[0].TexPos = pButton[k - 3]->m_VertexList[2].TexPos;
+				pButton[k]->m_VertexList[1].TexPos = pButton[k - 3]->m_VertexList[3].TexPos;
+				pButton[k]->m_VertexList[2].TexPos = pButton[k]->m_VertexList[0].TexPos;
+				pButton[k]->m_VertexList[2].TexPos.y += 1 / 3.0f;
+				pButton[k]->m_VertexList[3].TexPos.x = pButton[k]->m_VertexList[1].TexPos.x;
+				pButton[k]->m_VertexList[3].TexPos.y = pButton[k]->m_VertexList[2].TexPos.y;
+				break;
+			}
+			default:
+			{
+				if (j == 1)
+				{
+					pButton[k]->fWidth = Size.x * 0.8f;
+				}
+				else
+				{
+					pButton[k]->fWidth = Size.x * 0.1f;
+				}
+				pButton[k]->fHeight = pButton[k - 1]->fHeight;
+				pButton[k]->m_Centerpos.x = pButton[k - 1]->m_Centerpos.x + pButton[k - 1]->fWidth * 0.5f + pButton[k]->fWidth * 0.5f;
+				pButton[k]->m_Centerpos.y = pButton[k - 1]->m_Centerpos.y;
+
+				pButton[k]->m_VertexList[0].TexPos = pButton[k - 1]->m_VertexList[1].TexPos;
+				pButton[k]->m_VertexList[2].TexPos = pButton[k - 1]->m_VertexList[3].TexPos;
+				pButton[k]->m_VertexList[1].TexPos = pButton[k]->m_VertexList[0].TexPos;
+				pButton[k]->m_VertexList[1].TexPos.x += 1 / 3.0f;
+				pButton[k]->m_VertexList[3].TexPos.x = pButton[k]->m_VertexList[1].TexPos.x;
+				pButton[k]->m_VertexList[3].TexPos.y = pButton[k]->m_VertexList[2].TexPos.y;
+			}
+			}
+		}
+	}
 }
 void Button::CreateButtonVertex()
 {

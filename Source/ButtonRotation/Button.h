@@ -11,8 +11,10 @@ public:
 	void	pushIndecies();
 public:
 	bool	Init() override;
+	bool	Frame() override;
 	bool	Release() override;
 private:
+	void	DivideButton(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size);
 	void	CreateButtonVertex();
 private:
 	int iIndex;
