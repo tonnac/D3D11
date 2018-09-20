@@ -1,7 +1,13 @@
 #include "Button.h"
+#include "DirectInput.h"
 
 Button::Button()
 {
+}
+bool Button::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath)
+{
+	Plane_Object::CreateConstantBuffer(pDevice);
+	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath);
 }
 void Button::SetPos(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
 {
@@ -11,7 +17,7 @@ void Button::SetPos(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			AddVertex(pButton[i]->m_VertexList[j]);
+			m_VertexList.push_back(pButton[i]->m_VertexList[j]);
 		}
 	}
 }
@@ -26,12 +32,18 @@ void Button::AddVertex(const P3_VERTEX& vertex)
 }
 void Button::pushIndecies()
 {
-	m_indiciesList.push_back(iIndex - 4);
-	m_indiciesList.push_back(iIndex - 3);
-	m_indiciesList.push_back(iIndex - 2);
-	m_indiciesList.push_back(iIndex - 3);
-	m_indiciesList.push_back(iIndex - 1);
-	m_indiciesList.push_back(iIndex - 2);
+	return;
+	//m_indiciesList.push_back(iIndex - 4);
+	//m_indiciesList.push_back(iIndex - 3);
+	//m_indiciesList.push_back(iIndex - 2);
+	//m_indiciesList.push_back(iIndex - 3);
+	//m_indiciesList.push_back(iIndex - 1);
+	//m_indiciesList.push_back(iIndex - 2);
+}
+void Button::CreateConstant(ID3D11Device* pDevice)
+{
+	m_ConstantData.Util.x = g_fGameTime;
+	Plane_Object::CreateConstantBuffer(pDevice);
 }
 bool Button::Init()
 {
@@ -43,11 +55,20 @@ bool Button::Init()
 }
 bool Button::Frame()
 {
-	for (int i = 0; i < m_VertexList.size(); ++i)
+	m_ConstantData.Util.x = g_fGameTime * 50.0f;
+	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_HOLD)
 	{
-		DirectX::XMFLOAT3 pos = m_VertexList[i].Pos;
-		m_VertexList[i].Pos.x = cosf(g_fGameTime) * pos.x + sinf(g_fGameTime) * pos.y;
-		m_VertexList[i].Pos.y = cosf(g_fGameTime) * pos.y - sinf(g_fGameTime) * pos.x;
+		for (int i = 0; i < m_VertexList.size(); ++i)
+		{
+			m_VertexList[i].Pos.x += g_fSecPerFrame;
+		}
+	}
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_HOLD)
+	{
+		for (int i = 0; i < m_VertexList.size(); ++i)
+		{
+			m_VertexList[i].Pos.x -= g_fSecPerFrame;
+		}
 	}
 
 	return true;

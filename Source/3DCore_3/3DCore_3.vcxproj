@@ -161,33 +161,41 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="Object_Basic.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PlaneObject.cpp" />
+    <ClCompile Include="Plane_Object.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TriangleObject.cpp" />
+    <ClCompile Include="TriangleObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="wClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="Object_Basic.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="PlaneObject.h" />
+    <ClInclude Include="Plane_Object.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="TriangleObject.h" />
+    <ClInclude Include="TriangleObject.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="wClass.h" />
   </ItemGroup>
   <ItemGroup>

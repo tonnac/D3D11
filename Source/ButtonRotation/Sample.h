@@ -1,6 +1,5 @@
 #pragma once
 #include "Core.h"
-#include "PlaneObject.h"
 #include "TriangleObject.h"
 #include "Button.h"
 
@@ -14,4 +13,5 @@ public:
 	bool				Release() override;
 private:
 	Button				m_object;
+	TriangleObject		m_Trie;
 };

@@ -6,9 +6,8 @@ class TriangleObject : public Object
 public:
 	TriangleObject() = default;
 public:
+	bool				InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath) override;
 	bool				Frame() override;
-	bool				PostRender(ID3D11DeviceContext* pContext) override;
 private:
-	void CreateVertexBuffer(ID3D11Device* pDevice) override;
-	void CreateIndexBuffer(ID3D11Device* pDevice) override;
+	void				CreateVertex(ID3D11Device* pDevice);
 };
