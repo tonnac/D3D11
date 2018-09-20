@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)/../../output/$(SolutionName)/</OutDir>
+    <IntDir>$(SolutionDir)/../../output/$(SolutionName)/$(ProjectName)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -89,11 +91,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)../Dx/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)../Dx/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)../Momodora/lib"
+copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,6 +151,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="d3dUtil.h" />
+    <ClInclude Include="Device.h" />
+    <ClInclude Include="DeviceInfo.h" />
+    <ClInclude Include="DirectInput.h" />
+    <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Object_Basic.h" />
+    <ClInclude Include="Plane_Object.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TriangleObject.h" />
+    <ClInclude Include="wClass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="d3dUtil.cpp" />
+    <ClCompile Include="Device.cpp" />
+    <ClCompile Include="DeviceInfo.cpp" />
+    <ClCompile Include="DirectInput.cpp" />
+    <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Object_Basic.cpp" />
+    <ClCompile Include="Plane_Object.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TriangleObject.cpp" />
+    <ClCompile Include="wClass.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="VertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
