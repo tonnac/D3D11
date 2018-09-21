@@ -35,7 +35,8 @@ public:
 	ID3D11Buffer *				getIndexBuffer() const;
 	ID3D11Buffer *				getConstantBuffer() const;
 	ID3D11BlendState*			getBlendState() const;
-protected:
+	Texture*					getTexture() const;
+private:
 	ID3D11Buffer *				m_pIndexBuffer = nullptr;
 	ID3D11Buffer *				m_pConstantBuffer = nullptr;
 	ID3D11Buffer *				m_pVertexBuffer = nullptr;

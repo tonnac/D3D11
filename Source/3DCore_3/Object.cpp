@@ -3,6 +3,8 @@
 
 bool Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath)
 {
+	std::tstring Filename;
+	Filename.assign(TexFilepath, TexFilepath.find_first_of('/') + 1);
 	CreateVertexBuffer(pDevice);
 	m_Object.CreateTexture(pDevice, Name, TexFilepath);
 	m_Object.CreateShader(pDevice, Name, ShaderFilepath);

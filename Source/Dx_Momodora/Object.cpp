@@ -3,20 +3,18 @@
 
 bool Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath)
 {
+	std::tstring Filename;
+	Filename.assign(TexFilepath, TexFilepath.find_last_of('/') + 1, TexFilepath.find_last_of('.'));
 	CreateVertexBuffer(pDevice);
-	m_Object.CreateTexture(pDevice, Name, TexFilepath);
+	m_Object.CreateTexture(pDevice, Filename, TexFilepath);
 	m_Object.CreateShader(pDevice, Name, ShaderFilepath);
 	m_Object.CreateRasterizer(pDevice);
 	Init();
 	return true;
 }
-void Object::CreateVertexBuffer(ID3D11Device* pDevice)
+void Object::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
 {
-	m_Object.CreateBuffer(pDevice, D3D11_BIND_VERTEX_BUFFER, &m_VertexList.at(0), sizeof(P3_VERTEX) * CASTING(UINT, m_VertexList.size()));
-}
-void Object::CreateConstantBuffer(ID3D11Device* pDevice)
-{
-	m_Object.CreateBuffer(pDevice);
+	return;
 }
 bool Object::Init()
 {
@@ -66,6 +64,14 @@ bool Object::PostRender(ID3D11DeviceContext* pContext)
 	pContext->Draw(CASTING(UINT, m_VertexList.size()), 0);
 	return true;
 }
+void Object::CreateVertexBuffer(ID3D11Device* pDevice)
+{
+	m_Object.CreateBuffer(pDevice, D3D11_BIND_VERTEX_BUFFER, &m_VertexList.at(0), sizeof(P3_VERTEX) * CASTING(UINT, m_VertexList.size()));
+}
+void Object::CreateConstantBuffer(ID3D11Device* pDevice)
+{
+	m_Object.CreateBuffer(pDevice);
+}
 D2D1_POINT_2F Object::ComputeCoord()
 {
 	D2D1_POINT_2F pos;
@@ -86,8 +92,4 @@ void Object::ComputeCollision(const D2D1_POINT_2F& col)
 	m_rtCollision.top = m_Centerpos.y + col.y * 0.5f;
 	m_rtCollision.right = m_Centerpos.x + col.x * 0.5f;
 	m_rtCollision.bottom = m_Centerpos.y - col.y * 0.5f;
-}
-void Object::SetInitPos(const D2D1_POINT_2F& pos)
-{
-	m_Centerpos = pos;
 }

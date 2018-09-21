@@ -93,6 +93,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_ButtonRotation", "Button
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_Player", "Player\Player.vcxproj", "{1D90FE22-4180-4A6A-8C32-15DEDEF1F768}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "02_Background", "Background\Background.vcxproj", "{630EB80A-F21A-4CAB-86DA-0AE009855DFA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0D1697E9-0544-4252-87AE-A96994534C06} = {0D1697E9-0544-4252-87AE-A96994534C06}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -293,6 +298,14 @@ Global
 		{1D90FE22-4180-4A6A-8C32-15DEDEF1F768}.Release|x64.Build.0 = Release|x64
 		{1D90FE22-4180-4A6A-8C32-15DEDEF1F768}.Release|x86.ActiveCfg = Release|Win32
 		{1D90FE22-4180-4A6A-8C32-15DEDEF1F768}.Release|x86.Build.0 = Release|Win32
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Debug|x64.ActiveCfg = Debug|x64
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Debug|x64.Build.0 = Debug|x64
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Debug|x86.ActiveCfg = Debug|Win32
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Debug|x86.Build.0 = Debug|Win32
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Release|x64.ActiveCfg = Release|x64
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Release|x64.Build.0 = Release|x64
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Release|x86.ActiveCfg = Release|Win32
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -319,6 +332,7 @@ Global
 		{28CAEF84-6059-419D-B7D8-AC0872E922B9} = {1AC37112-62C5-4C10-82C0-3073121E4F23}
 		{C5615E30-54D2-42C2-810F-72EA29BD4A7E} = {7E76B665-03E3-45C5-AE7D-91CA81C1767F}
 		{1D90FE22-4180-4A6A-8C32-15DEDEF1F768} = {C343D625-4127-42A5-A442-C52031F3BEC6}
+		{630EB80A-F21A-4CAB-86DA-0AE009855DFA} = {C343D625-4127-42A5-A442-C52031F3BEC6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A137998C-AE6B-4842-97D0-A4D045CE1C97}
