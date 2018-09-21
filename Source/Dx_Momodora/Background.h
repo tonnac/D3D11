@@ -10,7 +10,7 @@ public:
 public:
 	bool Frame() override;
 private:
-	void DrawPosUpdate();
+	void TexPosUpdate();
 private:
 	const FLOAT m_fWidth;
 	const FLOAT m_fHeight;

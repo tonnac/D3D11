@@ -35,7 +35,7 @@ public:
 public:
 	void				AddCache(const std::tstring& Name, Shader* pShader);
 	Shader*				LoadShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath,
-						const std::string& VSFunc = "VS", const std::string& PSFunc = "PS");
+						const std::string& VSFunc, const std::string& PSFunc);
 	Shader*				getShader(const std::tstring& Name);
 private:
 	const int			Max_Cache = 3;

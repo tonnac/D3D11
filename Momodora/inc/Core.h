@@ -18,11 +18,14 @@ public:
 	virtual bool	Frame();
 	virtual bool	Render();
 	virtual bool	Release();
+public:
+	void			ResizeDevice(const LONG& Width, const LONG& Height) override;
 private:
 	bool			GameFrame();
 	bool			PreRender();
 	bool			GameRender();
 	bool			PostRender();
+	bool			MatrixInit();
 private:
 	Timer			m_Timer;
 };

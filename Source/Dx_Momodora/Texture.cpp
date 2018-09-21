@@ -39,7 +39,7 @@ ID3D11ShaderResourceView* Texture::getResourceView()
 {
 	GETPTR(m_pTexSRV);
 }
-DirectX::XMFLOAT2 Texture::getImageSize()
+D3DXVECTOR2 Texture::getImageSize()
 {
 	return m_ImageSize;
 }

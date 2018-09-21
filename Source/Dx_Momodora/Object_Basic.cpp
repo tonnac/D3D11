@@ -1,12 +1,19 @@
 #include "Object_Basic.h"
 #include "DirectInput.h"
 
+
 bool Object_Basic::PreRender(ID3D11DeviceContext* pContext)
 {
 	ID3D11VertexShader* pVertexShader = m_pShader->getVertexShader();
 	ID3D11PixelShader* pPixelShader = m_pShader->getPixelShader();
-	ID3D11SamplerState* pSamplerState = m_pTexture->getSamplerState();
-	ID3D11ShaderResourceView* m_TexSRV = m_pTexture->getResourceView();
+	if (m_pTexture)
+	{
+		ID3D11SamplerState* pSamplerState = m_pTexture->getSamplerState();
+		ID3D11ShaderResourceView* m_TexSRV = m_pTexture->getResourceView();
+
+		pContext->PSSetSamplers(0, 1, &pSamplerState);
+		pContext->PSSetShaderResources(0, 1, &m_TexSRV);
+	}
 	if (S_Input.getKeyState(DIK_PGDN) == Input::KEYSTATE::KEY_HOLD)
 	{
 		pContext->RSSetState(m_pWireFrameRS);
@@ -22,9 +29,7 @@ bool Object_Basic::PreRender(ID3D11DeviceContext* pContext)
 	UINT offset = 0;
 	pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 	pContext->IASetInputLayout(m_pInputLayout);
-	
-	pContext->PSSetSamplers(0, 1, &pSamplerState);
-	pContext->PSSetShaderResources(0, 1, &m_TexSRV);
+
 	return true;
 }
 bool Object_Basic::Release()
@@ -74,13 +79,11 @@ void Object_Basic::CreateBuffer(ID3D11Device * pDevice, const D3D11_BIND_FLAG& t
 }
 void Object_Basic::CreateTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath)
 {
-	S_Texture.LoadTexture(pDevice, Name, Filepath);
-	m_pTexture = S_Texture.getTexture(Name);
+	m_pTexture = S_Texture.LoadTexture(pDevice, Name, Filepath);
 }
-void Object_Basic::CreateShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath)
+void Object_Basic::CreateShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath, const std::string& VSFunc, const std::string& PSFunc)
 {
-	S_Shader.LoadShader(pDevice, Name, Filepath);
-	m_pShader = S_Shader.getShader(Name);
+	m_pShader = S_Shader.LoadShader(pDevice, Name, Filepath, VSFunc, PSFunc);
 	CreateaInputLayout(pDevice);
 }
 void Object_Basic::setBlendState(ID3D11Device* pDevice)

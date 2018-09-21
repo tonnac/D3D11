@@ -3,18 +3,17 @@
 #include "Shader.h"
 #include "Texture.h"
 
-#define GPU
-//#define CPU
+
 
 struct P3_VERTEX
 {
-	DirectX::XMFLOAT3 Pos;
-	DirectX::XMFLOAT2 TexPos;
+	D3DXVECTOR3 Pos;
+	D3DXVECTOR2 TexPos;
 };
 struct VS_CB
 {
-	DirectX::XMFLOAT4 Color;
-	DirectX::XMFLOAT4 Util;
+	D3DXVECTOR4 Color;
+	D3DXVECTOR4 Util;
 };
 
 class Object_Basic
@@ -26,7 +25,7 @@ public:
 	void						CreateBuffer(ID3D11Device * pDevice, const D3D11_BIND_FLAG& type = D3D11_BIND_CONSTANT_BUFFER,
 											void * pData = nullptr, const UINT& Size = sizeof(VS_CB));
 	void						CreateTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath);
-	void						CreateShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath);
+	void						CreateShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath, const std::string& VSFunc, const std::string& PSFunc);
 	void						setBlendState(ID3D11Device* pDevice);
 	void						CreateaInputLayout(ID3D11Device* pDevice);
 	void						CreateRasterizer(ID3D11Device* pDevice);

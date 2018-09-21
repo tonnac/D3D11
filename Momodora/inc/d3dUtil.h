@@ -18,7 +18,7 @@
 #include <D3DX11.h>
 #include <DXGI.h>
 #include <D3Dcompiler.h>
-#include <DirectXMath.h>
+#include <D3DX10math.h>
 
 #pragma region DirectWrite
 #include "D2D1.h"
@@ -33,6 +33,7 @@
 #pragma comment(lib, "dinput8.lib")
 #pragma endregion
 
+#pragma comment(lib,"d3dx10.lib")
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"d3dx11.lib")
@@ -66,12 +67,13 @@ namespace std
 #define RE_CASTING(x,y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {x->Release();} (x) = nullptr
 
-extern HINSTANCE g_hInstance;
-extern HWND		 g_hWnd;
-extern RECT		 g_rtClient;
-extern FLOAT	 g_fSecPerFrame;
-extern FLOAT	 g_fGameTime;
-extern bool		 g_bActive;
+extern HINSTANCE	g_hInstance;
+extern HWND			g_hWnd;
+extern RECT			g_rtClient;
+extern FLOAT		g_fSecPerFrame;
+extern FLOAT		g_fGameTime;
+extern bool			g_bActive;
+extern D3DXMATRIX	g_mToProj;
 
 template <typename K>
 class Singleton

@@ -4,12 +4,13 @@
 Button::Button()
 {
 }
-bool Button::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath)
+bool Button::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+				const std::string& VSFunc, const std::string& PSFunc)
 {
 	Plane_Object::CreateConstantBuffer(pDevice);
-	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath);
+	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
-void Button::SetPos(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
+void Button::SetPos(const D3DXVECTOR2& CenterPos, const D2D1_POINT_2F& Size)
 {
 	DivideButton(CenterPos, Size);
 	CreateButtonVertex();
@@ -81,7 +82,7 @@ bool Button::Release()
 	}
 	return true;
 }
-void Button::DivideButton(const D2D1_POINT_2F& CenterPos, const D2D1_POINT_2F& Size)
+void Button::DivideButton(const D3DXVECTOR2& CenterPos, const D2D1_POINT_2F& Size)
 {
 	fWidth = Size.x;
 	fHeight = Size.y;

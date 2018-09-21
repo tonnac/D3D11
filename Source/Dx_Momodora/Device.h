@@ -9,7 +9,7 @@ public:
 	void						InitDevice();
 	void						CleanupDevice();
 public:
-	void						ResizeDevice(const LONG& Width, const LONG& Height);
+	virtual void				ResizeDevice(const LONG& Width, const LONG& Height);
 private:
 	void						CreateDevice();
 	void						CreateFactory();

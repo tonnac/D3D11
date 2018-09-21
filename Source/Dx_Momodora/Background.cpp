@@ -10,14 +10,10 @@ void Background::SetPos(const FLOAT& rtLeft, const FLOAT& rtTop, const FLOAT& Ma
 	m_MaxSize.right = MaxWidth;
 	Plane_Object::SetPos({ 0.0f,0.0f }, { rtLeft, rtTop, rtLeft + m_fWidth, rtTop + m_fHeight });
 	m_VertexList.resize(4);
-	m_VertexList[0].Pos.x = -1.0f;
-	m_VertexList[0].Pos.y = 1.0f;
-	m_VertexList[1].Pos.x = 1.0f;
-	m_VertexList[1].Pos.y = 1.0f;
-	m_VertexList[2].Pos.x = -1.0f;
-	m_VertexList[2].Pos.y = -1.0f;
-	m_VertexList[3].Pos.x = 1.0f;
-	m_VertexList[3].Pos.y = -1.0f;
+	m_VertexList[0].Pos = { -1.0f, 1.0f, 0.5f };
+	m_VertexList[1].Pos = { 1.0f, 1.0f, 0.5f };
+	m_VertexList[2].Pos = { -1.0f, -1.0f, 0.5f };
+	m_VertexList[3].Pos = { 1.0f, -1.0f, 0.5f };
 }
 bool Background::Frame()
 {
@@ -31,22 +27,15 @@ bool Background::Frame()
 		m_rtDraw.left -= g_fSecPerFrame * 200.0f;
 		m_rtDraw.right -= g_fSecPerFrame * 200.0f;
 	}
-	DrawPosUpdate();
+	TexPosUpdate();
 	return true;
 }
-void Background::DrawPosUpdate()
+void Background::TexPosUpdate()
 {
 	Texture* pTexture = m_Object.getTexture();
-	DirectX::XMFLOAT2 pos = pTexture->getImageSize();
-	m_VertexList[0].TexPos.x = m_rtDraw.left / pos.x;
-	m_VertexList[0].TexPos.y = m_rtDraw.top / pos.y;
-
-	m_VertexList[1].TexPos.x = m_rtDraw.right / pos.x;
-	m_VertexList[1].TexPos.y = m_rtDraw.top / pos.y;
-
-	m_VertexList[2].TexPos.x = m_rtDraw.left / pos.x;
-	m_VertexList[2].TexPos.y = m_rtDraw.bottom / pos.y;
-
-	m_VertexList[3].TexPos.x = m_rtDraw.right / pos.x;
-	m_VertexList[3].TexPos.y = m_rtDraw.bottom / pos.y;
+	D3DXVECTOR2 pos = pTexture->getImageSize();
+	m_VertexList[0].TexPos = { m_rtDraw.left / pos.x, m_rtDraw.top / pos.y };
+	m_VertexList[1].TexPos = { m_rtDraw.right / pos.x, m_rtDraw.top / pos.y };
+	m_VertexList[2].TexPos = { m_rtDraw.left / pos.x, m_rtDraw.bottom / pos.y };
+	m_VertexList[3].TexPos = { m_rtDraw.right / pos.x, m_rtDraw.bottom / pos.y };
 }

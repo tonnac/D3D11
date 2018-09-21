@@ -1,5 +1,7 @@
 #include "Core.h"
 
+D3DXMATRIX g_mToProj;
+
 bool Core::GameInit()
 {
 #ifdef DEVICE_INFO
@@ -9,6 +11,7 @@ bool Core::GameInit()
 	S_Input.Init();
 	S_Write.Set(m_pSwapChain);
 	m_Timer.Init();
+	MatrixInit();
 	Init();
 	return true;
 }
@@ -44,6 +47,11 @@ bool Core::Release()
 {
 	return true;
 }
+void Core::ResizeDevice(const LONG& Width, const LONG& Height)
+{
+	Device::ResizeDevice(Width, Height);
+	MatrixInit();
+}
 bool Core::GameFrame()
 {
 	S_Input.Frame();
@@ -73,5 +81,14 @@ bool Core::PostRender()
 {
 	S_Write.End();
 	ThrowifFailed(m_pSwapChain->Present(0, 0));
+	return true;
+}
+bool Core::MatrixInit()
+{
+	D3DXMatrixIdentity(&g_mToProj);
+	g_mToProj._11 = 2.0f / g_rtClient.right;
+	g_mToProj._31 = -1.0f;
+	g_mToProj._22 = -2.0f / g_rtClient.bottom;
+	g_mToProj._32 = 1.0f;
 	return true;
 }
