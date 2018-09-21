@@ -13,8 +13,7 @@ public:
 	bool						Render(ID3D11DeviceContext* pContext);
 	virtual bool				PostRender(ID3D11DeviceContext* pContext);
 	bool						Release();
-	virtual void				SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect);
-public:
+	virtual void				SetPos(const D2D1_POINT_2F& pos);
 protected:
 	void						CreateVertexBuffer(ID3D11Device* pDevice);
 	void						CreateConstantBuffer(ID3D11Device* pDevice);
@@ -22,6 +21,8 @@ protected:
 	D2D1_POINT_2F				ComputeCoord();
 	D2D1_POINT_2F				ComputeCoord(const D2D1_POINT_2F& pos);
 	void						ComputeCollision(const D2D1_POINT_2F& col);
+protected:
+	void						SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect);
 protected:
 	Object_Basic				m_Object;
 	VS_CB						m_ConstantData;

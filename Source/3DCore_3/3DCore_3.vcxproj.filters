@@ -25,92 +25,30 @@
     <Filter Include="헤더 파일\Object\UI">
       <UniqueIdentifier>{9b0e23af-3953-4e9d-8838-4c2308c5a93d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\BasicStructure">
+      <UniqueIdentifier>{9dd5fdc3-5393-4760-9b56-561a3e1fccd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\BasicStructure">
+      <UniqueIdentifier>{937b20a9-de00-4413-a617-dd66a95899a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectWrite.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="wClass.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Core.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="d3dUtil.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Device.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeviceInfo.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TriangleObject.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object_Basic.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane_Object.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>소스 파일\Object\UI</Filter>
-    </ClCompile>
+    <Text Include="VertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectWrite.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="wClass.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Core.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Device.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DeviceInfo.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectInput.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Plane_Object.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
+    <ClInclude Include="Object_Basic.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object_Basic.h">
+    <ClInclude Include="Object.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
     <ClInclude Include="TriangleObject.h">
@@ -119,8 +57,76 @@
     <ClInclude Include="Button.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dUtil.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceInfo.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectInput.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectWrite.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
+    <ClInclude Include="wClass.h">
+      <Filter>헤더 파일\BasicStructure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="VertexShader.txt" />
+    <ClCompile Include="Shader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Basic.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane_Object.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TriangleObject.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dUtil.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceInfo.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectInput.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectWrite.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="wClass.cpp">
+      <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

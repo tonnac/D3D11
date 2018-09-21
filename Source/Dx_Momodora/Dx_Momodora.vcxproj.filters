@@ -31,6 +31,12 @@
     <Filter Include="헤더 파일\BasicStructure">
       <UniqueIdentifier>{38eb438d-73cf-4d61-bb33-e7a93dca5cc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Object\BasicObject">
+      <UniqueIdentifier>{2bdf1d01-b4e1-4fc5-be46-543da47ba3c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object\BasicObject">
+      <UniqueIdentifier>{4e7762bf-b014-4210-99a7-7ca43ddf0df3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -38,18 +44,6 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Plane_Object.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object_Basic.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="TriangleObject.h">
-      <Filter>헤더 파일\Object</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
       <Filter>헤더 파일\Object\UI</Filter>
@@ -78,6 +72,18 @@
     <ClInclude Include="wClass.h">
       <Filter>헤더 파일\BasicStructure</Filter>
     </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>헤더 파일\Object\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_Basic.h">
+      <Filter>헤더 파일\Object\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane_Object.h">
+      <Filter>헤더 파일\Object\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -85,18 +91,6 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TriangleObject.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object_Basic.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane_Object.cpp">
-      <Filter>소스 파일\Object</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
       <Filter>소스 파일\Object\UI</Filter>
@@ -124,6 +118,18 @@
     </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>소스 파일\BasicStructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane_Object.cpp">
+      <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_Basic.cpp">
+      <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

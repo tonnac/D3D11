@@ -12,11 +12,7 @@ bool Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std:
 	Init();
 	return true;
 }
-void Object::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
-{
-	m_Centerpos = pos;
-	m_rtDraw = rect;
-}
+
 bool Object::Init()
 {
 	return true;
@@ -69,6 +65,10 @@ bool Object::Release()
 {
 	return m_Object.Release();
 }
+void Object::SetPos(const D2D1_POINT_2F& pos)
+{
+	return;
+}
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {
 	m_Object.CreateBuffer(pDevice, D3D11_BIND_VERTEX_BUFFER, &m_VertexList.at(0), sizeof(P3_VERTEX) * CASTING(UINT, m_VertexList.size()));
@@ -97,4 +97,9 @@ void Object::ComputeCollision(const D2D1_POINT_2F& col)
 	m_rtCollision.top = m_Centerpos.y + col.y * 0.5f;
 	m_rtCollision.right = m_Centerpos.x + col.x * 0.5f;
 	m_rtCollision.bottom = m_Centerpos.y - col.y * 0.5f;
+}
+void Object::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
+{
+	m_Centerpos = pos;
+	m_rtDraw = rect;
 }

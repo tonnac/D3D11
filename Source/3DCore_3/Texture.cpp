@@ -18,6 +18,7 @@ void Texture::LoadTexture(ID3D11Device* pDevice, const std::tstring& Name, const
 	m_ImageSize.x = CASTING(float, Imageinfo.Width);
 	m_ImageSize.y = CASTING(float, Imageinfo.Height);
 	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, Filepath.c_str(), nullptr, nullptr, &m_pTexSRV, nullptr));
+	
 
 	CreateSamplerState(pDevice);
 }

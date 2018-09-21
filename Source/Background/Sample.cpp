@@ -2,7 +2,7 @@
 
 bool Sample::Init()
 {
-	m_Background.SetPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f }, { 222.0f, 0.0f, 222.0f + 406.0f, 240.0f });
+	m_Background.SetPos(220.0f, 0.0f, 896.0f, 240.0f);
 	m_Background.InitSet(m_pDevice, L"DD", L"../../momodora/data/map/Map1.png", L"VertexShader.txt");
 	return true;
 }

@@ -139,3 +139,7 @@ ID3D11BlendState* Object_Basic::getBlendState() const
 {
 	GETPTR(m_pBlendState);
 }
+Texture* Object_Basic::getTexture() const
+{
+	GETPTR(m_pTexture);
+}
