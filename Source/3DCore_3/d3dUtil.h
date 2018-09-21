@@ -61,7 +61,7 @@ namespace std
 }
 
 #define MAXKEYNUM 256
-#define GETPTR(x) if((x) == nullptr) {return nullptr;} return (x)
+#define GETPTR(x) if(x == nullptr) {return nullptr;} return (x)
 #define CASTING(x,y) static_cast<x>((y))
 #define RE_CASTING(x,y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {x->Release();} (x) = nullptr

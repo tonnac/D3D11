@@ -10,17 +10,17 @@ public:
 	virtual bool				Init();
 	virtual bool				Frame();
 	virtual bool				PreRender(ID3D11DeviceContext* pContext);
-	bool						Render(ID3D11DeviceContext* pContext);
+	virtual bool				Render(ID3D11DeviceContext* pContext);
 	virtual bool				PostRender(ID3D11DeviceContext* pContext);
 protected:
 	void						CreateVertexBuffer(ID3D11Device* pDevice);
 	void						CreateConstantBuffer(ID3D11Device* pDevice);
-protected:
+public:
 	D2D1_POINT_2F				ComputeCoord();
 	D2D1_POINT_2F				ComputeCoord(const D2D1_POINT_2F& pos);
 	void						ComputeCollision(const D2D1_POINT_2F& col);
 	void						SetInitPos(const D2D1_POINT_2F& pos);
-protected:
+public:
 	Object_Basic				m_Object;
 	VS_CB						m_ConstantData;
 	std::vector<RECT>			Sprite;
