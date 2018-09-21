@@ -1,14 +1,9 @@
 #include "Background.h"
 #include "DirectInput.h"
 
-Background::Background()
-{
-	SetInitPos = [this](const D2D1_POINT_2F& pe, const D2D1_RECT_F& rect) {SetPos(pe, rect);};
-	auto foo = [this](const D2D1_RECT_F& rect) {SetPos({ 0.0f,0.0f }, rect);};
-}
-
 void Background::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
 {
+	Plane_Object::SetPos(pos, rect);
 	m_VertexList.resize(4);
 	m_VertexList[0].Pos.x = -1.0f;
 	m_VertexList[0].Pos.y = 1.0f;
@@ -18,16 +13,19 @@ void Background::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
 	m_VertexList[2].Pos.y = -1.0f;
 	m_VertexList[3].Pos.x = 1.0f;
 	m_VertexList[3].Pos.y = -1.0f;
-	m_rtDraw = rect;
-	
-}
-bool Background::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath)
-{
-	Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath);
-	return true;
 }
 bool Background::Frame()
 {
+	if (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_rtDraw.left += g_fSecPerFrame * 200.0f;
+		m_rtDraw.right += g_fSecPerFrame * 200.0f;
+	}
+	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_rtDraw.left -= g_fSecPerFrame * 200.0f;
+		m_rtDraw.right -= g_fSecPerFrame * 200.0f;
+	}
 	Texture* pTexture = m_Object.getTexture();
 	DirectX::XMFLOAT2 pos = pTexture->getImageSize();
 	m_VertexList[0].TexPos.x = m_rtDraw.left / pos.x;

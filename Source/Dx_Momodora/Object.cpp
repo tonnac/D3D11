@@ -14,7 +14,8 @@ bool Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std:
 }
 void Object::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
 {
-	return;
+	m_Centerpos = pos;
+	m_rtDraw = rect;
 }
 bool Object::Init()
 {
@@ -63,6 +64,10 @@ bool Object::PostRender(ID3D11DeviceContext* pContext)
 {
 	pContext->Draw(CASTING(UINT, m_VertexList.size()), 0);
 	return true;
+}
+bool Object::Release()
+{
+	return m_Object.Release();
 }
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {

@@ -7,7 +7,6 @@ public:
 	Plane_Object() = default;
 public:
 	virtual bool			InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath) override;
-	virtual void			SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect);
 	virtual bool			Init() override;
 	virtual bool			Frame() override;
 protected:

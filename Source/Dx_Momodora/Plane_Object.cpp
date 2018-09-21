@@ -7,10 +7,6 @@ bool Plane_Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, cons
 	m_Object.setBlendState(pDevice);
 	return Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath);
 }
-void Plane_Object::SetPos(const D2D1_POINT_2F& pos, const D2D1_RECT_F& rect)
-{
-	return;
-}
 bool Plane_Object::Init()
 {
 	return true;
