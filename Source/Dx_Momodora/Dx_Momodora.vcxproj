@@ -161,12 +161,9 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
-    <ClInclude Include="GameScene.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Object_Basic.h" />
     <ClInclude Include="Plane_Object.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
@@ -184,12 +181,9 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
-    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Object_Basic.cpp" />
     <ClCompile Include="Plane_Object.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />

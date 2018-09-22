@@ -111,6 +111,18 @@ public:
 	int LineNumber = -1;
 };
 
+class FileException
+{
+public:
+	FileException() = default;
+	FileException(const std::tstring& Path,const std::tstring& filename, const std::tstring function, const int& line);
+private:
+	std::tstring Filepath;
+	std::tstring FileName;
+	std::tstring Function;
+	int LineNumber = -1;
+};
+
 #ifndef ThrowifFailed
 #define ThrowifFailed(x)											\
 {																	\
@@ -141,6 +153,18 @@ public:
 }
 #endif
 
+#ifndef FileExceptErr
+#define FileExceptErr(x,y)								\
+{														\
+	(x).open((y).c_str(), std::ios::in);				\
+	if ((x).is_open() == false)							\
+	{													\
+		std::tstring wfn = AnsiToTString(__FILE__);		\
+		std::tstring wfc = AnsiToTString(__FUNCTION__);	\
+		throw FileException(y, wfn, wfc, __LINE__);		\
+	}													\
+}
+#endif
 template <typename K>
 struct CacheData_
 {
