@@ -74,6 +74,8 @@ extern FLOAT		g_fSecPerFrame;
 extern FLOAT		g_fGameTime;
 extern bool			g_bActive;
 extern D3DXMATRIX	g_mToProj;
+extern FLOAT		g_fImageWidth;
+extern FLOAT		g_fImageHeight;
 
 template <typename K>
 class Singleton

@@ -14,6 +14,7 @@ struct VS_CB
 {
 	D3DXVECTOR4 Color;
 	D3DXVECTOR4 Util;
+	D3DXMATRIX	Proj;
 };
 
 class Object_Basic

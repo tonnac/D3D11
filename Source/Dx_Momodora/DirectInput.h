@@ -35,9 +35,9 @@ public:
 	bool					Render();
 	bool					Release();
 public:
-	Input::MousePos			getMousePos();
-	Input::KEYSTATE			getKeyState(DWORD dwKey);
-	Input::KEYSTATE			getMouseState(DWORD dwKey);
+	POINT					getMousePos() const;
+	Input::KEYSTATE			getKeyState(DWORD dwKey) const;
+	Input::KEYSTATE			getMouseState(DWORD dwKey) const;
 public:
 	void					SetAcquire(const bool& flag);
 private:
@@ -50,6 +50,8 @@ private:
 
 	DIMOUSESTATE			m_CurrentMouseState;
 	DIMOUSESTATE			m_BeforeMouseState;
+
+	POINT					m_MousePos;
 };
 
 

@@ -1,7 +1,8 @@
 cbuffer VS_CB
 {
-	float4 Color : packoffset(c0);
-	float4 Util : packoffset(c1);
+	float4	Color		: packoffset(c0);
+	float4	Util		: packoffset(c1);
+	matrix	g_proj		: packoffset(c2);
 }
 
 struct VS_INPUT
@@ -23,14 +24,15 @@ float4 Rotate(in float4 pos)
 	return vPos;
 }
 
-VS_OUTPUT VS(in VS_INPUT input)
+VS_OUTPUT VS(in VS_INPUT vIn)
 {
-	VS_OUTPUT output = (VS_OUTPUT)0;
-	output.pos = Rotate(input.pos);
-	output.tex = input.tex;
-	return output;
+	VS_OUTPUT vOut = (VS_OUTPUT)0;
+	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
+	vOut.pos = mul(vLocal, g_proj);
+	vOut.pos.z = 0.5f;
+	vOut.tex = vIn.tex;
+	return vOut;
 }
-
 ///////////////////////////////////////
 Texture2D g_txDiffuse : register(t0);
 SamplerState g_SamState : register(s0);

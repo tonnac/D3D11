@@ -1,4 +1,5 @@
 #include "DirectInput.h"
+#include "DirectWrite.h"
 
 DirectInput::DirectInput()
 {
@@ -20,6 +21,9 @@ bool DirectInput::Init()
 	ThrowifFailed(m_pMouse->SetDataFormat(&c_dfDIMouse));
 	ThrowifFailed(m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
 	while (m_pMouse->Acquire() == DIERR_INPUTLOST);
+
+	GetCursorPos(&m_MousePos);
+	ScreenToClient(g_hWnd, &m_MousePos);
 	return true;
 }
 bool DirectInput::Frame()
@@ -34,6 +38,8 @@ bool DirectInput::Frame()
 		while (m_pMouse->Acquire() == DIERR_INPUTLOST);
 		m_pMouse->Acquire();
 	}
+	GetCursorPos(&m_MousePos);
+	ScreenToClient(g_hWnd, &m_MousePos);
 	return true;
 }
 bool DirectInput::PostFrame()
@@ -44,6 +50,8 @@ bool DirectInput::PostFrame()
 }
 bool DirectInput::Render()
 {
+	std::tstring pe = std::to_tstring(m_MousePos.x) + L", " + std::to_tstring(m_MousePos.y);
+	S_Write.DrawText({ 0,120,800,600 }, pe, D2D1::ColorF::Black);
 	return true;
 }
 bool DirectInput::Release()
@@ -54,11 +62,11 @@ bool DirectInput::Release()
 	RELEASE(m_pDi);
 	return true;
 }
-Input::MousePos DirectInput::getMousePos()
+POINT DirectInput::getMousePos() const
 {
-	return { m_CurrentMouseState.lX,m_CurrentMouseState.lY, m_CurrentMouseState.lZ };
+	return m_MousePos;
 }
-Input::KEYSTATE	DirectInput::getKeyState(DWORD dwKey)
+Input::KEYSTATE	DirectInput::getKeyState(DWORD dwKey) const
 {
 	if (dwKey & 0x100)
 	{
@@ -123,7 +131,7 @@ Input::KEYSTATE	DirectInput::getKeyState(DWORD dwKey)
 		}
 	}
 }
-Input::KEYSTATE	DirectInput::getMouseState(DWORD dwKey)
+Input::KEYSTATE	DirectInput::getMouseState(DWORD dwKey) const
 {
 	if (m_BeforeMouseState.rgbButtons[dwKey] & 0x80)
 	{

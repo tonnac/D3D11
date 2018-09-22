@@ -71,6 +71,7 @@ bool Core::GameRender()
 {
 	PreRender();
 	{
+		S_Input.Render();
 		m_Timer.Render();
 		Render();
 	}

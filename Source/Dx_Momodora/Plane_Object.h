@@ -10,7 +10,7 @@ public:
 							const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;
 protected:
 	virtual void			CreateIndexBuffer(ID3D11Device* pDevice);
-public:
+protected:
 	bool					PreRender(ID3D11DeviceContext* pContext) override;
 	bool					PostRender(ID3D11DeviceContext* pContext) override;
 protected:

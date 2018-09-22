@@ -12,6 +12,7 @@ public:
 	bool				Render() override;
 	bool				Release() override;
 private:
+	std::vector<Terrain*> m_TerrainList;
 	Background			m_Background;
 	Terrain				m_Terrain;
 };
