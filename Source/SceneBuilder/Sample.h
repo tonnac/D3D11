@@ -1,7 +1,6 @@
 #pragma once
 #include "Core.h"
 #include "SceneMgr.h"
-#include "SceneBuilder.h"
 
 
 class Sample : public Core

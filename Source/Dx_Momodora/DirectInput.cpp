@@ -50,8 +50,8 @@ bool DirectInput::PostFrame()
 }
 bool DirectInput::Render()
 {
-	std::tstring pe = std::to_tstring(m_MousePos.x) + L", " + std::to_tstring(m_MousePos.y);
-	S_Write.DrawText({ 0,120,800,600 }, pe, D2D1::ColorF::Black);
+	//std::tstring pe = std::to_tstring(m_MousePos.x) + L", " + std::to_tstring(m_MousePos.y);
+	//S_Write.DrawText({ 0,120,800,600 }, pe, D2D1::ColorF::Black);
 	return true;
 }
 bool DirectInput::Release()

@@ -6,6 +6,8 @@ HWND			g_hWnd = nullptr;
 RECT			g_rtClient;
 wClass* wClass::g_Window = nullptr;
 bool			g_bActive = false;
+FLOAT			g_fImageWidth = 0.0f;
+FLOAT			g_fImageHeight = 0.0f;
 
 LRESULT CALLBACK MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -50,6 +52,9 @@ bool wClass::Set(HINSTANCE hInstance, const LONG& Width, const LONG& Height, con
 
 	GetWindowRect(g_hWnd, &m_rtWindow);
 	GetClientRect(g_hWnd, &g_rtClient);
+
+	g_fImageWidth = g_rtClient.right / 3.0f;
+	g_fImageHeight = g_rtClient.bottom / 3.0f;
 
 	CenterWindow(r);
 	ShowWindow(g_hWnd, SW_SHOW);

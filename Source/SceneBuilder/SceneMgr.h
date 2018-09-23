@@ -1,6 +1,5 @@
 #pragma once
 #include "GameScene.h"
-#include "SceneBuilder.h"
 
 class SceneMgr : public Singleton<SceneMgr>
 {
@@ -13,10 +12,10 @@ public:
 	bool					Render		();
 	bool					Release		();
 private:
+
 	ID3D11Device *			m_pDevice;
 	ID3D11DeviceContext *	m_pContext;
 	Scene *					m_pCurrentScene;
-	SceneBuilder			m_Builder;
 };
 
 #define S_Scene SceneMgr::getInst()

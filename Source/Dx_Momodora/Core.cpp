@@ -1,6 +1,6 @@
 #include "Core.h"
 
-D3DXMATRIX g_mToProj;
+D3DXMATRIX	g_mToProj;
 
 bool Core::GameInit()
 {

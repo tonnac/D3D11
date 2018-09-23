@@ -1,6 +1,8 @@
 #include "Sample.h"
 #include "DirectInput.h"
 
+
+
 bool Sample::Init()
 {
 	S_Scene.Initialize(m_pDevice, m_pContext);

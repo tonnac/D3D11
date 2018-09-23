@@ -28,9 +28,10 @@ bool Terrain::Frame()
 	m_rtCollision.bottom = m_VertexList[2].Pos.y;
 	return true;
 }
-void Terrain::Scroll(const FLOAT& pos)
+bool Terrain::Scroll(const FLOAT& pos)
 {
-	m_Centerpos.x += pos;
+	m_Centerpos.x += -pos;
+	return true;
 }
 void Terrain::CreateIndexBuffer(ID3D11Device* pDevice)
 {

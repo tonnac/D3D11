@@ -10,7 +10,7 @@ public:
 public:
 	bool Frame() override;
 public:
-	void Scroll(const FLOAT& pos) override;
+	bool Scroll(const FLOAT& pos) override;
 protected:
 	void CreateIndexBuffer(ID3D11Device* pDevice) override;
 private:

@@ -15,7 +15,7 @@ public:
 	virtual void				SetPos(const D3DXVECTOR2& pos);
 	virtual void				SetPos(const D3DXVECTOR4& DrawVec);
 public:
-	virtual void				Scroll(const FLOAT& pos);
+	virtual bool				Scroll(const FLOAT& pos);
 protected:
 	void						CreateVertexBuffer(ID3D11Device* pDevice);
 	virtual void				CreateConstantBuffer(ID3D11Device* pDevice);

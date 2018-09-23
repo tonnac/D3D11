@@ -68,9 +68,9 @@ void Object::SetPos(const D3DXVECTOR4& DrawVec)
 {
 	return;
 }
-void Object::Scroll(const FLOAT& pos)
+bool Object::Scroll(const FLOAT& pos)
 {
-	return;
+	return true;
 }
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {

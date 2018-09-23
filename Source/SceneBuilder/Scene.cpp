@@ -22,7 +22,7 @@ bool Scene::Render()
 	S_Object.Render(m_pContext);
 	return true;
 }
-bool Scene::inverseSet()
+bool Scene::inverseInit()
 {
 	return true;
 }
@@ -37,59 +37,125 @@ void Scene::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
 }
 void Scene::SceneSet(const bool& isInverse)
 {
-	std::tifstream fp;
-	std::tstring FilePath = L"SceneScript.txt";
-	FileExceptErr(fp, FilePath);
-	S_Object.Release();
-
-	std::tstring Buffer;
-	int ObjTypeNum;
-
-	while (Buffer != m_SceneName)
+	if (isInverse == false)
 	{
-		std::getline(fp, Buffer);
-	}
-	if (fp.eof() == true)
-	{
-		std::tstring ErrMsg = m_SceneName + L" Can't Find";
-		MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
-		PostQuitMessage(0);
-	}
+		std::tifstream fp;
+		std::tstring FilePath = L"SceneScript.txt";
+		FileExceptErr(fp, FilePath);
+		S_Object.Release();
 
-	fp >> Buffer >> ObjTypeNum;
+		std::tstring Buffer;
+		int ObjTypeNum;
 
-	for (int k = 0; k < ObjTypeNum; ++k)
-	{
-		ObjectEnum ObjType;
-		int ObjNum;
-		fp >> ObjType >> ObjNum >> Buffer;
-
-		switch (ObjType)
+		while (Buffer != m_SceneName && fp.eof() == false)
 		{
-		case ObjectEnum::BACKGROUND:
+			std::getline(fp, Buffer);
+		}
+
+		if (fp.eof() == true)
 		{
-			for (int i = 0; i < ObjNum; ++i)
+			std::tstring ErrMsg = m_SceneName + L" Can't Find";
+			MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
+			PostQuitMessage(0);
+		}
+
+		fp >> Buffer >> ObjTypeNum;
+
+		for (int k = 0; k < ObjTypeNum; ++k)
+		{
+			ObjectEnum ObjType;
+			int ObjNum;
+			fp >> ObjType >> ObjNum >> Buffer;
+
+			switch (ObjType)
 			{
-				FLOAT BackPos[4];
-				fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
-				Background* pBackground = new Background;
-				pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-				pBackground->InitSet(m_pDevice, L"Map", L"../../momodora/data/map/Map.png", L"VertexShader.txt");
-				S_Object.AddBackGround(pBackground);
-			}
-		}break;
-		case ObjectEnum::TERRAIN:
-		{
-			for (int i = 0; i < ObjNum; ++i)
+			case ObjectEnum::BACKGROUND:
 			{
-				D3DXVECTOR4 TerrainPos;
-				fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
-				Terrain* pTerrain = new Terrain;
-				pTerrain->SetPos(TerrainPos);
-				pTerrain->InitSet(m_pDevice, L"Terrain", L"VertexShader.txt", "VS", "TerrainPS");
-				S_Object.AddTerrain(pTerrain);
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					FLOAT BackPos[4];
+					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
+					Background* pBackground = new Background;
+					pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
+					pBackground->InitSet(m_pDevice, L"Map", L"../../momodora/data/map/Map.png", L"VertexShader.txt");
+					S_Object.AddBackGround(pBackground);
+				}
+			}break;
+			case ObjectEnum::TERRAIN:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 TerrainPos;
+					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
+					Terrain* pTerrain = new Terrain;
+					pTerrain->SetPos(TerrainPos);
+					pTerrain->InitSet(m_pDevice, L"Terrain", L"VertexShader.txt", "VS", "TerrainPS");
+					S_Object.AddTerrain(pTerrain);
+				}
+			}break;
 			}
-		}break;
+		}
+	}
+	else
+	{
+		static FLOAT xWidth = 0.0f;
+		std::tifstream fp;
+		std::tstring FilePath = L"SceneScript.txt";
+		FileExceptErr(fp, FilePath);
+		S_Object.Release();
+
+		std::tstring Buffer;
+		int ObjTypeNum;
+
+		while (Buffer != m_SceneName && fp.eof() == false)
+		{
+			std::getline(fp, Buffer);
+		}
+
+		if (fp.eof() == true)
+		{
+			std::tstring ErrMsg = m_SceneName + L" Can't Find";
+			MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
+			PostQuitMessage(0);
+		}
+
+		fp >> Buffer >> ObjTypeNum;
+
+		for (int k = 0; k < ObjTypeNum; ++k)
+		{
+			ObjectEnum ObjType;
+			int ObjNum;
+			fp >> ObjType >> ObjNum >> Buffer;
+
+			switch (ObjType)
+			{
+			case ObjectEnum::BACKGROUND:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					FLOAT BackPos[4];
+					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
+					xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
+					Background* pBackground = new Background;
+					pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
+					pBackground->InitSet(m_pDevice, L"Map", L"../../momodora/data/map/Map.png", L"VertexShader.txt");			
+					S_Object.AddBackGround(pBackground);
+				}
+			}break;
+			case ObjectEnum::TERRAIN:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 TerrainPos;
+					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
+					Terrain* pTerrain = new Terrain;
+					pTerrain->SetPos(TerrainPos);
+					pTerrain->Scroll(xWidth * 3.0f);
+					pTerrain->InitSet(m_pDevice, L"Terrain", L"VertexShader.txt", "VS", "TerrainPS");
+					S_Object.AddTerrain(pTerrain);
+				}
+			}break;
+			}
 		}
 	}
 }

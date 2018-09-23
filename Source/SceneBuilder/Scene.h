@@ -20,7 +20,7 @@ public:
 	virtual bool			Frame		() = 0;
 	virtual bool			Render		() final;
 	virtual bool			Release		() = 0;
-	virtual bool			inverseSet	();
+	virtual bool			inverseInit	();
 	bool					getNextScene();
 public:
 	void					setDevice(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
