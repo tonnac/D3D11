@@ -1,0 +1,56 @@
+cbuffer VS_CB
+{
+	float4	Color		: packoffset(c0);
+	float4	Util		: packoffset(c1);
+	matrix	g_proj		: packoffset(c2);
+}
+
+struct VS_INPUT
+{
+	float4 pos : POSITION;
+	float2 tex : TEXCOORD;
+};
+struct VS_OUTPUT
+{
+	float4 pos : SV_POSITION;
+	float2 tex : TEXCOORD; 
+};
+
+float4 Rotate(in float4 pos)
+{
+	float4 vPos = pos;
+	vPos.x = cos(radians(Util.x)) * pos.x + sin(radians(Util.x)) * pos.y;
+	vPos.y = cos(radians(Util.x)) * pos.y - sin(radians(Util.x)) * pos.x;
+	return vPos;
+}
+
+VS_OUTPUT VS(in VS_INPUT vIn)
+{
+	VS_OUTPUT vOut = (VS_OUTPUT)0;
+	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
+	vOut.pos = mul(vLocal, g_proj);
+	vOut.pos.z = 0.5f;
+	vOut.tex = vIn.tex;
+	return vOut;
+}
+///////////////////////////////////////
+Texture2D g_txDiffuse : register(t0);
+SamplerState g_SamState : register(s0);
+
+struct PS_INPUT
+{
+	float4 pos : SV_POSITION;
+	float2 tex : TEXCOORD;
+};
+
+float4 PS(in PS_INPUT input) : SV_Target
+{
+	float4 TexColor = g_txDiffuse.Sample(g_SamState, input.tex);
+	return TexColor;
+}
+
+float4 TerrainPS(in PS_INPUT input) : SV_Target
+{
+	float4 Color1 = float4(1.0f,0.0f,0.0f,1.0f);
+	return Color1;
+}

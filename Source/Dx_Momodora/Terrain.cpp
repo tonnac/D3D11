@@ -21,11 +21,16 @@ void Terrain::SetPos(const D3DXVECTOR4& DrawVec)
 }
 bool Terrain::Frame()
 {
+	ComputeVertex();
 	m_rtCollision.left = m_VertexList[0].Pos.x;
 	m_rtCollision.top = m_VertexList[0].Pos.y;
 	m_rtCollision.right = m_VertexList[1].Pos.x;
 	m_rtCollision.bottom = m_VertexList[2].Pos.y;
 	return true;
+}
+void Terrain::Scroll(const FLOAT& pos)
+{
+	m_Centerpos.x += pos;
 }
 void Terrain::CreateIndexBuffer(ID3D11Device* pDevice)
 {
@@ -40,19 +45,6 @@ void Terrain::CreateIndexBuffer(ID3D11Device* pDevice)
 	}
 	m_Object.CreateBuffer(pDevice, D3D11_BIND_INDEX_BUFFER, &m_indiciesList.at(0), sizeof(DWORD) * CASTING(UINT, m_indiciesList.size()));
 }
-bool Terrain::PreRender(ID3D11DeviceContext* pContext)
-{
-	Plane_Object::PreRender(pContext);
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-	return true;
-}
-void Terrain::Scroll(const FLOAT& pos)
-{
-	for (int i = 0; i < m_VertexList.size(); ++i)
-	{
-		m_VertexList[i].Pos.x += pos;
-	}
-}
 void Terrain::ConvertScreenCoord()
 {
 	m_DrawVec.x *= g_rtClient.right / g_fImageWidth;
@@ -63,4 +55,23 @@ void Terrain::ConvertScreenCoord()
 	m_VertexList[1].Pos = D3DXVECTOR3(m_DrawVec.z, m_DrawVec.y, 0.5f);
 	m_VertexList[2].Pos = D3DXVECTOR3(m_DrawVec.x, m_DrawVec.w, 0.5f);
 	m_VertexList[3].Pos = D3DXVECTOR3(m_DrawVec.z, m_DrawVec.w, 0.5f);
+	m_Centerpos.x = (m_DrawVec.x + m_DrawVec.z) * 0.5f;
+	m_Centerpos.y = (m_DrawVec.y + m_DrawVec.w) * 0.5f;
+}
+void Terrain::ComputeVertex()
+{
+	m_VertexList[0].Pos.x = m_Centerpos.x - (m_DrawVec.z - m_DrawVec.x) * 0.5f;
+	m_VertexList[0].Pos.y = m_Centerpos.y - (m_DrawVec.w - m_DrawVec.y) * 0.5f;
+	m_VertexList[1].Pos.x = m_Centerpos.x + (m_DrawVec.z - m_DrawVec.x) * 0.5f;
+	m_VertexList[1].Pos.y = m_VertexList[0].Pos.y;
+	m_VertexList[2].Pos.x = m_VertexList[0].Pos.x;
+	m_VertexList[2].Pos.y = m_Centerpos.y + (m_DrawVec.w - m_DrawVec.y) * 0.5f;
+	m_VertexList[3].Pos.x = m_VertexList[1].Pos.x;
+	m_VertexList[3].Pos.y = m_VertexList[2].Pos.y;
+}
+bool Terrain::PreRender(ID3D11DeviceContext* pContext)
+{
+	Plane_Object::PreRender(pContext);
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	return true;
 }

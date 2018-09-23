@@ -3,24 +3,24 @@
 
 bool Sample::Init()
 {
-//	m_GameScene.SendDevice(m_pDevice, m_pContext);
-//	m_GameScene.Init();
-	m_Sb.Initialize(L"VertexShad1er.txt");
+	m_GameScene.SendDevice(m_pDevice, m_pContext);
+	m_GameScene.Init();
+//	m_Sb.Initialize(L"VertexShad1er.txt");
 	return true;
 }
 bool Sample::Frame()
 {
-//	m_GameScene.Frame();
+	m_GameScene.Frame();
 	return true;
 }
 bool Sample::Render()
 {
-//	m_GameScene.Render();
+	m_GameScene.Render();
 	return true;
 }
 bool Sample::Release()
 {
-//	m_GameScene.Release();
+	m_GameScene.Release();
 	return true;
 }
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)

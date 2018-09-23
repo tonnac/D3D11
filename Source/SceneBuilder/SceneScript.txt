@@ -1,0 +1,7 @@
+GameScene1
+ObjTypeNum 2
+0 1 BackGround
+220 0 896 240
+1 2 Terrain
+0 192 545 240
+545 175 628 240
