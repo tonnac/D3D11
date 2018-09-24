@@ -15,7 +15,7 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	m_pContext = pContext;
 	m_pCurrentScene = new GameScene1;
 	m_pCurrentScene->setDevice(pDevice, pContext);
-	m_pCurrentScene->Init();
+	m_pCurrentScene->inverseInit();
 }
 bool SceneMgr::Frame()
 {

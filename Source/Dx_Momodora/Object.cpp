@@ -60,13 +60,12 @@ bool Object::Release()
 {
 	return m_Object.Release();
 }
-void Object::SetPos(const D3DXVECTOR2& pos)
-{
-	m_Centerpos = pos;
-}
 void Object::SetPos(const D3DXVECTOR4& DrawVec)
 {
-	m_DrawVec = DrawVec;
+	m_VertexList[0].TexPos = { DrawVec.x, DrawVec.y };
+	m_VertexList[1].TexPos = { DrawVec.z, DrawVec.y };
+	m_VertexList[2].TexPos = { DrawVec.x, DrawVec.w };
+	m_VertexList[3].TexPos = { DrawVec.z, DrawVec.w };
 }
 bool Object::Scroll(const FLOAT& pos)
 {
@@ -80,10 +79,19 @@ void Object::CreateConstantBuffer(ID3D11Device* pDevice)
 {
 	m_ConstantData.Proj = g_mToProj;
 	D3DXMatrixTranspose(&m_ConstantData.Proj, &m_ConstantData.Proj);
+	if (m_Object.getTexture() != nullptr)
+	{
+		D3DXVECTOR2 ImageSize = m_Object.getTexture()->getImageSize();
+		m_ConstantData.Util.x = ImageSize.x;
+		m_ConstantData.Util.y = ImageSize.y;
+	}
 	m_Object.CreateBuffer(pDevice);
 }
-void Object::SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& drawvec)
+void Object::SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& DrawVec)
 {
 	m_Centerpos = pos;
-	m_DrawVec = drawvec;
+	m_VertexList[0].TexPos = { DrawVec.x, DrawVec.y };
+	m_VertexList[1].TexPos = { DrawVec.z, DrawVec.y };
+	m_VertexList[2].TexPos = { DrawVec.x, DrawVec.w };
+	m_VertexList[3].TexPos = { DrawVec.z, DrawVec.w };
 }

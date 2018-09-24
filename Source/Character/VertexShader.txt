@@ -1,10 +1,10 @@
 cbuffer VS_CB
 {
 	float4	Color		: packoffset(c0);
-	float4	Util.x		: packoffset(c1.x);
-	float4	Util.y		: packoffset(c1.y);
-	float4	Util.z		: packoffset(c1.z);
-	float4	Util.w		: packoffset(c1.w);
+	float	Width		: packoffset(c1.x);
+	float	Height		: packoffset(c1.y);
+	float	Utilz		: packoffset(c1.z);
+	float	Utilw		: packoffset(c1.w);
 	matrix	g_proj		: packoffset(c2);
 }
 
@@ -33,7 +33,8 @@ VS_OUTPUT VS(in VS_INPUT vIn)
 	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
 	vOut.pos = mul(vLocal, g_proj);
 	vOut.pos.z = 0.5f;
-	vOut.tex = vIn.tex;
+	vOut.tex.x = vIn.tex.x / Width;
+	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;
 }
 VS_OUTPUT PLAYER(in VS_INPUT vIn)
@@ -42,7 +43,8 @@ VS_OUTPUT PLAYER(in VS_INPUT vIn)
 	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
 	vOut.pos = mul(vLocal, g_proj);
 	vOut.pos.z = 0.5f;
-	vOut.tex = vIn.tex;
+	vOut.tex.x = vIn.tex.x / Width;
+	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;
 }
 ///////////////////////////////////////

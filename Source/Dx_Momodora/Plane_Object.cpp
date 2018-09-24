@@ -1,12 +1,17 @@
 #include "Plane_Object.h"
 #include "DirectInput.h"
 
+Plane_Object::Plane_Object()
+{
+	m_VertexList.resize(4);
+}
+
 bool Plane_Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 							const std::string& VSFunc, const std::string& PSFunc)
 {
 	CreateIndexBuffer(pDevice);
 	m_Object.setBlendState(pDevice);
-	return Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath);
+	return Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
 void Plane_Object::CreateIndexBuffer(ID3D11Device* pDevice)
 {

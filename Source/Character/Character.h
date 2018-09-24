@@ -10,7 +10,7 @@ public:
 	bool	Frame() override;
 	bool	PostRender(ID3D11DeviceContext* pContext) override;
 private:
-	FLOAT m_fScale;
-	bool isDebug;
+	FLOAT	m_fScale;
+	bool	isDebug;
 	ID3D11PixelShader * m_pShader;
 };

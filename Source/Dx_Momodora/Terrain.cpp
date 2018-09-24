@@ -13,11 +13,21 @@ bool Terrain::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std
 	Init();
 	return true;
 }
-void Terrain::SetPos(const D3DXVECTOR4& DrawVec)
+void Terrain::SetPos(const D3DXVECTOR4& Drawvec)
 {
-	m_VertexList.resize(4);
-	m_DrawVec = DrawVec;
-	ConvertScreenCoord();
+	D3DXVECTOR4 DrawVec = Drawvec;
+	DrawVec.x *= g_rtClient.right / g_fImageWidth;
+	DrawVec.y *= g_rtClient.bottom / g_fImageHeight;
+	DrawVec.z *= g_rtClient.right / g_fImageWidth;
+	DrawVec.w *= g_rtClient.bottom / g_fImageHeight;
+	m_fxDiffHalf = (DrawVec.z - DrawVec.x) * 0.5f;
+	m_fyDiffHalf = (DrawVec.w - DrawVec.y) * 0.5f;
+	m_VertexList[0].Pos = D3DXVECTOR3(DrawVec.x, DrawVec.y, 0.5f);
+	m_VertexList[1].Pos = D3DXVECTOR3(DrawVec.z, DrawVec.y, 0.5f);
+	m_VertexList[2].Pos = D3DXVECTOR3(DrawVec.x, DrawVec.w, 0.5f);
+	m_VertexList[3].Pos = D3DXVECTOR3(DrawVec.z, DrawVec.w, 0.5f);
+	m_Centerpos.x = (DrawVec.x + DrawVec.z) * 0.5f;
+	m_Centerpos.y = (DrawVec.y + DrawVec.w) * 0.5f;
 }
 bool Terrain::Frame()
 {
@@ -33,40 +43,14 @@ bool Terrain::Scroll(const FLOAT& pos)
 	m_Centerpos.x += -pos;
 	return true;
 }
-void Terrain::CreateIndexBuffer(ID3D11Device* pDevice)
-{
-	for (int i = 0; i < m_VertexList.size() / 4; ++i)
-	{
-		m_indiciesList.push_back(i * 4);
-		m_indiciesList.push_back(i * 4 + 1);
-		m_indiciesList.push_back(i * 4 + 3);
-		m_indiciesList.push_back(i * 4 + 3);
-		m_indiciesList.push_back(i * 4 + 2);
-		m_indiciesList.push_back(i * 4);
-	}
-	m_Object.CreateBuffer(pDevice, D3D11_BIND_INDEX_BUFFER, &m_indiciesList.at(0), sizeof(DWORD) * CASTING(UINT, m_indiciesList.size()));
-}
-void Terrain::ConvertScreenCoord()
-{
-	m_DrawVec.x *= g_rtClient.right / g_fImageWidth;
-	m_DrawVec.y *= g_rtClient.bottom / g_fImageHeight;
-	m_DrawVec.z *= g_rtClient.right / g_fImageWidth;
-	m_DrawVec.w *= g_rtClient.bottom / g_fImageHeight;
-	m_VertexList[0].Pos = D3DXVECTOR3(m_DrawVec.x, m_DrawVec.y, 0.5f);
-	m_VertexList[1].Pos = D3DXVECTOR3(m_DrawVec.z, m_DrawVec.y, 0.5f);
-	m_VertexList[2].Pos = D3DXVECTOR3(m_DrawVec.x, m_DrawVec.w, 0.5f);
-	m_VertexList[3].Pos = D3DXVECTOR3(m_DrawVec.z, m_DrawVec.w, 0.5f);
-	m_Centerpos.x = (m_DrawVec.x + m_DrawVec.z) * 0.5f;
-	m_Centerpos.y = (m_DrawVec.y + m_DrawVec.w) * 0.5f;
-}
 void Terrain::ComputeVertex()
 {
-	m_VertexList[0].Pos.x = m_Centerpos.x - (m_DrawVec.z - m_DrawVec.x) * 0.5f;
-	m_VertexList[0].Pos.y = m_Centerpos.y - (m_DrawVec.w - m_DrawVec.y) * 0.5f;
-	m_VertexList[1].Pos.x = m_Centerpos.x + (m_DrawVec.z - m_DrawVec.x) * 0.5f;
+	m_VertexList[0].Pos.x = m_Centerpos.x - m_fxDiffHalf;
+	m_VertexList[0].Pos.y = m_Centerpos.y - m_fyDiffHalf;
+	m_VertexList[1].Pos.x = m_Centerpos.x + m_fxDiffHalf;
 	m_VertexList[1].Pos.y = m_VertexList[0].Pos.y;
 	m_VertexList[2].Pos.x = m_VertexList[0].Pos.x;
-	m_VertexList[2].Pos.y = m_Centerpos.y + (m_DrawVec.w - m_DrawVec.y) * 0.5f;
+	m_VertexList[2].Pos.y = m_Centerpos.y + m_fyDiffHalf;
 	m_VertexList[3].Pos.x = m_VertexList[1].Pos.x;
 	m_VertexList[3].Pos.y = m_VertexList[2].Pos.y;
 }
