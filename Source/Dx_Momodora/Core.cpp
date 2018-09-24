@@ -1,4 +1,6 @@
 #include "Core.h"
+#include "Texture.h"
+#include "Shader.h"
 
 D3DXMATRIX	g_mToProj;
 
@@ -23,6 +25,8 @@ bool Core::GameRun()
 }
 bool Core::GameRelease()
 {
+	S_Texture.Release();
+	S_Shader.Release();
 	S_Write.Release();
 	S_Input.Release();
 	m_Timer.Release();

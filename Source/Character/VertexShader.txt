@@ -1,7 +1,10 @@
 cbuffer VS_CB
 {
 	float4	Color		: packoffset(c0);
-	float4	Util		: packoffset(c1);
+	float4	Util.x		: packoffset(c1.x);
+	float4	Util.y		: packoffset(c1.y);
+	float4	Util.z		: packoffset(c1.z);
+	float4	Util.w		: packoffset(c1.w);
 	matrix	g_proj		: packoffset(c2);
 }
 
@@ -19,12 +22,21 @@ struct VS_OUTPUT
 float4 Rotate(in float4 pos)
 {
 	float4 vPos = pos;
-	vPos.x = cos(radians(Util.x)) * pos.x + sin(radians(Util.x)) * pos.y;
-	vPos.y = cos(radians(Util.x)) * pos.y - sin(radians(Util.x)) * pos.x;
+//	vPos.x = cos(radians(Util.x)) * pos.x + sin(radians(Util.x)) * pos.y;
+//	vPos.y = cos(radians(Util.x)) * pos.y - sin(radians(Util.x)) * pos.x;
 	return vPos;
 }
 
 VS_OUTPUT VS(in VS_INPUT vIn)
+{
+	VS_OUTPUT vOut = (VS_OUTPUT)0;
+	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
+	vOut.pos = mul(vLocal, g_proj);
+	vOut.pos.z = 0.5f;
+	vOut.tex = vIn.tex;
+	return vOut;
+}
+VS_OUTPUT PLAYER(in VS_INPUT vIn)
 {
 	VS_OUTPUT vOut = (VS_OUTPUT)0;
 	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);

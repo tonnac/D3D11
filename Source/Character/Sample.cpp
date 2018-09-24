@@ -4,21 +4,27 @@
 bool Sample::Init()
 {
 	S_Scene.Initialize(m_pDevice, m_pContext);
+	// 25 36
+	m_Character.SetPos(m_pDevice, { 100.0f,500.0f }, { 10.0f,87.0f,35.0f,122.5f });
+	m_Character.InitSet(m_pDevice, L"Kaho", L"../../momodora/data/character/Kaho.png", L"VertexShader.txt");
 	return true;
 }
 bool Sample::Frame()
 {
 	S_Scene.Frame();
+	m_Character.Frame();
 	return true;
 }
 bool Sample::Render()
 {
 	S_Scene.Render();
+	m_Character.Render(m_pContext);
 	return true;
 }
 bool Sample::Release()
 {
 	S_Scene.Release();
+	m_Character.Release();
 	return true;
 }
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)

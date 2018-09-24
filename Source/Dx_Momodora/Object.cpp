@@ -62,11 +62,11 @@ bool Object::Release()
 }
 void Object::SetPos(const D3DXVECTOR2& pos)
 {
-	return;
+	m_Centerpos = pos;
 }
 void Object::SetPos(const D3DXVECTOR4& DrawVec)
 {
-	return;
+	m_DrawVec = DrawVec;
 }
 bool Object::Scroll(const FLOAT& pos)
 {

@@ -14,10 +14,10 @@ void Plane_Object::CreateIndexBuffer(ID3D11Device* pDevice)
 	{
 		m_indiciesList.push_back(i * 4);
 		m_indiciesList.push_back(i * 4 + 1);
-		m_indiciesList.push_back(i * 4 + 2);
+		m_indiciesList.push_back(i * 4 + 3);
 		m_indiciesList.push_back(i * 4 + 3);
 		m_indiciesList.push_back(i * 4 + 2);
-		m_indiciesList.push_back(i * 4 + 1);
+		m_indiciesList.push_back(i * 4);
 	}
 	m_Object.CreateBuffer(pDevice, D3D11_BIND_INDEX_BUFFER, &m_indiciesList.at(0), sizeof(DWORD) * CASTING(UINT, m_indiciesList.size()));
 }
