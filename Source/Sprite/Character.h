@@ -1,5 +1,6 @@
 #pragma once
 #include "Plane_Object.h"
+#include "Sprite.h"
 
 class Character : public Plane_Object
 {
@@ -13,4 +14,5 @@ private:
 	FLOAT	m_fScale;
 	bool	isDebug;
 	ID3D11PixelShader * m_pShader;
+	Sprite*				m_pSprite;
 };

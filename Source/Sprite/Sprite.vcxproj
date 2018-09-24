@@ -21,14 +21,17 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Sample.h" />
+    <ClInclude Include="Sprite.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Kaho.txt" />
     <Text Include="SceneScript.txt" />
     <Text Include="VertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="Sprite.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

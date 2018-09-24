@@ -1,9 +1,7 @@
 #include "Character.h"
 #include "DirectInput.h"
 
-//스프라이트 Texpos 
-
-Character::Character() : m_fScale(2.6f), isDebug(false), m_pShader(nullptr)
+Character::Character() : m_fScale(2.6f), isDebug(false), m_pShader(nullptr), m_pSprite(nullptr)
 {}
 
 void Character::SetPos(ID3D11Device * pDevice,const D3DXVECTOR2& Centerpos, const D3DXVECTOR4& DrawVec)
@@ -14,6 +12,9 @@ void Character::SetPos(ID3D11Device * pDevice,const D3DXVECTOR2& Centerpos, cons
 		"TerrainPS", "ps_5_0", D3DCOMPILE_DEBUG, 0, nullptr, &pPSBlob, &pErrBlob, nullptr));
 	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &m_pShader));
 	Plane_Object::SetPos(Centerpos, DrawVec);
+
+	S_Sprite.SpriteSet(L"Kaho.txt");
+	m_pSprite = S_Sprite.LoadSprite(L"Kaho", L"Idle");
 }
 bool Character::Frame()
 {
@@ -39,6 +40,12 @@ bool Character::Frame()
 	m_VertexList[2].Pos.y = m_rtCollision.bottom;
 	m_VertexList[3].Pos.x = m_VertexList[1].Pos.x;
 	m_VertexList[3].Pos.y = m_VertexList[2].Pos.y;
+
+	Plane_Object::SetPos(m_pSprite->getSpriteVt());
+	if (m_pSprite->Frame() == false)
+	{
+		m_pSprite->setIndex(0);
+	}
 	return true;
 }
 bool Character::PostRender(ID3D11DeviceContext* pContext)
