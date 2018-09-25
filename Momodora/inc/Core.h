@@ -21,6 +21,8 @@ public:
 public:
 	void			ResizeDevice(const LONG& Width, const LONG& Height) override;
 private:
+	bool			DeviceInit();
+	bool			PreInit();
 	bool			GameFrame();
 	bool			PreRender();
 	bool			GameRender();

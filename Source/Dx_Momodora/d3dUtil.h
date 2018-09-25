@@ -67,15 +67,17 @@ namespace std
 #define RE_CASTING(x,y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {x->Release();} (x) = nullptr
 
-extern HINSTANCE	g_hInstance;
-extern HWND			g_hWnd;
-extern RECT			g_rtClient;
-extern FLOAT		g_fSecPerFrame;
-extern FLOAT		g_fGameTime;
-extern bool			g_bActive;
-extern D3DXMATRIX	g_mToProj;
-extern FLOAT		g_fImageWidth;
-extern FLOAT		g_fImageHeight;
+using FilePathMap = std::map<std::tstring, std::tstring>;
+
+extern HINSTANCE		g_hInstance;
+extern HWND				g_hWnd;
+extern RECT				g_rtClient;
+extern FLOAT			g_fSecPerFrame;
+extern FLOAT			g_fGameTime;
+extern bool				g_bActive;
+extern D3DXMATRIX		g_mToProj;
+extern FLOAT			g_fImageWidth;
+extern FLOAT			g_fImageHeight;
 
 template <typename K>
 class Singleton
@@ -170,4 +172,13 @@ struct CacheData_
 {
 	std::tstring Name;
 	K			 Data;
+};
+
+class Filepath
+{
+public:
+	static bool			Init(const std::tstring& path);
+	static FilePathMap	m_Txtpath;
+	static FilePathMap	m_Pngpath;
+	static FilePathMap	m_Sndpath;
 };

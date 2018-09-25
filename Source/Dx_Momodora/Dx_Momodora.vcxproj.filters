@@ -43,6 +43,12 @@
     <Filter Include="헤더 파일\Scene">
       <UniqueIdentifier>{bcda7f7e-31cf-457c-9e90-a300869e70ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Sprite">
+      <UniqueIdentifier>{f0085ae2-2a5a-4a84-834a-9a3e50a0a87b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Sprite">
+      <UniqueIdentifier>{322b9b76-9fbc-4191-9801-1025e6b34c92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -105,6 +111,9 @@
     <ClInclude Include="ObjectMgr.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>헤더 파일\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -166,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="ObjectMgr.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>소스 파일\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

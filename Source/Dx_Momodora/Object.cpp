@@ -60,16 +60,25 @@ bool Object::Release()
 {
 	return m_Object.Release();
 }
-void Object::SetPos(const D3DXVECTOR4& DrawVec)
+void Object::SetTexPos(const D3DXVECTOR4& DrawVec)
 {
-	m_VertexList[0].TexPos = { DrawVec.x, DrawVec.y };
-	m_VertexList[1].TexPos = { DrawVec.z, DrawVec.y };
-	m_VertexList[2].TexPos = { DrawVec.x, DrawVec.w };
-	m_VertexList[3].TexPos = { DrawVec.z, DrawVec.w };
+	return;
+}
+void Object::SetVertexPos(const D3DXVECTOR2& Conterpos, const D3DXVECTOR2& Offset)
+{
+	return;
 }
 bool Object::Scroll(const FLOAT& pos)
 {
 	return true;
+}
+std::vector<P3_VERTEX>* Object::getVertexList()
+{
+	return &m_VertexList;
+}
+void Object::MoveCenterPos(const D3DXVECTOR2& vec)
+{
+	m_Centerpos += vec;
 }
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {
@@ -89,9 +98,5 @@ void Object::CreateConstantBuffer(ID3D11Device* pDevice)
 }
 void Object::SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& DrawVec)
 {
-	m_Centerpos = pos;
-	m_VertexList[0].TexPos = { DrawVec.x, DrawVec.y };
-	m_VertexList[1].TexPos = { DrawVec.z, DrawVec.y };
-	m_VertexList[2].TexPos = { DrawVec.x, DrawVec.w };
-	m_VertexList[3].TexPos = { DrawVec.z, DrawVec.w };
+	return;
 }

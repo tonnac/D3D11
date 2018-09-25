@@ -7,7 +7,7 @@ class Character : public Plane_Object
 public:
 	Character();
 public:
-	void	SetPos(ID3D11Device * pDevice,const D3DXVECTOR2& Centerpos, const D3DXVECTOR4& DrawVec);
+	void	SetPos(ID3D11Device * pDevice,const D3DXVECTOR2& Centerpos);
 	bool	Frame() override;
 	bool	PostRender(ID3D11DeviceContext* pContext) override;
 private:

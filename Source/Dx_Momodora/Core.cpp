@@ -1,19 +1,14 @@
 #include "Core.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Sprite.h"
 
 D3DXMATRIX	g_mToProj;
 
 bool Core::GameInit()
 {
-#ifdef DEVICE_INFO
-	DeviceInfo::CreateDeviceInfo();
-#endif
-	InitDevice();
-	S_Input.Init();
-	S_Write.Set(m_pSwapChain);
-	m_Timer.Init();
-	MatrixInit();
+	DeviceInit();
+	PreInit();
 	Init();
 	return true;
 }
@@ -25,6 +20,7 @@ bool Core::GameRun()
 }
 bool Core::GameRelease()
 {
+	S_Sprite.Release();
 	S_Texture.Release();
 	S_Shader.Release();
 	S_Write.Release();
@@ -55,6 +51,24 @@ void Core::ResizeDevice(const LONG& Width, const LONG& Height)
 {
 	Device::ResizeDevice(Width, Height);
 	MatrixInit();
+}
+bool Core::DeviceInit()
+{
+#ifdef DEVICE_INFO
+	DeviceInfo::CreateDeviceInfo();
+#endif
+	InitDevice();
+	S_Input.Init();
+	S_Write.Set(m_pSwapChain);
+	m_Timer.Init();
+	return true;
+}
+bool Core::PreInit()
+{
+	MatrixInit();
+	Filepath::Init(L"Filepath.txt");
+	S_Sprite.SpriteSet(Filepath::m_Txtpath[L"KahoSprite"]);
+	return true;
 }
 bool Core::GameFrame()
 {

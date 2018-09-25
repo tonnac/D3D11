@@ -20,8 +20,8 @@ void Terrain::SetPos(const D3DXVECTOR4& Drawvec)
 	DrawVec.y *= g_rtClient.bottom / g_fImageHeight;
 	DrawVec.z *= g_rtClient.right / g_fImageWidth;
 	DrawVec.w *= g_rtClient.bottom / g_fImageHeight;
-	m_fxDiffHalf = (DrawVec.z - DrawVec.x) * 0.5f;
-	m_fyDiffHalf = (DrawVec.w - DrawVec.y) * 0.5f;
+	m_LengthDiff.x = (DrawVec.z - DrawVec.x) * 0.5f;
+	m_LengthDiff.y = (DrawVec.w - DrawVec.y) * 0.5f;
 	m_VertexList[0].Pos = D3DXVECTOR3(DrawVec.x, DrawVec.y, 0.5f);
 	m_VertexList[1].Pos = D3DXVECTOR3(DrawVec.z, DrawVec.y, 0.5f);
 	m_VertexList[2].Pos = D3DXVECTOR3(DrawVec.x, DrawVec.w, 0.5f);
@@ -29,30 +29,10 @@ void Terrain::SetPos(const D3DXVECTOR4& Drawvec)
 	m_Centerpos.x = (DrawVec.x + DrawVec.z) * 0.5f;
 	m_Centerpos.y = (DrawVec.y + DrawVec.w) * 0.5f;
 }
-bool Terrain::Frame()
-{
-	ComputeVertex();
-	m_rtCollision.left = m_VertexList[0].Pos.x;
-	m_rtCollision.top = m_VertexList[0].Pos.y;
-	m_rtCollision.right = m_VertexList[1].Pos.x;
-	m_rtCollision.bottom = m_VertexList[2].Pos.y;
-	return true;
-}
 bool Terrain::Scroll(const FLOAT& pos)
 {
 	m_Centerpos.x += -pos;
 	return true;
-}
-void Terrain::ComputeVertex()
-{
-	m_VertexList[0].Pos.x = m_Centerpos.x - m_fxDiffHalf;
-	m_VertexList[0].Pos.y = m_Centerpos.y - m_fyDiffHalf;
-	m_VertexList[1].Pos.x = m_Centerpos.x + m_fxDiffHalf;
-	m_VertexList[1].Pos.y = m_VertexList[0].Pos.y;
-	m_VertexList[2].Pos.x = m_VertexList[0].Pos.x;
-	m_VertexList[2].Pos.y = m_Centerpos.y + m_fyDiffHalf;
-	m_VertexList[3].Pos.x = m_VertexList[1].Pos.x;
-	m_VertexList[3].Pos.y = m_VertexList[2].Pos.y;
 }
 bool Terrain::PreRender(ID3D11DeviceContext* pContext)
 {

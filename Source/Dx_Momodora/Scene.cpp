@@ -37,30 +37,28 @@ void Scene::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
 }
 void Scene::SceneSet(const bool& isInverse)
 {
+	std::tifstream fp;
+	FileExceptErr(fp, Filepath::m_Txtpath[L"SceneScript"]);
+	S_Object.Release();
+
+	std::tstring Buffer;
+	int ObjTypeNum;
+
+	while (Buffer != m_SceneName && fp.eof() == false)
+	{
+		std::getline(fp, Buffer);
+	}
+
+	if (fp.eof() == true)
+	{
+		std::tstring ErrMsg = m_SceneName + L" Can't Find";
+		MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
+		PostQuitMessage(0);
+	}
+
+	fp >> Buffer >> ObjTypeNum;
 	if (isInverse == false)
 	{
-		std::tifstream fp;
-		std::tstring FilePath = L"SceneScript.txt";
-		FileExceptErr(fp, FilePath);
-		S_Object.Release();
-
-		std::tstring Buffer;
-		int ObjTypeNum;
-
-		while (Buffer != m_SceneName && fp.eof() == false)
-		{
-			std::getline(fp, Buffer);
-		}
-
-		if (fp.eof() == true)
-		{
-			std::tstring ErrMsg = m_SceneName + L" Can't Find";
-			MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
-			PostQuitMessage(0);
-		}
-
-		fp >> Buffer >> ObjTypeNum;
-
 		for (int k = 0; k < ObjTypeNum; ++k)
 		{
 			ObjectEnum ObjType;
@@ -77,7 +75,7 @@ void Scene::SceneSet(const bool& isInverse)
 					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
 					Background* pBackground = new Background;
 					pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Map", L"../../momodora/data/map/Map.png", L"VertexShader.txt");
+					pBackground->InitSet(m_pDevice, L"Map", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
 				}
 			}break;
@@ -89,7 +87,7 @@ void Scene::SceneSet(const bool& isInverse)
 					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
 					Terrain* pTerrain = new Terrain;
 					pTerrain->SetPos(TerrainPos);
-					pTerrain->InitSet(m_pDevice, L"Terrain", L"VertexShader.txt", "VS", "TerrainPS");
+					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pTerrain);
 				}
 			}break;
@@ -98,28 +96,7 @@ void Scene::SceneSet(const bool& isInverse)
 	}
 	else
 	{
-		static FLOAT xWidth = 0.0f;
-		std::tifstream fp;
-		std::tstring FilePath = L"SceneScript.txt";
-		FileExceptErr(fp, FilePath);
-		S_Object.Release();
-
-		std::tstring Buffer;
-		int ObjTypeNum;
-
-		while (Buffer != m_SceneName && fp.eof() == false)
-		{
-			std::getline(fp, Buffer);
-		}
-
-		if (fp.eof() == true)
-		{
-			std::tstring ErrMsg = m_SceneName + L" Can't Find";
-			MessageBox(nullptr, ErrMsg.c_str(), L"SceneBuilder Error", MB_OK);
-			PostQuitMessage(0);
-		}
-
-		fp >> Buffer >> ObjTypeNum;
+		FLOAT xWidth = 0.0f;
 
 		for (int k = 0; k < ObjTypeNum; ++k)
 		{
@@ -138,7 +115,7 @@ void Scene::SceneSet(const bool& isInverse)
 					xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
 					Background* pBackground = new Background;
 					pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Map", L"../../momodora/data/map/Map.png", L"VertexShader.txt");			
+					pBackground->InitSet(m_pDevice, L"Map", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
 				}
 			}break;
@@ -151,7 +128,7 @@ void Scene::SceneSet(const bool& isInverse)
 					Terrain* pTerrain = new Terrain;
 					pTerrain->SetPos(TerrainPos);
 					pTerrain->Scroll(xWidth * 3.0f);
-					pTerrain->InitSet(m_pDevice, L"Terrain", L"VertexShader.txt", "VS", "TerrainPS");
+					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pTerrain);
 				}
 			}break;
