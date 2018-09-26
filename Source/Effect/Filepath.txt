@@ -1,7 +1,7 @@
 Txt 3
-SceneScript SceneScript.txt
-Shader VertexShader.txt
-KahoSprite Kaho.txt
+SceneScript ../../momodora/data/txt/SceneScript.txt
+Shader ../../momodora/data/txt/VertexShader.txt
+KahoSprite ../../momodora/data/txt/Kaho.txt
 Png 2
 Kaho ../../momodora/data/character/Kaho.png
 Map ../../momodora/data/map/map.png

@@ -2,7 +2,10 @@
 
 GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename)
 {}
-
+void GameScene::InitArrow(PlayerEffectPtr arrow)
+{
+	arrow->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+}
 
 GameScene1::GameScene1() : GameScene(L"GameScene1")
 {}

@@ -4,6 +4,7 @@
 #include "Sprite.h"
 
 D3DXMATRIX	g_mToProj;
+bool		g_DebugMode = false;
 
 bool Core::GameInit()
 {
@@ -66,13 +67,19 @@ bool Core::DeviceInit()
 bool Core::PreInit()
 {
 	MatrixInit();
-	Filepath::Init(L"Filepath.txt");
+	Filepath::Init(L"../../momodora/data/txt/Filepath.txt");
 	S_Sprite.SpriteSet(Filepath::m_Txtpath[L"KahoSprite"]);
+	S_Sound.Init();
+	S_Sound.LoadFile(Filepath::m_Sndpath[L"Snd"]);
 	return true;
 }
 bool Core::GameFrame()
 {
 	S_Input.Frame();
+	if (S_Input.getKeyState(DIK_DELETE) == Input::KEYSTATE::KEY_PUSH)
+	{
+		g_DebugMode = !g_DebugMode;
+	}
 	m_Timer.Frame();
 	Frame();
 	S_Input.PostFrame();

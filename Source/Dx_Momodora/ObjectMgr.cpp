@@ -1,8 +1,11 @@
 #include "ObjectMgr.h"
 #include "DirectInput.h"
 
-ObjectMgr::ObjectMgr() : isDebug(false)
-{}
+ObjectMgr::ObjectMgr()
+{
+	m_PlayerEffect.clear();
+	m_Terrainlist.clear();
+}
 
 bool ObjectMgr::Frame()
 {
@@ -26,23 +29,43 @@ bool ObjectMgr::Frame()
 			}
 		}
 	}
-	if (S_Input.getKeyState(DIK_DELETE) == Input::KEYSTATE::KEY_PUSH)
-	{
-		isDebug = !isDebug;
-	}
 	for (auto& it : m_Terrainlist)
 	{
 		it->Frame();
 	}
 	m_pBackground->Frame();
+	if (m_PlayerEffect.empty() == false)
+	{
+		P_EffectIter iter;
+		for (iter = m_PlayerEffect.begin(); iter != m_PlayerEffect.end();)
+		{
+			if ((*iter)->Frame() == false)
+			{
+				iter = m_PlayerEffect.erase(iter);
+			}
+			else
+			{
+				++iter;
+			}
+		}
+	}
+	m_pPlayer->Frame();
 	return true;
 }
 bool ObjectMgr::Render(ID3D11DeviceContext* pContext)
 {
-	m_pBackground->Render(pContext);
-	if (isDebug == true)
+//	m_pBackground->Render(pContext);
+	if (g_DebugMode == true)
 	{
 		for (auto& it : m_Terrainlist)
+		{
+			it->Render(pContext);
+		}
+	}
+	m_pPlayer->Render(pContext);
+	if (m_PlayerEffect.empty() == false)
+	{
+		for (auto& it : m_PlayerEffect)
 		{
 			it->Render(pContext);
 		}
@@ -53,9 +76,9 @@ bool ObjectMgr::Release()
 {
 	for (auto& it : m_Terrainlist)
 	{
-		RELEASE(it);
+		DEL_REL(it);
 	}
-	RELEASE(m_pBackground);
+	DEL_REL(m_pBackground);
 	return true;
 }
 void ObjectMgr::AddBackGround(Background* pBackGround)
@@ -65,4 +88,12 @@ void ObjectMgr::AddBackGround(Background* pBackGround)
 void ObjectMgr::AddTerrain(Terrain* pTerrain)
 {
 	m_Terrainlist.push_back(pTerrain);
+}
+void ObjectMgr::AddPlayerEffect(PlayerEffectPtr pEffect)
+{
+	m_PlayerEffect.push_back(pEffect);
+}
+void ObjectMgr::AddPlayer(Player* pPlayer)
+{
+	m_pPlayer = pPlayer;
 }

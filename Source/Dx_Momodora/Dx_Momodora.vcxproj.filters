@@ -49,6 +49,30 @@
     <Filter Include="헤더 파일\Sprite">
       <UniqueIdentifier>{322b9b76-9fbc-4191-9801-1025e6b34c92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object\Effect">
+      <UniqueIdentifier>{0a468f1a-62a3-4440-a23a-bb79579086cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\State">
+      <UniqueIdentifier>{f81389ab-920b-45e1-9b07-80e8653288b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Object\Character">
+      <UniqueIdentifier>{1477ffa8-82e5-4bc2-8521-aa7fa1c6bc29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\State">
+      <UniqueIdentifier>{1b8a411c-05e4-4435-8c96-863b433ac88e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Character">
+      <UniqueIdentifier>{fe99efa6-f88d-4331-abbe-63527035ee5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Effect">
+      <UniqueIdentifier>{be4124a3-6b40-4b34-949f-4f84ad43c079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Sound">
+      <UniqueIdentifier>{1b35615b-75e7-43ed-aa1f-cfc145ae5065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Sound">
+      <UniqueIdentifier>{eb3ce7e1-b1da-4399-8d2d-0052f081f27b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -99,20 +123,44 @@
     <ClInclude Include="Terrain.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="SceneMgr.h">
-      <Filter>헤더 파일\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>헤더 파일\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBasicState.h">
+      <Filter>헤더 파일\State</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>헤더 파일\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMgr.h">
+      <Filter>헤더 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="KahoAttack.h">
+      <Filter>헤더 파일\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>헤더 파일\Object\Effect</Filter>
+    </ClInclude>
     <ClInclude Include="ObjectMgr.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>헤더 파일\Sprite</Filter>
+    <ClInclude Include="PlayerAttack.h">
+      <Filter>헤더 파일\State</Filter>
+    </ClInclude>
+    <ClInclude Include="mSound.h">
+      <Filter>헤더 파일\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,21 +215,41 @@
     <ClCompile Include="GameScene.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneMgr.cpp">
+    <ClCompile Include="Scene.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="Sprite.cpp">
+      <Filter>소스 파일\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBasicState.cpp">
+      <Filter>소스 파일\State</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>소스 파일\State</Filter>
+    </ClCompile>
+    <ClCompile Include="KahoAttack.cpp">
+      <Filter>소스 파일\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>소스 파일\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMgr.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
     <ClCompile Include="ObjectMgr.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>소스 파일\Sprite</Filter>
+    <ClCompile Include="PlayerAttack.cpp">
+      <Filter>소스 파일\State</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="VertexShader.txt" />
-    <Text Include="SceneScript.txt" />
+    <ClCompile Include="mSound.cpp">
+      <Filter>소스 파일\Sound</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

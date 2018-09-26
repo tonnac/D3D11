@@ -6,7 +6,7 @@ class Terrain : public Plane_Object
 public:
 	bool	InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& ShaderFilepath,
 					const std::string& VSFunc = "VS", const std::string& PSFunc = "PS");
-	void	SetPos(const D3DXVECTOR4& Drawvec);
+	void	SetPos(const D3DXVECTOR4& Pos) override;
 public:
 	bool	Scroll(const FLOAT& pos) override;
 private:

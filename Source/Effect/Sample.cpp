@@ -5,20 +5,22 @@ bool Sample::Init()
 {
 	S_Scene.Initialize(m_pDevice, m_pContext);
 	// 25 36
-	m_Character.SetPos(m_pDevice, { 100.0f,500.0f });
-	m_Character.InitSet(m_pDevice, L"Kaho", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	m_Character.SetCenterPos({ 100.0f,500.0f });
+	m_Character.InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 	
-	m_Effect.SetPos(m_pDevice, { 300.0f,500.0f });
-	m_Effect.InitSet(m_pDevice, L"Effect", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	m_Effect.SetCenterPos({ 300.0f,500.0f });
+	m_Effect.InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 
-	m_Effect1.SetPos(m_pDevice, { 500.0f,500.0f });
-	m_Effect1.InitSet(m_pDevice, L"Effect", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	m_Effect1.SetCenterPos({ 500.0f,500.0f });
+	m_Effect1.InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 
-	m_Effect2.SetPos(m_pDevice, { 300.0f,300.0f });
-	m_Effect2.InitSet(m_pDevice, L"Effect", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	m_Effect2.SetCenterPos({ 300.0f,300.0f });
+	m_Effect2.InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 
-	m_Effect3.SetPos(m_pDevice, { 500.0f,300.0f });
-	m_Effect3.InitSet(m_pDevice, L"Effect", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	m_Effect3.SetCenterPos({ 500.0f,300.0f });
+	m_Effect3.InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+
+	
 
 	return true;
 }

@@ -2,19 +2,17 @@
 #include "DirectInput.h"
 #include "State.h"
 
-Character::Character() : isDebug(false), m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1)
+Character::Character() : isDebug(false), m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1), m_fSpeed(0.0f)
 {
 	m_fScale = 2.6f;
 }
 
-void Character::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+
+bool Character::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+						const std::string& VSFunc, const std::string& PSFunc)
 {
-	ID3DBlob * pPSBlob = nullptr;
-	ID3DBlob * pErrBlob = nullptr;
-	ShaderifFailed(D3DX11CompileFromFile(Filepath::m_Txtpath[L"Shader"].c_str(), nullptr, nullptr,
-		"TerrainPS", "ps_5_0", D3DCOMPILE_DEBUG, 0, nullptr, &pPSBlob, &pErrBlob, nullptr));
-	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &m_pShader));
-	m_Centerpos = Centerpos;
+	m_pShader = S_Shader.getShader(L"Terrain")->getPixelShader();
+	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
 bool Character::Init()
 {

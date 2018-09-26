@@ -91,7 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)../Dx/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../Dx/inc;$(SolutionDir)../fmod/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -100,9 +100,11 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)../Momodora/lib"
-copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"
-copy "$(ProjectDir)*.txt" "$(SolutionDir)../Momodora/data/txt"</Command>
+copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)../Dx/Lib/x64;$(SolutionDir)../fmod/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -156,21 +158,29 @@ copy "$(ProjectDir)*.txt" "$(SolutionDir)../Momodora/data/txt"</Command>
     <ClInclude Include="Button.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="KahoAttack.h" />
+    <ClInclude Include="mSound.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="Object_Basic.h" />
     <ClInclude Include="Plane_Object.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAttack.h" />
+    <ClInclude Include="PlayerBasicState.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
@@ -181,29 +191,33 @@ copy "$(ProjectDir)*.txt" "$(SolutionDir)../Momodora/data/txt"</Command>
     <ClCompile Include="Button.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="KahoAttack.cpp" />
+    <ClCompile Include="mSound.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="Object_Basic.cpp" />
     <ClCompile Include="Plane_Object.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerAttack.cpp" />
+    <ClCompile Include="PlayerBasicState.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wClass.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="SceneScript.txt" />
-    <Text Include="VertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

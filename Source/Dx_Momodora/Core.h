@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "DirectWrite.h"
 #include "DirectInput.h"
+#include "mSound.h"
 
 //#define DEVICE_INFO
 

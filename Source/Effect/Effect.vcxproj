@@ -21,25 +21,31 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Effect.h" />
-    <ClInclude Include="KahoAttack.h" />
+    <ClInclude Include="KahoAttack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAttack.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="PlayerBasicState.h" />
     <ClInclude Include="Sample.h" />
+    <ClInclude Include="SceneMgr.h" />
     <ClInclude Include="State.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="KahoAttack.cpp" />
+    <ClCompile Include="KahoAttack.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAttack.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="PlayerBasicState.cpp" />
     <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="State.cpp" />
   </ItemGroup>
   <ItemGroup>

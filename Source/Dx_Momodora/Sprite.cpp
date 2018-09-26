@@ -1,5 +1,9 @@
 #include "Sprite.h"
 
+Sprite::Sprite() : m_fSpriteTime(0.0f), m_fDivideTime(1.0f), m_iIndex(0)
+{
+	m_fOffset = m_fDivideTime / m_spritelist.size();
+}
 Sprite::Sprite(const int& k) : m_fSpriteTime(0.0f), m_fDivideTime(1.0f), m_iIndex(0)
 {
 	m_spritelist.resize(k);
@@ -17,16 +21,13 @@ bool Sprite::Frame()
 		m_fSpriteTime -= m_fOffset;
 		if (++m_iIndex >= m_spritelist.size())
 		{
+			m_fSpriteTime = 0.0f;
 			return false;
 		}
 	}
 	return true;
 }
-bool Sprite::setList(const SPRITELIST& rt)
-{
-	m_spritelist = rt;
-	return true;
-}
+
 size_t Sprite::Size()
 {
 	return m_spritelist.size();
@@ -46,11 +47,15 @@ bool Sprite::setIndex(const INT& rindex)
 	m_iIndex = rindex;
 	return true;
 }
-INT	Sprite::getIndex()
+INT	Sprite::getIndex() const
 {
 	return m_iIndex;
 }
-D3DXVECTOR4 Sprite::getSpriteVt()
+void Sprite::pushSprite(const D3DXVECTOR4& Vec)
+{
+	m_spritelist.push_back(Vec);
+}
+D3DXVECTOR4 Sprite::getSpriteVt() const
 {
 	return m_spritelist[m_iIndex];
 }
@@ -93,41 +98,31 @@ bool SpriteMgr::SpriteSet(const std::tstring& Filepath)
 
 	std::tstring pe = Filepath.substr(Filepath.find_last_of('/') + 1, Filepath.length());
 	pe = pe.substr(0, pe.find('.'));
-	SPMAP addmap;
 
 	if (!m_SpriteMap[pe].empty())
 	{
 		return true;
 	}
 
-	std::vector<std::tstring> temp;
 	std::tstring buffer;
-
+	SPMAP addmap;
 	std::getline(fp, buffer);
 	int Total = std::stoi(buffer);
-	temp.resize(Total);
-	for (int i = 0; i < Total; i++)
+	for (int i = 0; i < Total; ++i)
 	{
+		std::tstring temp;
 		int k;
-		fp >> temp[i] >> k;
-		Sprite* pl = new Sprite(k);
-		addmap.insert(std::make_pair(temp[i], pl));
-	}
-	while (!fp.eof())
-	{
-		for (auto it : temp)
+		fp >> temp >> k;
+		Sprite* pl = new Sprite;
+		for (int j = 0; j < k; ++j)
 		{
-			SPRITELIST sl;
-			for (int i = 0; i < addmap[it]->Size();++i)
-			{
-				FLOAT l, t, r, b;
-				fp >> l >> t >> r >> b;;
-				r += l, b += t;
-				D3DXVECTOR4 rt = { l,t,r,b };
-				sl.push_back(rt);
-			}
-			addmap[it]->setList(sl);
+			D3DXVECTOR4 rt;
+			fp >> rt.x >> rt.y >> rt.z >> rt.w;
+			rt.z += rt.x, rt.w += rt.y;
+			pl->pushSprite(rt);
 		}
+		pl->setDivideTime(1.0f);
+		addmap.insert(std::make_pair(temp, pl));
 	}
 	m_SpriteMap[pe] = addmap;
 	return true;

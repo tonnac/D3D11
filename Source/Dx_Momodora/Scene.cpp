@@ -75,7 +75,7 @@ void Scene::SceneSet(const bool& isInverse)
 					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
 					Background* pBackground = new Background;
 					pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Map", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
+					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
 				}
 			}break;
@@ -89,6 +89,18 @@ void Scene::SceneSet(const bool& isInverse)
 					pTerrain->SetPos(TerrainPos);
 					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pTerrain);
+				}
+			}break;
+			case ObjectEnum::PLAYER:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR2 Center;
+					fp >> Center.x >> Center.y;
+					Player* pPlayer = new Player;
+					pPlayer->SetCenterPos(Center);
+					pPlayer->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+					S_Object.AddPlayer(pPlayer);
 				}
 			}break;
 			}
@@ -130,6 +142,18 @@ void Scene::SceneSet(const bool& isInverse)
 					pTerrain->Scroll(xWidth * 3.0f);
 					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pTerrain);
+				}
+			}break;
+			case ObjectEnum::PLAYER:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR2 Center;
+					fp >> Center.x >> Center.y;
+					Player* pPlayer = new Player;
+					Center.x = g_rtClient.right - Center.x;
+					pPlayer->SetCenterPos(Center);
+					pPlayer->reverseDir();
 				}
 			}break;
 			}

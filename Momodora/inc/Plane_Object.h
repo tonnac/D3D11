@@ -13,7 +13,6 @@ public:
 	bool					Frame() override;
 protected:
 	virtual void			CreateIndexBuffer(ID3D11Device* pDevice);
-	virtual void			SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& DrawVec) override;
 protected:
 	bool					PreRender(ID3D11DeviceContext* pContext) override;
 	bool					PostRender(ID3D11DeviceContext* pContext) override;

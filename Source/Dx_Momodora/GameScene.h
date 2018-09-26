@@ -10,6 +10,7 @@ public:
 	virtual bool		Frame		() override = 0;
 	virtual bool		Release		() override = 0;
 	virtual bool		inverseInit	() override = 0;
+	virtual void		InitArrow	(PlayerEffectPtr arrow) final;
 protected:
 };
 

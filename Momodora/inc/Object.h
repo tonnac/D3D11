@@ -13,18 +13,18 @@ public:
 	bool						Render(ID3D11DeviceContext* pContext);
 	virtual bool				Release();
 	virtual void				SetTexPos(const D3DXVECTOR4& DrawVec);
-	virtual void				SetVertexPos(const D3DXVECTOR2& Conterpos, const D3DXVECTOR2& Offset);
+	virtual void				SetCenterPos(const D3DXVECTOR2& Centerpos);
+	virtual void				SetPos(const D3DXVECTOR4& Pos);
 public:
 	virtual bool				Scroll(const FLOAT& pos);
 public:
-	std::vector<P3_VERTEX>*		getVertexList();
-public:
 	void						MoveCenterPos(const D3DXVECTOR2& vec);
+public:
+	D3DXVECTOR2					getCenterPos() const;
 protected:
 	void						CreateVertexBuffer(ID3D11Device* pDevice);
 	virtual void				CreateConstantBuffer(ID3D11Device* pDevice);
 protected:
-	virtual void				SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& DrawVec);
 	virtual bool				PostRender(ID3D11DeviceContext* pContext);
 	virtual bool				PreRender(ID3D11DeviceContext* pContext);
 protected:

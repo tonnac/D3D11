@@ -1,19 +1,15 @@
 #include "Effect.h"
 #include "DirectInput.h"
 
-Effect::Effect() : isDebug(false)
+Effect::Effect() : isDebug(false), m_iDir(1)
 {
 	m_fScale = 2.6f;
 }
-
-void Effect::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+bool Effect::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
 {
-	ID3DBlob * pPSBlob = nullptr;
-	ID3DBlob * pErrBlob = nullptr;
-	ShaderifFailed(D3DX11CompileFromFile(Filepath::m_Txtpath[L"Shader"].c_str(), nullptr, nullptr,
-		"TerrainPS", "ps_5_0", D3DCOMPILE_DEBUG, 0, nullptr, &pPSBlob, &pErrBlob, nullptr));
-	ThrowifFailed(pDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &m_pShader));
-	m_Centerpos = Centerpos;
+	m_pShader = S_Shader.getShader(L"Terrain")->getPixelShader();
+	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
 bool Effect::Frame()
 {
@@ -32,6 +28,11 @@ bool Effect::Frame()
 	m_LengthDiff.x = (m_VertexList[1].TexPos.x - m_VertexList[0].TexPos.x) * m_fScale * 0.5f;
 	m_LengthDiff.y = (m_VertexList[2].TexPos.y - m_VertexList[0].TexPos.y) * m_fScale * 0.5f;
 
+	if (m_iDir == -1)
+	{
+		reverseSet();
+	}
+
 	return Plane_Object::Frame();
 }
 bool Effect::PostRender(ID3D11DeviceContext* pContext)
@@ -45,6 +46,10 @@ bool Effect::PostRender(ID3D11DeviceContext* pContext)
 	}
 	return true;
 }
+bool Effect::Release()
+{
+	return Plane_Object::Release();
+}
 void Effect::setSpeed(const FLOAT& pt)
 {
 //	m_fSpeed = pt;
@@ -52,4 +57,17 @@ void Effect::setSpeed(const FLOAT& pt)
 void Effect::setIndex(const int& index)
 {
 	m_pEffectSprite->setIndex(index);
+}
+void Effect::reverseDir()
+{
+	m_iDir *= -1;
+}
+void Effect::reverseSet()
+{
+	D3DXVECTOR2 temp = m_VertexList[0].TexPos;
+	m_VertexList[0].TexPos = m_VertexList[1].TexPos;
+	m_VertexList[1].TexPos = temp;
+	temp = m_VertexList[3].TexPos;
+	m_VertexList[3].TexPos = m_VertexList[2].TexPos;
+	m_VertexList[2].TexPos = temp;
 }

@@ -33,10 +33,11 @@ private:
 public:
 	bool				Release();
 public:
-	void				AddCache(const std::tstring& Name, Shader* pShader);
 	Shader*				LoadShader(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath,
 						const std::string& VSFunc, const std::string& PSFunc);
-	Shader*				getShader(const std::tstring& Name);
+	Shader *			getShader(const std::tstring& Name);
+private:
+	void				AddCache(const std::tstring& Name, Shader* pShader);
 private:
 	const int			Max_Cache = 3;
 	CacheList			m_DataCache;

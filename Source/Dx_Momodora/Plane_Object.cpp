@@ -50,14 +50,6 @@ void Plane_Object::CreateIndexBuffer(ID3D11Device* pDevice)
 	}
 	m_Object.CreateBuffer(pDevice, D3D11_BIND_INDEX_BUFFER, &m_indiciesList.at(0), sizeof(DWORD) * CASTING(UINT, m_indiciesList.size()));
 }
-void Plane_Object::SetPos(const D3DXVECTOR2& pos, const D3DXVECTOR4& DrawVec)
-{
-	m_Centerpos = pos;
-	m_VertexList[0].TexPos = { DrawVec.x, DrawVec.y };
-	m_VertexList[1].TexPos = { DrawVec.z, DrawVec.y };
-	m_VertexList[2].TexPos = { DrawVec.x, DrawVec.w };
-	m_VertexList[3].TexPos = { DrawVec.z, DrawVec.w };
-}
 bool Plane_Object::PreRender(ID3D11DeviceContext* pContext)
 {
 	ID3D11Buffer * pIndex = m_Object.getIndexBuffer();

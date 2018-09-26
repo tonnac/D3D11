@@ -1,5 +1,10 @@
 #include "KahoAttack.h"
 
+KahoAttack::~KahoAttack()
+{
+	Plane_Object::Release();
+}
+
 bool KahoAttack::Frame()
 {
 	Effect::Frame();
@@ -16,51 +21,62 @@ bool KahoAttack::Frame()
 	}
 	return true;
 }
-
-void KahoAttack1::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+bool KahoAttack::Release()
 {
-	Effect::SetPos(pDevice, Centerpos);
+	return true;
+}
+
+bool KahoAttack1::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
+{
 	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"Leaf1");
 	m_pEffectSprite->setIndex(0);
 	m_pEffectSprite->setDivideTime(0.7f);
 	m_iValidIndex = 4;
+	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
-void KahoAttack2::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+
+bool KahoAttack2::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
 {
-	Effect::SetPos(pDevice, Centerpos);
 	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"Leaf2");
 	m_pEffectSprite->setIndex(0);
 	m_pEffectSprite->setDivideTime(0.7f);
 	m_iValidIndex = 4;
+	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
-void KahoAttack3::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+
+bool KahoAttack3::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
 {
-	Effect::SetPos(pDevice, Centerpos);
 	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"Leaf3");
 	m_pEffectSprite->setIndex(0);
 	m_pEffectSprite->setDivideTime(0.7f);
 	m_iValidIndex = 5;
+	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
-void KahoAirAttack::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
+
+bool KahoAirAttack::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
 {
-	Effect::SetPos(pDevice, Centerpos);
 	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"AirLeaf");
 	m_pEffectSprite->setIndex(0);
 	m_pEffectSprite->setDivideTime(0.7f);
 	m_iValidIndex = 2;
+	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
-//void KahoBowAttack::SetPos(ID3D11Device * pDevice, const D3DXVECTOR2& Centerpos)
-//{
-//	LoadFile(L"PLAYER", L"../../../../data/bmp/KahoColor.bmp", L"../../../../data/bmp/KahoMask.bmp");
-//	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"ArrowS");
-//	m_pEffectSprite->setIndex(0);
-//	m_pEffectSprite->setDivideTime(0.5f);
-//	setRendering(2.8f, INVERSE::DEFAULT);
-//	return true;
-//}
-//bool KahoBowAttack::Frame()
-//{
-//	m_CenterPos.x += g_fSecPerFrame * m_fSpeed * 7.0f;
-//	Effect::Frame();
-//	return true;
-//}
+
+bool KahoBowAttack::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
+{
+	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"ArrowS");
+	m_pEffectSprite->setIndex(0);
+	m_pEffectSprite->setDivideTime(0.5f);
+	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
+}
+bool KahoBowAttack::Frame()
+{
+	m_Centerpos.x += g_fSecPerFrame * g_fSpeed * 7.0f * m_iDir;
+	Effect::Frame();
+	return true;
+}

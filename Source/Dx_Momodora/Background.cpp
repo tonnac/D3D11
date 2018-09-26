@@ -2,6 +2,8 @@
 #include "DirectInput.h"
 #include "DirectWrite.h"
 
+FLOAT g_fMapWidth = 0.0f;
+
 Background::Background()
 {
 }
@@ -9,12 +11,13 @@ Background::Background()
 void Background::SetPos(const FLOAT& rtLeft, const FLOAT& rtTop, const FLOAT& MaxWidth, const FLOAT& MaxHeight)
 {
 	BasicSet(rtLeft, MaxWidth);
-	Plane_Object::SetPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f }, { rtLeft, rtTop, rtLeft + g_fImageWidth, rtTop + g_fImageHeight });
+	g_fMapWidth = (m_MaxSize.y - m_MaxSize.x) * g_rtClient.right / g_fImageWidth;
+	Plane_Object::SetTexPos({ rtLeft, rtTop, rtLeft + g_fImageWidth, rtTop + g_fImageHeight });
 }
 void Background::SetInversePos(const FLOAT& rtLeft, const FLOAT& rtTop, const FLOAT& MaxWidth, const FLOAT& MaxHeight)
 {
 	BasicSet(rtLeft, MaxWidth);
-	Plane_Object::SetPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f }, { MaxWidth - g_fImageWidth, rtTop, MaxWidth, rtTop + g_fImageHeight });
+	Plane_Object::SetTexPos({ MaxWidth - g_fImageWidth, rtTop, MaxWidth, rtTop + g_fImageHeight });
 }
 bool Background::Frame()
 {
@@ -54,4 +57,5 @@ void Background::BasicSet(const FLOAT& rtLeft, const FLOAT& MaxWidth)
 	m_VertexList[1].Pos = { CASTING(FLOAT,g_rtClient.right), 0.0f, 0.5f };
 	m_VertexList[2].Pos = { 0.0f, CASTING(FLOAT,g_rtClient.bottom), 0.5f };
 	m_VertexList[3].Pos = { m_VertexList[1].Pos.x, m_VertexList[2].Pos.y, 0.5f };
+	m_Centerpos = { g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f };
 }

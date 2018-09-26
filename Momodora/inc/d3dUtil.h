@@ -19,6 +19,7 @@
 #include <DXGI.h>
 #include <D3Dcompiler.h>
 #include <D3DX10math.h>
+#include <memory>
 
 #pragma region DirectWrite
 #include "D2D1.h"
@@ -37,6 +38,9 @@
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"d3dx11.lib")
+
+#pragma comment(lib,"fmod64_vc.lib")
+
 #pragma comment(lib,"Dx_Momodora.lib")
 
 namespace std
@@ -66,6 +70,7 @@ namespace std
 #define CASTING(x,y) static_cast<x>((y))
 #define RE_CASTING(x,y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {x->Release();} (x) = nullptr
+#define DEL_REL(x) if((x)) {x->Release(); delete (x);} (x) = nullptr
 
 using FilePathMap = std::map<std::tstring, std::tstring>;
 
@@ -78,6 +83,16 @@ extern bool				g_bActive;
 extern D3DXMATRIX		g_mToProj;
 extern FLOAT			g_fImageWidth;
 extern FLOAT			g_fImageHeight;
+extern FLOAT			g_fSpeed;
+extern FLOAT			g_fMapWidth;
+extern bool				g_DebugMode;
+
+class PlayerEffect;
+using PlayerEffectPtr = std::shared_ptr<PlayerEffect>;
+extern PlayerEffectPtr g_Attack1;
+extern PlayerEffectPtr g_Attack2;
+extern PlayerEffectPtr g_Attack3;
+extern PlayerEffectPtr g_AirAttack;
 
 template <typename K>
 class Singleton

@@ -13,9 +13,9 @@ bool Terrain::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std
 	Init();
 	return true;
 }
-void Terrain::SetPos(const D3DXVECTOR4& Drawvec)
+void Terrain::SetPos(const D3DXVECTOR4& Pos)
 {
-	D3DXVECTOR4 DrawVec = Drawvec;
+	D3DXVECTOR4 DrawVec = Pos;
 	DrawVec.x *= g_rtClient.right / g_fImageWidth;
 	DrawVec.y *= g_rtClient.bottom / g_fImageHeight;
 	DrawVec.z *= g_rtClient.right / g_fImageWidth;

@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "PlayerBasicState.h"
 
+FLOAT g_fSpeed = 0.0f;
+
 Player::Player()
 {
 	State * state = new PlayerIdle(this);
@@ -27,5 +29,6 @@ Player::Player()
 	//state = new PlayerLadderLeave(this);
 	//state = new PlayerLadderUp(this);
 	//state = new PlayerLadderDown(this);
+	m_fSpeed = g_fSpeed = 200.0f;
 	m_pCurrentState = m_StateList[L"Idle"];
 }

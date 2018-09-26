@@ -6,16 +6,17 @@ using SPRITELIST = std::vector<D3DXVECTOR4>;
 class Sprite
 {
 public:
+	Sprite();
 	Sprite(const int&);
 	~Sprite();
 public:
 	bool				Frame			();
 public:
-	D3DXVECTOR4			getSpriteVt		();
+	D3DXVECTOR4			getSpriteVt		() const;
 	bool				setDivideTime	(const FLOAT& offset);
 	bool				setIndex		(const INT& rindex);
-	INT					getIndex		();
-	bool				setList			(const SPRITELIST& rt);
+	INT					getIndex		() const;
+	void				pushSprite		(const D3DXVECTOR4& Vec);
 	size_t				Size			();
 private:
 	INT					m_iIndex;
