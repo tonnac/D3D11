@@ -2,9 +2,12 @@
 #include "DirectInput.h"
 #include "State.h"
 
-Character::Character() : isDebug(false), m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1), m_fSpeed(0.0f)
+#include "DirectWrite.h"
+
+Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1), m_fSpeed(0.0f),
+							m_bLanding(true)
 {
-	m_fScale = 2.6f;
+	m_fScale = 3.0f;
 }
 
 
@@ -24,10 +27,6 @@ bool Character::Init()
 }
 bool Character::Frame()
 {
-	if (S_Input.getKeyState(DIK_DELETE) == Input::KEYSTATE::KEY_PUSH)
-	{
-		isDebug = !isDebug;
-	}
 	m_pCurrentState->Frame();
 
 	m_LengthDiff.x = (m_VertexList[1].TexPos.x - m_VertexList[0].TexPos.x) * m_fScale * 0.5f;
@@ -43,6 +42,10 @@ bool Character::Frame()
 bool Character::PostRender(ID3D11DeviceContext* pContext)
 {
 	Plane_Object::PostRender(pContext);
+
+	std::tstring pos = std::to_tstring(m_Centerpos.x) + L", " + std::to_tstring(m_Centerpos.y);
+	S_Write.DrawText({ 0.0f,50.0f,CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }, pos, D2D1::ColorF::White);
+
 	if (g_DebugMode == true)
 	{
 		pContext->PSSetShader(m_pShader, nullptr, 0);
@@ -71,6 +74,14 @@ void Character::reverseDir()
 {
 	m_iDir *= -1;
 }
+bool Character::isLanding() const
+{
+	return m_bLanding;
+}
+void Character::setLanding(const bool& landing)
+{
+	m_bLanding = landing;
+}
 std::tstring Character::getCurrentState()
 {
 	std::map<std::tstring, State*>::iterator iter;
@@ -78,7 +89,7 @@ std::tstring Character::getCurrentState()
 	iter = std::find_if(m_StateList.begin(), m_StateList.end(), foo);
 	return iter->first;
 }
-INT Character::getDir()
+INT Character::getDir() const
 {
 	return m_iDir;
 }

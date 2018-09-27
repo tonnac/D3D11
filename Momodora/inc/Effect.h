@@ -19,7 +19,6 @@ protected:
 	void				reverseSet	();
 protected:
 	INT					m_iDir;
-	bool				isDebug;
 	ID3D11PixelShader * m_pShader;
 	Sprite *			m_pEffectSprite;
 };

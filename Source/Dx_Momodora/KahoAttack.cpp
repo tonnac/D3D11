@@ -86,11 +86,6 @@ bool KahoBowAttack::Frame()
 {
 	m_Centerpos.x += g_fSecPerFrame * g_fSpeed * 7.0f * m_iDir;
 
-	if (S_Input.getKeyState(DIK_DELETE) == Input::KEYSTATE::KEY_PUSH)
-	{
-		isDebug = !isDebug;
-	}
-
 	SetTexPos(m_pEffectSprite->getSpriteVt());
 
 	m_LengthDiff.x = (m_VertexList[1].TexPos.x - m_VertexList[0].TexPos.x) * m_fScale * 0.5f;

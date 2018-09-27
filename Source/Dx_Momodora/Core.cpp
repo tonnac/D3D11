@@ -87,7 +87,7 @@ bool Core::GameFrame()
 }
 bool Core::PreRender()
 {
-	float fColor[] = { 0.8f ,1.0f, 0.8f, 1.0f };
+	float fColor[] = { 0.0f ,0.0f, 0.0f, 1.0f };
 	m_pContext->ClearRenderTargetView(m_pRenderTargetView, fColor);
 	S_Write.Begin();
 	return true;

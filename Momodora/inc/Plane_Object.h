@@ -1,6 +1,7 @@
 #pragma once
 #include "Object.h"
 
+
 class Plane_Object : public Object
 {
 public:
@@ -11,6 +12,8 @@ public:
 	virtual void			SetTexPos(const D3DXVECTOR4& DrawVec) override;
 public:
 	bool					Frame() override;
+public:
+	virtual COL				Collision(Object* pObject, FLOAT* ColSize = nullptr) override;
 protected:
 	virtual void			CreateIndexBuffer(ID3D11Device* pDevice);
 protected:

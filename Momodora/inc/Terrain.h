@@ -1,6 +1,8 @@
 #pragma once
 #include "Plane_Object.h"
 
+class Character;
+
 class Terrain : public Plane_Object
 {
 public:
@@ -9,6 +11,8 @@ public:
 	void	SetPos(const D3DXVECTOR4& Pos) override;
 public:
 	bool	Scroll(const FLOAT& pos) override;
+	COL		Collision(Object* pObject, FLOAT* ColSize = nullptr) override;
+	COL		Collision(Character* pObject);
 private:
 	bool	PreRender(ID3D11DeviceContext* pContext);
 };

@@ -14,6 +14,13 @@ public:
 	virtual bool		Init() = 0;
 	virtual bool		Frame() = 0;
 protected:
+	bool				AirAttack();
+	bool				BowAttack();
+	bool				Attack();
+	bool				Jump();
+	bool				Roll();
+	bool				Fall();
+	void				AirMove();
 	BowDelete			bowdel;
 };
 class PlayerIdle : public PlayerState
@@ -56,8 +63,7 @@ public:
 	bool		Init() override;
 	bool		Frame() override;
 private:
-	FLOAT		m_fAcceleration;
-	FLOAT&		m_fJumpSpeed;
+	FLOAT		m_fJumpSpeed;
 };
 class PlayerJump2 : public PlayerState
 {
@@ -67,8 +73,7 @@ public:
 	bool		Init() override;
 	bool		Frame() override;
 private:
-	FLOAT		m_fAcceleration;
-	FLOAT&		m_fJumpSpeed;
+	FLOAT		m_fJumpSpeed;
 };
 class PlayerFall : public PlayerState
 {

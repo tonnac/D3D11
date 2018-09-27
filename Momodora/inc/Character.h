@@ -21,14 +21,17 @@ public:
 	void				setState(const std::tstring& statename);
 	void				reverseDir();
 public:
+	bool				isLanding() const;
+	void				setLanding(const bool& landing);
+public:
 	std::tstring		getCurrentState();
-	INT					getDir();
+	INT					getDir() const;
 private:
 	void				reverseSet();
 protected:
+	bool				m_bLanding;
 	FLOAT				m_fSpeed;
 	INT					m_iDir;
-	bool				isDebug;
 	ID3D11PixelShader * m_pShader;
 	State*				m_pCurrentState;
 	StateList			m_StateList;

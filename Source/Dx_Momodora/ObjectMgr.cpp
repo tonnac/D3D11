@@ -29,9 +29,19 @@ bool ObjectMgr::Frame()
 			}
 		}
 	}
+	COL type = COL::NONE;
 	for (auto& it : m_Terrainlist)
 	{
+		type += it->Collision(m_pPlayer);
 		it->Frame();
+	}
+	if (type == COL::NONE)
+	{
+		m_pPlayer->setLanding(false);
+	}
+	else
+	{
+		m_pPlayer->setLanding(true);
 	}
 	m_pBackground->Frame();
 	if (m_PlayerEffect.empty() == false)

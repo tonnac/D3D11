@@ -1,6 +1,17 @@
 #pragma once
 #include "Object_Basic.h"
 
+enum class COL
+{
+	NONE,
+	LEFT,
+	TOP,
+	RIGHT,
+	BOTTOM
+};
+
+COL& operator +=(COL& lhs, const COL& rhs);
+
 class Object
 {
 public:
@@ -16,11 +27,13 @@ public:
 	virtual void				SetCenterPos(const D3DXVECTOR2& Centerpos);
 	virtual void				SetPos(const D3DXVECTOR4& Pos);
 public:
+	virtual COL					Collision(Object* pObject, FLOAT* ColSize = nullptr);
 	virtual bool				Scroll(const FLOAT& pos);
 public:
 	void						MoveCenterPos(const D3DXVECTOR2& vec);
 public:
 	D3DXVECTOR2					getCenterPos() const;
+	D2D1_RECT_F					getCollisionRT() const;
 protected:
 	void						CreateVertexBuffer(ID3D11Device* pDevice);
 	virtual void				CreateConstantBuffer(ID3D11Device* pDevice);

@@ -14,39 +14,59 @@ PlayerState::PlayerState(Player * pPlayer) : State(pPlayer)
 		}
 	};
 }
-//bool PlayerState::Render()
-//{
-//	return true;
-//}
-//bool PlayerState::Release()
-//{
-//	if (m_pEffectObj)
-//	{
-//		m_pEffectObj->Release();
-//		delete m_pEffectObj;
-//	}
-//	return true;
-//}
 
-PlayerIdle::PlayerIdle(Player * pPlayer) : PlayerState(pPlayer)
+bool PlayerState::AirAttack()
 {
-	m_pCharacter->AddState(std::tstring(L"Idle"), this);
-}
-bool PlayerIdle::Init()
-{
-	setSprite(L"Kaho", L"Idle");
-	m_pSprite->setDivideTime(0.8f);
-	return true;
-}
-bool PlayerIdle::Frame()
-{
-//	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
-	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
-		S_Sound.Play(Effect_Snd::JUMP);
-		m_pCharacter->setState(L"Jump");
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		S_Sound.Play(Effect_Snd::ATTACK1);
+		m_pCharacter->setState(L"AirAttack");
+		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
+		if (m_pCharacter->getDir() == 1)
+		{
+			Center.x += 60.0f;
+			Center.y += 20.0f;
+			g_Attack1->setDir(1);
+		}
+		else
+		{
+			Center.x -= 60.0f;
+			Center.y += 20.0f;
+			g_Attack1->setDir(-1);
+		}
+		g_AirAttack->SetCenterPos(Center);
+		S_Object.AddPlayerEffect(g_AirAttack);
 		return true;
 	}
+	return false;
+}
+bool PlayerState::BowAttack()
+{
+	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_PUSH)
+	{
+		std::shared_ptr<KahoBowAttack> Arrow(new KahoBowAttack, bowdel);
+		D3DXVECTOR2 Cen = m_pCharacter->getCenterPos();
+
+		if (m_pCharacter->getDir() == -1)
+		{
+			Arrow->SetCenterPos({ Cen.x - 20, Cen.y - 13 });
+			Arrow->reverseDir();
+		}
+		else
+		{
+			Arrow->SetCenterPos({ Cen.x + 20, Cen.y - 13 });
+		}
+		S_Sound.Play(Effect_Snd::ARROW);
+		S_Scene.InitArrow(Arrow);
+		S_Object.AddPlayerEffect(Arrow);
+		return true;
+	}
+	return false;
+}
+bool PlayerState::Attack()
+{
 	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect_Snd::ATTACK1);
@@ -66,32 +86,102 @@ bool PlayerIdle::Frame()
 		S_Object.AddPlayerEffect(g_Attack1);
 		return true;
 	}
+	return false;
+}
+bool PlayerState::Jump()
+{
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+	{
+		S_Sound.Play(Effect_Snd::JUMP);
+		m_pSprite->setIndex(0);
+		m_pCharacter->setLanding(false);
+		m_pCharacter->setState(L"Jump");
+		return true;
+	}
+	return false;
+}
+bool PlayerState::Roll()
+{
 	if (S_Input.getKeyState(DIK_Q) == Input::KEYSTATE::KEY_PUSH)
 	{
 		S_Sound.Play(Effect_Snd::ROLL);
 		m_pCharacter->setState(L"Roll");
 		return true;
 	}
-	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_PUSH)
+	return false;
+}
+bool PlayerState::Fall()
+{
+	if (m_pCharacter->isLanding() == false)
 	{
-		std::shared_ptr<KahoBowAttack> Arrow(new KahoBowAttack, bowdel);
-		D3DXVECTOR2 Cen = m_pCharacter->getCenterPos();
-
-		if (m_pCharacter->getDir() == -1)
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
+	return false;
+}
+void PlayerState::AirMove()
+{
+	INT DIR = m_pCharacter->getDir();
+	if (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
+	{
+		if (DIR == -1)
 		{
-			Arrow->SetCenterPos({ Cen.x - 20, Cen.y - 13 });
-			Arrow->reverseDir();
+			m_pCharacter->reverseDir();
 		}
 		else
+			m_pCharacter->MoveCenterPos({ DIR * g_fSecPerFrame * g_fSpeed, 0.0f });
+	}
+	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
+	{
+		if (DIR == 1)
 		{
-			Arrow->SetCenterPos({ Cen.x + 20, Cen.y - 13 });
+			m_pCharacter->reverseDir();
 		}
-		S_Sound.Play(Effect_Snd::ARROW);
-		S_Scene.InitArrow(Arrow);
-		S_Object.AddPlayerEffect(Arrow);
+		else
+			m_pCharacter->MoveCenterPos({ DIR * g_fSecPerFrame * g_fSpeed, 0.0f });
+	}
+}
+
+PlayerIdle::PlayerIdle(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"Idle"), this);
+}
+bool PlayerIdle::Init()
+{
+	setSprite(L"Kaho", L"Idle");
+	m_pSprite->setDivideTime(0.8f);
+	return true;
+}
+bool PlayerIdle::Frame()
+{
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
+
+//	m_pCharacter->setLanding(false);
+
+	if (BowAttack() == true)
+	{
 		m_pCharacter->setState(L"Bow");
 		return true;
 	}
+	if (Attack() == true)
+	{
+		return true;
+	}
+	if (Jump() == true)
+	{
+		return true;
+	}
+	if (Roll() == true)
+	{
+		return true;
+	}
+	if (Fall() == true)
+	{
+		return true;
+	}
+
 	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_fTimer += g_fSecPerFrame;
@@ -105,7 +195,6 @@ bool PlayerIdle::Frame()
 		{
 			m_fTimer = 0.0f;
 			m_pCharacter->reverseDir();
-			return true;
 		}
 	}
 	if (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
@@ -113,8 +202,6 @@ bool PlayerIdle::Frame()
 		m_fTimer += g_fSecPerFrame;
 		if (m_pCharacter->getDir() == 1 && m_fTimer >= 0.1f)
 		{
-			std::shared_ptr<KahoBowAttack> bo(new KahoBowAttack);
-
 			m_fTimer = 0.0f;
 			m_pCharacter->setState(L"Run");
 			return true;
@@ -123,7 +210,6 @@ bool PlayerIdle::Frame()
 		{
 			m_fTimer = 0.0f;
 			m_pCharacter->reverseDir();
-			return true;
 		}
 	}
 	//if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH && m_pCharacter->getLadder())
@@ -167,32 +253,23 @@ bool PlayerRun::Frame()
 	//	return true;
 	//}
 
-	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
+	if (Attack() == true)
 	{
-		S_Sound.Play(Effect_Snd::ATTACK1);
-		m_pCharacter->setState(L"Attack1");
-		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
-		if (m_pCharacter->getDir() == 1)
-		{
-			Center.x += 100.0f;
-			g_Attack1->setDir(1);
-		}
-		else
-		{
-			Center.x -= 100.0f;
-			g_Attack1->setDir(-1);
-		}
-		g_Attack1->SetCenterPos(Center);
-		S_Object.AddPlayerEffect(g_Attack1);
 		return true;
 	}
-	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_HOLD)
+	if (Jump() == true)
 	{
-		S_Sound.Play(Effect_Snd::JUMP);
-		m_pSprite->setIndex(0);
-		m_pCharacter->setState(L"Jump");
 		return true;
 	}
+	if (Roll() == true)
+	{
+		return true;
+	}
+	if (Fall() == true)
+	{
+		return true;
+	}
+
 	if ((m_pCharacter->getDir() == 1 && (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD))
 		|| (m_pCharacter->getDir() == -1 && (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_HOLD)))
 	{
@@ -205,19 +282,13 @@ bool PlayerRun::Frame()
 		|| (m_pCharacter->getDir() == -1 && (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)))
 	{
 		INT Dir = m_pCharacter->getDir();
-		m_pCharacter->MoveCenterPos({ Dir * g_fSecPerFrame * 50.0f, 0.0f });
+		m_pCharacter->MoveCenterPos({ Dir * g_fSecPerFrame * g_fSpeed, 0.0f });
 	}
 	else if ((S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_FREE) ||
 		(S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_FREE))
 	{
 		m_pSprite->setIndex(0);
 		m_pCharacter->setState(L"Brake");
-		return true;
-	}
-	if (S_Input.getKeyState(DIK_Q) == Input::KEYSTATE::KEY_PUSH)
-	{
-		m_pSprite->setIndex(0);
-		m_pCharacter->setState(L"Roll");
 		return true;
 	}
 
@@ -236,11 +307,11 @@ bool PlayerBrake::Init()
 }
 bool PlayerBrake::Frame()
 {
-	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
+	if (Attack() == true)
 	{
-		m_pCharacter->setState(L"Attack1");
 		return true;
 	}
+
 	if ((m_pCharacter->getDir() == 1 && (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)) ||
 		(m_pCharacter->getDir() == -1 && (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_HOLD)))
 	{
@@ -275,244 +346,148 @@ bool PlayerTurn::Frame()
 	return true;
 }
 
-//PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(m_pCharacter->getJumpSpeed()), m_fAcceleration(-120.0f)
-//{
-//	m_pCharacter->AddState(std::tstring("Jump"), this);
-//}
-//bool PlayerJump::Init()
-//{
-//	setSprite(L"Kaho", L"Jump");
-//	m_pSprite->setDivideTime(0.5f);
-//	return true;
-//}
-//bool PlayerJump::Frame()
-//{
+PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(400.0f)
+{
+	m_pCharacter->AddState(std::tstring(L"Jump"), this);
+}
+bool PlayerJump::Init()
+{
+	setSprite(L"Kaho", L"Jump");
+	m_pSprite->setDivideTime(0.5f);
+	m_iResetindex = 2;
+	return true;
+}
+bool PlayerJump::Frame()
+{
 //	m_pCharacter->setLanding(false);
-//	m_fTimer += g_fSecPerFrame;
-//	m_fJumpSpeed += g_fSecPerFrame * 9.8 * m_fAcceleration / 2;
-//	INT iJumpNumber = m_pCharacter->getJumpNum();
-//	m_CenterPos->y -= g_fSecPerFrame * m_fJumpSpeed;
-//	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		S_Sound.Play(Effect_Snd::AIRATTACK);
-//		m_fTimer = 0.0f;
-//		m_fAcceleration = -120.0f;
-//		m_pCharacter->setState(L"AirAttack");
-//		return true;
-//	}
-//	if (m_fJumpSpeed < 0.0f)
-//	{
-//		m_fTimer = 0.0f;
-//		m_fAcceleration = -120.0f;
-//		m_pCharacter->setState(L"Fall");
-//		return true;
-//	}
-//	if (iJumpNumber == 0 && (S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH))
-//	{
-//		S_Sound.Play(Effect_Snd::JUMP);
-//		m_fTimer = 0.0f;
-//		m_fAcceleration = -120.0f;
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setJumpNum(1);
-//		m_pCharacter->setState(L"Jump2");
-//		return true;
-//	}
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		if (m_pCharacter->getDir() == -1)
-//		{
-//			m_pCharacter->setRendering(m_pCharacter->getZoom(), INVERSE::DEFAULT);
-//			m_pCharacter->setDir(-1);
-//		}
-//		else
-//			m_CenterPos->x += g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		if (m_pCharacter->getDir() == 1)
-//		{
-//			m_pCharacter->setRendering(m_pCharacter->getZoom(), INVERSE::LR_ROTATION);
-//			m_pCharacter->setDir(-1);
-//		}
-//		else
-//			m_CenterPos->x -= g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		S_Sound.Play(Effect_Snd::ARROW);
-//		EffectObj * Arrow = new KahoBowAttack;
-//		Arrow->Init();
-//		if (m_pCharacter->getDir() == -1)
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x - 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setRendering(2.8f, INVERSE::LR_ROTATION);
-//			Arrow->setSpeed(-200.0f);
-//		}
-//		else
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x + 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setSpeed(200.0f);
-//		}
-//		m_pCharacter->addEffect(Arrow);
-//		m_pCharacter->setState(L"AirBow");
-//		return true;
-//	}
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pSprite->setIndex(0);
-//	}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
-//PlayerJump2::PlayerJump2(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(m_pCharacter->getJumpSpeed(1)), m_fAcceleration(-120.0f)
-//{
-//	m_pCharacter->AddState(std::tstring("Jump2"), this);
-//}
-//bool PlayerJump2::Init()
-//{
-//	setSprite(L"Kaho", L"Jump");
-//	m_pSprite->setDivideTime(1.0f);
-//	return true;
-//}
-//bool PlayerJump2::Frame()
-//{
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	m_fTimer += g_fSecPerFrame;
-//	m_fJumpSpeed += g_fSecPerFrame * 9.8 * m_fAcceleration / 2;
-//	INT iJumpNumber = m_pCharacter->getJumpNum();
-//	m_CenterPos->y -= g_fSecPerFrame * m_fJumpSpeed;
-//
-//	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		S_Sound.Play(Effect_Snd::AIRATTACK);
-//		m_fTimer = 0.0f;
-//		m_fAcceleration = -120.0f;
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"AirAttack");
-//		return true;
-//	}
-//	if (m_fJumpSpeed < 0.0f)
-//	{
-//		m_fTimer = 0.0f;
-//		m_fAcceleration = -120.0f;
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"Fall");
-//		return true;
-//	}
-//	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->x += g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->x -= g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		EffectObj * Arrow = new KahoBowAttack;
-//		Arrow->Init();
-//		if (m_pCharacter->getDir() == -1)
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x - 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setRendering(2.8f, INVERSE::LR_ROTATION);
-//			Arrow->setSpeed(-200.0f);
-//		}
-//		else
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x + 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setSpeed(200.0f);
-//		}
-//		m_pCharacter->addEffect(Arrow);
-//		S_Sound.Play(Effect_Snd::ARROW);
-//		m_pCharacter->setState(L"AirBow");
-//		return true;
-//	}
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pSprite->setIndex(0);
-//	}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
-//PlayerFall::PlayerFall(Player * pPlayer) : PlayerState(pPlayer), m_fAcceleration(1.0f)
-//{
-//	m_pCharacter->AddState(std::tstring("Fall"), this);
-//}
-//bool PlayerFall::Init()
-//{
-//	setSprite(L"Kaho", L"Fall");
-//	m_pSprite->setDivideTime(0.5f);
-//	return true;
-//}
-//bool PlayerFall::Frame()
-//{
-//	m_fTimer += g_fSecPerFrame;
-//	INT iJumpNum = m_pCharacter->getJumpNum();
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	if (S_Input.getKeyState('S') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		m_pCharacter->setState(L"AirAttack");
-//		return true;
-//	}
-//	if (S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_RIGHT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->x += g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_LEFT) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->x -= g_fSecPerFrame * fSpeed;
-//	}
-//	if (S_Input.getKeyState('D') == Input::KEYSTATE::KEY_PUSH)
-//	{
-//		EffectObj * Arrow = new KahoBowAttack;
-//		Arrow->Init();
-//		if (m_pCharacter->getDir() == -1)
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x - 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setRendering(2.8f, INVERSE::LR_ROTATION);
-//			Arrow->setSpeed(-200.0f);
-//		}
-//		else
-//		{
-//			Arrow->Set(m_pCharacter->getCenterPos()->x + 20, m_pCharacter->getCenterPos()->y - 13);
-//			Arrow->setSpeed(200.0f);
-//		}
-//		m_pCharacter->addEffect(Arrow);
-//		m_pCharacter->setState(L"AirBow");
-//		return true;
-//	}
-//	if (m_fTimer >= 0.1f && iJumpNum == 0 &&
-//		(S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH))
-//	{
-//		m_pCharacter->setJumpNum(1);
-//		m_pSprite->setIndex(0);
-//		m_fTimer = 0.0f;
-//		m_pCharacter->setState(L"Jump");
-//		return true;
-//	}
-//	m_CenterPos->y += g_fSecPerFrame * 400.0f;
-//
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pSprite->setIndex(2);
-//	}
-//
-//	if (m_pCharacter->getLanding())
-//	{
-//		m_pCharacter->setJumpNum(0);
-//		m_pSprite->setIndex(0);
-//		m_fTimer = 0.0f;
-//		m_pCharacter->setJumpSpeed(400.0f, 300.0f);
-//		m_pCharacter->setState(L"Rise");
-//		return true;
-//	}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
+	m_fTimer += g_fSecPerFrame;
+	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
+
+	if (AirAttack() == true)
+	{
+		return true;
+	}
+	if (m_fTimer >= 0.3f)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
+	if (BowAttack() == true)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"AirBow");
+		return true;
+	}
+	AirMove();
+
+	if (m_fTimer >= 0.1f && Player::getJumpNum() == 0 && (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH))
+	{
+		S_Sound.Play(Effect_Snd::JUMP);
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		Player::setJumpNum(1);
+		m_pCharacter->setState(L"Jump2");
+		return true;
+	}
+	return State::Frame();
+}
+
+PlayerJump2::PlayerJump2(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(600.0f)
+{
+	m_pCharacter->AddState(std::tstring(L"Jump2"), this);
+}
+bool PlayerJump2::Init()
+{
+	setSprite(L"Kaho", L"Jump");
+	m_pSprite->setDivideTime(1.0f);
+	return true;
+}
+bool PlayerJump2::Frame()
+{
+	//	m_pCharacter->setLanding(false);
+	m_fTimer += g_fSecPerFrame;
+
+	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
+
+	if (AirAttack() == true)
+	{
+		return true;
+	}
+	if (BowAttack() == true)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"AirBow");
+		return true;
+	}
+	if (m_fTimer >= 0.15f)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
+	AirMove();
+
+	return State::Frame();
+}
+
+PlayerFall::PlayerFall(Player * pPlayer) : PlayerState(pPlayer), m_fAcceleration(1.0f)
+{
+	m_pCharacter->AddState(std::tstring(L"Fall"), this);
+}
+bool PlayerFall::Init()
+{
+	setSprite(L"Kaho", L"Fall");
+	m_pSprite->setDivideTime(1.0f);
+	m_iResetindex = 2;
+	return true;
+}
+bool PlayerFall::Frame()
+{
+	m_fTimer += g_fSecPerFrame;
+
+	if (AirAttack() == true)
+	{
+		return true;
+	}
+	AirMove();
+	if (BowAttack() == true)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"AirBow");
+		return true;
+	}
+
+	if (m_fTimer >= 0.1f && Player::getJumpNum() == 0 &&
+		(S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH))
+	{
+		Player::setJumpNum(1);
+		m_pSprite->setIndex(0);
+		m_fTimer = 0.0f;
+		m_pCharacter->setState(L"Jump2");
+		return true;
+	}
+
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 400.0f });
+
+	//if (m_pCharacter->getLanding())
+	//{
+	//	m_pCharacter->setJumpNum(0);
+	//	m_pSprite->setIndex(0);
+	//	m_fTimer = 0.0f;
+	//	m_pCharacter->setJumpSpeed(400.0f, 300.0f);
+	//	m_pCharacter->setState(L"Rise");
+	//	return true;
+	//}
+
+	return State::Frame();
+}
+
 PlayerRise::PlayerRise(Player * pPlayer) : PlayerState(pPlayer)
 {
 	m_pCharacter->AddState(std::tstring(L"Rise"), this);
@@ -525,12 +500,6 @@ bool PlayerRise::Init()
 }
 bool PlayerRise::Frame()
 {
-	if (!m_pSprite->Frame())
-	{
-		m_pSprite->setIndex(0);
-		m_pCharacter->setState(L"Idle");
-		return true;
-	}
 	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		if (m_pCharacter->getDir() == -1)		// 방향 같으면
@@ -567,8 +536,7 @@ bool PlayerCrouch::Init()
 }
 bool PlayerCrouch::Frame()
 {
-//	m_CenterPos->y += g_fSecPerFrame * 200.0f;
-
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 200.0f });
 	if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_UP || S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_FREE)
 	{
 		m_pCharacter->setState(L"Rise");
@@ -581,24 +549,24 @@ bool PlayerCrouch::Frame()
 		m_pSprite->setIndex(0);
 		return true;
 	}*/
-
-	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_PUSH)
+	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 	{
-		std::shared_ptr<KahoBowAttack> Arrow(new KahoBowAttack, bowdel);
-		D3DXVECTOR2 Cen = m_pCharacter->getCenterPos();
-
+		if (m_pCharacter->getDir() == 1)						// 방향 다르면
+		{
+			m_fTimer = 0.0f;
+			m_pCharacter->reverseDir();
+		}
+	}
+	if (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH)
+	{
 		if (m_pCharacter->getDir() == -1)
 		{
-			Arrow->SetCenterPos({ Cen.x - 20, Cen.y - 13 });
-			Arrow->reverseDir();
+			m_fTimer = 0.0f;
+			m_pCharacter->reverseDir();
 		}
-		else
-		{
-			Arrow->SetCenterPos({ Cen.x + 20, Cen.y - 13 });
-		}
-		S_Sound.Play(Effect_Snd::ARROW);
-		S_Scene.InitArrow(Arrow);
-		S_Object.AddPlayerEffect(Arrow);
+	}
+	if (BowAttack() == true)
+	{
 		m_pCharacter->setState(L"CrouchBow");
 		return true;
 	}
@@ -722,39 +690,36 @@ bool PlayerCrouch::Frame()
 //	return true;
 //}
 //
-//PlayerRoll::PlayerRoll(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("Roll"), this);
-//}
-//bool PlayerRoll::Init()
-//{
-//	setSprite(L"Kaho", L"Roll");
-//	m_pSprite->setDivideTime(0.6f);
-//	return true;
-//}
-//bool PlayerRoll::Frame()
-//{
-//	m_fTimer += g_fSecPerFrame;
-//	if (!m_pCharacter->getLanding() && m_fTimer>= 0.5f)
-//	{
-//		m_fTimer = 0.0f;
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"Fall");
-//		return true;
-//	}
-//	m_CenterPos->y += g_fSecPerFrame * 30.0f;
-//	if (!m_pSprite->Frame())
-//	{
-//		m_fTimer = 0.0f;
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"Idle");
-//	}
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	m_CenterPos->x += m_pCharacter->getDir() * g_fSecPerFrame * fSpeed * 1.5f;
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
+PlayerRoll::PlayerRoll(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"Roll"), this);
+}
+bool PlayerRoll::Init()
+{
+	setSprite(L"Kaho", L"Roll");
+	m_pSprite->setDivideTime(0.6f);
+	return true;
+}
+bool PlayerRoll::Frame()
+{
+	m_fTimer += g_fSecPerFrame;
+	//if (!m_pCharacter->getLanding() && m_fTimer>= 0.5f)
+	//{
+	//	m_fTimer = 0.0f;
+	//	m_pSprite->setIndex(0);
+	//	m_pCharacter->setState(L"Fall");
+	//	return true;
+	//}
+	//m_CenterPos->y += g_fSecPerFrame * 30.0f;
+	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * g_fSpeed * 1.5f , 0.0f });
+	if (State::Frame() == false)
+	{
+		m_fTimer = 0.0f;
+		m_pCharacter->setState(L"Idle");
+	}
+	return true;
+}
+
 //PlayerHurt::PlayerHurt(Player * pPlayer) : PlayerState(pPlayer)
 //{
 //	m_pCharacter->AddState(std::tstring("Hurt"), this);

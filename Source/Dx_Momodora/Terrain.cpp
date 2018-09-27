@@ -1,6 +1,7 @@
 #include "Terrain.h"
 #include "DirectInput.h"
 #include "DirectWrite.h"
+#include "Player.h"
 
 bool Terrain::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& ShaderFilepath,
 			const std::string& VSFunc, const std::string& PSFunc)
@@ -33,6 +34,58 @@ bool Terrain::Scroll(const FLOAT& pos)
 {
 	m_Centerpos.x += -pos;
 	return true;
+}
+COL Terrain::Collision(Object* pObject, FLOAT* ColSize)
+{
+	FLOAT Size;
+	COL col = Plane_Object::Collision(pObject, &Size);
+	switch (col)
+	{
+	case COL::LEFT:
+	{
+		pObject->MoveCenterPos({ -Size, 0.0f });
+	}break;
+	case COL::TOP:
+	{
+		pObject->MoveCenterPos({ 0.0f, -Size });
+	}break;
+	case COL::RIGHT:
+	{
+		pObject->MoveCenterPos({ Size, 0.0f });
+	}break;
+	case COL::BOTTOM:
+	{
+//		pObject->MoveCenterPos({ 0.0f, -Size });
+	}break;
+	}
+	return col;
+}
+COL	Terrain::Collision(Character* pObject)
+{
+	FLOAT Size;
+	COL col = Collision(pObject, &Size);
+	if (col == COL::TOP && pObject->getCurrentState() == L"Fall")
+	{
+		pObject->setState(L"Idle");
+		Player::setJumpNum(0);
+	}
+	D2D1_RECT_F pcol = pObject->getCollisionRT();
+	D2D1_RECT_F dCol = { pcol.left, pcol.bottom, pcol.right, pcol.bottom + 15.0f };
+	D3DXVECTOR2 dColcen = { (dCol.right + dCol.left) * 0.5f, (dCol.bottom + dCol.top) * 0.5f };
+
+
+	if (pObject->getCurrentState() != L"Fall" && 
+		(dCol.right - dColcen.x) + m_rtCollision.right - m_Centerpos.x >= abs(m_Centerpos.x - dColcen.x) && 
+		(dCol.bottom - dColcen.y) + m_rtCollision.bottom- m_Centerpos.y >= abs(m_Centerpos.y - dColcen.y))
+	{
+		return COL::TOP;
+	}
+	else
+	{
+		return COL::NONE;
+	}
+
+//	return col;
 }
 bool Terrain::PreRender(ID3D11DeviceContext* pContext)
 {

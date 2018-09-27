@@ -1,6 +1,5 @@
 #include "PlayerAttack.h"
 #include "KahoAttack.h"
-//#include "mSound.h"
 #include "SceneMgr.h"
 
 MeleeAttack::MeleeAttack(Player* pPlayer) : PlayerState(pPlayer)
@@ -137,7 +136,7 @@ bool AirAttack::Init()
 }
 bool AirAttack::Frame()
 {
-	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * 30.0f, 0.0f });
+	m_pCharacter->MoveCenterPos({ 0.0f, m_pCharacter->getDir() * g_fSecPerFrame * 30.0f });
 
 	if (State::Frame() == false)
 	{

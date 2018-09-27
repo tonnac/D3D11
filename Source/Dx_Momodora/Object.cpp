@@ -1,6 +1,12 @@
 #include "Object.h"
 #include "DirectInput.h"
 
+COL& operator +=(COL& lhs, const COL& rhs)
+{
+	INT type = CASTING(INT, lhs) + CASTING(INT, rhs);
+	lhs = CASTING(COL, type);
+	return lhs;
+}
 
 Object::Object()
 {}
@@ -48,6 +54,10 @@ void Object::SetPos(const D3DXVECTOR4& Pos)
 {
 	return;
 }
+COL Object::Collision(Object* pObject, FLOAT* ColSize)
+{
+	return COL::NONE;
+}
 bool Object::Scroll(const FLOAT& pos)
 {
 	return true;
@@ -59,6 +69,10 @@ void Object::MoveCenterPos(const D3DXVECTOR2& vec)
 D3DXVECTOR2 Object::getCenterPos() const
 {
 	return m_Centerpos;
+}
+D2D1_RECT_F	Object::getCollisionRT() const
+{
+	return m_rtCollision;
 }
 void Object::CreateVertexBuffer(ID3D11Device* pDevice)
 {

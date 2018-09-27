@@ -1,7 +1,7 @@
 #include "Effect.h"
 #include "DirectInput.h"
 
-Effect::Effect() : isDebug(false), m_iDir(1)
+Effect::Effect() : m_iDir(1)
 {
 	m_fScale = 2.6f;
 }

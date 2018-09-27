@@ -37,6 +37,60 @@ bool Plane_Object::Frame()
 	m_rtCollision.bottom = m_VertexList[3].Pos.y;
 	return true;
 }
+COL Plane_Object::Collision(Object* pObject, FLOAT* ColSize)
+{
+	D2D1_RECT_F ColRT = pObject->getCollisionRT();
+	D3DXVECTOR2 Cen = pObject->getCenterPos();
+
+	FLOAT xDiff = abs(m_Centerpos.x - Cen.x);
+	FLOAT yDiff = abs(m_Centerpos.y - Cen.y);
+
+	FLOAT xLen1 = m_rtCollision.right - m_Centerpos.x;
+	FLOAT yLen1 = m_rtCollision.bottom - m_Centerpos.y;
+
+	FLOAT xLen2 = ColRT.right - Cen.x;
+	FLOAT yLen2 = ColRT.bottom - Cen.y;
+
+	if (xLen1 + xLen2 >= xDiff && yLen1 + yLen2 >= yDiff)
+	{
+		D2D1_RECT_F ColArea;
+		ColArea.left = (m_rtCollision.left < ColRT.left) ? ColRT.left : m_rtCollision.left;
+		ColArea.top = (m_rtCollision.top < ColRT.top) ? ColRT.top : m_rtCollision.top;
+		ColArea.right = (m_rtCollision.right < ColRT.right) ? m_rtCollision.right : ColRT.right;
+		ColArea.bottom = (m_rtCollision.bottom < ColRT.bottom) ? m_rtCollision.bottom : ColRT.bottom;
+		if (abs(ColArea.right - ColArea.left) < abs(ColArea.bottom - ColArea.top))
+		{
+			if (ColSize != nullptr)
+			{
+				*ColSize = ColArea.right - ColArea.left;
+			}
+			if (abs(ColArea.left - m_rtCollision.left) < Epsilon)
+			{
+				return COL::LEFT;
+			}
+			else
+			{
+				return COL::RIGHT;
+			}
+		}
+		else
+		{
+			if (ColSize != nullptr)
+			{
+				*ColSize = ColArea.bottom - ColArea.top;
+			}
+			if (abs(ColArea.top - m_rtCollision.top) < Epsilon)
+			{
+				return COL::TOP;
+			}
+			else
+			{
+				return COL::BOTTOM;
+			}
+		}
+	}
+	return COL::NONE;
+}
 void Plane_Object::CreateIndexBuffer(ID3D11Device* pDevice)
 {
 	for (int i = 0; i < m_VertexList.size() / 4; ++i)
