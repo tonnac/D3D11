@@ -165,6 +165,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="DeviceInfo.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="DownableObject.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="GameScene.h" />
@@ -199,6 +200,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="DeviceInfo.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="DownableObject.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="GameScene.cpp" />

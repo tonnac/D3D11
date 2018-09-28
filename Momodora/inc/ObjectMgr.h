@@ -1,9 +1,9 @@
 #pragma once
 #include "Object.h"
-#include "Terrain.h"
 #include "Background.h"
 #include "KahoAttack.h"
 #include "Player.h"
+#include "DownableObject.h"
 
 class ObjectMgr : public Singleton<ObjectMgr>
 {

@@ -7,7 +7,7 @@
 Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1), m_fSpeed(0.0f),
 							m_bLanding(true)
 {
-	m_fScale = 3.0f;
+	m_fScale = 2.8f;
 }
 
 

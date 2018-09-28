@@ -567,14 +567,15 @@ bool PlayerCrouch::Frame()
 	{
 		m_pCharacter->setState(L"Rise");
 	}
-	/*if (m_pCharacter->getDownable() && S_Input.getKeyState('A') == Input::KEYSTATE::KEY_PUSH)
+	Player* pPlayer = dynamic_cast<Player*>(m_pCharacter);
+	if (pPlayer->getDown() && S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 	{
-		m_CenterPos->y += 40.0f;
-		m_pCharacter->setDownable(false);
+		m_pCharacter->MoveCenterPos({ 0.0f,40.0f });
+		pPlayer->setDown(false);
 		m_pCharacter->setState(L"Fall");
 		m_pSprite->setIndex(0);
 		return true;
-	}*/
+	}
 	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 	{
 		if (m_pCharacter->getDir() == 1)						// 방향 다르면

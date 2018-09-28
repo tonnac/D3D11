@@ -7,7 +7,8 @@ enum ObjectEnum : unsigned char
 {
 	BACKGROUND = 0,
 	TERRAIN,
-	PLAYER
+	PLAYER,
+	DOWN
 };
 
 

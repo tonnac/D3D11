@@ -10,7 +10,7 @@ ObjTypeNum 3
 2 1 Player
 100 450
 GameScene2
-ObjTypeNum 3
+ObjTypeNum 4
 0 1 BackGround
 920 0 1587 240
 1 10 Terrain
@@ -25,4 +25,9 @@ ObjTypeNum 3
 536 208 671 240
 615 0 700 160
 2 1 Player
-100 425
+100 350
+3 4 Down
+200 144 231 151
+264 128 328 135
+376 112 456 119
+536 112 615 119

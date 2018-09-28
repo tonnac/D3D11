@@ -6,7 +6,7 @@
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
 
-Player::Player() : m_bInvincible(false), m_fTimer(0.0f)
+Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false)
 {
 	State * state = new PlayerIdle(this);
 	state = new PlayerRun(this);
@@ -66,8 +66,16 @@ void Player::setJumpNum(const INT& iNum)
 {
 	m_iJumpNum = iNum;
 }
+void Player::setDown(const bool& down)
+{
+	m_Down = down;
+}
 
 INT Player::getJumpNum()
 {
 	return m_iJumpNum;
+}
+bool Player::getDown() const
+{
+	return m_Down;
 }

@@ -101,6 +101,18 @@ void Scene::SceneSet(const bool& isInverse)
 					g_Player->SetCenterPos(Center);
 				}
 			}break;
+			case ObjectEnum::DOWN:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 Pos;
+					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+					DownableObject* pData = new DownableObject;
+					pData->SetPos(Pos);
+					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+					S_Object.AddTerrain(pData);
+				}
+			}break;
 			}
 		}
 	}
@@ -150,6 +162,19 @@ void Scene::SceneSet(const bool& isInverse)
 					fp >> Center.x >> Center.y;
 					Center.x = g_rtClient.right - Center.x;
 					g_Player->SetCenterPos(Center);
+				}
+			}break;
+			case ObjectEnum::DOWN:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 Pos;
+					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+					DownableObject* pData = new DownableObject;
+					pData->SetPos(Pos);
+					pData->Scroll(xWidth * 3.0f);
+					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+					S_Object.AddTerrain(pData);
 				}
 			}break;
 			}

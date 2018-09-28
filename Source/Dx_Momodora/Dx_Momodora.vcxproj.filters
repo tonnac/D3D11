@@ -73,6 +73,12 @@
     <Filter Include="헤더 파일\Sound">
       <UniqueIdentifier>{eb3ce7e1-b1da-4399-8d2d-0052f081f27b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object\Terrain">
+      <UniqueIdentifier>{286d6667-28d9-4af3-b943-53abced4ddba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Terrain">
+      <UniqueIdentifier>{f36d0800-fb39-4ca1-961b-8aed2a0c70ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -120,9 +126,6 @@
     <ClInclude Include="Background.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
@@ -164,6 +167,12 @@
     </ClInclude>
     <ClInclude Include="Fade.h">
       <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="DownableObject.h">
+      <Filter>헤더 파일\Object\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +221,6 @@
     <ClCompile Include="Background.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>소스 파일\Scene</Filter>
     </ClCompile>
@@ -256,6 +262,12 @@
     </ClCompile>
     <ClCompile Include="Fade.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="DownableObject.cpp">
+      <Filter>소스 파일\Object\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
