@@ -9,7 +9,10 @@ Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1)
 {
 	m_fScale = 2.8f;
 }
-
+Character::~Character()
+{
+	Plane_Object::Release();
+}
 
 bool Character::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 						const std::string& VSFunc, const std::string& PSFunc)

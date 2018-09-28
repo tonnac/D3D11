@@ -177,6 +177,12 @@
     <ClInclude Include="Ladder.h">
       <Filter>헤더 파일\Object\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="Mainmenu.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -274,6 +280,12 @@
     </ClCompile>
     <ClCompile Include="Ladder.cpp">
       <Filter>소스 파일\Object\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Mainmenu.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

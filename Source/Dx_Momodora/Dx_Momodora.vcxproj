@@ -171,6 +171,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="KahoAttack.h" />
     <ClInclude Include="Ladder.h" />
+    <ClInclude Include="Mainmenu.h" />
     <ClInclude Include="mSound.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectMgr.h" />
@@ -187,6 +188,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="wClass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -207,6 +209,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="KahoAttack.cpp" />
     <ClCompile Include="Ladder.cpp" />
+    <ClCompile Include="Mainmenu.cpp" />
     <ClCompile Include="mSound.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
@@ -223,6 +226,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="wClass.cpp" />
   </ItemGroup>
   <ItemGroup>

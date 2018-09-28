@@ -156,6 +156,17 @@ Input::KEYSTATE	DirectInput::getMouseState(DWORD dwKey) const
 		}
 	}
 }
+bool DirectInput::PressAnyKey()
+{
+	for (int i = 0; i < MAXKEYNUM; ++i)
+	{
+		if (KEYDOWN(m_CurrentKeyState[i]))
+		{
+			return true;
+		}
+	}
+	return false;
+}
 void DirectInput::SetAcquire(const bool& flag)
 {
 	if (m_pMouse == nullptr || m_pKey == nullptr) return;

@@ -21,31 +21,38 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 
-	g_Attack1 = std::make_shared<KahoAttack1>();
-	g_Attack2 = std::make_shared<KahoAttack2>();
-	g_Attack3 = std::make_shared<KahoAttack3>();
-	g_AirAttack = std::make_shared<KahoAirAttack>();
-	g_Player = std::make_shared<Player>();
+	//g_Attack1 = std::make_shared<KahoAttack1>();
+	//g_Attack2 = std::make_shared<KahoAttack2>();
+	//g_Attack3 = std::make_shared<KahoAttack3>();
+	//g_AirAttack = std::make_shared<KahoAirAttack>();
+	//g_Player = std::make_shared<Player>();
 
 	m_pCurrentScene = new LobbyScene;
 	m_pCurrentScene->setDevice(pDevice, pContext);
-	m_pCurrentScene->inverseInit();
+	m_pCurrentScene->Init();
 
-	g_Player->InitSet(m_pDevice, L"Player", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"], "VS", "PlayerPS");
-	S_Object.AddPlayer(g_Player);
+//	g_Player->InitSet(m_pDevice, L"Player", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"], "VS", "PlayerPS");
+//	S_Object.AddPlayer(g_Player);
 
-	g_Attack1->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	g_Attack2->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	g_Attack3->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	//g_Attack1->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	//g_Attack2->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	//g_Attack3->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	//g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 
 	m_pFade = std::make_shared<Fade>();
 
 	m_pFade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
+	m_pFade->setDivideTime(10.0f);
+	m_pFade->FadeIn();
 }
 bool SceneMgr::Frame()
 {
-	SceneChange();
+	if (S_Input.getKeyState(DIK_5) == Input::KEYSTATE::KEY_PUSH)
+	{
+		m_pFade->FadeIn();
+	}
+	m_pFade->Frame();
+//	SceneChange();
 	if (m_pCurrentScene->Frame() == false)
 	{
 		m_iCount = 1;
@@ -56,10 +63,7 @@ bool SceneMgr::Frame()
 bool SceneMgr::Render()
 {
 	m_pCurrentScene->Render();
-	if (m_iCount != 0)
-	{
-		m_pFade->Render(m_pContext);
-	}
+	m_pFade->Render(m_pContext);
 	return true;
 }
 bool SceneMgr::Release()

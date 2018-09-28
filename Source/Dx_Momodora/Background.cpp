@@ -50,13 +50,6 @@ bool Background::Scroll(const FLOAT& pos)
 	}
 	return false;
 }
-//COL Background::CanScroll()
-//{
-//	COL type = COL::NONE;
-//	type += CanScrollLeft();
-//	type += CanScrollRight();
-//	return type;
-//}
 void Background::BasicSet(const FLOAT& rtLeft, const FLOAT& MaxWidth)
 {
 	m_MaxSize.x = rtLeft;

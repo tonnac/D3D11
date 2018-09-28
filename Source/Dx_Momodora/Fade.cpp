@@ -1,16 +1,11 @@
 #include "Fade.h"
 
-Fade::Fade() : m_fMaxAngle(0.5f * CASTING(FLOAT, D3DX_PI))
-{
-
-}
+Fade::Fade() : m_fDivideTime(0.45f), m_fMaxAngle(0.5* CASTING(FLOAT, D3DX_PI))
+{}
 
 bool Fade::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& ShaderFilepath,
 					const std::string& VSFunc, const std::string& PSFunc)
 {
-	m_fInitVal = 0.0f;
-	m_fAngle = m_fMaxAngle;
-
 	m_VertexList[0].Pos = { 0.0f,0.0f,0.5f };
 	m_VertexList[1].Pos = { 960.0f,0.0f,0.5f };
 	m_VertexList[2].Pos = { 0.0f,720.0f,0.5f };
@@ -29,7 +24,7 @@ bool Fade::Frame()
 	{
 		if (abs(m_fInitVal - 0.0f) < 0.01f)
 		{
-			m_fAngle -= m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.45f;
+			m_fAngle -= m_fMaxAngle / 0.5f * g_fSecPerFrame * m_fDivideTime;
 			if (abs(m_fAngle - 0.0f) < 0.01f)
 			{
 				m_fInitVal = m_fMaxAngle;
@@ -39,7 +34,7 @@ bool Fade::Frame()
 		}
 		else
 		{
-			m_fAngle += m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.45f;
+			m_fAngle += m_fMaxAngle / 0.5f * g_fSecPerFrame * m_fDivideTime;
 			if (abs(m_fAngle - m_fMaxAngle) < 0.01f)
 			{
 				m_fInitVal = 0.0f;
@@ -54,4 +49,20 @@ bool Fade::Frame()
 void Fade::setOn(const bool& Switch)
 {
 	isOn = Switch;
+}
+void Fade::FadeIn()
+{
+	m_fInitVal = 0.5f * CASTING(FLOAT, D3DX_PI);
+	m_fAngle = 0.0f;
+	isOn = true;
+}
+void Fade::FadeOut()
+{
+	m_fInitVal = 0.0f;
+	m_fAngle = 0.5f * CASTING(FLOAT, D3DX_PI);
+	isOn = true;
+}
+void Fade::setDivideTime(const FLOAT& time)
+{
+	m_fDivideTime = 1.0f / time;
 }

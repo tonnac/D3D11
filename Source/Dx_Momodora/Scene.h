@@ -1,6 +1,7 @@
 #pragma once
 #include "Core.h"
 #include "ObjectMgr.h"
+#include "Fade.h"
 
 
 enum ObjectEnum : unsigned char
@@ -9,9 +10,19 @@ enum ObjectEnum : unsigned char
 	TERRAIN,
 	PLAYER,
 	DOWN,
-	LADDER
+	LADDER,
+	MAINMENU
 };
 
+enum class LOBBYSTATE : unsigned char
+{
+	DEFAULT,
+	START,
+	MAINMENU,
+	SETTING,
+	KEYSETTING,
+	SELECT
+};
 
 class Scene
 {
@@ -41,10 +52,10 @@ class LobbyScene : public Scene
 public:
 	LobbyScene();
 public:
-	bool			inverseInit	() override;
 	bool			Frame		() override;
 	bool			Release		() override;
 protected:
+	LOBBYSTATE		m_State;
 	INT				m_miscIndex;
 	bool			isSoundBar;
 	bool			isPress;

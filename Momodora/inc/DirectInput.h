@@ -38,6 +38,7 @@ public:
 	POINT					getMousePos() const;
 	Input::KEYSTATE			getKeyState(DWORD dwKey) const;
 	Input::KEYSTATE			getMouseState(DWORD dwKey) const;
+	bool					PressAnyKey();
 public:
 	void					SetAcquire(const bool& flag);
 private:

@@ -9,6 +9,7 @@ class Character : public Plane_Object
 {
 public:
 	Character();
+	virtual ~Character();
 public:
 	virtual bool		InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 						const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;

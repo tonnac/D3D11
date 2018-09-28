@@ -1,5 +1,6 @@
 #pragma once
 #include "Object.h"
+#include "Mainmenu.h"
 #include "Background.h"
 #include "KahoAttack.h"
 #include "Player.h"
@@ -11,31 +12,83 @@ class ObjectMgr : public Singleton<ObjectMgr>
 	friend class Singleton<ObjectMgr>;
 	using P_Effect = std::vector<PlayerEffectPtr>;
 	using P_EffectIter = P_Effect::iterator;
-	using TerrainList = std::vector<Terrain*>;
+	using TerrainList = std::vector<TerrainPTR>;
+	using UIList = std::list<UIPTR>;
 	using TerrainIter = TerrainList::iterator;
+	using UIIter = UIList::iterator;
 private:
 	ObjectMgr();
+public:
+	~ObjectMgr();
 public:
 	bool						Frame			();
 	bool						Render			(ID3D11DeviceContext* pContext);
 	bool						Release			();
 public:
-	void						AddBackGround	(Background* pBackGround);
-	void						AddTerrain		(Terrain* pTerrain);
+	void						AddUI			(UIPTR pUI);
+	void						AddBackGround	(BackgroundPTR pBackground);
+	void						AddTerrain		(TerrainPTR pTerrain);
 	void						AddPlayerEffect	(PlayerEffectPtr pEffect);
-	void						AddPlayer		(std::shared_ptr<Player> pPlayer);
+	void						AddPlayer		(PlayerPTR pPlayer);
 private:
+	template <typename X>
+	inline void					ObjectFrame(X pData)
+	{
+		if (pData != nullptr)
+		{
+			pData->Frame();
+		}
+	}
+	template <typename X>
+	inline void					ContainerFrame	(X pData)
+	{
+		if (pData.empty() == false)
+		{
+			for (auto &it : pData)
+			{
+				it->Frame();
+			}
+		}
+	}
 	void						Scroll			();
-	void						EffectFrame		();
-	void						TerrainFrame	();
+	void						TerrainCollision();
 private:
-	void						EffectRender	(ID3D11DeviceContext* pContext);
-	void						TerrainRender	(ID3D11DeviceContext* pContext);
+	template <typename K>
+	inline void					ObjectRender	(ID3D11DeviceContext* pContext, K pData)
+	{
+		if (pData != nullptr)
+		{
+			pData->Render(pContext);
+		}
+	}
+	template <typename X>
+	inline void					ContainerRender	(ID3D11DeviceContext* pContext, X pData)
+	{
+		if (pData.empty() == false)
+		{
+			for (auto &it : pData)
+			{
+				it->Render(pContext);
+			}
+		}
+	}
+private:
+	template <typename X>
+	inline void					ContainerRelease(X pData)
+	{
+		typename X::iterator iter;
+		for (iter = pData.begin(); iter != pData.end();)
+		{
+			(*iter)->Release();
+			iter = pData.erase(iter);
+		}
+	}
 private:
 	D2D1_RECT_F					m_Collision;
-	std::shared_ptr<Player>		m_pPlayer;
-	Background*					m_pBackground;
+	PlayerPTR					m_pPlayer;
+	BackgroundPTR				m_pBackground;
 	TerrainList					m_Terrainlist;
+	UIList						m_UIList;
 	P_Effect					m_PlayerEffect;
 private:
 	const FLOAT					m_fLeftFocus;

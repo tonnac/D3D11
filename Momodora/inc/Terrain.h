@@ -15,3 +15,5 @@ public:
 private:
 	bool			PreRender(ID3D11DeviceContext* pContext);
 };
+
+using TerrainPTR = std::shared_ptr<Terrain>;

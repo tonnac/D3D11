@@ -11,39 +11,58 @@ ObjectMgr::ObjectMgr() : m_fLeftFocus(g_rtClient.right / 4.0f + 50.0f), m_fRight
 	m_Collision.bottom = CASTING(FLOAT, g_rtClient.bottom);
 }
 
+ObjectMgr::~ObjectMgr()
+{
+	Release();
+}
+
 bool ObjectMgr::Frame()
 {
-	m_pPlayer->Frame();
+	ObjectFrame<PlayerPTR>(m_pPlayer);
+	ObjectFrame<BackgroundPTR>(m_pBackground);
 	Scroll();
-	TerrainFrame();
-	m_pBackground->Frame();
-	EffectFrame();
+	TerrainCollision();
+	ContainerFrame<TerrainList>(m_Terrainlist);
+	ContainerFrame<P_Effect>(m_PlayerEffect);
+	ContainerFrame<UIList>(m_UIList);
 	return true;
 }
 bool ObjectMgr::Render(ID3D11DeviceContext* pContext)
 {
-	m_pBackground->Render(pContext);
-	TerrainRender(pContext);
-	m_pPlayer->Render(pContext);
-	EffectRender(pContext);
+	ObjectRender<PlayerPTR>(pContext, m_pPlayer);
+	ObjectRender<BackgroundPTR>(pContext, m_pBackground);
+	ContainerRender<TerrainList>(pContext, m_Terrainlist);
+	ContainerRender<P_Effect>(pContext, m_PlayerEffect);
+	ContainerRender<UIList>(pContext, m_UIList);
 	return true;
 }
 bool ObjectMgr::Release()
 {
-	TerrainIter iter;
-	for (iter = m_Terrainlist.begin(); iter != m_Terrainlist.end();)
+	ContainerRelease<TerrainList>(m_Terrainlist);
+	ContainerRelease<UIList>(m_UIList);
+	if (m_pBackground != nullptr)
 	{
-		(*iter)->Release();
-		iter = m_Terrainlist.erase(iter);
+		m_pBackground->Release();
+		m_pBackground.reset();
 	}
-	DEL_REL(m_pBackground);
 	return true;
 }
-void ObjectMgr::AddBackGround(Background* pBackGround)
+void ObjectMgr::AddUI(UIPTR pUI)
+{
+	UI * ppUI = pUI.get();
+	Mainmenu * pMain = dynamic_cast<Mainmenu*>(ppUI);
+	if (pMain != nullptr)
+	{
+		m_UIList.push_front(pUI);
+	}
+	else
+		m_UIList.push_back(pUI);
+}
+void ObjectMgr::AddBackGround(BackgroundPTR pBackGround)
 {
 	m_pBackground = pBackGround;
 }
-void ObjectMgr::AddTerrain(Terrain* pTerrain)
+void ObjectMgr::AddTerrain(TerrainPTR pTerrain)
 {
 	m_Terrainlist.push_back(pTerrain);
 }
@@ -51,7 +70,7 @@ void ObjectMgr::AddPlayerEffect(PlayerEffectPtr pEffect)
 {
 	m_PlayerEffect.push_back(pEffect);
 }
-void ObjectMgr::AddPlayer(std::shared_ptr<Player> pPlayer)
+void ObjectMgr::AddPlayer(PlayerPTR pPlayer)
 {
 	m_pPlayer = pPlayer;
 }
@@ -106,59 +125,23 @@ void ObjectMgr::Scroll()
 		}
 	}
 }
-void ObjectMgr::TerrainFrame()
+void ObjectMgr::TerrainCollision()
 {
-	COL type = COL::NONE;
-	for (auto& it : m_Terrainlist)
+	if (m_Terrainlist.empty() == false)
 	{
-		type += it->Collision(m_pPlayer);
-		it->Frame();
-	}
-
-	if (type == COL::NONE)
-	{
-		m_pPlayer->setLanding(false);
-	}
-	else
-	{
-		m_pPlayer->setLanding(true);
-	}
-}
-void ObjectMgr::EffectFrame()
-{
-	if (m_PlayerEffect.empty() == false)
-	{
-		P_EffectIter iter;
-		for (iter = m_PlayerEffect.begin(); iter != m_PlayerEffect.end();)
-		{
-			if ((*iter)->Frame() == false)
-			{
-				iter = m_PlayerEffect.erase(iter);
-			}
-			else
-			{
-				++iter;
-			}
-		}
-	}
-}
-void ObjectMgr::EffectRender(ID3D11DeviceContext* pContext)
-{
-	if (m_PlayerEffect.empty() == false)
-	{
-		for (auto& it : m_PlayerEffect)
-		{
-			it->Render(pContext);
-		}
-	}
-}
-void ObjectMgr::TerrainRender(ID3D11DeviceContext* pContext)
-{
-	if (g_DebugMode == true)
-	{
+		COL type = COL::NONE;
 		for (auto& it : m_Terrainlist)
 		{
-			it->Render(pContext);
+			type += it->Collision(m_pPlayer);
+		}
+
+		if (type == COL::NONE)
+		{
+			m_pPlayer->setLanding(false);
+		}
+		else
+		{
+			m_pPlayer->setLanding(true);
 		}
 	}
 }

@@ -68,13 +68,25 @@ void Scene::SceneSet(const bool& isInverse)
 
 			switch (ObjType)
 			{
+			case ObjectEnum::MAINMENU:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					FLOAT BackPos[4];
+					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
+					std::shared_ptr<Mainmenu> pData = std::make_shared<Mainmenu>();
+					pData->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
+					pData->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
+					S_Object.AddUI(pData);
+				}
+			}break;
 			case ObjectEnum::BACKGROUND:
 			{
 				for (int i = 0; i < ObjNum; ++i)
 				{
 					FLOAT BackPos[4];
 					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
-					Background* pBackground = new Background;
+					BackgroundPTR pBackground = std::make_shared<Background>();
 					pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
 					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
@@ -86,7 +98,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 TerrainPos;
 					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
-					Terrain* pTerrain = new Terrain;
+					TerrainPTR pTerrain = std::make_shared<Terrain>();
 					pTerrain->SetPos(TerrainPos);
 					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pTerrain);
@@ -107,7 +119,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 Pos;
 					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					DownableObject* pData = new DownableObject;
+					std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
 					pData->SetPos(Pos);
 					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pData);
@@ -119,7 +131,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 Pos;
 					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					Ladder* pData = new Ladder;
+					std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
 					pData->SetPos(Pos);
 					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 					S_Object.AddTerrain(pData);
@@ -147,7 +159,7 @@ void Scene::SceneSet(const bool& isInverse)
 					FLOAT BackPos[4];
 					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
 					xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
-					Background* pBackground = new Background;
+					BackgroundPTR pBackground = std::make_shared<Background>();
 					pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
 					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
@@ -159,7 +171,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 TerrainPos;
 					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
-					Terrain* pTerrain = new Terrain;
+					TerrainPTR pTerrain = std::make_shared<Terrain>();
 					pTerrain->SetPos(TerrainPos);
 					pTerrain->Scroll(xWidth * 3.0f);
 					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
@@ -182,7 +194,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 Pos;
 					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					DownableObject* pData = new DownableObject;
+					std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
 					pData->SetPos(Pos);
 					pData->Scroll(xWidth * 3.0f);
 					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
@@ -195,7 +207,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR4 Pos;
 					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					Ladder* pData = new Ladder;
+					std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
 					pData->SetPos(Pos);
 					pData->Scroll(xWidth * 3.0f);
 					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
@@ -207,21 +219,12 @@ void Scene::SceneSet(const bool& isInverse)
 	}
 }
 
-LobbyScene::LobbyScene() : isPress(false), isSoundBar(false)
+LobbyScene::LobbyScene() : Scene(L"LobbyScene"), isPress(false), isSoundBar(false), m_State(LOBBYSTATE::DEFAULT)
 {
 
 }		
-bool LobbyScene::inverseInit()
-{
-	m_pBackground = new Background;
-	m_pBackground->InitSet(m_pDevice, L"Lobby", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
-	m_pBackground->SetPos(0.0f, 0.0f, 960.0f, 720.0f);
-	S_Object.AddBackGround(m_pBackground);
-	return true;
-}
 bool LobbyScene::Frame()
 {
-	S_Object.Frame();
 	return true;
 }
 bool LobbyScene::Release()

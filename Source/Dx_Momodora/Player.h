@@ -23,3 +23,5 @@ private:
 	static INT		m_iJumpNum;
 	bool			m_Down;
 };
+
+using PlayerPTR = std::shared_ptr<Player>;
