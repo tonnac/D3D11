@@ -7,9 +7,9 @@ public:
 	GameScene() = default;
 	GameScene(const std::tstring& Scenename);
 public:
-	virtual bool		Frame		() override = 0;
-	virtual bool		Release		() override = 0;
-	virtual bool		inverseInit	() override = 0;
+	virtual bool		Frame		() override;
+	virtual bool		Release		() override;
+	virtual bool		inverseInit	() override;
 	virtual void		InitArrow	(PlayerEffectPtr arrow) final;
 protected:
 };
@@ -21,8 +21,6 @@ public:
 	GameScene1();
 public:
 	bool				Frame		() override;
-	bool				Release		() override;
-	bool				inverseInit	() override;
 };
 
 class GameScene2 : public GameScene
@@ -31,8 +29,6 @@ public:
 	GameScene2();
 public:
 	bool				Frame		() override;
-	bool				Release		() override;
-	bool				inverseInit	() override;
 };
 
 class GameScene3 : public GameScene

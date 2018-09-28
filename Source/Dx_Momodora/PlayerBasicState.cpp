@@ -190,7 +190,7 @@ bool PlayerIdle::Init()
 }
 bool PlayerIdle::Frame()
 {
-	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 80.0f });
 
 	if (BowAttack() == true)
 	{

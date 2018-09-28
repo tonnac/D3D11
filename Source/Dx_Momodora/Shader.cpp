@@ -87,5 +87,12 @@ Shader* ShaderMgr::getShader(const std::tstring& Name)
 	{
 		return iter->Data;
 	}
+	DataMap::iterator it;
+	std::tstring ee = Name;
+	it = m_DataMap.find(Name);
+	if (it != m_DataMap.end())
+	{
+		return it->second;
+	}
 	return nullptr;
 }

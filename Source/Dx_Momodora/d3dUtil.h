@@ -95,6 +95,9 @@ extern PlayerEffectPtr g_Attack2;
 extern PlayerEffectPtr g_Attack3;
 extern PlayerEffectPtr g_AirAttack;
 
+class Player;
+extern std::shared_ptr<Player> g_Player;
+
 template <typename K>
 class Singleton
 {

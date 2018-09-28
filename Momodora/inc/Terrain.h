@@ -11,8 +11,8 @@ public:
 	void	SetPos(const D3DXVECTOR4& Pos) override;
 public:
 	bool	Scroll(const FLOAT& pos) override;
-	COL		Collision(Object* pObject, FLOAT* ColSize = nullptr) override;
-	COL		Collision(Character* pObject);
+	COL		Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
+	COL		Collision(std::shared_ptr<Character> pObject);
 private:
 	bool	PreRender(ID3D11DeviceContext* pContext);
 };

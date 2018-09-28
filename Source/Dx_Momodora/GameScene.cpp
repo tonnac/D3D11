@@ -7,36 +7,42 @@ void GameScene::InitArrow(PlayerEffectPtr arrow)
 	arrow->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 }
 
-GameScene1::GameScene1() : GameScene(L"GameScene1")
-{}
-bool GameScene1::Frame()
+bool GameScene::Frame()
 {
-	S_Object.Frame();
-	return true;
+	return S_Object.Frame();
 }
-bool GameScene1::Release()
+bool GameScene::Release()
 {
-	S_Object.Release();
-	return true;
+	return S_Object.Release();
 }
-bool GameScene1::inverseInit()
+bool GameScene::inverseInit()
 {
 	SceneSet(true);
 	return true;
 }
 
-GameScene2::GameScene2()
+GameScene1::GameScene1() : GameScene(L"GameScene1")
+{}
+bool GameScene1::Frame()
+{
+	if (g_Player->getCenterPos().x >= g_rtClient.right - 5.0f)
+	{
+		m_bSceneChange = true;
+		return false;
+	}
+	S_Object.Frame();
+	return true;
+}
+
+GameScene2::GameScene2() : GameScene(L"GameScene2")
 {}
 bool GameScene2::Frame()
 {
-	return true;
-}
-bool GameScene2::Release()
-{
-	return true;
-}
-bool GameScene2::inverseInit()
-{
+	if (g_Player->getCenterPos().x <= 5.0f)
+	{
+		return false;
+	}
+	S_Object.Frame();
 	return true;
 }
 

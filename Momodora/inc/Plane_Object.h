@@ -6,6 +6,7 @@ class Plane_Object : public Object
 {
 public:
 	Plane_Object();
+	~Plane_Object();
 public:
 	virtual bool			InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 							const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;
@@ -13,7 +14,7 @@ public:
 public:
 	bool					Frame() override;
 public:
-	virtual COL				Collision(Object* pObject, FLOAT* ColSize = nullptr) override;
+	virtual COL				Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
 protected:
 	virtual void			CreateIndexBuffer(ID3D11Device* pDevice);
 protected:

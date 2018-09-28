@@ -17,21 +17,21 @@ public:
 	Scene() = default;
 	Scene(const std::tstring& Scenename);
 public:
-	virtual bool			Init		() final;
-	virtual bool			Frame		() = 0;
-	virtual bool			Render		() final;
-	virtual bool			Release		() = 0;
-	virtual bool			inverseInit	();
-	bool					getNextScene();
+	virtual bool							Init			() final;
+	virtual bool							Frame			() = 0;
+	virtual bool							Render			() final;
+	virtual bool							Release			() = 0;
+	virtual bool							inverseInit		();
+	bool									getSceneChange	();
 public:
-	void					setDevice(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
+	void									setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
 protected:
-	virtual void			SceneSet(const bool& isInverse = false) final;
+	virtual void							SceneSet		(const bool& isInverse = false) final;
 protected:
-	bool					m_bNextSceneStart;
-	ID3D11Device*			m_pDevice;
-	ID3D11DeviceContext*	m_pContext;
-	const std::tstring		m_SceneName;
+	bool									m_bSceneChange;
+	ID3D11Device*							m_pDevice;
+	ID3D11DeviceContext*					m_pContext;
+	const std::tstring						m_SceneName;
 };
 
 //class LobbyScene : public Scene

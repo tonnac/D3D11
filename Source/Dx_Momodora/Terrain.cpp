@@ -35,7 +35,7 @@ bool Terrain::Scroll(const FLOAT& pos)
 	m_Centerpos.x += -pos;
 	return true;
 }
-COL Terrain::Collision(Object* pObject, FLOAT* ColSize)
+COL Terrain::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 {
 	FLOAT Size;
 	COL col = Plane_Object::Collision(pObject, &Size);
@@ -60,7 +60,7 @@ COL Terrain::Collision(Object* pObject, FLOAT* ColSize)
 	}
 	return col;
 }
-COL	Terrain::Collision(Character* pObject)
+COL	Terrain::Collision(std::shared_ptr<Character> pObject)
 {
 	FLOAT Size;
 	COL col = Collision(pObject, &Size);

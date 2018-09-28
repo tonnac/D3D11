@@ -54,7 +54,7 @@ void Object::SetPos(const D3DXVECTOR4& Pos)
 {
 	return;
 }
-COL Object::Collision(Object* pObject, FLOAT* ColSize)
+COL Object::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 {
 	return COL::NONE;
 }

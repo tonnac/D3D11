@@ -1,11 +1,12 @@
 #include "Player.h"
 #include "PlayerBasicState.h"
 #include "PlayerAttack.h"
+#include "DirectInput.h"
 
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
 
-Player::Player()
+Player::Player() : m_bInvincible(false), m_fTimer(0.0f)
 {
 	State * state = new PlayerIdle(this);
 	state = new PlayerRun(this);
@@ -33,6 +34,32 @@ Player::Player()
 	//state = new PlayerLadderDown(this);
 	m_fSpeed = g_fSpeed = 300.0f;
 	m_pCurrentState = m_StateList[L"Idle"];
+}
+
+bool Player::Frame()
+{
+	if (m_bInvincible == true)
+	{
+		m_fTimer += g_fSecPerFrame;
+		if (m_ConstantData.Util.z >= 0.5f)
+		{
+			m_ConstantData.Util.z = 0.0f;
+		}
+		else
+			m_ConstantData.Util.z = 1.0f;
+		if (m_fTimer >= 5.0f)
+		{
+			m_fTimer = 0.0f;
+			m_ConstantData.Util.z = 1.0f;
+			m_bInvincible = false;
+		}
+	}
+
+	if (S_Input.getKeyState(DIK_F8) == Input::KEYSTATE::KEY_PUSH)
+	{
+		m_bInvincible = true;
+	}
+	return Character::Frame();
 }
 
 void Player::setJumpNum(const INT& iNum)

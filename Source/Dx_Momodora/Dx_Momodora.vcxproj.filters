@@ -162,6 +162,9 @@
     <ClInclude Include="mSound.h">
       <Filter>헤더 파일\Sound</Filter>
     </ClInclude>
+    <ClInclude Include="Fade.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -251,5 +254,11 @@
     <ClCompile Include="mSound.cpp">
       <Filter>소스 파일\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="Fade.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
   </ItemGroup>
 </Project>

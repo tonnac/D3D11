@@ -114,7 +114,7 @@ bool AirAttack::Init()
 }
 bool AirAttack::Frame()
 {
-	m_pCharacter->MoveCenterPos({ 0.0f, m_pCharacter->getDir() * g_fSecPerFrame * 30.0f });
+	m_pCharacter->MoveCenterPos({ 0.0f, g_fSecPerFrame * 30.0f });
 	AttackFrame(g_AirAttack);
 	if (State::Frame() == false)
 	{

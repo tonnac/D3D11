@@ -21,6 +21,7 @@ void Background::SetInversePos(const FLOAT& rtLeft, const FLOAT& rtTop, const FL
 }
 bool Background::Frame()
 {
+	m_ConstantData.Util.z = cos(g_fGameTime) * 0.5f + 0.5f;
 	return true;
 }
 bool Background::Scroll(const FLOAT& pos)

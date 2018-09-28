@@ -27,7 +27,7 @@ public:
 	virtual void				SetCenterPos(const D3DXVECTOR2& Centerpos);
 	virtual void				SetPos(const D3DXVECTOR4& Pos);
 public:
-	virtual COL					Collision(Object* pObject, FLOAT* ColSize = nullptr);
+	virtual COL					Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize);
 	virtual bool				Scroll(const FLOAT& pos);
 public:
 	void						MoveCenterPos(const D3DXVECTOR2& vec);

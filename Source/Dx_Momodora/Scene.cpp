@@ -10,7 +10,7 @@ std::tifstream& operator >> (std::tifstream& fp, ObjectEnum& type)
 	return fp;
 }
 
-Scene::Scene(const std::tstring& Scenename) : m_bNextSceneStart(false), m_SceneName(Scenename)
+Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename)
 {}
 bool Scene::Init()
 {
@@ -26,15 +26,16 @@ bool Scene::inverseInit()
 {
 	return true;
 }
-bool Scene::getNextScene()
+bool Scene::getSceneChange()
 {
-	return m_bNextSceneStart;
+	return m_bSceneChange;
 }
 void Scene::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
 {
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 }
+
 void Scene::SceneSet(const bool& isInverse)
 {
 	std::tifstream fp;
@@ -97,10 +98,7 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR2 Center;
 					fp >> Center.x >> Center.y;
-					Player* pPlayer = new Player;
-					pPlayer->SetCenterPos(Center);
-					pPlayer->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-					S_Object.AddPlayer(pPlayer);
+					g_Player->SetCenterPos(Center);
 				}
 			}break;
 			}
@@ -150,13 +148,8 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					D3DXVECTOR2 Center;
 					fp >> Center.x >> Center.y;
-					Player* pPlayer = new Player;
 					Center.x = g_rtClient.right - Center.x;
-					pPlayer->SetCenterPos(Center);
-					pPlayer->reverseDir();
-
-					pPlayer->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-					S_Object.AddPlayer(pPlayer);
+					g_Player->SetCenterPos(Center);
 				}
 			}break;
 			}

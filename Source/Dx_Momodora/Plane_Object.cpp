@@ -5,12 +5,16 @@ Plane_Object::Plane_Object() : m_fScale(1.0f)
 {
 	m_VertexList.resize(4);
 }
-
+Plane_Object::~Plane_Object()
+{
+	Release();
+}
 bool Plane_Object::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 							const std::string& VSFunc, const std::string& PSFunc)
 {
 	CreateIndexBuffer(pDevice);
 	m_Object.setBlendState(pDevice);
+	m_ConstantData.Util.z = 1.0f;
 	return Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
 void Plane_Object::SetTexPos(const D3DXVECTOR4& DrawVec)
@@ -31,13 +35,14 @@ bool Plane_Object::Frame()
 	m_VertexList[3].Pos.x = m_VertexList[1].Pos.x;
 	m_VertexList[3].Pos.y = m_VertexList[2].Pos.y;
 
+
 	m_rtCollision.left = m_VertexList[0].Pos.x;
 	m_rtCollision.top = m_VertexList[0].Pos.y;
 	m_rtCollision.right = m_VertexList[3].Pos.x;
 	m_rtCollision.bottom = m_VertexList[3].Pos.y;
 	return true;
 }
-COL Plane_Object::Collision(Object* pObject, FLOAT* ColSize)
+COL Plane_Object::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 {
 	D2D1_RECT_F ColRT = pObject->getCollisionRT();
 	D3DXVECTOR2 Cen = pObject->getCenterPos();

@@ -30,9 +30,11 @@ bool ObjectMgr::Render(ID3D11DeviceContext* pContext)
 }
 bool ObjectMgr::Release()
 {
-	for (auto& it : m_Terrainlist)
+	TerrainIter iter;
+	for (iter = m_Terrainlist.begin(); iter != m_Terrainlist.end();)
 	{
-		DEL_REL(it);
+		(*iter)->Release();
+		iter = m_Terrainlist.erase(iter);
 	}
 	DEL_REL(m_pBackground);
 	return true;
@@ -49,7 +51,7 @@ void ObjectMgr::AddPlayerEffect(PlayerEffectPtr pEffect)
 {
 	m_PlayerEffect.push_back(pEffect);
 }
-void ObjectMgr::AddPlayer(Player* pPlayer)
+void ObjectMgr::AddPlayer(std::shared_ptr<Player> pPlayer)
 {
 	m_pPlayer = pPlayer;
 }
@@ -57,7 +59,7 @@ void ObjectMgr::AddPlayer(Player* pPlayer)
 void ObjectMgr::Scroll()
 {
 	D2D1_RECT_F Crt = m_pPlayer->getCollisionRT();
-
+	D3DXVECTOR2 Cen = m_pPlayer->getCenterPos();
 	if (m_Collision.right < Crt.right)
 	{
 		if (m_pBackground->CanScrollRight() == true)
@@ -86,21 +88,21 @@ void ObjectMgr::Scroll()
 	{
 		if (m_pPlayer->getDir() == 1 && m_pBackground->CanScrollRight() == true)
 		{
-			m_pBackground->Scroll((Crt.left - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter);
+			m_pBackground->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter);
 			for (auto& it : m_Terrainlist)
 			{
-				it->Scroll((Crt.left - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				it->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
 			}
-			m_pPlayer->MoveCenterPos({ (m_fLeftFocus - Crt.left) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
+			m_pPlayer->MoveCenterPos({ (m_fLeftFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
 		}
 		if (m_pPlayer->getDir() == -1 && m_pBackground->CanScrollLeft() == true)
 		{
-			m_pBackground->Scroll((Crt.right - m_fRightFocus) * g_fSecPerFrame * m_fDiameter);
+			m_pBackground->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter);
 			for (auto& it : m_Terrainlist)
 			{
-				it->Scroll((Crt.right - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				it->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
 			}
-			m_pPlayer->MoveCenterPos({ (m_fRightFocus - Crt.right) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
+			m_pPlayer->MoveCenterPos({ (m_fRightFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
 		}
 	}
 }

@@ -3,7 +3,7 @@ cbuffer VS_CB
 	float4	Color		: packoffset(c0);
 	float	Width		: packoffset(c1.x);
 	float	Height		: packoffset(c1.y);
-	float	Utilz		: packoffset(c1.z);
+	float	Cos			: packoffset(c1.z);
 	float	Utilw		: packoffset(c1.w);
 	matrix	g_proj		: packoffset(c2);
 }
@@ -67,4 +67,22 @@ float4 TerrainPS(in PS_INPUT input) : SV_Target
 {
 	float4 Color1 = float4(0.0f,0.0f,1.0f,1.0f);
 	return Color1;
+}
+
+float4 PlayerPS(in PS_INPUT input) : SV_Target
+{
+	float4 TexColor = g_txDiffuse.Sample(g_SamState, input.tex);
+	if(TexColor.a < 0.1)
+	{
+		discard;
+	}
+	TexColor.a = Cos;
+	return TexColor;
+}
+
+float4 FadePS(in PS_INPUT input) : SV_Target
+{
+	float4 Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	Color.a = cos(Cos);
+	return Color;
 }

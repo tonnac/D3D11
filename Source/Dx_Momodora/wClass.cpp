@@ -105,8 +105,8 @@ LRESULT wClass::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			{
 				DXGI_MODE_DESC modeDesc;
 				ZeroMemory(&modeDesc, sizeof(modeDesc));
-				modeDesc.Width = 800;
-				modeDesc.Height = 600;
+				modeDesc.Width = 960;
+				modeDesc.Height = 720;
 				modeDesc.RefreshRate.Numerator = 60;
 				modeDesc.RefreshRate.Denominator = 1;
 				modeDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
