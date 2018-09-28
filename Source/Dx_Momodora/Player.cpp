@@ -6,7 +6,7 @@
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
 
-Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false)
+Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder(false)
 {
 	State * state = new PlayerIdle(this);
 	state = new PlayerRun(this);
@@ -28,10 +28,10 @@ Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false)
 	//state = new PlayerHurt(this);
 	//state = new PlayerDeath(this);
 
-	//state = new PlayerLadderEnter(this);
-	//state = new PlayerLadderLeave(this);
-	//state = new PlayerLadderUp(this);
-	//state = new PlayerLadderDown(this);
+	state = new PlayerLadderEnter(this);
+	state = new PlayerLadderLeave(this);
+	state = new PlayerLadderUp(this);
+	state = new PlayerLadderDown(this);
 	m_fSpeed = g_fSpeed = 300.0f;
 	m_pCurrentState = m_StateList[L"Idle"];
 }
@@ -70,6 +70,10 @@ void Player::setDown(const bool& down)
 {
 	m_Down = down;
 }
+void Player::setLadder(const bool& ladder)
+{
+	m_Ladder = ladder;
+}
 
 INT Player::getJumpNum()
 {
@@ -78,4 +82,8 @@ INT Player::getJumpNum()
 bool Player::getDown() const
 {
 	return m_Down;
+}
+bool Player::getLadder() const
+{
+	return m_Ladder;
 }

@@ -32,7 +32,7 @@ bool PlayerAttack::Frame()
 		return true;
 	}
 
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_fTimer = 0.0f;
 		m_pCharacter->setState(L"Idle");
@@ -69,7 +69,7 @@ bool PlayerAttack2::Frame()
 		return true;
 	}
 
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_fTimer = 0.0f;
 		m_pCharacter->setState(L"Idle");
@@ -93,7 +93,7 @@ bool PlayerAttack3::Frame()
 {
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * 30.0f, 0.0f });
 	AttackFrame(g_Attack3);
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
 	}
@@ -116,7 +116,7 @@ bool AirAttack::Frame()
 {
 	m_pCharacter->MoveCenterPos({ 0.0f, g_fSecPerFrame * 30.0f });
 	AttackFrame(g_AirAttack);
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Fall");
 	}
@@ -136,7 +136,7 @@ bool BowAttack::Init()
 }
 bool BowAttack::Frame()
 {
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
 	}
@@ -157,7 +157,7 @@ bool AirBowAttack::Init()
 }
 bool AirBowAttack::Frame()
 {
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Fall");
 	}
@@ -178,7 +178,7 @@ bool CrouchBowAttack::Init()
 }
 bool CrouchBowAttack::Frame()
 {
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Crouch");
 	}

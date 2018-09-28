@@ -12,7 +12,7 @@ public:
 	PlayerState(Player*);
 public:
 	virtual bool		Init() = 0;
-	virtual bool		Frame() = 0;
+	virtual bool		Frame();
 protected:
 	void				AttackFrame(PlayerEffectPtr aptr);
 	bool				AirAttack();
@@ -23,6 +23,8 @@ protected:
 	bool				Fall();
 	void				AirMove();
 	BowDelete			bowdel;
+protected:
+	Player *			m_pCharacter;
 };
 class PlayerIdle : public PlayerState
 {

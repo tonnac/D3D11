@@ -1,6 +1,5 @@
 #pragma once
-#include "Plane_Object.h"
-#include "Character.h"
+#include "Player.h"
 
 class Terrain : public Plane_Object
 {
@@ -11,7 +10,8 @@ public:
 public:
 	bool			Scroll(const FLOAT& pos) override;
 	virtual COL		Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
-	virtual COL		Collision(std::shared_ptr<Character> pObject);
+//	virtual COL		Collision(std::shared_ptr<Character> pObject);
+	virtual COL		Collision(std::shared_ptr<Player> pPlayer);
 private:
 	bool			PreRender(ID3D11DeviceContext* pContext);
 };

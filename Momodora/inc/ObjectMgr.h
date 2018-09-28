@@ -4,6 +4,7 @@
 #include "KahoAttack.h"
 #include "Player.h"
 #include "DownableObject.h"
+#include "Ladder.h"
 
 class ObjectMgr : public Singleton<ObjectMgr>
 {

@@ -42,14 +42,29 @@ bool GameScene2::Frame()
 	{
 		return false;
 	}
+	if (g_Player->getCenterPos().x >= g_rtClient.right - 5.0f)
+	{
+		m_bSceneChange = true;
+		return false;
+	}
 	S_Object.Frame();
 	return true;
 }
 
-GameScene3::GameScene3()
+GameScene3::GameScene3() : GameScene(L"GameScene3")
 {}
 bool GameScene3::Frame()
 {
+	if (g_Player->getCenterPos().x <= 5.0f)
+	{
+		return false;
+	}
+	if (g_Player->getCenterPos().x >= g_rtClient.right - 5.0f)
+	{
+		m_bSceneChange = true;
+		return false;
+	}
+	S_Object.Frame();
 	return true;
 }
 bool GameScene3::Release()

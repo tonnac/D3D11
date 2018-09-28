@@ -29,7 +29,7 @@ bool Fade::Frame()
 	{
 		if (abs(m_fInitVal - 0.0f) < 0.01f)
 		{
-			m_fAngle -= m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.4f;
+			m_fAngle -= m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.45f;
 			if (abs(m_fAngle - 0.0f) < 0.01f)
 			{
 				m_fInitVal = m_fMaxAngle;
@@ -39,7 +39,7 @@ bool Fade::Frame()
 		}
 		else
 		{
-			m_fAngle += m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.4f;
+			m_fAngle += m_fMaxAngle / 0.5f * g_fSecPerFrame * 0.45f;
 			if (abs(m_fAngle - m_fMaxAngle) < 0.01f)
 			{
 				m_fInitVal = 0.0f;

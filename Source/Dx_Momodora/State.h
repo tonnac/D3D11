@@ -9,20 +9,15 @@ class Player;
 class State
 {
 public:
-	State(Character* pCharacter);
+	State();
 public:
 	virtual bool		Init		();
-	virtual bool		Frame		();
-	virtual bool		Release		();
+	virtual bool		Frame		() = 0;
 public:
 	void				setSprite	(const std::tstring& name, const std::tstring& Spritename);
-public:
-//	RECT				getEffectRT	();
 protected:
 	INT					m_iResetindex;
-	Character *			m_pCharacter;
 	Sprite *			m_pSprite;
 	RECT*				m_rtDraw;
-//	EffectObj *			m_pEffectObj;
 	FLOAT				m_fTimer;
 };

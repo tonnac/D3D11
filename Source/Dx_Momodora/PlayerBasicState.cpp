@@ -2,7 +2,7 @@
 #include "ObjectMgr.h"
 #include "SceneMgr.h"
 
-PlayerState::PlayerState(Player * pPlayer) : State(pPlayer)
+PlayerState::PlayerState(Player * pPlayer) : m_pCharacter(pPlayer)
 {
 	bowdel = [](PlayerEffect* pEffect)
 	{
@@ -13,6 +13,17 @@ PlayerState::PlayerState(Player * pPlayer) : State(pPlayer)
 	};
 }
 
+
+bool PlayerState::Frame()
+{
+	m_pCharacter->SetTexPos(m_pSprite->getSpriteVt());
+	if (m_pSprite->Frame() == false)
+	{
+		m_pSprite->setIndex(m_iResetindex);
+		return false;
+	}
+	return true;
+}
 void PlayerState::AttackFrame(PlayerEffectPtr aptr)
 {
 	D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
@@ -244,23 +255,23 @@ bool PlayerIdle::Frame()
 			m_pCharacter->reverseDir();
 		}
 	}
-	//if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH && m_pCharacter->getLadder())
-	//{
-	//	m_pCharacter->setState(L"LadderEnter");
-	//	return true;
-	//}
-	//if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH && m_pCharacter->getLadder())
-	//{
-	//	m_pCharacter->setState(L"LadderUp");
-	//	return true;
-	//}
+	if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH && m_pCharacter->getLadder())
+	{
+		m_pCharacter->setState(L"LadderEnter");
+		return true;
+	}
+	if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH && m_pCharacter->getLadder())
+	{
+		m_pCharacter->setState(L"LadderUp");
+		return true;
+	}
 	if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_pCharacter->setState(L"Crouch");
 		return true;
 	}
 
-	return State::Frame();
+	return PlayerState::Frame();
 }
 
 PlayerRun::PlayerRun(Player * pPlayer) : PlayerState(pPlayer)
@@ -322,7 +333,7 @@ bool PlayerRun::Frame()
 		return true;
 	}
 
-	return State::Frame();
+	return PlayerState::Frame();
 }
 
 PlayerBrake::PlayerBrake(Player * pPlayer) : PlayerState(pPlayer)
@@ -350,7 +361,7 @@ bool PlayerBrake::Frame()
 		m_pSprite->setIndex(0);
 		return true;
 	}
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
 	}
@@ -369,7 +380,7 @@ bool PlayerTurn::Init()
 }
 bool PlayerTurn::Frame()
 {
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
 	}
@@ -421,7 +432,7 @@ bool PlayerJump::Frame()
 		m_pCharacter->setState(L"Jump2");
 		return true;
 	}
-	return State::Frame();
+	return PlayerState::Frame();
 }
 
 PlayerJump2::PlayerJump2(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(600.0f)
@@ -460,7 +471,7 @@ bool PlayerJump2::Frame()
 	}
 	AirMove();
 
-	return State::Frame();
+	return PlayerState::Frame();
 }
 
 PlayerFall::PlayerFall(Player * pPlayer) : PlayerState(pPlayer), m_fAcceleration(1.0f)
@@ -511,7 +522,7 @@ bool PlayerFall::Frame()
 		return true;
 	}
 
-	return State::Frame();
+	return PlayerState::Frame();
 }
 
 PlayerRise::PlayerRise(Player * pPlayer) : PlayerState(pPlayer)
@@ -542,7 +553,7 @@ bool PlayerRise::Frame()
 			return true;
 		}
 	}
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
 	}
@@ -598,125 +609,118 @@ bool PlayerCrouch::Frame()
 		return true;
 	}
 
-	return State::Frame();
+	return PlayerState::Frame();
 }
-//
-//PlayerLadderEnter::PlayerLadderEnter(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("LadderEnter"), this);
-//}
-//bool PlayerLadderEnter::Init()
-//{
-//	setSprite(L"Kaho", L"LadderEnter");
-//	m_pSprite->setDivideTime(0.8f);
-//	return true;
-//}
-//bool PlayerLadderEnter::Frame()
-//{
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"LadderDown");
-//		return true;
-//	}
-//	/*if (m_pSprite->getIndex() == 0)
-//	{
-//		m_CenterPos->y += 100.0f * g_fSecPerFrame;
-//	}*/
-//	m_CenterPos->y += g_fSecPerFrame * 80.0f;
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
-//PlayerLadderLeave::PlayerLadderLeave(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("LadderLeave"), this);
-//}
-//bool PlayerLadderLeave::Init()
-//{
-//	setSprite(L"Kaho", L"LadderLeave");
-//	m_pSprite->setDivideTime(0.8f);
-//	return true;
-//}
-//bool PlayerLadderLeave::Frame()
-//{
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"Rise");
-//		return true;
-//	}
-//	m_CenterPos->y -= g_fSecPerFrame * 65.0f;
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
-//PlayerLadderUp::PlayerLadderUp(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("LadderUp"), this);
-//}
-//bool PlayerLadderUp::Init()
-//{
-//	setSprite(L"Kaho", L"LadderUp");
-//	m_pSprite->setDivideTime(1.2f);
-//	return true;
-//}
-//bool PlayerLadderUp::Frame()
-//{
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_pCharacter->setState(L"LadderDown");
-//		return true;
-//	}
-//	if (S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->y -= g_fSecPerFrame * fSpeed * 0.67;
-//		if (!m_pSprite->Frame())
-//		{
-//			m_pSprite->setIndex(0);
-//		}
-//	}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
-//PlayerLadderDown::PlayerLadderDown(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("LadderDown"), this);
-//}
-//bool PlayerLadderDown::Init()
-//{
-//	setSprite(L"Kaho", L"LadderDown");
-//	m_pSprite->setDivideTime(0.8f);
-//	return true;
-//}
-//bool PlayerLadderDown::Frame()
-//{
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	if (S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_DOWN) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_CenterPos->y += g_fSecPerFrame * fSpeed * 0.9;
-//		if (!m_pSprite->Frame())
-//		{
-//			m_pSprite->setIndex(0);
-//		}
-//	}
-//	if (S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(VK_UP) == Input::KEYSTATE::KEY_HOLD)
-//	{
-//		m_pCharacter->setState(L"LadderUp");
-//		return true;
-//	}
-//	//if (!m_pCharacter->isFallState())
-//	//{
-//	//	m_pSprite->setIndex(0);
-//	//	m_pCharacter->setState(L"LadderLeave");
-//	//	return true;
-//	//}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
+
+PlayerLadderEnter::PlayerLadderEnter(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"LadderEnter"), this);
+}
+bool PlayerLadderEnter::Init()
+{
+	setSprite(L"Kaho", L"LadderEnter");
+	m_pSprite->setDivideTime(0.8f);
+	return true;
+}
+bool PlayerLadderEnter::Frame()
+{
+	if (PlayerState::Frame() == false)
+	{
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"LadderDown");
+		return true;
+	}
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 80.0f });
+	return true;
+}
+
+PlayerLadderLeave::PlayerLadderLeave(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"LadderLeave"), this);
+}
+bool PlayerLadderLeave::Init()
+{
+	setSprite(L"Kaho", L"LadderLeave");
+	m_pSprite->setDivideTime(0.8f);
+	return true;
+}
+bool PlayerLadderLeave::Frame()
+{
+	if (PlayerState::Frame() == false)
+	{
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Rise");
+		return true;
+	}
+	m_pCharacter->MoveCenterPos({ 0.0f,-g_fSecPerFrame * 65.0f });
+	return true;
+}
+
+PlayerLadderUp::PlayerLadderUp(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"LadderUp"), this);
+}
+bool PlayerLadderUp::Init()
+{
+	setSprite(L"Kaho", L"LadderUp");
+	m_pSprite->setDivideTime(1.2f);
+	return true;
+}
+bool PlayerLadderUp::Frame()
+{
+	if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_pCharacter->setState(L"LadderDown");
+		return true;
+	}
+	if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_pCharacter->MoveCenterPos({ 0.0f,-g_fSecPerFrame * g_fSpeed * 0.67f });
+		if (PlayerState::Frame() == false)
+		{
+			m_pSprite->setIndex(0);
+			return true;
+		}
+	}
+	return true;
+}
+
+PlayerLadderDown::PlayerLadderDown(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"LadderDown"), this);
+}
+bool PlayerLadderDown::Init()
+{
+	setSprite(L"Kaho", L"LadderDown");
+	m_pSprite->setDivideTime(0.8f);
+	return true;
+}
+bool PlayerLadderDown::Frame()
+{
+	if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_pCharacter->MoveCenterPos({ 0.0f, g_fSecPerFrame * g_fSpeed * 0.9f });
+		if (PlayerState::Frame() == false)
+		{
+			m_pSprite->setIndex(0);
+			return true;
+		}
+	}
+	if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_HOLD)
+	{
+		m_pCharacter->setState(L"LadderUp");
+		return true;
+	}
+	//if (!m_pCharacter->isFallState())
+	//{
+	//	m_pSprite->setIndex(0);
+	//	m_pCharacter->setState(L"LadderLeave");
+	//	return true;
+	//}
+	PlayerState::Frame();
+	return true;
+}
+
 PlayerRoll::PlayerRoll(Player * pPlayer) : PlayerState(pPlayer)
 {
 	m_pCharacter->AddState(std::tstring(L"Roll"), this);
@@ -739,7 +743,7 @@ bool PlayerRoll::Frame()
 		return true;
 	}
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * g_fSpeed * 1.5f , 0.0f });
-	if (State::Frame() == false)
+	if (PlayerState::Frame() == false)
 	{
 		m_fTimer = 0.0f;
 		m_pCharacter->setState(L"Idle");

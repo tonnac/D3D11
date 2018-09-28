@@ -113,6 +113,18 @@ void Scene::SceneSet(const bool& isInverse)
 					S_Object.AddTerrain(pData);
 				}
 			}break;
+			case ObjectEnum::LADDER:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 Pos;
+					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+					Ladder* pData = new Ladder;
+					pData->SetPos(Pos);
+					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+					S_Object.AddTerrain(pData);
+				}
+			}break;
 			}
 		}
 	}
@@ -177,12 +189,47 @@ void Scene::SceneSet(const bool& isInverse)
 					S_Object.AddTerrain(pData);
 				}
 			}break;
+			case ObjectEnum::LADDER:
+			{
+				for (int i = 0; i < ObjNum; ++i)
+				{
+					D3DXVECTOR4 Pos;
+					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+					Ladder* pData = new Ladder;
+					pData->SetPos(Pos);
+					pData->Scroll(xWidth * 3.0f);
+					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+					S_Object.AddTerrain(pData);
+				}
+			}break;
 			}
 		}
 	}
 }
-//LobbyScene::LobbyScene() : isPress(false), isSoundBar(false)
-//{}										 
+
+LobbyScene::LobbyScene() : isPress(false), isSoundBar(false)
+{
+
+}		
+bool LobbyScene::inverseInit()
+{
+	m_pBackground = new Background;
+	m_pBackground->InitSet(m_pDevice, L"Lobby", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
+	m_pBackground->SetPos(0.0f, 0.0f, 960.0f, 720.0f);
+	S_Object.AddBackGround(m_pBackground);
+	return true;
+}
+bool LobbyScene::Frame()
+{
+	S_Object.Frame();
+	return true;
+}
+bool LobbyScene::Release()
+{
+	return true;
+}
+
+
 //bool LobbyScene::Init()
 //{
 //	PosSet();
@@ -271,6 +318,8 @@ void Scene::SceneSet(const bool& isInverse)
 //	}
 //	return true;
 //}
+
+
 //bool LobbyScene::BKState()
 //{
 //	switch (m_state)
@@ -516,6 +565,9 @@ void Scene::SceneSet(const bool& isInverse)
 //		break;
 //	}
 //}
+
+
+
 //
 //
 //bool EndScene::Init()

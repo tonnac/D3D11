@@ -8,7 +8,8 @@ enum ObjectEnum : unsigned char
 	BACKGROUND = 0,
 	TERRAIN,
 	PLAYER,
-	DOWN
+	DOWN,
+	LADDER
 };
 
 
@@ -35,27 +36,20 @@ protected:
 	const std::tstring						m_SceneName;
 };
 
-//class LobbyScene : public Scene
-//{
-//public:
-//	LobbyScene();
-//public:
-//	bool			Init		() override;
-//	bool			Frame		() override;
-//	bool			Render		() override;
-//	bool			Release		() override;
-//	bool			BKState		();
-//	void			PosSet		();
-//	void			AKeyReact	(const INT&);
-//protected:
-//	INT				m_miscIndex;
-//	LOBBYSTATE		m_state;
-//	bool			isSoundBar;
-//	bool			isPress;
-//	BKObject		m_bkmisc[3];
-//	RECT			m_miscrt[12];
-//	FloatPoint		m_miscpos[11];
-//};
+class LobbyScene : public Scene
+{
+public:
+	LobbyScene();
+public:
+	bool			inverseInit	() override;
+	bool			Frame		() override;
+	bool			Release		() override;
+protected:
+	INT				m_miscIndex;
+	bool			isSoundBar;
+	bool			isPress;
+	Background*		m_pBackground;
+};
 //
 //class EndScene : public Scene
 //{

@@ -60,24 +60,50 @@ COL Terrain::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 	}
 	return col;
 }
-COL	Terrain::Collision(std::shared_ptr<Character> pObject)
+//COL	Terrain::Collision(std::shared_ptr<Character> pObject)
+//{
+//	FLOAT Size;
+//	COL col = Collision(pObject, &Size);
+//
+//	if (col == COL::TOP)
+//	{
+//		return col;
+//	}
+//
+//	D2D1_RECT_F pcol = pObject->getCollisionRT();
+//	D2D1_RECT_F dCol = { pcol.left, pcol.bottom, pcol.right, pcol.bottom + 15.0f };
+//	D3DXVECTOR2 dColcen = { (dCol.right + dCol.left) * 0.5f, (dCol.bottom + dCol.top) * 0.5f };
+//
+//
+//	if (pObject->getCurrentState() != L"Fall" &&
+//		(dCol.right - dColcen.x) + m_rtCollision.right - m_Centerpos.x >= abs(m_Centerpos.x - dColcen.x) && 
+//		(dCol.bottom - dColcen.y) + m_rtCollision.bottom- m_Centerpos.y >= abs(m_Centerpos.y - dColcen.y))
+//	{
+//		return COL::TOP;
+//	}
+//	else
+//	{
+//		return COL::NONE;
+//	}
+//}
+COL	Terrain::Collision(std::shared_ptr<Player> pPlayer)
 {
 	FLOAT Size;
-	COL col = Collision(pObject, &Size);
+	COL col = Collision(pPlayer, &Size);
 
 	if (col == COL::TOP)
 	{
 		return col;
 	}
 
-	D2D1_RECT_F pcol = pObject->getCollisionRT();
+	D2D1_RECT_F pcol = pPlayer->getCollisionRT();
 	D2D1_RECT_F dCol = { pcol.left, pcol.bottom, pcol.right, pcol.bottom + 15.0f };
 	D3DXVECTOR2 dColcen = { (dCol.right + dCol.left) * 0.5f, (dCol.bottom + dCol.top) * 0.5f };
 
 
-	if (pObject->getCurrentState() != L"Fall" &&
-		(dCol.right - dColcen.x) + m_rtCollision.right - m_Centerpos.x >= abs(m_Centerpos.x - dColcen.x) && 
-		(dCol.bottom - dColcen.y) + m_rtCollision.bottom- m_Centerpos.y >= abs(m_Centerpos.y - dColcen.y))
+	if (pPlayer->getCurrentState() != L"Fall" &&
+		(dCol.right - dColcen.x) + m_rtCollision.right - m_Centerpos.x >= abs(m_Centerpos.x - dColcen.x) &&
+		(dCol.bottom - dColcen.y) + m_rtCollision.bottom - m_Centerpos.y >= abs(m_Centerpos.y - dColcen.y))
 	{
 		return COL::TOP;
 	}

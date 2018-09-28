@@ -14,7 +14,7 @@ Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1)
 bool Character::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 						const std::string& VSFunc, const std::string& PSFunc)
 {
-	m_pShader = S_Shader.getShader(L"Terrain")->getPixelShader();
+	m_pShader = S_Shader.LoadShader(pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS")->getPixelShader();
 	return Plane_Object::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }
 bool Character::Init()

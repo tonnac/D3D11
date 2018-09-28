@@ -3,6 +3,10 @@
 bool Sample::Init()
 {
 	S_Scene.Initialize(m_pDevice, m_pContext);
+	m_Ladder = new Ladder;
+	m_Ladder->SetPos({536.0f,100.0f,551.0f,208.0f});
+	m_Ladder->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+	S_Object.AddTerrain(m_Ladder);
 	return true;
 }
 bool Sample::Frame()

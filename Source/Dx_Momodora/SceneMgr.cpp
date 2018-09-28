@@ -8,7 +8,7 @@ std::shared_ptr<PlayerEffect>	g_Attack3 = nullptr;
 std::shared_ptr<PlayerEffect>	g_AirAttack = nullptr;
 std::shared_ptr<Player>			g_Player = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(2), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(0), m_iCount(0)
 {
 }
 
@@ -27,9 +27,9 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	g_AirAttack = std::make_shared<KahoAirAttack>();
 	g_Player = std::make_shared<Player>();
 
-	m_pCurrentScene = new GameScene2;
+	m_pCurrentScene = new LobbyScene;
 	m_pCurrentScene->setDevice(pDevice, pContext);
-	m_pCurrentScene->Init();
+	m_pCurrentScene->inverseInit();
 
 	g_Player->InitSet(m_pDevice, L"Player", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"], "VS", "PlayerPS");
 	S_Object.AddPlayer(g_Player);
