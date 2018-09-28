@@ -20,25 +20,14 @@ bool PlayerAttack::Frame()
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * 30.0f, 0.0f });
 
 	m_fTimer += g_fSecPerFrame;
-
+	AttackFrame(g_Attack1);
 	if (m_fTimer >= 0.4f && S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_fTimer = 0.0f;
 		S_Sound.Play(Effect_Snd::ATTACK2);
 		m_pCharacter->setState(L"Attack2");
 		m_pSprite->setIndex(0);
-		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
-		if (m_pCharacter->getDir() == 1)
-		{
-			Center.x += 70.0f;
-			g_Attack2->setDir(1);
-		}
-		else
-		{
-			Center.x -= 70.0f;
-			g_Attack2->setDir(-1);
-		}
-		g_Attack2->SetCenterPos(Center);
+		AttackFrame(g_Attack2);
 		S_Object.AddPlayerEffect(g_Attack2);
 		return true;
 	}
@@ -68,25 +57,14 @@ bool PlayerAttack2::Frame()
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * 30.0f, 0.0f });
 
 	m_fTimer += g_fSecPerFrame;
-
+	AttackFrame(g_Attack2);
 	if (m_fTimer >= 0.4f && S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_fTimer = 0.0f;
 		S_Sound.Play(Effect_Snd::ATTACK3);
 		m_pCharacter->setState(L"Attack3");
 		m_pSprite->setIndex(0);
-		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
-		if (m_pCharacter->getDir() == 1)
-		{
-			Center.x += 100.0f;
-			g_Attack3->setDir(1);
-		}
-		else
-		{
-			Center.x -= 100.0f;
-			g_Attack3->setDir(-1);
-		}
-		g_Attack3->SetCenterPos(Center);
+		AttackFrame(g_Attack3);
 		S_Object.AddPlayerEffect(g_Attack3);
 		return true;
 	}
@@ -114,7 +92,7 @@ bool PlayerAttack3::Init()
 bool PlayerAttack3::Frame()
 {
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * 30.0f, 0.0f });
-
+	AttackFrame(g_Attack3);
 	if (State::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
@@ -131,13 +109,13 @@ AirAttack::AirAttack(Player * pPlayer) : MeleeAttack(pPlayer), m_fAcceleration(0
 bool AirAttack::Init()
 {
 	setSprite(L"Kaho", L"AirAttack");
-	m_pSprite->setDivideTime(0.5f);
+	m_pSprite->setDivideTime(0.6f);
 	return true;
 }
 bool AirAttack::Frame()
 {
 	m_pCharacter->MoveCenterPos({ 0.0f, m_pCharacter->getDir() * g_fSecPerFrame * 30.0f });
-
+	AttackFrame(g_AirAttack);
 	if (State::Frame() == false)
 	{
 		m_pCharacter->setState(L"Fall");

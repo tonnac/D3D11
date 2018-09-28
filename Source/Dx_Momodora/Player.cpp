@@ -31,7 +31,7 @@ Player::Player()
 	//state = new PlayerLadderLeave(this);
 	//state = new PlayerLadderUp(this);
 	//state = new PlayerLadderDown(this);
-	m_fSpeed = g_fSpeed = 200.0f;
+	m_fSpeed = g_fSpeed = 300.0f;
 	m_pCurrentState = m_StateList[L"Idle"];
 }
 

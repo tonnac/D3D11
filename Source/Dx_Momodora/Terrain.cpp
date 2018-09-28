@@ -55,7 +55,7 @@ COL Terrain::Collision(Object* pObject, FLOAT* ColSize)
 	}break;
 	case COL::BOTTOM:
 	{
-//		pObject->MoveCenterPos({ 0.0f, -Size });
+		pObject->MoveCenterPos({ 0.0f, Size });
 	}break;
 	}
 	return col;
@@ -64,17 +64,18 @@ COL	Terrain::Collision(Character* pObject)
 {
 	FLOAT Size;
 	COL col = Collision(pObject, &Size);
-	if (col == COL::TOP && pObject->getCurrentState() == L"Fall")
+
+	if (col == COL::TOP)
 	{
-		pObject->setState(L"Idle");
-		Player::setJumpNum(0);
+		return col;
 	}
+
 	D2D1_RECT_F pcol = pObject->getCollisionRT();
 	D2D1_RECT_F dCol = { pcol.left, pcol.bottom, pcol.right, pcol.bottom + 15.0f };
 	D3DXVECTOR2 dColcen = { (dCol.right + dCol.left) * 0.5f, (dCol.bottom + dCol.top) * 0.5f };
 
 
-	if (pObject->getCurrentState() != L"Fall" && 
+	if (pObject->getCurrentState() != L"Fall" &&
 		(dCol.right - dColcen.x) + m_rtCollision.right - m_Centerpos.x >= abs(m_Centerpos.x - dColcen.x) && 
 		(dCol.bottom - dColcen.y) + m_rtCollision.bottom- m_Centerpos.y >= abs(m_Centerpos.y - dColcen.y))
 	{
@@ -84,8 +85,6 @@ COL	Terrain::Collision(Character* pObject)
 	{
 		return COL::NONE;
 	}
-
-//	return col;
 }
 bool Terrain::PreRender(ID3D11DeviceContext* pContext)
 {

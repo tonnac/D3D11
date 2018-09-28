@@ -11,6 +11,9 @@ public:
 public:
 	bool		Frame() override;
 	bool		Scroll(const FLOAT& pos) override;
+//	COL			CanScroll();
+	bool		CanScrollLeft();
+	bool		CanScrollRight();
 private:
 	void		BasicSet(const FLOAT& rtLeft, const FLOAT& MaxWidth);
 private:

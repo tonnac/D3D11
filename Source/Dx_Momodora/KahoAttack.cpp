@@ -69,7 +69,7 @@ bool KahoAirAttack::InitSet(ID3D11Device* pDevice, const std::tstring& Name, con
 {
 	m_pEffectSprite = S_Sprite.LoadSprite(L"Kaho", L"AirLeaf");
 	m_pEffectSprite->setIndex(0);
-	m_pEffectSprite->setDivideTime(0.7f);
+	m_pEffectSprite->setDivideTime(0.6f);
 	m_iValidIndex = 2;
 	return Effect::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
 }

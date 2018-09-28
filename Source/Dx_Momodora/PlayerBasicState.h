@@ -14,6 +14,7 @@ public:
 	virtual bool		Init() = 0;
 	virtual bool		Frame() = 0;
 protected:
+	void				AttackFrame(PlayerEffectPtr aptr);
 	bool				AirAttack();
 	bool				BowAttack();
 	bool				Attack();

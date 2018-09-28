@@ -127,7 +127,7 @@ void Scene::SceneSet(const bool& isInverse)
 					xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
 					Background* pBackground = new Background;
 					pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Map", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
+					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddBackGround(pBackground);
 				}
 			}break;
@@ -154,6 +154,9 @@ void Scene::SceneSet(const bool& isInverse)
 					Center.x = g_rtClient.right - Center.x;
 					pPlayer->SetCenterPos(Center);
 					pPlayer->reverseDir();
+
+					pPlayer->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+					S_Object.AddPlayer(pPlayer);
 				}
 			}break;
 			}

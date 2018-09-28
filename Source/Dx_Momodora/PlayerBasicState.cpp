@@ -1,8 +1,6 @@
 #include "PlayerBasicState.h"
 #include "ObjectMgr.h"
 #include "SceneMgr.h"
-//#include "KahoAttack.h"
-//#include "TerrainObject.h"
 
 PlayerState::PlayerState(Player * pPlayer) : State(pPlayer)
 {
@@ -13,6 +11,53 @@ PlayerState::PlayerState(Player * pPlayer) : State(pPlayer)
 			delete pEffect;
 		}
 	};
+}
+
+void PlayerState::AttackFrame(PlayerEffectPtr aptr)
+{
+	D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
+	if (aptr == g_Attack1 || aptr == g_Attack3)
+	{
+		if (m_pCharacter->getDir() == 1)
+		{
+			Center.x += 100.0f;
+			aptr->setDir(1);
+		}
+		else
+		{
+			Center.x -= 100.0f;
+			aptr->setDir(-1);
+		}
+	}
+	else if (aptr == g_Attack2)
+	{
+		if (m_pCharacter->getDir() == 1)
+		{
+			Center.x += 70.0f;
+			aptr->setDir(1);
+		}
+		else
+		{
+			Center.x -= 70.0f;
+			aptr->setDir(-1);
+		}
+	}
+	else
+	{
+		if (m_pCharacter->getDir() == 1)
+		{
+			Center.x += 60.0f;
+			Center.y += 10.0f;
+			aptr->setDir(1);
+		}
+		else
+		{
+			Center.x -= 60.0f;
+			Center.y += 10.0f;
+			aptr->setDir(-1);
+		}
+	}
+	aptr->SetCenterPos(Center);
 }
 
 bool PlayerState::AirAttack()
@@ -71,18 +116,7 @@ bool PlayerState::Attack()
 	{
 		S_Sound.Play(Effect_Snd::ATTACK1);
 		m_pCharacter->setState(L"Attack1");
-		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
-		if (m_pCharacter->getDir() == 1)
-		{
-			Center.x += 100.0f;
-			g_Attack1->setDir(1);
-		}
-		else
-		{
-			Center.x -= 100.0f;
-			g_Attack1->setDir(-1);
-		}
-		g_Attack1->SetCenterPos(Center);
+		AttackFrame(g_Attack1);
 		S_Object.AddPlayerEffect(g_Attack1);
 		return true;
 	}
@@ -157,8 +191,6 @@ bool PlayerIdle::Init()
 bool PlayerIdle::Frame()
 {
 	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
-
-//	m_pCharacter->setLanding(false);
 
 	if (BowAttack() == true)
 	{
@@ -244,14 +276,7 @@ bool PlayerRun::Init()
 }
 bool PlayerRun::Frame()
 {
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	m_CenterPos->y += g_fSecPerFrame * 2.0f;
-	//if (!m_pCharacter->getLanding())
-	//{
-	//	m_pSprite->setIndex(0);
-	//	m_pCharacter->setState(L"Fall");
-	//	return true;
-	//}
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
 
 	if (Attack() == true)
 	{
@@ -267,6 +292,11 @@ bool PlayerRun::Frame()
 	}
 	if (Fall() == true)
 	{
+		return true;
+	}
+	if (BowAttack() == true)
+	{
+		m_pCharacter->setState(L"Bow");
 		return true;
 	}
 
@@ -359,7 +389,6 @@ bool PlayerJump::Init()
 }
 bool PlayerJump::Frame()
 {
-//	m_pCharacter->setLanding(false);
 	m_fTimer += g_fSecPerFrame;
 	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
 
@@ -407,7 +436,6 @@ bool PlayerJump2::Init()
 }
 bool PlayerJump2::Frame()
 {
-	//	m_pCharacter->setLanding(false);
 	m_fTimer += g_fSecPerFrame;
 
 	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
@@ -475,15 +503,13 @@ bool PlayerFall::Frame()
 
 	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 400.0f });
 
-	//if (m_pCharacter->getLanding())
-	//{
-	//	m_pCharacter->setJumpNum(0);
-	//	m_pSprite->setIndex(0);
-	//	m_fTimer = 0.0f;
-	//	m_pCharacter->setJumpSpeed(400.0f, 300.0f);
-	//	m_pCharacter->setState(L"Rise");
-	//	return true;
-	//}
+	if (m_pCharacter->isLanding() == true)
+	{
+		m_pSprite->setIndex(0);
+		Player::setJumpNum(0);
+		m_pCharacter->setState(L"Rise");
+		return true;
+	}
 
 	return State::Frame();
 }
@@ -703,14 +729,14 @@ bool PlayerRoll::Init()
 bool PlayerRoll::Frame()
 {
 	m_fTimer += g_fSecPerFrame;
-	//if (!m_pCharacter->getLanding() && m_fTimer>= 0.5f)
-	//{
-	//	m_fTimer = 0.0f;
-	//	m_pSprite->setIndex(0);
-	//	m_pCharacter->setState(L"Fall");
-	//	return true;
-	//}
-	//m_CenterPos->y += g_fSecPerFrame * 30.0f;
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 30.0f });
+	if (m_pCharacter->isLanding() == false && m_fTimer >= 0.5f)
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
 	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * g_fSecPerFrame * g_fSpeed * 1.5f , 0.0f });
 	if (State::Frame() == false)
 	{
