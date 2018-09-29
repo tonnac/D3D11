@@ -7,6 +7,8 @@ std::shared_ptr<PlayerEffect>	g_Attack2 = nullptr;
 std::shared_ptr<PlayerEffect>	g_Attack3 = nullptr;
 std::shared_ptr<PlayerEffect>	g_AirAttack = nullptr;
 std::shared_ptr<Player>			g_Player = nullptr;
+std::shared_ptr<Fade>			g_Fade = nullptr;
+std::shared_ptr<Setting>		g_Setting = nullptr;
 
 SceneMgr::SceneMgr() : m_iSceneIndex(0), m_iCount(0)
 {
@@ -39,20 +41,14 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	//g_Attack3->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 	//g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 
-	m_pFade = std::make_shared<Fade>();
 
-	m_pFade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
-	m_pFade->setDivideTime(10.0f);
-	m_pFade->FadeIn();
+	g_Setting = std::make_shared<Setting>();
+	g_Setting->InitSet(m_pDevice, L"Baisc", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
+	g_Fade = std::make_shared<Fade>();
+	g_Fade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
 }
 bool SceneMgr::Frame()
 {
-	if (S_Input.getKeyState(DIK_5) == Input::KEYSTATE::KEY_PUSH)
-	{
-		m_pFade->FadeIn();
-	}
-	m_pFade->Frame();
-//	SceneChange();
 	if (m_pCurrentScene->Frame() == false)
 	{
 		m_iCount = 1;
@@ -63,7 +59,6 @@ bool SceneMgr::Frame()
 bool SceneMgr::Render()
 {
 	m_pCurrentScene->Render();
-	m_pFade->Render(m_pContext);
 	return true;
 }
 bool SceneMgr::Release()

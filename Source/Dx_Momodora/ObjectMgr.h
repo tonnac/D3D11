@@ -1,11 +1,12 @@
 #pragma once
 #include "Object.h"
-#include "Mainmenu.h"
+#include "LobbyMenu.h"
 #include "Background.h"
 #include "KahoAttack.h"
 #include "Player.h"
 #include "DownableObject.h"
 #include "Ladder.h"
+#include "Bar.h"
 
 class ObjectMgr : public Singleton<ObjectMgr>
 {

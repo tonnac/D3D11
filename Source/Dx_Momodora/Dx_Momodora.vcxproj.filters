@@ -177,10 +177,22 @@
     <ClInclude Include="Ladder.h">
       <Filter>헤더 파일\Object\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="Mainmenu.h">
+    <ClInclude Include="UI.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h">
+    <ClInclude Include="Bar.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Setting.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressBar.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyMenu.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -281,10 +293,22 @@
     <ClCompile Include="Ladder.cpp">
       <Filter>소스 파일\Object\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Mainmenu.cpp">
+    <ClCompile Include="UI.cpp">
       <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
+    <ClCompile Include="Bar.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Setting.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressBar.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyMenu.cpp">
       <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
   </ItemGroup>

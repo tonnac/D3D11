@@ -49,14 +49,7 @@ bool ObjectMgr::Release()
 }
 void ObjectMgr::AddUI(UIPTR pUI)
 {
-	UI * ppUI = pUI.get();
-	Mainmenu * pMain = dynamic_cast<Mainmenu*>(ppUI);
-	if (pMain != nullptr)
-	{
-		m_UIList.push_front(pUI);
-	}
-	else
-		m_UIList.push_back(pUI);
+	m_UIList.push_back(pUI);
 }
 void ObjectMgr::AddBackGround(BackgroundPTR pBackGround)
 {

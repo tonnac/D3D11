@@ -10,6 +10,7 @@ public:
 				const std::string& VSFunc = "VS", const std::string& PSFunc = "PS");
 	bool		Frame() override;
 	void		setOn(const bool& Switch);
+	bool		getOn();
 	void		FadeIn();
 	void		FadeOut();
 	void		setDivideTime(const FLOAT& time);

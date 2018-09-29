@@ -21,7 +21,7 @@ public:
 								const std::string& VSFunc = "VS", const std::string& PSFunc = "PS");
 	virtual bool				Init();
 	virtual bool				Frame();
-	bool						Render(ID3D11DeviceContext* pContext);
+	virtual bool				Render(ID3D11DeviceContext* pContext);
 	virtual bool				Release();
 	virtual void				SetTexPos(const D3DXVECTOR4& DrawVec);
 	virtual void				SetCenterPos(const D3DXVECTOR2& Centerpos);

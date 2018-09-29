@@ -1,6 +1,7 @@
 #pragma once
 #include "SceneMgr.h"
-#include "Ladder.h"
+#include "LobbyMenu.h"
+
 
 class Sample : public Core
 {
@@ -10,4 +11,5 @@ public:
 	bool				Render() override;
 	bool				Release() override;
 private:
+	Lobbymenu			m_Lobby;
 };

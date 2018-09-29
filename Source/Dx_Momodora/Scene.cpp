@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "ObjectMgr.h"
-//#include "mSound.h"
+#include "mSound.h"
+#include "LobbyMenu.h"
 
 std::tifstream& operator >> (std::tifstream& fp, ObjectEnum& type)
 {
@@ -10,8 +11,10 @@ std::tifstream& operator >> (std::tifstream& fp, ObjectEnum& type)
 	return fp;
 }
 
-Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename)
-{}
+Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename), m_bSetting(false)
+{
+	
+}
 bool Scene::Init()
 {
 	SceneSet();
@@ -30,12 +33,19 @@ bool Scene::getSceneChange()
 {
 	return m_bSceneChange;
 }
+void Scene::setSetting(const bool& set)
+{
+	m_bSetting = set;
+}
 void Scene::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
 {
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 }
-
+bool Scene::getSetting() const
+{
+	return m_bSetting;
+}
 void Scene::SceneSet(const bool& isInverse)
 {
 	std::tifstream fp;
@@ -68,16 +78,15 @@ void Scene::SceneSet(const bool& isInverse)
 
 			switch (ObjType)
 			{
-			case ObjectEnum::MAINMENU:
+			case ObjectEnum::LOBBYMENU:
 			{
 				for (int i = 0; i < ObjNum; ++i)
 				{
-					FLOAT BackPos[4];
-					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
-					std::shared_ptr<Mainmenu> pData = std::make_shared<Mainmenu>();
-					pData->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
+					std::shared_ptr<Lobbymenu> pData = std::make_shared<Lobbymenu>();
 					pData->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
 					S_Object.AddUI(pData);
+					LobbyScene* se = dynamic_cast<LobbyScene*>(this);
+					se->setLobby(pData);
 				}
 			}break;
 			case ObjectEnum::BACKGROUND:
@@ -219,18 +228,38 @@ void Scene::SceneSet(const bool& isInverse)
 	}
 }
 
-LobbyScene::LobbyScene() : Scene(L"LobbyScene"), isPress(false), isSoundBar(false), m_State(LOBBYSTATE::DEFAULT)
+LobbyScene::LobbyScene() : Scene(L"LobbyScene")
 {
+	
+}
 
-}		
 bool LobbyScene::Frame()
 {
+	if (m_Fade.getOn() == true)
+	{
+		m_Fade.Frame();
+	}
+	return true;
+}
+bool LobbyScene::Render()
+{
+	Scene::Render();
+	if (m_Fade.getOn() == true)
+	{
+		m_Fade.Render(m_pContext);
+	}
 	return true;
 }
 bool LobbyScene::Release()
 {
+	m_pLobby->Release();
 	return true;
 }
+void LobbyScene::setLobby(std::shared_ptr<Lobbymenu> pLobby)
+{
+	m_pLobby = pLobby;
+}
+
 
 
 //bool LobbyScene::Init()

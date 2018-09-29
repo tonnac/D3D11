@@ -3,6 +3,7 @@
 #include "ObjectMgr.h"
 #include "Fade.h"
 
+class Lobbymenu;
 
 enum ObjectEnum : unsigned char
 {
@@ -11,18 +12,10 @@ enum ObjectEnum : unsigned char
 	PLAYER,
 	DOWN,
 	LADDER,
-	MAINMENU
+	LOBBYMENU,
+	BAR
 };
 
-enum class LOBBYSTATE : unsigned char
-{
-	DEFAULT,
-	START,
-	MAINMENU,
-	SETTING,
-	KEYSETTING,
-	SELECT
-};
 
 class Scene
 {
@@ -30,21 +23,26 @@ public:
 	Scene() = default;
 	Scene(const std::tstring& Scenename);
 public:
-	virtual bool							Init			() final;
-	virtual bool							Frame			() = 0;
-	virtual bool							Render			() final;
-	virtual bool							Release			() = 0;
-	virtual bool							inverseInit		();
-	bool									getSceneChange	();
+	virtual bool			Init			() final;
+	virtual bool			Frame			() = 0;
+	virtual bool			Render			();
+	virtual bool			Release			() = 0;
+	virtual bool			inverseInit		();
+	bool					getSceneChange	();
 public:
-	void									setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
+	void					setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
+	void					setSetting		(const bool& set);
+public:
+	bool					getSetting		() const;
 protected:
-	virtual void							SceneSet		(const bool& isInverse = false) final;
+	virtual void			SceneSet		(const bool& isInverse = false) final;
 protected:
-	bool									m_bSceneChange;
-	ID3D11Device*							m_pDevice;
-	ID3D11DeviceContext*					m_pContext;
-	const std::tstring						m_SceneName;
+	bool					m_bSetting;
+	Fade					m_Fade;
+	bool					m_bSceneChange;
+	ID3D11Device*			m_pDevice;
+	ID3D11DeviceContext*	m_pContext;
+	const std::tstring		m_SceneName;
 };
 
 class LobbyScene : public Scene
@@ -52,15 +50,15 @@ class LobbyScene : public Scene
 public:
 	LobbyScene();
 public:
-	bool			Frame		() override;
-	bool			Release		() override;
+	bool					Frame		() override;
+	bool					Render		() override;
+	bool					Release		() override;
+public:
+	void					setLobby	(std::shared_ptr<Lobbymenu> pLobby);
 protected:
-	LOBBYSTATE		m_State;
-	INT				m_miscIndex;
-	bool			isSoundBar;
-	bool			isPress;
-	Background*		m_pBackground;
+	std::shared_ptr<Lobbymenu> m_pLobby;
 };
+
 //
 //class EndScene : public Scene
 //{

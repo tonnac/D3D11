@@ -1,5 +1,6 @@
 #pragma once
 #include "GameScene.h"
+#include "Setting.h"
 #include "Fade.h"
 
 class SceneMgr : public Singleton<SceneMgr>

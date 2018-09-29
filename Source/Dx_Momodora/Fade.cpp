@@ -50,6 +50,10 @@ void Fade::setOn(const bool& Switch)
 {
 	isOn = Switch;
 }
+bool Fade::getOn()
+{
+	return isOn;
+}
 void Fade::FadeIn()
 {
 	m_fInitVal = 0.5f * CASTING(FLOAT, D3DX_PI);

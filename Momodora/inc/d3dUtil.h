@@ -20,6 +20,7 @@
 #include <D3Dcompiler.h>
 #include <D3DX10math.h>
 #include <memory>
+#include <array>
 
 #pragma region DirectWrite
 #include "D2D1.h"
@@ -72,21 +73,24 @@ namespace std
 #define RE_CASTING(x,y) reinterpret_cast<x>((y))
 #define RELEASE(x) if((x)) {x->Release();} (x) = nullptr
 #define DEL_REL(x) if((x)) {x->Release(); delete (x);} (x) = nullptr
+#define SUBTRACT(x,y) abs((x) - (y))
 
 using FilePathMap = std::map<std::tstring, std::tstring>;
 
 extern HINSTANCE		g_hInstance;
 extern HWND				g_hWnd;
 extern RECT				g_rtClient;
+extern bool				g_bActive;
+extern bool				g_DebugMode;
+extern D3DXMATRIX		g_mToProj;
 extern FLOAT			g_fSecPerFrame;
 extern FLOAT			g_fGameTime;
-extern bool				g_bActive;
-extern D3DXMATRIX		g_mToProj;
 extern FLOAT			g_fImageWidth;
 extern FLOAT			g_fImageHeight;
 extern FLOAT			g_fSpeed;
 extern FLOAT			g_fMapWidth;
-extern bool				g_DebugMode;
+extern FLOAT			g_fEffectVolume;
+extern FLOAT			g_fBGMVolume;
 
 class PlayerEffect;
 using PlayerEffectPtr = std::shared_ptr<PlayerEffect>;
@@ -97,6 +101,12 @@ extern PlayerEffectPtr g_AirAttack;
 
 class Player;
 extern std::shared_ptr<Player> g_Player;
+
+class Fade;
+extern std::shared_ptr<Fade> g_Fade;
+
+class Setting;
+extern std::shared_ptr<Setting> g_Setting;
 
 template <typename K>
 class Singleton
@@ -145,32 +155,32 @@ private:
 };
 
 #ifndef ThrowifFailed
-#define ThrowifFailed(x)											\
-{																	\
-	HRESULT hr__ = (x);												\
-	if(FAILED(hr__))												\
-	{																\
-		std::tstring wfn = AnsiToTString(__FILE__);					\
-		std::tstring wfc = AnsiToTString(__FUNCTION__);				\
-		throw DxException(hr__, wfc, wfn, __LINE__);				\
-	}																\
+#define ThrowifFailed(x)								\
+{														\
+	HRESULT hr__ = (x);									\
+	if(FAILED(hr__))									\
+	{													\
+		std::tstring wfn = AnsiToTString(__FILE__);		\
+		std::tstring wfc = AnsiToTString(__FUNCTION__);	\
+		throw DxException(hr__, wfc, wfn, __LINE__);	\
+	}													\
 }
 #endif
 
 #ifndef ShaderifFailed
-#define ShaderifFailed(x)														\
-{																				\
-	HRESULT hr__ = (x);															\
-	if(FAILED(hr__))															\
-	{																			\
-		std::string Err = "\n\n";												\
-		Err += (char*)pErrBlob->GetBufferPointer();								\
-		Err += "\n\n";															\
-		OutputDebugStringA(Err.c_str());										\
-		std::tstring wfn = AnsiToTString(__FILE__);								\
-		std::tstring wfc = AnsiToTString(__FUNCTION__);							\
-		throw DxException(hr__, wfc, wfn, __LINE__);							\
-	}																			\
+#define ShaderifFailed(x)							   	\
+{													   	\
+	HRESULT hr__ = (x);								   	\
+	if(FAILED(hr__))								   	\
+	{												   	\
+		std::string Err = "\n\n";					   	\
+		Err += (char*)pErrBlob->GetBufferPointer();	   	\
+		Err += "\n\n";								   	\
+		OutputDebugStringA(Err.c_str());			   	\
+		std::tstring wfn = AnsiToTString(__FILE__);	   	\
+		std::tstring wfc = AnsiToTString(__FUNCTION__);	\
+		throw DxException(hr__, wfc, wfn, __LINE__);   	\
+	}												   	\
 }
 #endif
 
