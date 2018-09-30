@@ -10,7 +10,7 @@ std::shared_ptr<Player>			g_Player = nullptr;
 std::shared_ptr<Fade>			g_Fade = nullptr;
 std::shared_ptr<Setting>		g_Setting = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(0), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(1), m_iCount(0)
 {
 }
 
@@ -23,36 +23,38 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 
-	//g_Attack1 = std::make_shared<KahoAttack1>();
-	//g_Attack2 = std::make_shared<KahoAttack2>();
-	//g_Attack3 = std::make_shared<KahoAttack3>();
-	//g_AirAttack = std::make_shared<KahoAirAttack>();
-	//g_Player = std::make_shared<Player>();
-
-	m_pCurrentScene = new LobbyScene;
-	m_pCurrentScene->setDevice(pDevice, pContext);
-	m_pCurrentScene->Init();
-
-//	g_Player->InitSet(m_pDevice, L"Player", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"], "VS", "PlayerPS");
-//	S_Object.AddPlayer(g_Player);
-
-	//g_Attack1->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	//g_Attack2->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	//g_Attack3->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-	//g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
-
+	g_Fade = std::make_shared<Fade>();
+	g_Fade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
 
 	g_Setting = std::make_shared<Setting>();
 	g_Setting->InitSet(m_pDevice, L"Baisc", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
-	g_Fade = std::make_shared<Fade>();
-	g_Fade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
+
+#pragma region Player_Init
+	g_Attack1 = std::make_shared<KahoAttack1>();
+	g_Attack2 = std::make_shared<KahoAttack2>();
+	g_Attack3 = std::make_shared<KahoAttack3>();
+	g_AirAttack = std::make_shared<KahoAirAttack>();
+	g_Player = std::make_shared<Player>();
+	g_Player->InitSet(m_pDevice, L"Player", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"], "VS", "PlayerPS");
+
+	g_Attack1->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	g_Attack2->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	g_Attack3->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+#pragma endregion
+
+	m_pCurrentScene = new GameScene1;
+	m_pCurrentScene->setDevice(pDevice, pContext);
+	m_pCurrentScene->Init();
+
+	S_Object.AddPlayer(g_Player);
 }
 bool SceneMgr::Frame()
 {
 	if (m_pCurrentScene->Frame() == false)
 	{
-		m_iCount = 1;
-		m_pFade->setOn(true);
+		m_pCurrentScene->Release();
+		m_pCurrentScene = getScene(m_pCurrentScene->getSceneChange());
 	}
 	return true;
 }
@@ -74,27 +76,6 @@ void SceneMgr::InitArrow(PlayerEffectPtr Arrow)
 		pGameScene->InitArrow(Arrow);
 	}
 }
-void SceneMgr::SceneChange()
-{
-	if (m_iCount != 0)
-	{
-		if (m_pFade->Frame() == false)
-		{
-			++m_iCount;
-			if (m_iCount >= 3)
-			{
-				m_iCount = 0;
-				return;
-			}
-			m_pFade->setOn(true);
-			if (m_iCount == 2)
-			{
-				m_pCurrentScene->Release();
-				m_pCurrentScene = getScene(m_pCurrentScene->getSceneChange());
-			}	
-		}
-	}
-}
 Scene* SceneMgr::getScene(const bool& isNextScene)
 {
 	Scene* retScene = nullptr;
@@ -108,11 +89,6 @@ Scene* SceneMgr::getScene(const bool& isNextScene)
 	}
 	switch (m_iSceneIndex)
 	{
-	case 0:
-	{
-//		retScene = new LobbyScene;
-	}
-		break;
 	case 1:
 	{
 		retScene = new GameScene1;

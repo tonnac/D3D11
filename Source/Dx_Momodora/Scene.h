@@ -38,7 +38,6 @@ protected:
 	virtual void			SceneSet		(const bool& isInverse = false) final;
 protected:
 	bool					m_bSetting;
-	Fade					m_Fade;
 	bool					m_bSceneChange;
 	ID3D11Device*			m_pDevice;
 	ID3D11DeviceContext*	m_pContext;

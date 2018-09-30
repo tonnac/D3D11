@@ -84,9 +84,10 @@ void Scene::SceneSet(const bool& isInverse)
 				{
 					std::shared_ptr<Lobbymenu> pData = std::make_shared<Lobbymenu>();
 					pData->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
-					S_Object.AddUI(pData);
 					LobbyScene* se = dynamic_cast<LobbyScene*>(this);
 					se->setLobby(pData);
+					g_Fade->setDivideTime(10.0f);
+					g_Fade->FadeIn();
 				}
 			}break;
 			case ObjectEnum::BACKGROUND:
@@ -235,18 +236,28 @@ LobbyScene::LobbyScene() : Scene(L"LobbyScene")
 
 bool LobbyScene::Frame()
 {
-	if (m_Fade.getOn() == true)
+	if (m_pLobby->Frame() == false)
 	{
-		m_Fade.Frame();
+		m_bSceneChange = true;
+		g_Fade->setDivideTime(1.0f);
+		g_Fade->FadeOut();
+	}
+	if (g_Fade->getOn() == true)
+	{
+		g_Fade->Frame();
+	}
+	if (g_Fade->getOn() == false && m_bSceneChange == true)
+	{
+		return false;
 	}
 	return true;
 }
 bool LobbyScene::Render()
 {
-	Scene::Render();
-	if (m_Fade.getOn() == true)
+	m_pLobby->Render(m_pContext);
+	if (g_Fade->getOn() == true)
 	{
-		m_Fade.Render(m_pContext);
+		g_Fade->Render(m_pContext);
 	}
 	return true;
 }

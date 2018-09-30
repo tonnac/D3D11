@@ -33,7 +33,7 @@ public:
 	void						AddPlayer		(PlayerPTR pPlayer);
 private:
 	template <typename X>
-	inline void					ObjectFrame(X pData)
+	inline void					ObjectFrame(X& pData)
 	{
 		if (pData != nullptr)
 		{
@@ -41,7 +41,7 @@ private:
 		}
 	}
 	template <typename X>
-	inline void					ContainerFrame	(X pData)
+	inline void					ContainerFrame	(X& pData)
 	{
 		if (pData.empty() == false)
 		{
@@ -51,11 +51,30 @@ private:
 			}
 		}
 	}
+	template <typename X>
+	inline void					EffectFrame(X& pData)
+	{
+		typename X::iterator iter;
+		if (pData.empty() == false)
+		{
+			for (iter = pData.begin(); iter != pData.end();)
+			{
+				if ((*iter)->Frame() == false)
+				{
+					iter = pData.erase(iter);
+				}
+				else
+				{
+					++iter;
+				}
+			}
+		}
+	}
 	void						Scroll			();
 	void						TerrainCollision();
 private:
 	template <typename K>
-	inline void					ObjectRender	(ID3D11DeviceContext* pContext, K pData)
+	inline void					ObjectRender	(ID3D11DeviceContext* pContext, K& pData)
 	{
 		if (pData != nullptr)
 		{
@@ -63,7 +82,7 @@ private:
 		}
 	}
 	template <typename X>
-	inline void					ContainerRender	(ID3D11DeviceContext* pContext, X pData)
+	inline void					ContainerRender	(ID3D11DeviceContext* pContext, X& pData)
 	{
 		if (pData.empty() == false)
 		{
@@ -75,7 +94,7 @@ private:
 	}
 private:
 	template <typename X>
-	inline void					ContainerRelease(X pData)
+	inline void					ContainerRelease(X& pData)
 	{
 		typename X::iterator iter;
 		for (iter = pData.begin(); iter != pData.end();)

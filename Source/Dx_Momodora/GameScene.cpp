@@ -22,7 +22,9 @@ bool GameScene::inverseInit()
 }
 
 GameScene1::GameScene1() : GameScene(L"GameScene1")
-{}
+{
+	S_Sound.Play(BGM::STAGE, true, true);
+}
 bool GameScene1::Frame()
 {
 	if (g_Player->getCenterPos().x >= g_rtClient.right - 5.0f)

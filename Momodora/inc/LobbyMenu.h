@@ -1,5 +1,5 @@
 #pragma once
-#include "Menu.h"
+#include "Setting.h"
 
 class Bar;
 
@@ -8,8 +8,6 @@ enum class LOBBYSTATE : unsigned char
 	DEFAULT,
 	START,
 	MAINMENU,
-	SETTING,
-	KEYSETTING,
 	SELECT
 };
 
@@ -25,14 +23,19 @@ public:
 	bool Frame() override;
 	bool Render(ID3D11DeviceContext* pContext) override;
 	bool Release() override;
+public:
+	bool DownKey() override;
+	bool UPKey() override;
+public:
+	void setState(const LOBBYSTATE& type);
 private:
 	bool StateFrame();
 private:
-	INT							m_iBarIndex;
 	LOBBYSTATE					m_State;
 	std::shared_ptr<Bar>		m_Bar;
 	std::shared_ptr<Bar>		m_Start;
 	std::array<D3DXVECTOR4, 2>	m_DrawArray;
 	std::array<D3DXVECTOR2, 8>	m_BarCenterPos;
-	std::array<D3DXVECTOR4, 4>	m_BarDrawArray;
+	std::array<D3DXVECTOR4, 8>	m_BarDrawArray;
+	std::array<D3DXVECTOR2, 6>	m_StartCenterPos;
 };

@@ -1,8 +1,8 @@
 #pragma once
 #include "ProgressBar.h"
-#include "LobbyMenu.h"
+#include "Menu.h"
 
-class Setting : public UI
+class Setting : public Menu
 {
 public:
 	bool						InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
@@ -10,8 +10,12 @@ public:
 	bool						Frame() override;
 	bool						Release() override;
 	bool						Render(ID3D11DeviceContext* pContext) override;
+public:
+	void						setMenu(Menu* pMenu);
+public:
+	bool						DownKey() override;
+	bool						UPKey() override;
 private:
-	INT							m_iBarIndex;
 	Bar							m_Bar;
 	std::array<ProgressBar, 2>	m_SoundBarArray;
 	std::array<D3DXVECTOR2, 4>	m_BarCenterPos;

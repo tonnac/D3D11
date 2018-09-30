@@ -47,14 +47,11 @@ bool Setting::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std
 
 bool Setting::Frame()
 {
-	switch (m_iBarIndex)
+	switch (m_iIndex)
 	{
 	case 0:
 	{
-		if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH)
-		{
-			++m_iBarIndex;
-		}
+		DownKey();
 		if (SUBTRACT(g_fEffectVolume, 0.0f) > Epsilon && S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 		{
 			g_fEffectVolume -= 0.1f;
@@ -66,14 +63,8 @@ bool Setting::Frame()
 	}break;
 	case 1:
 	{
-		if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH)
-		{
-			--m_iBarIndex;
-		}
-		if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH)
-		{
-			++m_iBarIndex;
-		}
+		UPKey();
+		DownKey();
 		if (SUBTRACT(g_fBGMVolume, 0.0f) > Epsilon && S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 		{
 			g_fBGMVolume -= 0.1f;
@@ -85,24 +76,23 @@ bool Setting::Frame()
 	}break;
 	case 2:
 	{
-		if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH)
-		{
-			--m_iBarIndex;
-		}
-		if (S_Input.getKeyState(DIK_DOWN) == Input::KEYSTATE::KEY_PUSH)
-		{
-			++m_iBarIndex;
-		}
+		UPKey();
+		DownKey();
 	}break;
 	case 3:
 	{
-		if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH)
+		UPKey();
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 		{
-			--m_iBarIndex;
+			S_Sound.Play(Effect_Snd::MENUCANCLE);
+			m_iIndex = 0;
+			m_pMenu->setSetting(false);
+			m_pMenu = nullptr;
+			return true;
 		}
 	}break;
 	}
-	if (m_iBarIndex != 2)
+	if (m_iIndex != 2)
 	{
 		SetTexPos(m_DrawArray[0]);
 		for (auto & iter : m_SoundBarArray)
@@ -115,8 +105,8 @@ bool Setting::Frame()
 		SetTexPos(m_DrawArray[1]);
 	}
 
-	m_Bar.SetTexPos(m_BarDrawArray[m_iBarIndex]);
-	m_Bar.SetCenterPos(m_BarCenterPos[m_iBarIndex]);
+	m_Bar.SetTexPos(m_BarDrawArray[m_iIndex]);
+	m_Bar.SetCenterPos(m_BarCenterPos[m_iIndex]);
 	m_Bar.Frame();
 	return true;
 }
@@ -133,13 +123,35 @@ bool Setting::Release()
 bool Setting::Render(ID3D11DeviceContext* pContext)
 {
 	UI::Render(pContext);
-	if (m_iBarIndex != 2)
+	if (m_iIndex != 2)
 	{
 		m_Bar.Render(pContext);
 		for (auto & it : m_SoundBarArray)
 		{
 			it.Render(pContext);
 		}
+	}
+	return true;
+}
+
+void Setting::setMenu(Menu* pMenu)
+{
+	m_pMenu = pMenu;
+}
+
+bool Setting::DownKey()
+{
+	if (Menu::DownKey() == true)
+	{
+		S_Sound.Play(Effect_Snd::SETTINGMOVE);
+	}
+	return true;
+}
+bool Setting::UPKey()
+{
+	if (Menu::UPKey() == true)
+	{
+		S_Sound.Play(Effect_Snd::SETTINGMOVE);
 	}
 	return true;
 }

@@ -23,17 +23,20 @@ bool ObjectMgr::Frame()
 	Scroll();
 	TerrainCollision();
 	ContainerFrame<TerrainList>(m_Terrainlist);
-	ContainerFrame<P_Effect>(m_PlayerEffect);
+	EffectFrame<P_Effect>(m_PlayerEffect);
 	ContainerFrame<UIList>(m_UIList);
 	return true;
 }
 bool ObjectMgr::Render(ID3D11DeviceContext* pContext)
 {
-	ObjectRender<PlayerPTR>(pContext, m_pPlayer);
 	ObjectRender<BackgroundPTR>(pContext, m_pBackground);
-	ContainerRender<TerrainList>(pContext, m_Terrainlist);
+	ObjectRender<PlayerPTR>(pContext, m_pPlayer);
 	ContainerRender<P_Effect>(pContext, m_PlayerEffect);
 	ContainerRender<UIList>(pContext, m_UIList);
+	if (g_DebugMode == true)
+	{
+		ContainerRender<TerrainList>(pContext, m_Terrainlist);
+	}
 	return true;
 }
 bool ObjectMgr::Release()
