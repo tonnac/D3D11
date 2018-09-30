@@ -28,7 +28,7 @@ public:
 	virtual bool			Render			();
 	virtual bool			Release			() = 0;
 	virtual bool			inverseInit		();
-	bool					getSceneChange	();
+	bool					getPrevScene	() const;
 public:
 	void					setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
 	void					setSetting		(const bool& set);
@@ -39,6 +39,7 @@ protected:
 protected:
 	bool					m_bSetting;
 	bool					m_bSceneChange;
+	bool					m_bPrevScene;
 	ID3D11Device*			m_pDevice;
 	ID3D11DeviceContext*	m_pContext;
 	const std::tstring		m_SceneName;

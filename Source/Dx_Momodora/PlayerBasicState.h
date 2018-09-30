@@ -4,7 +4,7 @@
 
 class PlayerEffect;
 
-using BowDelete = std::function<void(PlayerEffect*)>;
+using EffectDel = std::function<void(PlayerEffect*)>;
 
 class PlayerState : public State
 {
@@ -22,7 +22,7 @@ protected:
 	bool				Roll();
 	bool				Fall();
 	void				AirMove();
-	BowDelete			bowdel;
+	static EffectDel	bowdel;
 protected:
 	Player *			m_pCharacter;
 };

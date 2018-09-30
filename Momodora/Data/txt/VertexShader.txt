@@ -1,6 +1,6 @@
 cbuffer VS_CB
 {
-	float4	Color		: packoffset(c0);
+	float4	Cr			: packoffset(c0);
 	float	Width		: packoffset(c1.x);
 	float	Height		: packoffset(c1.y);
 	float	Cos			: packoffset(c1.z);
@@ -33,8 +33,8 @@ VS_OUTPUT VS(in VS_INPUT vIn)
 	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
 	vOut.pos = mul(vLocal, g_proj);
 	vOut.pos.z = 0.5f;
-	vOut.tex.x = ceil(vIn.tex.x) / Width;
-	vOut.tex.y = ceil(vIn.tex.y) / Height;
+	vOut.tex.x = vIn.tex.x / Width;
+	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;
 }
 VS_OUTPUT PLAYER(in VS_INPUT vIn)
@@ -85,4 +85,24 @@ float4 FadePS(in PS_INPUT input) : SV_Target
 	float4 Color = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	Color.a = cos(Cos);
 	return Color;
+}
+
+float4 SettingPS(in PS_INPUT input) : SV_Target
+{
+	float4 TexColor = g_txDiffuse.Sample(g_SamState, input.tex);
+	if(TexColor.a < 0.5f)
+	{
+		TexColor = float4(0.0f,0.0f,0.0f,Cr.x);
+	}
+	return TexColor;
+}
+
+float4 KeyPS(in PS_INPUT input) : SV_Target
+{
+	float4 TexColor = g_txDiffuse.Sample(g_SamState, input.tex);
+	if(TexColor.a < 0.5f)
+	{
+		TexColor = float4(36 / 255.0f, 0.0f, 18 / 255.0f, 0.5f);
+	}
+	return TexColor;
 }

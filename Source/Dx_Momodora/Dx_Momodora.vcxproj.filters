@@ -87,9 +87,6 @@
     <ClInclude Include="Texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>헤더 파일\Object\UI</Filter>
-    </ClInclude>
     <ClInclude Include="Core.h">
       <Filter>헤더 파일\BasicStructure</Filter>
     </ClInclude>
@@ -203,9 +200,6 @@
     <ClCompile Include="Texture.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>소스 파일\Object\UI</Filter>
-    </ClCompile>
     <ClCompile Include="wClass.cpp">
       <Filter>소스 파일\BasicStructure</Filter>
     </ClCompile>
@@ -314,5 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
+    <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
   </ItemGroup>
 </Project>

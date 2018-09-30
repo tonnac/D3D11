@@ -1,11 +1,27 @@
-Txt 3
+Txt
 SceneScript ../../momodora/data/txt/SceneScript.txt
 Shader ../../momodora/data/txt/VertexShader.txt
 KahoSprite ../../momodora/data/txt/Kaho.txt
-Png 4
+Snd ../../momodora/data/txt/Sound.txt
+Png
 Kaho ../../momodora/data/character/Kaho2.png
 Map ../../momodora/data/map/map.png
 Lobby ../../momodora/data/lobby/title_0.png
 Misc ../../momodora/data/lobby/misc.png
-Snd 1
-Snd ../../momodora/data/txt/Sound.txt
+InGameMenu ../../momodora/data/ingameui/ingamebar.png
+Item_IC ../../momodora/data/ingameui/Item_IC.png
+MI_IC ../../momodora/data/ingameui/MI_IC.png
+Map_IC ../../momodora/data/ingameui/Map_IC.png
+Setting_IC ../../momodora/data/ingameui/Setting_IC.png
+MainMenu_IC ../../momodora/data/ingameui/MainMenu_IC.png
+Item_F ../../momodora/data/ingameui/Item_F.png
+MI_F ../../momodora/data/ingameui/MI_F.png
+Map_F ../../momodora/data/ingameui/Map_F.png
+Setting_F ../../momodora/data/ingameui/Setting_F.png
+MainMenu_F ../../momodora/data/ingameui/MainMenu_F.png
+Item_Acti ../../momodora/data/ingameui/Item_Acti.png
+MI_Acti ../../momodora/data/ingameui/MI_Acti.png
+Map_Acti ../../momodora/data/ingameui/Map_Acti.png
+Setting_Acti ../../momodora/data/ingameui/Setting_Acti.png
+MainMenu_Acti ../../momodora/data/ingameui/MainMenu_Acti.png
+Key ../../momodora/data/ingameui/Key.png

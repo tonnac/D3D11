@@ -156,9 +156,6 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Bar.h" />
-    <ClInclude Include="Button.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Character.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="d3dUtil.h" />
@@ -198,9 +195,6 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Bar.cpp" />
-    <ClCompile Include="Button.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
@@ -238,6 +232,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="wClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

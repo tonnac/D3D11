@@ -3,7 +3,6 @@
 
 FilePathMap Filepath::m_Pngpath;
 FilePathMap Filepath::m_Txtpath;
-FilePathMap Filepath::m_Sndpath;
 
 DxException::DxException(HRESULT hr, const std::tstring& functionname, const std::tstring& filename, const int& lineNumber)
 	: ErrorCode(hr), Functionname(functionname), LineNumber(lineNumber)
@@ -29,39 +28,51 @@ Filepath(Path), Function(function), LineNumber(line)
 
 bool Filepath::Init(const std::tstring& path)
 {
+	std::tstring FileType[] =
+	{
+		L"Txt",
+		L"Png"
+	};
+
+	auto Searchstring = [FileType](const std::tstring& src)
+	{
+		int size = sizeof(FileType) / sizeof(FileType[0]);
+		for (int i = 0; i < size; ++i)
+		{
+			if (src == FileType[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	};
+
 	std::tifstream fp;
 	FileExceptErr(fp, path);
+	std::tstring Type;
 	while (!fp.eof())
 	{
 		std::tstring buffer;
-		int Total = 0;
+		std::getline(fp, buffer);
+		if (Searchstring(buffer) == true)
+		{
+			Type = buffer;
+			continue;
+		}
+		std::tistringstream is(buffer);
 
-		fp >> buffer >> Total;
 		std::tstring first;
 		std::tstring second;
-		if (buffer == L"Txt")
+
+		is >> first >> second;
+
+		if (Type == FileType[0])
 		{
-			for (int i = 0; i < Total; ++i)
-			{
-				fp >> first >> second;
-				m_Txtpath[first] = second;
-			}
+			m_Txtpath[first] = second;
 		}
-		else if (buffer == L"Png")
+		else if (Type == FileType[1])
 		{
-			for (int i = 0; i < Total; ++i)
-			{
-				fp >> first >> second;
-				m_Pngpath[first] = second;
-			}
-		}
-		else if (buffer == L"Snd")
-		{
-			for (int i = 0; i < Total; ++i)
-			{
-				fp >> first >> second;
-				m_Sndpath[first] = second;
-			}
+			m_Pngpath[first] = second;
 		}
 	}
 	return true;

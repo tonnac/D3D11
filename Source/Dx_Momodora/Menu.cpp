@@ -31,3 +31,22 @@ bool Menu::UPKey()
 	}
 	return false;
 }
+
+bool Menu::RightKey()
+{
+	if (S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH)
+	{
+		++m_iIndex;
+		return true;
+	}
+	return false;
+}
+bool Menu::LeftKey()
+{
+	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
+	{
+		--m_iIndex;
+		return true;
+	}
+	return false;
+}

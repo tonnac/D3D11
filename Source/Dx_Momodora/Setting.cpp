@@ -1,5 +1,6 @@
 #include "Setting.h"
 #include "DirectInput.h"
+#include "LobbyMenu.h"
 
 FLOAT g_fEffectVolume = 1.0f;
 FLOAT g_fBGMVolume = 1.0f;
@@ -7,6 +8,7 @@ FLOAT g_fBGMVolume = 1.0f;
 bool Setting::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 						const std::string& VSFunc, const std::string& PSFunc)
 {
+	m_ConstantData.Color.x = 1.0f;
 	m_DrawArray[0] = { 0.0f, 720.0f, 960.0f, 1440.0f };
 	m_DrawArray[1] = { 960.0f, 720.0f, 1920.0f, 1440.0f };
 
@@ -136,6 +138,11 @@ bool Setting::Render(ID3D11DeviceContext* pContext)
 
 void Setting::setMenu(Menu* pMenu)
 {
+	Lobbymenu* lobby = dynamic_cast<Lobbymenu*>(pMenu);
+	if (lobby == nullptr)
+	{
+		m_ConstantData.Color.x = 0.5f;
+	}
 	m_pMenu = pMenu;
 }
 

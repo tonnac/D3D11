@@ -16,8 +16,7 @@ public:
 public:
 	void					InitArrow	(PlayerEffectPtr Arrow);
 private:
-	void					SceneChange	();
-	Scene*					getScene	(const bool& isNextScene);
+	Scene*					getScene	(const bool& isPrevScene);
 private:
 	INT						m_iSceneIndex;
 	INT						m_iCount;

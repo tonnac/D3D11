@@ -2,15 +2,16 @@
 #include "ObjectMgr.h"
 #include "SceneMgr.h"
 
+EffectDel PlayerState::bowdel = [](PlayerEffect* pEffect)
+{
+	if (pEffect->getEnd() == false)
+	{
+		delete pEffect;
+	}
+};
+
 PlayerState::PlayerState(Player * pPlayer) : m_pCharacter(pPlayer)
 {
-	bowdel = [](PlayerEffect* pEffect)
-	{
-		if (pEffect->getEnd() == false)
-		{
-			delete pEffect;
-		}
-	};
 }
 
 

@@ -13,6 +13,8 @@ public:
 public:
 	virtual bool	DownKey();
 	virtual bool	UPKey();
+	virtual bool	RightKey();
+	virtual bool	LeftKey();
 protected:
 	INT				m_iIndex;
 private:

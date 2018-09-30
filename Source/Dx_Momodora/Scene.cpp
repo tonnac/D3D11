@@ -11,10 +11,11 @@ std::tifstream& operator >> (std::tifstream& fp, ObjectEnum& type)
 	return fp;
 }
 
-Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename), m_bSetting(false)
+Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename), m_bSetting(false), m_bPrevScene(false)
 {
 	
 }
+
 bool Scene::Init()
 {
 	SceneSet();
@@ -23,15 +24,19 @@ bool Scene::Init()
 bool Scene::Render()
 {
 	S_Object.Render(m_pContext);
+	if (g_Fade->getOn() == true)
+	{
+		g_Fade->Render(m_pContext);
+	}
 	return true;
 }
 bool Scene::inverseInit()
 {
 	return true;
 }
-bool Scene::getSceneChange()
+bool Scene::getPrevScene() const
 {
-	return m_bSceneChange;
+	return m_bPrevScene;
 }
 void Scene::setSetting(const bool& set)
 {

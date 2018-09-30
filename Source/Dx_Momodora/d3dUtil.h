@@ -228,5 +228,4 @@ public:
 	static bool			Init(const std::tstring& path);
 	static FilePathMap	m_Txtpath;
 	static FilePathMap	m_Pngpath;
-	static FilePathMap	m_Sndpath;
 };

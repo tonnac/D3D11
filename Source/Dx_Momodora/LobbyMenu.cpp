@@ -86,13 +86,13 @@ bool Lobbymenu::Frame()
 
 bool Lobbymenu::Render(ID3D11DeviceContext* pContext)
 {
+	Menu::Render(pContext);
 	if (getSetting() == true)
 	{
 		g_Setting->Render(pContext);
 	}
 	else
 	{
-		Menu::Render(pContext);
 		if (m_State != LOBBYSTATE::DEFAULT)
 		{
 			m_Bar->Render(pContext);
@@ -145,7 +145,6 @@ bool Lobbymenu::StateFrame()
 		{
 			S_Sound.PlayEffect(Effect_Snd::PRESSANYKEY);
 			S_Sound.PlayBGM(BGM::TITLE);
-//			S_Sound.PlayEffect(BGM::TITLE, true, true);
 			m_State = LOBBYSTATE::MAINMENU;
 			++m_iIndex;
 		}

@@ -71,7 +71,7 @@ bool Core::PreInit()
 	Filepath::Init(L"../../momodora/data/txt/Filepath.txt");
 	S_Sprite.SpriteSet(Filepath::m_Txtpath[L"KahoSprite"]);
 	S_Sound.Init();
-	S_Sound.LoadFile(Filepath::m_Sndpath[L"Snd"]);
+	S_Sound.LoadFile(Filepath::m_Txtpath[L"Snd"]);
 	return true;
 }
 bool Core::GameFrame()
