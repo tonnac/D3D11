@@ -54,11 +54,11 @@ bool Setting::Frame()
 		DownKey();
 		if (SUBTRACT(g_fEffectVolume, 0.0f) > Epsilon && S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 		{
-			g_fEffectVolume -= 0.1f;
+			VolumeSet(g_fEffectVolume, -0.1f);
 		}
 		if (SUBTRACT(g_fEffectVolume, 1.0f) > Epsilon && S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH)
 		{
-			g_fEffectVolume += 0.1f;
+			VolumeSet(g_fEffectVolume, +0.1f);
 		}
 	}break;
 	case 1:
@@ -67,11 +67,11 @@ bool Setting::Frame()
 		DownKey();
 		if (SUBTRACT(g_fBGMVolume, 0.0f) > Epsilon && S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH)
 		{
-			g_fBGMVolume -= 0.1f;
+			VolumeSet(g_fBGMVolume, -0.1f);
 		}
 		if (SUBTRACT(g_fBGMVolume, 1.0f) > Epsilon && S_Input.getKeyState(DIK_RIGHT) == Input::KEYSTATE::KEY_PUSH)
 		{
-			g_fBGMVolume += 0.1f;
+			VolumeSet(g_fBGMVolume, +0.1f);
 		}
 	}break;
 	case 2:
@@ -84,7 +84,7 @@ bool Setting::Frame()
 		UPKey();
 		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 		{
-			S_Sound.Play(Effect_Snd::MENUCANCLE);
+			S_Sound.PlayEffect(Effect_Snd::MENUCANCLE);
 			m_iIndex = 0;
 			m_pMenu->setSetting(false);
 			m_pMenu = nullptr;
@@ -143,7 +143,7 @@ bool Setting::DownKey()
 {
 	if (Menu::DownKey() == true)
 	{
-		S_Sound.Play(Effect_Snd::SETTINGMOVE);
+		S_Sound.PlayEffect(Effect_Snd::SETTINGMOVE);
 	}
 	return true;
 }
@@ -151,7 +151,7 @@ bool Setting::UPKey()
 {
 	if (Menu::UPKey() == true)
 	{
-		S_Sound.Play(Effect_Snd::SETTINGMOVE);
+		S_Sound.PlayEffect(Effect_Snd::SETTINGMOVE);
 	}
 	return true;
 }

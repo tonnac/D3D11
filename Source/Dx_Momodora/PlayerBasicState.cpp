@@ -77,7 +77,7 @@ bool PlayerState::AirAttack()
 	{
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
-		S_Sound.Play(Effect_Snd::ATTACK1);
+		S_Sound.PlayEffect(Effect_Snd::ATTACK1);
 		m_pCharacter->setState(L"AirAttack");
 		D3DXVECTOR2 Center = m_pCharacter->getCenterPos();
 		if (m_pCharacter->getDir() == 1)
@@ -114,7 +114,7 @@ bool PlayerState::BowAttack()
 		{
 			Arrow->SetCenterPos({ Cen.x + 20, Cen.y - 13 });
 		}
-		S_Sound.Play(Effect_Snd::ARROW);
+		S_Sound.PlayEffect(Effect_Snd::ARROW);
 		S_Scene.InitArrow(Arrow);
 		S_Object.AddPlayerEffect(Arrow);
 		return true;
@@ -125,7 +125,7 @@ bool PlayerState::Attack()
 {
 	if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
-		S_Sound.Play(Effect_Snd::ATTACK1);
+		S_Sound.PlayEffect(Effect_Snd::ATTACK1);
 		m_pCharacter->setState(L"Attack1");
 		AttackFrame(g_Attack1);
 		S_Object.AddPlayerEffect(g_Attack1);
@@ -137,7 +137,7 @@ bool PlayerState::Jump()
 {
 	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 	{
-		S_Sound.Play(Effect_Snd::JUMP);
+		S_Sound.PlayEffect(Effect_Snd::JUMP);
 		m_pSprite->setIndex(0);
 		m_pCharacter->setLanding(false);
 		m_pCharacter->setState(L"Jump");
@@ -149,7 +149,7 @@ bool PlayerState::Roll()
 {
 	if (S_Input.getKeyState(DIK_Q) == Input::KEYSTATE::KEY_PUSH)
 	{
-		S_Sound.Play(Effect_Snd::ROLL);
+		S_Sound.PlayEffect(Effect_Snd::ROLL);
 		m_pCharacter->setState(L"Roll");
 		return true;
 	}
@@ -425,7 +425,7 @@ bool PlayerJump::Frame()
 
 	if (m_fTimer >= 0.1f && Player::getJumpNum() == 0 && (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH))
 	{
-		S_Sound.Play(Effect_Snd::JUMP);
+		S_Sound.PlayEffect(Effect_Snd::JUMP);
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
 		Player::setJumpNum(1);

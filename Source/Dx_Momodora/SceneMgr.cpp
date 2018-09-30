@@ -10,7 +10,7 @@ std::shared_ptr<Player>			g_Player = nullptr;
 std::shared_ptr<Fade>			g_Fade = nullptr;
 std::shared_ptr<Setting>		g_Setting = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(1), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(0), m_iCount(0)
 {
 }
 
@@ -43,14 +43,22 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	g_AirAttack->InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 #pragma endregion
 
-	m_pCurrentScene = new GameScene1;
+	m_pCurrentScene = new LobbyScene;
 	m_pCurrentScene->setDevice(pDevice, pContext);
 	m_pCurrentScene->Init();
 
-	S_Object.AddPlayer(g_Player);
+//	S_Object.AddPlayer(g_Player);
 }
 bool SceneMgr::Frame()
 {
+	if (S_Input.getKeyState(DIK_LBUTTON) == Input::KEYSTATE::KEY_PUSH)
+	{
+		VolumeSet(g_fBGMVolume, -0.1f);
+	}
+	if (S_Input.getKeyState(DIK_RBUTTON) == Input::KEYSTATE::KEY_PUSH)
+	{
+		VolumeSet(g_fBGMVolume, +0.1f);
+	}
 	if (m_pCurrentScene->Frame() == false)
 	{
 		m_pCurrentScene->Release();

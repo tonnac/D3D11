@@ -26,6 +26,7 @@ bool Core::GameRelease()
 	S_Shader.Release();
 	S_Write.Release();
 	S_Input.Release();
+	S_Sound.Release();
 	m_Timer.Release();
 	Release();
 	CleanupDevice();
@@ -76,6 +77,7 @@ bool Core::PreInit()
 bool Core::GameFrame()
 {
 	S_Input.Frame();
+	S_Sound.Frame();
 	if (S_Input.getKeyState(DIK_DELETE) == Input::KEYSTATE::KEY_PUSH)
 	{
 		g_DebugMode = !g_DebugMode;

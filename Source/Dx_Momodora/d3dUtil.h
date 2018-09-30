@@ -196,6 +196,25 @@ private:
 	}													\
 }
 #endif
+
+#ifndef VolumeSet
+#define VolumeSet(x, y)			\
+{								\
+	if ((x) + (y) < 0.0f)		\
+	{							\
+		(x) = 0.0f;				\
+	}							\
+	else if ((x) + (y) > 1.0f)	\
+	{							\
+		(x) = 1.0f;				\
+	}							\
+	else						\
+	{							\
+		(x) += (y);				\
+	}							\
+}						
+#endif
+
 template <typename K>
 struct CacheData_
 {

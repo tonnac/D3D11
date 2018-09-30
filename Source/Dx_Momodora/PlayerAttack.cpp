@@ -24,7 +24,7 @@ bool PlayerAttack::Frame()
 	if (m_fTimer >= 0.4f && S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_fTimer = 0.0f;
-		S_Sound.Play(Effect_Snd::ATTACK2);
+		S_Sound.PlayEffect(Effect_Snd::ATTACK2);
 		m_pCharacter->setState(L"Attack2");
 		m_pSprite->setIndex(0);
 		AttackFrame(g_Attack2);
@@ -61,7 +61,7 @@ bool PlayerAttack2::Frame()
 	if (m_fTimer >= 0.4f && S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_fTimer = 0.0f;
-		S_Sound.Play(Effect_Snd::ATTACK3);
+		S_Sound.PlayEffect(Effect_Snd::ATTACK3);
 		m_pCharacter->setState(L"Attack3");
 		m_pSprite->setIndex(0);
 		AttackFrame(g_Attack3);

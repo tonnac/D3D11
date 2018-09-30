@@ -23,7 +23,7 @@ bool GameScene::inverseInit()
 
 GameScene1::GameScene1() : GameScene(L"GameScene1")
 {
-	S_Sound.Play(BGM::STAGE, true, true);
+	S_Sound.PlayBGM(BGM::STAGE);
 }
 bool GameScene1::Frame()
 {

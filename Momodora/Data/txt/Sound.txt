@@ -1,6 +1,8 @@
-15
+2
+BGM 2
 ../../momodora/data/snd/Title.mp3
 ../../momodora/data/snd/Stage1.mp3
+Effect 13
 ../../momodora/data/snd/Attack1.mp3
 ../../momodora/data/snd/Attack2.mp3
 ../../momodora/data/snd/Attack3.mp3

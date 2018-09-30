@@ -131,31 +131,6 @@ Input::KEYSTATE	DirectInput::getKeyState(DWORD dwKey) const
 		}
 	}
 }
-Input::KEYSTATE	DirectInput::getMouseState(DWORD dwKey) const
-{
-	if (m_BeforeMouseState.rgbButtons[dwKey] & 0x80)
-	{
-		if (KEYDOWN(m_CurrentMouseState.rgbButtons[dwKey]))
-		{
-			return Input::KEYSTATE::KEY_HOLD;
-		}
-		else
-		{
-			return Input::KEYSTATE::KEY_UP;
-		}
-	}
-	else
-	{
-		if (KEYDOWN(m_CurrentMouseState.rgbButtons[dwKey]))
-		{
-			return Input::KEYSTATE::KEY_PUSH;
-		}
-		else
-		{
-			return Input::KEYSTATE::KEY_FREE;
-		}
-	}
-}
 bool DirectInput::PressAnyKey()
 {
 	for (int i = 0; i < MAXKEYNUM; ++i)

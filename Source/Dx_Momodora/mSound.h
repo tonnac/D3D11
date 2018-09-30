@@ -14,7 +14,7 @@ enum BGM
 
 enum Effect_Snd
 {
-	ATTACK1 = 2,
+	ATTACK1 = 0,
 	ATTACK2,
 	ATTACK3,
 	AIRATTACK,
@@ -40,19 +40,26 @@ public:
 	bool				Render		();
 	bool				Release		();
 public:
-	INT					LoadSound	(const std::tstring& Filename, const bool& = false);
-	void				Play		(const INT&, const bool& = true, const bool& = false);
+	INT					LoadEffect	(const std::tstring& Filename, const bool& = false);
+	INT					LoadBGM		(const std::tstring& Filename, const bool& = false);
 public:
-	void				StopSound	(const INT&);
-	void				PauseSound	(const INT&);
+	void				PlayEffect	(const INT&, const bool& = false, const bool& = false);
+	void				PlayBGM		(const BGM& type);
+public:
+	void				setBGMVolume();
+public:
+	void				StopBGM		(const INT&);
+//	void				PauseSound	(const INT&);
 public:
 	void				LoadFile	(const std::tstring& Filepath);
 private:
-	INT					m_iSoundList;
+	INT					m_iBGMList;
+	INT					m_iEffectList;
 	FMOD::System*		m_pSystem;
-	FMOD::Channel*		m_pCh[g_iMaxSound];
-	FMOD::Sound*		m_pSound[g_iMaxSound];
+	FMOD::Channel*		m_pBGMCh[2];
+	FMOD::Channel*		m_pEffectCh[g_iMaxSound];
+	FMOD::Sound*		m_pBGMSound[2];
+	FMOD::Sound*		m_pEffectSound[g_iMaxSound];
 };
-
 
 #define S_Sound mSound::getInst()

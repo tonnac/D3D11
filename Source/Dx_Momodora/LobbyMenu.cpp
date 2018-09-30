@@ -113,7 +113,7 @@ bool Lobbymenu::DownKey()
 {
 	if (Menu::DownKey() == true)
 	{
-		S_Sound.Play(Effect_Snd::MENUMOVE);
+		S_Sound.PlayEffect(Effect_Snd::MENUMOVE);
 	}
 	return true;
 }
@@ -121,7 +121,7 @@ bool Lobbymenu::UPKey()
 {
 	if (Menu::UPKey() == true)
 	{
-		S_Sound.Play(Effect_Snd::MENUMOVE);
+		S_Sound.PlayEffect(Effect_Snd::MENUMOVE);
 	}
 	return true;
 }
@@ -143,8 +143,9 @@ bool Lobbymenu::StateFrame()
 	case LOBBYSTATE::START:
 		if (S_Input.PressAnyKey() == true)
 		{
-			S_Sound.Play(Effect_Snd::PRESSANYKEY);
-			S_Sound.Play(BGM::TITLE, true, true);
+			S_Sound.PlayEffect(Effect_Snd::PRESSANYKEY);
+			S_Sound.PlayBGM(BGM::TITLE);
+//			S_Sound.PlayEffect(BGM::TITLE, true, true);
 			m_State = LOBBYSTATE::MAINMENU;
 			++m_iIndex;
 		}
@@ -159,7 +160,7 @@ bool Lobbymenu::StateFrame()
 				m_State = LOBBYSTATE::SELECT;
 				m_Start->SetCenterPos(m_StartCenterPos[m_iIndex]);
 				m_Start->Frame();
-				S_Sound.Play(Effect_Snd::MENUSELECT);
+				S_Sound.PlayEffect(Effect_Snd::MENUSELECT);
 			}
 			DownKey();
 			break;
@@ -172,7 +173,7 @@ bool Lobbymenu::StateFrame()
 				m_State = LOBBYSTATE::SELECT;
 				m_Start->SetCenterPos(m_StartCenterPos[m_iIndex]);
 				m_Start->Frame();
-				S_Sound.Play(Effect_Snd::MENUSELECT);
+				S_Sound.PlayEffect(Effect_Snd::MENUSELECT);
 			}
 			DownKey();
 			UPKey();
@@ -201,13 +202,13 @@ bool Lobbymenu::StateFrame()
 	case LOBBYSTATE::SELECT:
 		if (S_Input.getKeyState(DIK_S) == Input::KEYSTATE::KEY_PUSH)
 		{
-			S_Sound.Play(Effect_Snd::MENUCANCLE);
+			S_Sound.PlayEffect(Effect_Snd::MENUCANCLE);
 			m_State = LOBBYSTATE::MAINMENU;
 		}
 		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 		{
-			S_Sound.StopSound(BGM::TITLE);
-			S_Sound.Play(Effect_Snd::MENUSELECT);
+			S_Sound.StopBGM(BGM::TITLE);
+			S_Sound.PlayEffect(Effect_Snd::MENUSELECT);
 			return false;
 		}
 		break;
