@@ -25,3 +25,4 @@ Map_Acti ../../momodora/data/ingameui/Map_Acti.png
 Setting_Acti ../../momodora/data/ingameui/Setting_Acti.png
 MainMenu_Acti ../../momodora/data/ingameui/MainMenu_Acti.png
 Key ../../momodora/data/ingameui/Key.png
+Maple ../../momodora/data/ingameui/Maple.png

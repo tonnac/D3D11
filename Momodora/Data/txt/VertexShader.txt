@@ -11,11 +11,13 @@ cbuffer VS_CB
 struct VS_INPUT
 {
 	float4 pos : POSITION;
+	float4 Col : COLOR;
 	float2 tex : TEXCOORD;
 };
 struct VS_OUTPUT
 {
 	float4 pos : SV_POSITION;
+	float4 Col : COLOR;
 	float2 tex : TEXCOORD; 
 };
 
@@ -47,6 +49,38 @@ VS_OUTPUT PLAYER(in VS_INPUT vIn)
 	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;
 }
+VS_OUTPUT Button(in VS_INPUT vIn)
+{
+	VS_OUTPUT vOut = (VS_OUTPUT)0;
+	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
+	vLocal.y = vLocal.y - cos(Utilw) * 5.0f;
+
+	float4 vCen = float4(Cr.y, Cr.z, 1.0f, 1.0f);
+
+	vLocal.x -= vCen.x;
+	vLocal.y -= vCen.y;
+
+	vLocal.x = vLocal.x * cos(Cr.x) + vLocal.y * sin(Cr.x);
+	vLocal.y = -vLocal.x * sin(Cr.x) + vLocal.y * cos(Cr.x);
+
+	vLocal.x += vCen.x;
+	vLocal.y += vCen.y;
+
+	vCen = mul(vCen, g_proj);
+
+	vOut.pos = mul(vLocal, g_proj);
+	vOut.pos.z = 0.5f;
+
+//	vOut.pos.x -= vCen.x;
+//	vOut.pos.y -= vCen.y;
+
+//	vOut.pos.x = vOut.pos.x * cos(Cr.x) - vOut.pos.y * sin(Cr.x);
+//	vOut.pos.y = vOut.pos.x * sin(Cr.x) + vOut.pos.y * cos(Cr.x);
+
+	vOut.tex.x = vIn.tex.x / Width;
+	vOut.tex.y = vIn.tex.y / Height;
+	return vOut;
+}
 ///////////////////////////////////////
 Texture2D g_txDiffuse : register(t0);
 SamplerState g_SamState : register(s0);
@@ -54,6 +88,7 @@ SamplerState g_SamState : register(s0);
 struct PS_INPUT
 {
 	float4 pos : SV_POSITION;
+	float4 Col : COLOR;
 	float2 tex : TEXCOORD;
 };
 

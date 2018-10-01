@@ -14,6 +14,7 @@ public:
 protected:
 	virtual bool		SceneChange	();
 protected:
+	bool				m_bGameMenu;
 };
 
 

@@ -8,6 +8,7 @@
 struct P3_VERTEX
 {
 	D3DXVECTOR3 Pos;
+	D3DXVECTOR4 Color;
 	D3DXVECTOR2 TexPos;
 };
 struct VS_CB

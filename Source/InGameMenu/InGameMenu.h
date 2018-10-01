@@ -4,6 +4,15 @@
 #include "Font.h"
 #include "Bar.h"
 
+enum class IGMSTATE : char
+{
+	DEFAULT,
+	INVENTORY,
+	MAINITEM,
+	SETTING,
+	MAINMENU
+};
+
 class InGameMenu : public Menu
 {
 public:
@@ -14,9 +23,13 @@ public:
 	bool Frame() override;
 	bool Render(ID3D11DeviceContext* pContext) override;
 	bool Release() override;
+public:
+	bool RightKey() override;
+	bool LeftKey() override;
 private:
 	bool StateFrame();
 private:
+	IGMSTATE				m_State;
 	std::array<Button, 5>	m_Button;
 	std::array<Font, 5>		m_Font;
 	Bar						m_Bar;

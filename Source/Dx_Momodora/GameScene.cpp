@@ -1,6 +1,6 @@
 #include "GameScene.h"
 
-GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename)
+GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename), m_bGameMenu(false)
 {}
 void GameScene::InitArrow(PlayerEffectPtr arrow)
 {

@@ -1,6 +1,6 @@
 #include "InGameMenu.h"
 
-InGameMenu::InGameMenu()
+InGameMenu::InGameMenu() : m_State(IGMSTATE::DEFAULT)
 {}
 
 bool InGameMenu::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
@@ -20,11 +20,11 @@ bool InGameMenu::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const 
 	m_Button[3].SetCenterPos({ 768.0f,342.0f });
 	m_Button[4].SetCenterPos({ 846.0f,343.5f });
 
-	m_Button[0].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Item_IC"], Filepath::m_Txtpath[L"Shader"]);
-	m_Button[1].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"MI_IC"], Filepath::m_Txtpath[L"Shader"]);
-	m_Button[2].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Map_IC"], Filepath::m_Txtpath[L"Shader"]);
-	m_Button[3].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Setting_IC"], Filepath::m_Txtpath[L"Shader"]);
-	m_Button[4].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"MainMenu_IC"], Filepath::m_Txtpath[L"Shader"]);
+	m_Button[0].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Item_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
+	m_Button[1].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"MI_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
+	m_Button[2].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Map_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
+	m_Button[3].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Setting_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
+	m_Button[4].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Maple"], Filepath::m_Txtpath[L"Shader"], "Button");
 
 	m_Button[0].LoadResourceView(pDevice, Filepath::m_Pngpath[L"Item_Acti"]);
 	m_Button[1].LoadResourceView(pDevice, Filepath::m_Pngpath[L"MI_Acti"]);
@@ -97,21 +97,69 @@ bool InGameMenu::Release()
 	return Menu::Release();
 }
 
+bool InGameMenu::RightKey()
+{
+	if (Menu::RightKey() == true)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			m_Button[i].setMove(true);
+		}
+		return true;
+	}
+	return false;
+}
+bool InGameMenu::LeftKey()
+{
+	if (Menu::LeftKey() == true)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			m_Button[i].setMove(true);
+		}
+		return true;
+	}
+	return false;
+}
+
 bool InGameMenu::StateFrame()
 {
+	if (LeftKey() == true && m_iIndex == -1)
+	{
+		m_iIndex = 4;
+	}
+	if (RightKey() == true && m_iIndex == 5)
+	{
+		m_iIndex = 0;
+	}
+
 	switch (m_iIndex)
 	{
 	case 0:
-		RightKey();
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+		{
+			m_State = IGMSTATE::INVENTORY;
+		}
 		break;
 	case 1:
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+		{
+			m_State = IGMSTATE::MAINITEM;
+		}
+		break;
 	case 2:
+		break;
 	case 3:
-		LeftKey();
-		RightKey();
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+		{
+			m_State = IGMSTATE::SETTING;
+		}
 		break;
 	case 4:
-		LeftKey();
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+		{
+			m_State = IGMSTATE::MAINMENU;
+		}
 		break;
 	default:
 		break;
