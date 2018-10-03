@@ -108,6 +108,9 @@ extern std::shared_ptr<Fade> g_Fade;
 class Setting;
 extern std::shared_ptr<Setting> g_Setting;
 
+class InGameMenu;
+extern std::shared_ptr<InGameMenu> g_IGM;
+
 template <typename K>
 class Singleton
 {

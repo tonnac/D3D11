@@ -100,6 +100,7 @@ bool Object::PreRender(ID3D11DeviceContext* pContext)
 	}
 
 	pContext->UpdateSubresource(m_Object.getVertexBuffer(), 0, nullptr, &m_VertexList[0], 0, 0);
+
 	if (pConstant != nullptr)
 	{
 		pContext->PSSetConstantBuffers(0, 1, &pConstant);

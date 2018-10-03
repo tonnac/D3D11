@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "InGameMenu.h"
 
 GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename), m_bGameMenu(false)
 {}
@@ -6,24 +7,54 @@ void GameScene::InitArrow(PlayerEffectPtr arrow)
 {
 	arrow->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
 }
-
+bool GameScene::getGameMenu() const
+{
+	return m_bGameMenu;
+}
+void GameScene::setGameMenu(const bool& flag)
+{
+	m_bGameMenu = flag;
+}
 bool GameScene::Frame()
 {
-	if (m_bSceneChange == false && SceneChange() == true)
+	if (S_Input.getKeyState(DIK_LSHIFT) == Input::KEYSTATE::KEY_PUSH)
 	{
-		g_Fade->setDivideTime(0.5f);
-		g_Fade->FadeOut();
+		m_bGameMenu = true;
 	}
-	if (g_Fade->getOn() == true)
+	if (m_bGameMenu == true)
 	{
-		g_Fade->Frame();
+		g_IGM->Frame();
 	}
-	if (g_Fade->getOn() == false && m_bSceneChange == true)
+	else
 	{
-		return false;
+		if (m_bSceneChange == false && SceneChange() == true)
+		{
+			g_Fade->setDivideTime(0.5f);
+			g_Fade->FadeOut();
+		}
+		if (g_Fade->getOn() == true)
+		{
+			g_Fade->Frame();
+		}
+		if (g_Fade->getOn() == false && m_bSceneChange == true)
+		{
+			return false;
+		}
+		S_Object.Frame();
 	}
-	S_Object.Frame();
 	return true;
+}
+bool GameScene::Render()
+{
+	if (m_bGameMenu)
+	{
+		Scene::Render();
+		return g_IGM->Render(m_pContext);
+	}
+	else
+	{
+		return Scene::Render();
+	}
 }
 bool GameScene::Release()
 {

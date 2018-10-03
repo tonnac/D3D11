@@ -142,6 +142,7 @@ bool PlayerState::Jump()
 		m_pSprite->setIndex(0);
 		m_pCharacter->setLanding(false);
 		m_pCharacter->setState(L"Jump");
+		m_pCharacter->MoveCenterPos({ 0.0f, -g_fSecPerFrame * 900.0f });
 		return true;
 	}
 	return false;
@@ -376,11 +377,15 @@ PlayerTurn::PlayerTurn(Player * pPlayer) : PlayerState(pPlayer)
 bool PlayerTurn::Init()
 {
 	setSprite(L"Kaho", L"Turn");
-	m_pSprite->setDivideTime(0.35f);
+	m_pSprite->setDivideTime(0.25f);
 	return true;
 }
 bool PlayerTurn::Frame()
 {
+	if (Jump() == true)
+	{
+		return true;
+	}
 	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
@@ -388,7 +393,7 @@ bool PlayerTurn::Frame()
 	return true;
 }
 
-PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(400.0f)
+PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(500.0f)
 {
 	m_pCharacter->AddState(std::tstring(L"Jump"), this);
 }
@@ -401,17 +406,33 @@ bool PlayerJump::Init()
 }
 bool PlayerJump::Frame()
 {
+	static FLOAT ffTimer = 0.0f;
+	static FLOAT Acc = 0.0f;
+	Acc += g_fSecPerFrame * 800.0f;
 	m_fTimer += g_fSecPerFrame;
-	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_FREE || S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_UP)
+	{
+		ffTimer += g_fSecPerFrame;
+	}
 
 	if (AirAttack() == true)
 	{
 		return true;
 	}
-	if (m_fTimer >= 0.3f)
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_HOLD && m_fTimer <= 0.3f)
+	{
+		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - Acc) });
+	}
+	else if (ffTimer <= 0.2f && (m_fJumpSpeed - Acc) < 0.0f)
+	{
+		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - Acc) });
+	}
+	else
 	{
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
+		Acc = 0.0f;
+		ffTimer = 0.0f;
 		m_pCharacter->setState(L"Fall");
 		return true;
 	}
@@ -426,6 +447,8 @@ bool PlayerJump::Frame()
 
 	if (m_fTimer >= 0.1f && Player::getJumpNum() == 0 && (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH))
 	{
+		Acc = 0.0f;
+		ffTimer = 0.0f;
 		S_Sound.PlayEffect(Effect_Snd::JUMP);
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
@@ -436,7 +459,7 @@ bool PlayerJump::Frame()
 	return PlayerState::Frame();
 }
 
-PlayerJump2::PlayerJump2(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(600.0f)
+PlayerJump2::PlayerJump2(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(500.0f)
 {
 	m_pCharacter->AddState(std::tstring(L"Jump2"), this);
 }
@@ -444,14 +467,23 @@ bool PlayerJump2::Init()
 {
 	setSprite(L"Kaho", L"Jump");
 	m_pSprite->setDivideTime(1.0f);
+	m_iResetindex = 2;
 	return true;
 }
 bool PlayerJump2::Frame()
 {
 	m_fTimer += g_fSecPerFrame;
-
-	m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
-
+	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_HOLD && m_fTimer <= 0.20f)
+	{
+		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * m_fJumpSpeed });
+	}
+	else
+	{
+		m_fTimer = 0.0f;
+		m_pSprite->setIndex(2);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
 	if (AirAttack() == true)
 	{
 		return true;
@@ -459,14 +491,14 @@ bool PlayerJump2::Frame()
 	if (BowAttack() == true)
 	{
 		m_fTimer = 0.0f;
-		m_pSprite->setIndex(0);
+		m_pSprite->setIndex(2);
 		m_pCharacter->setState(L"AirBow");
 		return true;
 	}
 	if (m_fTimer >= 0.15f)
 	{
 		m_fTimer = 0.0f;
-		m_pSprite->setIndex(0);
+		m_pSprite->setIndex(2);
 		m_pCharacter->setState(L"Fall");
 		return true;
 	}
@@ -475,21 +507,22 @@ bool PlayerJump2::Frame()
 	return PlayerState::Frame();
 }
 
-PlayerFall::PlayerFall(Player * pPlayer) : PlayerState(pPlayer), m_fAcceleration(1.0f)
+PlayerFall::PlayerFall(Player * pPlayer) : PlayerState(pPlayer), m_fAcceleration(0.0f), m_fAccelPlus(0.0f)
 {
 	m_pCharacter->AddState(std::tstring(L"Fall"), this);
 }
 bool PlayerFall::Init()
 {
 	setSprite(L"Kaho", L"Fall");
-	m_pSprite->setDivideTime(1.0f);
+	m_pSprite->setDivideTime(0.4f);
 	m_iResetindex = 2;
 	return true;
 }
 bool PlayerFall::Frame()
 {
 	m_fTimer += g_fSecPerFrame;
-
+	m_fAccelPlus += g_fSecPerFrame * 60.0f;
+	m_fAcceleration += m_fAccelPlus;
 	if (AirAttack() == true)
 	{
 		return true;
@@ -513,12 +546,14 @@ bool PlayerFall::Frame()
 		return true;
 	}
 
-	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * 400.0f });
+	m_pCharacter->MoveCenterPos({ 0.0f,g_fSecPerFrame * m_fAcceleration });
 
 	if (m_pCharacter->isLanding() == true)
 	{
 		m_pSprite->setIndex(0);
 		Player::setJumpNum(0);
+		m_fAccelPlus = 0.0f;
+		m_fAcceleration = 0.0f;
 		m_pCharacter->setState(L"Rise");
 		return true;
 	}
@@ -557,6 +592,10 @@ bool PlayerRise::Frame()
 	if (PlayerState::Frame() == false)
 	{
 		m_pCharacter->setState(L"Idle");
+	}
+	if (Jump() == true)
+	{
+		return true;
 	}
 	return true;
 }

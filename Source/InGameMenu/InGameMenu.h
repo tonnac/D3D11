@@ -1,7 +1,6 @@
 #pragma once
 #include "Menu.h"
-#include "Button.h"
-#include "Font.h"
+#include "InGameBar.h"
 #include "Bar.h"
 
 enum class IGMSTATE : char
@@ -9,7 +8,6 @@ enum class IGMSTATE : char
 	DEFAULT,
 	INVENTORY,
 	MAINITEM,
-	SETTING,
 	MAINMENU
 };
 
@@ -30,7 +28,6 @@ private:
 	bool StateFrame();
 private:
 	IGMSTATE				m_State;
-	std::array<Button, 5>	m_Button;
-	std::array<Font, 5>		m_Font;
-	Bar						m_Bar;
+	InGameBar				m_IngameBar;
+	std::array<Bar, 3>		m_Bar;
 };

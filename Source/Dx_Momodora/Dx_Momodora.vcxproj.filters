@@ -79,6 +79,12 @@
     <Filter Include="헤더 파일\Object\Terrain">
       <UniqueIdentifier>{f36d0800-fb39-4ca1-961b-8aed2a0c70ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Item">
+      <UniqueIdentifier>{283442d7-8be4-459e-b2a4-8c20b8f50e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Item">
+      <UniqueIdentifier>{363e3c9b-f79d-42f3-8110-7bdf6b83cf66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -192,6 +198,21 @@
     <ClInclude Include="LobbyMenu.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="InGameBar.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameMenu.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectBar.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -303,6 +324,21 @@
       <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
     <ClCompile Include="LobbyMenu.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameMenu.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameBar.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectBar.cpp">
       <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
   </ItemGroup>

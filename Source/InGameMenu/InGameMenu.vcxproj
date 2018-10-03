@@ -150,12 +150,14 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="InGameBar.cpp" />
     <ClCompile Include="InGameMenu.cpp" />
     <ClCompile Include="Sample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="InGameBar.h" />
     <ClInclude Include="InGameMenu.h" />
     <ClInclude Include="Sample.h" />
   </ItemGroup>

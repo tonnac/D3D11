@@ -5,18 +5,6 @@
 
 class Lobbymenu;
 
-enum ObjectEnum : unsigned char
-{
-	BACKGROUND = 0,
-	TERRAIN,
-	PLAYER,
-	DOWN,
-	LADDER,
-	LOBBYMENU,
-	BAR
-};
-
-
 class Scene
 {
 public:

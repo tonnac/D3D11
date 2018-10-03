@@ -6,6 +6,11 @@
 bool Terrain::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& ShaderFilepath,
 			const std::string& VSFunc, const std::string& PSFunc)
 {
+	m_ConstantData.Color.x = 0.0f;
+	m_ConstantData.Color.y = 0.0f;
+	m_ConstantData.Color.z = 1.0f;
+	m_ConstantData.Color.w = 1.0f;
+
 	CreateVertexBuffer(pDevice);
 	m_Object.CreateShader(pDevice, Name, ShaderFilepath, VSFunc, PSFunc);
 	m_Object.CreateRasterizer(pDevice);
@@ -55,7 +60,7 @@ COL Terrain::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 	}break;
 	case COL::BOTTOM:
 	{
-		pObject->MoveCenterPos({ 0.0f, Size });
+		pObject->MoveCenterPos({ 0.0f, Size + 45.0f });
 	}break;
 	}
 	return col;
@@ -93,6 +98,11 @@ COL	Terrain::Collision(std::shared_ptr<Player> pPlayer)
 
 	if (col == COL::TOP)
 	{
+		return col;
+	}
+	if (col == COL::BOTTOM)
+	{
+		pPlayer->setState(L"Fall");
 		return col;
 	}
 

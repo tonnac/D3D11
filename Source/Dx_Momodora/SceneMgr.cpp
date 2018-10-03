@@ -9,8 +9,9 @@ std::shared_ptr<PlayerEffect>	g_AirAttack = nullptr;
 std::shared_ptr<Player>			g_Player = nullptr;
 std::shared_ptr<Fade>			g_Fade = nullptr;
 std::shared_ptr<Setting>		g_Setting = nullptr;
+std::shared_ptr<InGameMenu>		g_IGM = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(-1), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(2), m_iCount(0)
 {
 }
 
@@ -28,6 +29,9 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	g_Setting = std::make_shared<Setting>();
 	g_Setting->InitSet(m_pDevice, L"Setting", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"], "VS", "SettingPS");
+
+	g_IGM = std::make_shared<InGameMenu>();
+	g_IGM->InitSet(m_pDevice, L"Terrain", Filepath::m_Pngpath[L"InGameMenu"], Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 
 #pragma region Player_Init
 	g_Attack1 = std::make_shared<KahoAttack1>();
@@ -52,8 +56,9 @@ bool SceneMgr::Frame()
 	if (m_pCurrentScene->Frame() == false)
 	{
 		m_pCurrentScene->Release();
+		bool PrevScene = m_pCurrentScene->getPrevScene();
 		delete m_pCurrentScene;
-		m_pCurrentScene = getScene(m_pCurrentScene->getPrevScene());
+		m_pCurrentScene = getScene(PrevScene);
 	}
 	return true;
 }
@@ -74,6 +79,21 @@ void SceneMgr::InitArrow(PlayerEffectPtr Arrow)
 	{
 		pGameScene->InitArrow(Arrow);
 	}
+}
+void SceneMgr::setGameMenu(const bool& flag)
+{
+	GameScene * pScene = dynamic_cast<GameScene*>(m_pCurrentScene);
+	if (pScene != nullptr)
+	{
+		pScene->setGameMenu(flag);
+	}
+}
+void SceneMgr::setLobbyScene()
+{
+	m_pCurrentScene->Release();
+	delete m_pCurrentScene;
+	m_iSceneIndex = -1;
+	m_pCurrentScene = getScene(false);
 }
 Scene* SceneMgr::getScene(const bool& isPrevScene)
 {

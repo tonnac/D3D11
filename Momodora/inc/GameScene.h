@@ -8,9 +8,13 @@ public:
 	GameScene(const std::tstring& Scenename);
 public:
 	virtual bool		Frame		() override;
+	virtual bool		Render		() override;
 	virtual bool		Release		() override;
 	virtual bool		inverseInit	() override;
 	virtual void		InitArrow	(PlayerEffectPtr arrow) final;
+public:
+	bool				getGameMenu() const;
+	void				setGameMenu(const bool& flag);
 protected:
 	virtual bool		SceneChange	();
 protected:

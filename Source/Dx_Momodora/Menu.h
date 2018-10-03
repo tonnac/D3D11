@@ -8,7 +8,8 @@ class Menu : public UI
 {
 public:
 	Menu();
-	void			setSetting(const bool& set);
+	~Menu();
+	virtual void	setSetting(const bool& set);
 	bool			getSetting() const;
 public:
 	virtual bool	DownKey();

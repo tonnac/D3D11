@@ -19,7 +19,7 @@ public:
 	bool				Release() override;
 public:
 	void				AddState(const std::tstring& statename, State* pState);
-	void				setState(const std::tstring& statename);
+	virtual void		setState(const std::tstring& statename);
 	void				reverseDir();
 public:
 	bool				isLanding() const;

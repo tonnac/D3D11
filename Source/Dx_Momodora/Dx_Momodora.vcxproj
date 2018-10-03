@@ -156,6 +156,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Bar.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="d3dUtil.h" />
@@ -166,7 +167,10 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="DownableObject.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Fade.h" />
+    <ClInclude Include="Font.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="InGameBar.h" />
+    <ClInclude Include="InGameMenu.h" />
     <ClInclude Include="KahoAttack.h" />
     <ClInclude Include="Ladder.h" />
     <ClInclude Include="LobbyMenu.h" />
@@ -182,6 +186,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="ProgressBar.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
+    <ClInclude Include="SelectBar.h" />
     <ClInclude Include="Setting.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Sprite.h" />
@@ -195,6 +200,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Bar.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
@@ -205,7 +211,10 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="DownableObject.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="InGameBar.cpp" />
+    <ClCompile Include="InGameMenu.cpp" />
     <ClCompile Include="KahoAttack.cpp" />
     <ClCompile Include="Ladder.cpp" />
     <ClCompile Include="LobbyMenu.cpp" />
@@ -221,6 +230,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="ProgressBar.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
+    <ClCompile Include="SelectBar.cpp" />
     <ClCompile Include="Setting.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Sprite.cpp" />

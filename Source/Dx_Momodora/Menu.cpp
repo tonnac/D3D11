@@ -4,6 +4,11 @@
 Menu::Menu() : m_iIndex(0)
 {}
 
+Menu::~Menu()
+{
+	Release();
+}
+
 void Menu::setSetting(const bool& set)
 {
 	m_bSetting = set;

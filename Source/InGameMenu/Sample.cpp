@@ -2,8 +2,9 @@
 
 bool Sample::Init()
 {
-//	S_Scene.Initialize(m_pDevice, m_pContext);
-	m_Menu.InitSet(m_pDevice, L"Setting", Filepath::m_Pngpath[L"InGameMenu"], Filepath::m_Txtpath[L"Shader"], "VS", "SettingPS");
+	S_Scene.Initialize(m_pDevice, m_pContext);
+
+	m_Menu.InitSet(m_pDevice, L"Terrain", Filepath::m_Pngpath[L"InGameMenu"], Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
 	return true;
 }
 bool Sample::Frame()

@@ -1,4 +1,5 @@
 #include "InGameMenu.h"
+#include "Setting.h"
 
 InGameMenu::InGameMenu() : m_State(IGMSTATE::DEFAULT)
 {}
@@ -10,90 +11,89 @@ bool InGameMenu::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const 
 
 	m_ConstantData.Color.x = 0.5f;
 
-	m_Bar.SetCenterPos({ g_rtClient.right * 0.5f, 409.5f });
-	m_Bar.InitSet(pDevice, L"Key", Filepath::m_Pngpath[L"Key"], Filepath::m_Txtpath[L"Shader"],"VS","KeyPS");
-	m_Bar.SetTexPos({ 0.0f,0.0f,960.0f,51.0f });
+	m_Bar[0].SetCenterPos({ g_rtClient.right * 0.5f, 409.5f });
+	m_Bar[0].InitSet(pDevice, L"Key", Filepath::m_Pngpath[L"Key"], Filepath::m_Txtpath[L"Shader"],"VS","KeyPS");
+	m_Bar[0].SetTexPos({ 0.0f,0.0f,960.0f,51.0f });
 
-	m_Button[0].SetCenterPos({ 552.0f,340.5f });
-	m_Button[1].SetCenterPos({ 627.0f,343.5f });
-	m_Button[2].SetCenterPos({ 697.5f,343.5f });
-	m_Button[3].SetCenterPos({ 768.0f,342.0f });
-	m_Button[4].SetCenterPos({ 846.0f,343.5f });
+	m_Bar[1].SetCenterPos({ 695.0f, 344.0f });
+	m_Bar[1].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"YoN"], Filepath::m_Txtpath[L"Shader"]);
+	m_Bar[1].SetTexPos({ 0.0f,0.0f,468.0f,63.0f });
 
-	m_Button[0].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Item_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
-	m_Button[1].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"MI_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
-	m_Button[2].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Map_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
-	m_Button[3].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Setting_IC"], Filepath::m_Txtpath[L"Shader"], "Button");
-	m_Button[4].InitSet(pDevice, L"Button", Filepath::m_Pngpath[L"Maple"], Filepath::m_Txtpath[L"Shader"], "Button");
+	m_Bar[2].SetCenterPos({ 519.5f, 343.5f });
+	m_Bar[2].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Maple"], Filepath::m_Txtpath[L"Shader"]);
+	m_Bar[2].SetTexPos({ 0.0f,0.0f,27.0f,27.0f });
 
-	m_Button[0].LoadResourceView(pDevice, Filepath::m_Pngpath[L"Item_Acti"]);
-	m_Button[1].LoadResourceView(pDevice, Filepath::m_Pngpath[L"MI_Acti"]);
-	m_Button[2].LoadResourceView(pDevice, Filepath::m_Pngpath[L"Map_Acti"]);
-	m_Button[3].LoadResourceView(pDevice, Filepath::m_Pngpath[L"Setting_Acti"]);
-	m_Button[4].LoadResourceView(pDevice, Filepath::m_Pngpath[L"MainMenu_Acti"]);
+	m_VertexList[0].Pos = { 0.0f, 0.0f, 0.5f };
+	m_VertexList[1].Pos = { CASTING(FLOAT,g_rtClient.right), 0.0f, 0.5f };
+	m_VertexList[2].Pos = { 0.0f, CASTING(FLOAT,g_rtClient.bottom), 0.5f };
+	m_VertexList[3].Pos = { m_VertexList[1].Pos.x, m_VertexList[2].Pos.y, 0.5f };
 
-	SetCenterPos({ g_rtClient.right * 0.5f, g_rtClient.bottom * 0.5f });
+	m_IngameBar.InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"IngameBar"], Filepath::m_Txtpath[L"Shader"]);
 
-	m_Font[0].SetCenterPos({ 82.5f,345.0f });
-	m_Font[1].SetCenterPos({ 142.5f,345.0f });
-	m_Font[2].SetCenterPos({ 87.0f,345.0f });
-	m_Font[3].SetCenterPos({ 82.5f,345.0f });
-	m_Font[4].SetCenterPos({ 238.5f,345.0f });
+	m_ConstantData.Color.x = 0.0f;
+	m_ConstantData.Color.y = 0.0f;
+	m_ConstantData.Color.z = 0.0f;
+	m_ConstantData.Color.w = 1.0f;
 
-	m_Font[0].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Item_F"], Filepath::m_Txtpath[L"Shader"]);
-	m_Font[1].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"MI_F"], Filepath::m_Txtpath[L"Shader"]);
-	m_Font[2].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Map_F"], Filepath::m_Txtpath[L"Shader"]);
-	m_Font[3].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"Setting_F"], Filepath::m_Txtpath[L"Shader"]);
-	m_Font[4].InitSet(pDevice, L"Basic", Filepath::m_Pngpath[L"MainMenu_F"], Filepath::m_Txtpath[L"Shader"]);
-
-	Menu::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
-	TexPos = m_Object.getTexture()->getImageSize();
-	SetTexPos({0.0f,0.0f, TexPos.x, TexPos.y});
+	CreateVertexBuffer(pDevice);
+	m_Object.CreateShader(pDevice, Name, ShaderFilepath, VSFunc, PSFunc);
+	m_Object.CreateRasterizer(pDevice);
+	CreateIndexBuffer(pDevice);
+	CreateConstantBuffer(pDevice);
+	Init();
 	return true;
 }
 
 bool InGameMenu::Frame()
 {
-	for (int i = 0; i < 5; ++i)
+	if (getSetting() == true)
 	{
-		if (m_iIndex == i)
-		{
-			m_Button[i].setActive(true);
-		}
-		else
-		{
-			m_Button[i].setActive(false);
-		}
-		m_Button[i].Frame();
+		g_Setting->Frame();
 	}
-	m_Bar.Frame();
-	m_LengthDiff.x = (m_VertexList[1].TexPos.x - m_VertexList[0].TexPos.x) * 0.5f;
-	m_LengthDiff.y = (m_VertexList[2].TexPos.y - m_VertexList[0].TexPos.y) * 0.5f;
-	StateFrame();
-	return Menu::Frame();
+	else if (m_State == IGMSTATE::DEFAULT)
+	{
+		m_IngameBar.Frame();
+		m_Bar[0].Frame();
+		return StateFrame();
+	}
+	else if (m_State == IGMSTATE::MAINMENU)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			m_Bar[i].Frame();
+		}
+	}
+	return true;
 }
 bool InGameMenu::Render(ID3D11DeviceContext* pContext)
 {
-	Menu::Render(pContext);
-	for (auto & it : m_Button)
+	if (getSetting() == true)
 	{
-		it.Render(pContext);
+		g_Setting->Render(pContext);
 	}
-	m_Bar.Render(pContext);
-	m_Font[m_iIndex].Render(pContext);
+	else if (m_State == IGMSTATE::DEFAULT)
+	{
+		Menu::Render(pContext);
+		m_IngameBar.Render(pContext);
+		m_Bar[0].Render(pContext);
+	}
+	else if (m_State == IGMSTATE::MAINMENU)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			m_IngameBar.Render(pContext);
+			m_Bar[i].Render(pContext);
+		}
+	}
 	return true;
 }
 bool InGameMenu::Release()
 {
-	for (auto & it : m_Button)
+	m_IngameBar.Release();
+	for (int i = 0; i < 3; ++i)
 	{
-		it.Release();
+		m_Bar[i].Release();
 	}
-	for (int i = 0; i < 5; ++i)
-	{
-		m_Font[i].Release();
-	}
-	m_Bar.Release();
 	return Menu::Release();
 }
 
@@ -101,10 +101,9 @@ bool InGameMenu::RightKey()
 {
 	if (Menu::RightKey() == true)
 	{
-		for (int i = 0; i < 5; ++i)
-		{
-			m_Button[i].setMove(true);
-		}
+		S_Sound.PlayEffect(Effect_Snd::MENUMOVE);
+		m_IngameBar.setIndex(m_iIndex);
+		m_IngameBar.setMove();
 		return true;
 	}
 	return false;
@@ -113,10 +112,9 @@ bool InGameMenu::LeftKey()
 {
 	if (Menu::LeftKey() == true)
 	{
-		for (int i = 0; i < 5; ++i)
-		{
-			m_Button[i].setMove(true);
-		}
+		S_Sound.PlayEffect(Effect_Snd::MENUMOVE);
+		m_IngameBar.setIndex(m_iIndex);
+		m_IngameBar.setMove();
 		return true;
 	}
 	return false;
@@ -127,10 +125,12 @@ bool InGameMenu::StateFrame()
 	if (LeftKey() == true && m_iIndex == -1)
 	{
 		m_iIndex = 4;
+		m_IngameBar.setIndex(m_iIndex);
 	}
 	if (RightKey() == true && m_iIndex == 5)
 	{
 		m_iIndex = 0;
+		m_IngameBar.setIndex(m_iIndex);
 	}
 
 	switch (m_iIndex)
@@ -152,7 +152,9 @@ bool InGameMenu::StateFrame()
 	case 3:
 		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
 		{
-			m_State = IGMSTATE::SETTING;
+			setSetting(true);
+			g_Setting->setMenu(this);
+			S_Sound.PlayEffect(Effect_Snd::MENUSELECT);
 		}
 		break;
 	case 4:
@@ -164,6 +166,5 @@ bool InGameMenu::StateFrame()
 	default:
 		break;
 	}
-	m_Font[m_iIndex].Frame();
 	return true;
 }

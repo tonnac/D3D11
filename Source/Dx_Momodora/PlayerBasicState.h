@@ -87,6 +87,7 @@ public:
 	bool		Frame() override;
 private:
 	FLOAT		m_fAcceleration;
+	FLOAT		m_fAccelPlus;
 };
 class PlayerRise : public PlayerState
 {

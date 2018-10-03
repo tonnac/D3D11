@@ -2,6 +2,7 @@
 #include "GameScene.h"
 #include "Setting.h"
 #include "Fade.h"
+#include "InGameMenu.h"
 
 class SceneMgr : public Singleton<SceneMgr>
 {
@@ -15,6 +16,9 @@ public:
 	bool					Release		();
 public:
 	void					InitArrow	(PlayerEffectPtr Arrow);
+public:
+	void					setGameMenu	(const bool& flag);
+	void					setLobbyScene();
 private:
 	Scene*					getScene	(const bool& isPrevScene);
 private:

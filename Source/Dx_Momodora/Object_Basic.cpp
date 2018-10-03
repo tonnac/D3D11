@@ -127,6 +127,10 @@ void Object_Basic::CreateRasterizer(ID3D11Device* pDevice)
 	desc.FillMode = D3D11_FILL_WIREFRAME;
 	ThrowifFailed(pDevice->CreateRasterizerState(&desc, &m_pWireFrameRS));
 }
+void Object_Basic::setTexture(Texture* pTexture)
+{
+	m_pTexture = pTexture;
+}
 ID3D11Buffer * Object_Basic::getVertexBuffer() const
 {
 	GETPTR(m_pVertexBuffer);

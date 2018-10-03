@@ -6,7 +6,7 @@
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
 
-Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder(false)
+Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder(false), m_iConsumableNumber(0), m_iEquipNumber(0)
 {
 	State * state = new PlayerIdle(this);
 	state = new PlayerRun(this);
@@ -86,4 +86,12 @@ bool Player::getDown() const
 bool Player::getLadder() const
 {
 	return m_Ladder;
+}
+INT Player::getConsumableNum() const
+{
+	return m_iConsumableNumber;
+}
+INT Player::getEquipNum() const
+{
+	return m_iEquipNumber;
 }

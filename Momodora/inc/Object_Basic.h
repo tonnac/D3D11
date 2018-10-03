@@ -32,6 +32,8 @@ public:
 	void						CreateaInputLayout(ID3D11Device* pDevice);
 	void						CreateRasterizer(ID3D11Device* pDevice);
 public:
+	void						setTexture(Texture* pTexture);
+public:
 	ID3D11Buffer *				getVertexBuffer() const;
 	ID3D11Buffer *				getIndexBuffer() const;
 	ID3D11Buffer *				getConstantBuffer() const;

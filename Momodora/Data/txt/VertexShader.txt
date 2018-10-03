@@ -21,6 +21,19 @@ struct VS_OUTPUT
 	float2 tex : TEXCOORD; 
 };
 
+float CosFunc()
+{
+	float ret = cos(Utilw) * 0.5f + 0.5f;
+	return ret;
+}
+
+float SinFunc()
+{
+	float ret = sin(Utilw) * 0.5f + 0.5f;
+	return ret;
+}
+
+
 float4 Rotate(in float4 pos)
 {
 	float4 vPos = pos;
@@ -35,6 +48,7 @@ VS_OUTPUT VS(in VS_INPUT vIn)
 	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
 	vOut.pos = mul(vLocal, g_proj);
 	vOut.pos.z = 0.5f;
+	vOut.Col = vIn.Col;
 	vOut.tex.x = vIn.tex.x / Width;
 	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;
@@ -60,8 +74,8 @@ VS_OUTPUT Button(in VS_INPUT vIn)
 	vLocal.x -= vCen.x;
 	vLocal.y -= vCen.y;
 
-	vLocal.x = vLocal.x * cos(Cr.x) + vLocal.y * sin(Cr.x);
-	vLocal.y = -vLocal.x * sin(Cr.x) + vLocal.y * cos(Cr.x);
+//	vLocal.x = vLocal.x * cos(Cr.x) + vLocal.y * sin(Cr.x);
+//	vLocal.y = -vLocal.x * sin(Cr.x) + vLocal.y * cos(Cr.x);
 
 	vLocal.x += vCen.x;
 	vLocal.y += vCen.y;
@@ -100,7 +114,7 @@ float4 PS(in PS_INPUT input) : SV_Target
 
 float4 TerrainPS(in PS_INPUT input) : SV_Target
 {
-	float4 Color1 = float4(0.0f,0.0f,1.0f,1.0f);
+	float4 Color1 = float4(Cr.x,Cr.y,Cr.z,Cr.w);
 	return Color1;
 }
 
@@ -140,4 +154,26 @@ float4 KeyPS(in PS_INPUT input) : SV_Target
 		TexColor = float4(36 / 255.0f, 0.0f, 18 / 255.0f, 0.5f);
 	}
 	return TexColor;
+}
+
+float4 SelectPS(in PS_INPUT input) : SV_Target
+{
+	float4 TexColor = g_txDiffuse.Sample(g_SamState, input.tex);
+	TexColor.a = cos(Cr.x) * 0.5f + 0.5f;
+	if(TexColor.a < 0.2f)
+	{
+		TexColor.a = 0.2f;
+	}
+	if(TexColor.a > 0.8f)
+	{
+		TexColor.a = 0.8f;
+	}
+	return TexColor;
+}
+
+float4 SelectPSS(in PS_INPUT input) : SV_Target
+{
+	float4 fColor = input.Col;
+	fColor.a = cos(Cr.x) * 0.5f + 0.8f;
+	return fColor;
 }

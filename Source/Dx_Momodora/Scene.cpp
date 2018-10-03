@@ -3,14 +3,6 @@
 #include "mSound.h"
 #include "LobbyMenu.h"
 
-std::tifstream& operator >> (std::tifstream& fp, ObjectEnum& type)
-{
-	int k;
-	fp >> k;
-	type = CASTING(ObjectEnum, k);
-	return fp;
-}
-
 Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename), m_bSetting(false), m_bPrevScene(false)
 {
 	
@@ -53,12 +45,32 @@ bool Scene::getSetting() const
 }
 void Scene::SceneSet(const bool& isInverse)
 {
+	std::tstring ObjType[] = {
+		L"BackGround",
+		L"Terrain",
+		L"Player",
+		L"Down",
+		L"Ladder",
+		L"LobbyScene"
+	};
+
+	auto foo = [&ObjType](const std::tstring& buffer)
+	{
+		for (int i = 0; i < sizeof(ObjType) / sizeof(ObjType[0]); ++i)
+		{
+			if (buffer == ObjType[i])
+			{
+				return true;
+			}
+		}
+		return false;
+	};
+
 	std::tifstream fp;
 	FileExceptErr(fp, Filepath::m_Txtpath[L"SceneScript"]);
 	S_Object.Release();
 
 	std::tstring Buffer;
-	int ObjTypeNum;
 
 	while (Buffer != m_SceneName && fp.eof() == false)
 	{
@@ -72,168 +84,137 @@ void Scene::SceneSet(const bool& isInverse)
 		PostQuitMessage(0);
 	}
 
-	fp >> Buffer >> ObjTypeNum;
+	std::tstring type;
+
 	if (isInverse == false)
 	{
-		for (int k = 0; k < ObjTypeNum; ++k)
+		while (Buffer.empty() == false && fp.eof() == false)
 		{
-			ObjectEnum ObjType;
-			int ObjNum;
-			fp >> ObjType >> ObjNum >> Buffer;
-
-			switch (ObjType)
+			std::getline(fp, Buffer);
+			if (foo(Buffer) == true)
 			{
-			case ObjectEnum::LOBBYMENU:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					std::shared_ptr<Lobbymenu> pData = std::make_shared<Lobbymenu>();
-					pData->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
-					LobbyScene* se = dynamic_cast<LobbyScene*>(this);
-					se->setLobby(pData);
-					g_Fade->setDivideTime(10.0f);
-					g_Fade->FadeIn();
-				}
-			}break;
-			case ObjectEnum::BACKGROUND:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					FLOAT BackPos[4];
-					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
-					BackgroundPTR pBackground = std::make_shared<Background>();
-					pBackground->SetPos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
-					S_Object.AddBackGround(pBackground);
-				}
-			}break;
-			case ObjectEnum::TERRAIN:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 TerrainPos;
-					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
-					TerrainPTR pTerrain = std::make_shared<Terrain>();
-					pTerrain->SetPos(TerrainPos);
-					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pTerrain);
-				}
-			}break;
-			case ObjectEnum::PLAYER:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR2 Center;
-					fp >> Center.x >> Center.y;
-					g_Player->SetCenterPos(Center);
-				}
-			}break;
-			case ObjectEnum::DOWN:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 Pos;
-					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
-					pData->SetPos(Pos);
-					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pData);
-				}
-			}break;
-			case ObjectEnum::LADDER:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 Pos;
-					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
-					pData->SetPos(Pos);
-					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pData);
-				}
-			}break;
+				type = Buffer;
+				continue;
 			}
-		}
+			std::tistringstream is(Buffer);
+
+			if (type == ObjType[0])
+			{
+				FLOAT pos[4];
+				is >> pos[0] >> pos[1] >> pos[2] >> pos[3];
+				BackgroundPTR pBackground = std::make_shared<Background>();
+				pBackground->SetPos(pos[0], pos[1], pos[2], pos[3]);
+				pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
+				S_Object.AddBackGround(pBackground);
+			}
+			else if (type == ObjType[1])
+			{
+				D3DXVECTOR4 TerrainPos;
+				is >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
+				TerrainPTR pTerrain = std::make_shared<Terrain>();
+				pTerrain->SetPos(TerrainPos);
+				pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pTerrain);
+			}
+			else if (type == ObjType[2])
+			{
+				D3DXVECTOR2 Center;
+				is >> Center.x >> Center.y;
+				g_Player->SetCenterPos(Center);
+			}
+			else if (type == ObjType[3])
+			{
+				D3DXVECTOR4 Pos;
+				is >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+				std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
+				pData->SetPos(Pos);
+				pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pData);
+			}
+			else if (type == ObjType[4])
+			{
+				D3DXVECTOR4 Pos;
+				is >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+				std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
+				pData->SetPos(Pos);
+				pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pData);
+			}
+			else if (type == ObjType[5])
+			{
+				std::shared_ptr<Lobbymenu> pData = std::make_shared<Lobbymenu>();
+				pData->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
+				LobbyScene* se = dynamic_cast<LobbyScene*>(this);
+				se->setLobby(pData);
+				g_Fade->setDivideTime(10.0f);
+				g_Fade->FadeIn();
+			}
+		};
 	}
 	else
 	{
 		FLOAT xWidth = 0.0f;
-
-		for (int k = 0; k < ObjTypeNum; ++k)
+		while (Buffer.empty() == false)
 		{
-			ObjectEnum ObjType;
-			int ObjNum;
-			fp >> ObjType >> ObjNum >> Buffer;
+			std::getline(fp, Buffer);
+			if (foo(Buffer) == true)
+			{
+				type = Buffer;
+				continue;
+			}
+			std::tistringstream is(Buffer);
 
-			switch (ObjType)
+			if (type == ObjType[0])
 			{
-			case ObjectEnum::BACKGROUND:
+				FLOAT BackPos[4];
+				is >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
+				xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
+				BackgroundPTR pBackground = std::make_shared<Background>();
+				pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
+				pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
+				S_Object.AddBackGround(pBackground);
+			}
+			else if (type == ObjType[1])
 			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					FLOAT BackPos[4];
-					fp >> BackPos[0] >> BackPos[1] >> BackPos[2] >> BackPos[3];
-					xWidth = BackPos[2] - g_fImageWidth - BackPos[0];
-					BackgroundPTR pBackground = std::make_shared<Background>();
-					pBackground->SetInversePos(BackPos[0], BackPos[1], BackPos[2], BackPos[3]);
-					pBackground->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Map"], Filepath::m_Txtpath[L"Shader"]);
-					S_Object.AddBackGround(pBackground);
-				}
-			}break;
-			case ObjectEnum::TERRAIN:
+				D3DXVECTOR4 TerrainPos;
+				is >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
+				TerrainPTR pTerrain = std::make_shared<Terrain>();
+				pTerrain->SetPos(TerrainPos);
+				pTerrain->Scroll(xWidth * 3.0f);
+				pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pTerrain);
+			}
+			else if (type == ObjType[2])
 			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 TerrainPos;
-					fp >> TerrainPos.x >> TerrainPos.y >> TerrainPos.z >> TerrainPos.w;
-					TerrainPTR pTerrain = std::make_shared<Terrain>();
-					pTerrain->SetPos(TerrainPos);
-					pTerrain->Scroll(xWidth * 3.0f);
-					pTerrain->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pTerrain);
-				}
-			}break;
-			case ObjectEnum::PLAYER:
+				D3DXVECTOR2 Center;
+				is >> Center.x >> Center.y;
+				Center.y = g_Player->getCenterPos().y;
+				Center.x = g_rtClient.right - 15.0f;
+				g_Player->SetCenterPos(Center);
+			}
+			else if (type == ObjType[3])
 			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR2 Center;
-					fp >> Center.x >> Center.y;
-					Center.x = g_rtClient.right - Center.x;
-					g_Player->SetCenterPos(Center);
-				}
-			}break;
-			case ObjectEnum::DOWN:
+				D3DXVECTOR4 Pos;
+				is >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+				std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
+				pData->SetPos(Pos);
+				pData->Scroll(xWidth * 3.0f);
+				pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pData);
+			}
+			else if (type == ObjType[4])
 			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 Pos;
-					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					std::shared_ptr<DownableObject> pData = std::make_shared<DownableObject>();
-					pData->SetPos(Pos);
-					pData->Scroll(xWidth * 3.0f);
-					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pData);
-				}
-			}break;
-			case ObjectEnum::LADDER:
-			{
-				for (int i = 0; i < ObjNum; ++i)
-				{
-					D3DXVECTOR4 Pos;
-					fp >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
-					std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
-					pData->SetPos(Pos);
-					pData->Scroll(xWidth * 3.0f);
-					pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
-					S_Object.AddTerrain(pData);
-				}
-			}break;
+				D3DXVECTOR4 Pos;
+				is >> Pos.x >> Pos.y >> Pos.z >> Pos.w;
+				std::shared_ptr<Ladder> pData = std::make_shared<Ladder>();
+				pData->SetPos(Pos);
+				pData->Scroll(xWidth * 3.0f);
+				pData->InitSet(m_pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+				S_Object.AddTerrain(pData);
 			}
 		}
 	}
 }
-
 LobbyScene::LobbyScene() : Scene(L"LobbyScene")
 {
 	
