@@ -8,7 +8,7 @@ class Menu : public UI
 {
 public:
 	Menu();
-	~Menu();
+	virtual ~Menu();
 	virtual void	setSetting(const bool& set);
 	bool			getSetting() const;
 public:

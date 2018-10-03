@@ -8,3 +8,11 @@ public:
 private:
 
 };
+
+class HPBar : public Bar
+{
+public:
+	bool		Frame() override;
+private:
+	
+};

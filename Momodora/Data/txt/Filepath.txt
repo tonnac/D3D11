@@ -6,8 +6,8 @@ Snd ../../momodora/data/txt/Sound.txt
 Png
 Kaho ../../momodora/data/character/Kaho2.png
 Map ../../momodora/data/map/map.png
-Lobby ../../momodora/data/lobby/title_0.png
-Misc ../../momodora/data/lobby/misc.png
+Lobby ../../momodora/data/ui/lobby/title_0.png
+Misc ../../momodora/data/ui/lobby/misc.png
 Item_IC ../../momodora/data/ui/ingameui/Item_IC.png
 MI_IC ../../momodora/data/ui/ingameui/MI_IC.png
 Map_IC ../../momodora/data/ui/ingameui/Map_IC.png
@@ -37,3 +37,17 @@ InvenSel ../../momodora/data/ui/inventory/InvenSel.png
 FlowerDesc ../../momodora/data/ui/inventory/FlowerDesc.png
 Flower ../../momodora/data/ui/inventory/Flower.png
 FlowerName ../../momodora/data/ui/inventory/FlowerName.png
+0 ../../momodora/data/ui/0.png
+1 ../../momodora/data/ui/1.png
+2 ../../momodora/data/ui/2.png
+3 ../../momodora/data/ui/3.png
+4 ../../momodora/data/ui/4.png
+5 ../../momodora/data/ui/5.png
+6 ../../momodora/data/ui/6.png
+7 ../../momodora/data/ui/7.png
+8 ../../momodora/data/ui/8.png
+9 ../../momodora/data/ui/9.png
+HPBK ../../momodora/data/ui/ingameui/HPBK.png
+HPBar ../../momodora/data/ui/ingameui/HPBar.png
+QuickSlot ../../momodora/data/ui/ingameui/QuickSlot.png
+Moo ../../momodora/data/ui/ingameui/Moo.png

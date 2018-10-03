@@ -226,7 +226,12 @@ bool PlayerIdle::Frame()
 	{
 		return true;
 	}
-
+	if (S_Input.getKeyState(DIK_W) == Input::KEYSTATE::KEY_PUSH)
+	{
+		m_pCharacter->setState(L"Item");
+		S_Sound.PlayEffect(Effect_Snd::ITEM);
+		return true;
+	}
 	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
 	{
 		m_fTimer += g_fSecPerFrame;
@@ -843,3 +848,22 @@ bool PlayerRoll::Frame()
 //	*m_rtDraw = m_pSprite->getSpriteRt();
 //	return true;
 //}
+
+PlayerItem::PlayerItem(Player* pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"Item"), this);
+}
+bool PlayerItem::Init()
+{
+	setSprite(L"Kaho", L"Item");
+	m_pSprite->setDivideTime(1.0f);
+	return true;
+}
+bool PlayerItem::Frame()
+{
+	if (PlayerState::Frame() == false)
+	{
+		m_pCharacter->setState(L"Idle");
+	}
+	return true;
+}

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "InGameMenu.h"
+#include "GameUI.h"
 
 GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename), m_bGameMenu(false)
 {}
@@ -40,6 +41,7 @@ bool GameScene::Frame()
 		{
 			return false;
 		}
+		g_GameUI->Frame();
 		S_Object.Frame();
 	}
 	return true;
@@ -53,8 +55,10 @@ bool GameScene::Render()
 	}
 	else
 	{
-		return Scene::Render();
+		Scene::Render();
+		g_GameUI->Render(m_pContext);
 	}
+	return true;
 }
 bool GameScene::Release()
 {

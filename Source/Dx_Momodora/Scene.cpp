@@ -217,7 +217,7 @@ void Scene::SceneSet(const bool& isInverse)
 }
 LobbyScene::LobbyScene() : Scene(L"LobbyScene")
 {
-	
+
 }
 
 bool LobbyScene::Frame()

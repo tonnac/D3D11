@@ -2,11 +2,12 @@
 #include "PlayerBasicState.h"
 #include "PlayerAttack.h"
 #include "DirectInput.h"
+#include "Inventory.h"
 
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
 
-Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder(false), m_iConsumableNumber(0), m_iEquipNumber(0)
+Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder(false), m_iConsumableNumber(0), m_iEquipNumber(0), m_HP(100), m_iQuickSlotNum(0)
 {
 	State * state = new PlayerIdle(this);
 	state = new PlayerRun(this);
@@ -32,6 +33,7 @@ Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder
 	state = new PlayerLadderLeave(this);
 	state = new PlayerLadderUp(this);
 	state = new PlayerLadderDown(this);
+	state = new PlayerItem(this);
 	m_fSpeed = g_fSpeed = 300.0f;
 	m_pCurrentState = m_StateList[L"Idle"];
 }
@@ -57,7 +59,35 @@ bool Player::Frame()
 
 	if (S_Input.getKeyState(DIK_F8) == Input::KEYSTATE::KEY_PUSH)
 	{
+		m_HP -= 30;
 		m_bInvincible = true;
+	}
+	if (S_Input.getKeyState(DIK_E) == Input::KEYSTATE::KEY_PUSH)
+	{
+		INT BefIndex = m_iQuickSlotNum;
+		QuickSlot Q = g_Inven->getQuickSlot();
+		if (m_iQuickSlotNum == 2)
+		{
+			m_iQuickSlotNum = 0;
+		}
+		else
+		{
+			++m_iQuickSlotNum;
+		}
+		if (Q.getItem(m_iQuickSlotNum) == nullptr)
+		{
+			if (BefIndex == 0 && Q.getItem(2) != nullptr)
+			{
+				m_iQuickSlotNum = 2;
+			}
+			else if(Q.getItem(BefIndex - 1) != nullptr)
+			{
+				m_iQuickSlotNum = BefIndex - 1;
+			}
+			else
+				m_iQuickSlotNum = BefIndex;
+		}
+		
 	}
 	return Character::Frame();
 }
@@ -94,4 +124,16 @@ INT Player::getConsumableNum() const
 INT Player::getEquipNum() const
 {
 	return m_iEquipNumber;
+}
+INT Player::getHP() const
+{
+	return m_HP;
+}
+INT	Player::getQuickNum() const
+{
+	return m_iQuickSlotNum;
+}
+void Player::setHP(const INT& iVal)
+{
+	m_HP -= iVal;
 }

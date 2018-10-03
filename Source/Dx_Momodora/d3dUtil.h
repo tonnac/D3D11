@@ -111,6 +111,12 @@ extern std::shared_ptr<Setting> g_Setting;
 class InGameMenu;
 extern std::shared_ptr<InGameMenu> g_IGM;
 
+class Inventory;
+extern std::shared_ptr<Inventory> g_Inven;
+
+class GameUI;
+extern std::shared_ptr<GameUI> g_GameUI;
+
 template <typename K>
 class Singleton
 {

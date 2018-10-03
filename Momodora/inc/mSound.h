@@ -26,7 +26,8 @@ enum Effect_Snd
 	MENUSELECT,
 	PRESSANYKEY,
 	SETTINGMOVE,
-	HURT
+	HURT,
+	ITEM
 };
 
 class mSound : public Singleton<mSound>

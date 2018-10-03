@@ -1,6 +1,7 @@
 #include "InGameMenu.h"
 #include "Setting.h"
 #include "SceneMgr.h"
+#include "Inventory.h"
 
 InGameMenu::InGameMenu() : m_State(IGMSTATE::DEFAULT), m_iMapleIndex(0)
 {}
@@ -164,7 +165,12 @@ bool InGameMenu::StateFrame()
 		m_Bar[0].Frame();
 	}break;
 	case IGMSTATE::INVENTORY:
-		break;
+	{
+		if (g_Inven->Frame() == false)
+		{
+			m_State = IGMSTATE::DEFAULT;
+		}
+	}break;
 	case IGMSTATE::MAINITEM:
 	{
 		m_Bar[3].Frame();
@@ -230,7 +236,9 @@ bool InGameMenu::StateRender(ID3D11DeviceContext* pContext)
 		m_Bar[0].Render(pContext);
 	}break;
 	case IGMSTATE::INVENTORY:
-		break;
+	{
+		g_Inven->Render(pContext);
+	}break;
 	case IGMSTATE::MAINITEM:
 	{
 		m_Bar[3].Render(pContext);

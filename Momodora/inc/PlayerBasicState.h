@@ -161,3 +161,11 @@ public:
 	bool		Init() override;
 	bool		Frame() override;
 };
+class PlayerItem : public PlayerState
+{
+public:
+	PlayerItem(Player*);
+public:
+	bool		Init() override;
+	bool		Frame() override;
+};

@@ -34,6 +34,7 @@ public:
 	bool				Release();
 public:
 	Texture*			LoadTexture(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& Filepath);
+	Texture*			LoadTexture(const std::tstring& Name);
 private:
 	void				AddCache(const std::tstring& Name, Texture* pTexture);
 	Texture*			getTexture(const std::tstring& Name);

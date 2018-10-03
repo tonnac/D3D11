@@ -11,7 +11,7 @@ Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1)
 }
 Character::~Character()
 {
-	Plane_Object::Release();
+	Release();
 }
 
 bool Character::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
@@ -50,8 +50,8 @@ bool Character::PostRender(ID3D11DeviceContext* pContext)
 {
 	Plane_Object::PostRender(pContext);
 
-	std::tstring pos = std::to_tstring(m_Centerpos.x) + L", " + std::to_tstring(m_Centerpos.y);
-	S_Write.DrawText({ 0.0f,50.0f,CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }, pos, D2D1::ColorF::White);
+	//std::tstring pos = std::to_tstring(m_Centerpos.x) + L", " + std::to_tstring(m_Centerpos.y);
+	//S_Write.DrawText({ 0.0f,50.0f,CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }, pos, D2D1::ColorF::White);
 
 	if (g_DebugMode == true)
 	{

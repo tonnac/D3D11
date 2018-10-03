@@ -1,6 +1,10 @@
 #include "SceneMgr.h"
 //#include "mSound.h"
 #include "KahoAttack.h"
+#include "Inventory.h"
+#include "LobbyMenu.h"
+#include "Bar.h"
+#include "GameUI.h"
 
 std::shared_ptr<PlayerEffect>	g_Attack1 = nullptr;
 std::shared_ptr<PlayerEffect>	g_Attack2 = nullptr;
@@ -10,6 +14,8 @@ std::shared_ptr<Player>			g_Player = nullptr;
 std::shared_ptr<Fade>			g_Fade = nullptr;
 std::shared_ptr<Setting>		g_Setting = nullptr;
 std::shared_ptr<InGameMenu>		g_IGM = nullptr;
+std::shared_ptr<Inventory>		g_Inven = nullptr;
+std::shared_ptr<GameUI>			g_GameUI = nullptr;
 
 SceneMgr::SceneMgr() : m_iSceneIndex(2), m_iCount(0)
 {
@@ -24,6 +30,17 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 
+	S_Texture.LoadTexture(pDevice, L"0", Filepath::m_Pngpath[L"0"]);
+	S_Texture.LoadTexture(pDevice, L"1", Filepath::m_Pngpath[L"1"]);
+	S_Texture.LoadTexture(pDevice, L"2", Filepath::m_Pngpath[L"2"]);
+	S_Texture.LoadTexture(pDevice, L"3", Filepath::m_Pngpath[L"3"]);
+	S_Texture.LoadTexture(pDevice, L"4", Filepath::m_Pngpath[L"4"]);
+	S_Texture.LoadTexture(pDevice, L"5", Filepath::m_Pngpath[L"5"]);
+	S_Texture.LoadTexture(pDevice, L"6", Filepath::m_Pngpath[L"6"]);
+	S_Texture.LoadTexture(pDevice, L"7", Filepath::m_Pngpath[L"7"]);
+	S_Texture.LoadTexture(pDevice, L"8", Filepath::m_Pngpath[L"8"]);
+	S_Texture.LoadTexture(pDevice, L"9", Filepath::m_Pngpath[L"9"]);
+
 	g_Fade = std::make_shared<Fade>();
 	g_Fade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
 
@@ -32,6 +49,12 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 	g_IGM = std::make_shared<InGameMenu>();
 	g_IGM->InitSet(m_pDevice, L"Terrain", Filepath::m_Pngpath[L"InGameMenu"], Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+
+	g_Inven = std::make_shared<Inventory>();
+	g_Inven->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Inventory"], Filepath::m_Txtpath[L"Shader"]);
+
+	g_GameUI = std::make_shared<GameUI>();
+	g_GameUI->InitSet(m_pDevice);
 
 #pragma region Player_Init
 	g_Attack1 = std::make_shared<KahoAttack1>();
@@ -130,6 +153,13 @@ Scene* SceneMgr::getScene(const bool& isPrevScene)
 	}break;
 	case 5:
 		break;
+	}
+	if (m_iSceneIndex == 0)
+	{
+		std::shared_ptr<Lobbymenu> pLobby = std::make_shared<Lobbymenu>();
+		pLobby->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Lobby"], Filepath::m_Txtpath[L"Shader"]);
+		LobbyScene* pLobbyScene = dynamic_cast<LobbyScene*>(retScene);
+		pLobbyScene->setLobby(pLobby);
 	}
 	retScene->setDevice(m_pDevice, m_pContext);
 	if (isPrevScene == true)

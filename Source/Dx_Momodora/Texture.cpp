@@ -85,6 +85,20 @@ Texture* TextureMgr::LoadTexture(ID3D11Device* pDevice, const std::tstring& Name
 	AddCache(Name, pData);
 	return pData;
 }
+Texture* TextureMgr::LoadTexture(const std::tstring& Name)
+{
+	Texture* pData = nullptr;
+	if ((pData = getTexture(Name)) != nullptr)
+	{
+		return pData;
+	}
+	else
+	{
+		pData = m_DataMap[Name];
+		AddCache(Name, m_DataMap[Name]);
+		return pData;
+	}
+}
 Texture* TextureMgr::getTexture(const std::tstring& Name)
 {
 	CacheIter iter;
