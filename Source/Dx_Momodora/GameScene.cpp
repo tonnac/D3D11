@@ -20,6 +20,13 @@ void GameScene::setGameMenu(const bool& flag)
 }
 bool GameScene::Frame()
 {
+	POINT Pos = S_Input.getMousePos();
+	if (Pos.x > 0 && Pos.x < g_rtClient.right && Pos.y > 0 && Pos.y < g_rtClient.bottom &&
+		S_Input.getKeyState(DIK_LBUTTON) == Input::KEYSTATE::KEY_PUSH)
+	{
+		g_Player->SetCenterPos({ CASTING(FLOAT, Pos.x),CASTING(FLOAT, Pos.y) });
+	}
+
 	if (S_Input.getKeyState(DIK_LSHIFT) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_bGameMenu = true;

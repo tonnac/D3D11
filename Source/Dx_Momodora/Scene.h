@@ -47,7 +47,7 @@ protected:
 	std::shared_ptr<Lobbymenu> m_pLobby;
 };
 
-//
+
 //class EndScene : public Scene
 //{
 //public:
@@ -55,5 +55,7 @@ protected:
 //	bool			Frame		() override;
 //	bool			Render		() override;
 //	bool			Release		() override;
+//private:
+//	Background		m_Background;
 //};
-
+//

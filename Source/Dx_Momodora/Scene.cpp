@@ -273,8 +273,8 @@ void LobbyScene::setLobby(std::shared_ptr<Lobbymenu> pLobby)
 	m_pLobby = pLobby;
 }
 
-//
-//
+
+
 //bool EndScene::Init()
 //{
 //	m_BKObject.LoadFile(L"End", L"../../data/bmp/EndScene.bmp");
