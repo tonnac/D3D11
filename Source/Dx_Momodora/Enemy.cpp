@@ -87,6 +87,7 @@ void Enemy::setHP(const FLOAT& iVal)
 	m_HP -= CASTING(INT, iVal);
 	if (m_HP <= 0)
 	{
+		m_pCurrentState = m_StateList[L"Hit"];
 		setDead();
 	}
 }

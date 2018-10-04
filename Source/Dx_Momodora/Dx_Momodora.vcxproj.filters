@@ -442,7 +442,4 @@
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
     <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
 </Project>

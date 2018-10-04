@@ -73,12 +73,17 @@ private:
 			{
 				if (m_EnemyList.empty() == false)
 				{
+					COL col = COL::NONE;
 					KahoBowAttack* pAttack = dynamic_cast<KahoBowAttack*>(iter->get());
 					for (auto &it : m_EnemyList)
 					{
-						COL col = (*iter)->Collision(it);
+						if (it->getCurrentState() != L"Hit")
+						{
+							col = (*iter)->Collision(it);
+						}
 						if (col > COL::NONE && pAttack != nullptr)
 						{
+							it->setTransition(E_EVENT::BEARROWATTACKED);
 							deliter = iter;
 						}
 					}

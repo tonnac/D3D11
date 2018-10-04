@@ -61,7 +61,7 @@ bool EnemyMoveState::Frame()
 	INT iDir = m_pEnemy->getDir();
 	D2D1_RECT_F ColRT = m_pEnemy->getCollisionRT();
 	D3DXVECTOR2 Cen = m_pEnemy->getCenterPos();
-	m_pEnemy->MoveCenterPos({ iDir * g_fSecPerFrame * fSpeed , g_fSecPerFrame * 5.0f });
+	m_pEnemy->MoveCenterPos({ iDir * g_fSecPerFrame * fSpeed , g_fSecPerFrame * 25.0f });
 	if (iDir == -1)
 	{
 		m_rtSight->left = ColRT.left - 100.0f;
@@ -257,7 +257,7 @@ bool EnemyAngryState::Frame()
 	D3DXVECTOR2 Center = m_pEnemy->getCenterPos();
 	FLOAT fSpeed = m_pEnemy->getSpeed();
 	INT iDir = m_pEnemy->getDir();
-	m_pEnemy->MoveCenterPos({ iDir * g_fSecPerFrame * fSpeed ,0.0f });
+	m_pEnemy->MoveCenterPos({ iDir * g_fSecPerFrame * fSpeed , g_fSecPerFrame * 150.0f });
 
 	if (m_fTimer >= 7.0f)
 	{

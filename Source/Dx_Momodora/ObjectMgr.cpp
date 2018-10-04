@@ -21,6 +21,7 @@ bool ObjectMgr::Frame()
 	ObjectFrame<PlayerPTR>(m_pPlayer);
 	ObjectFrame<BackgroundPTR>(m_pBackground);
 	Scroll();
+	ContainerFrame<EnemyList>(m_EnemyList);
 	TerrainCollision();
 	if (m_EnemyList.empty() == false)
 	{
@@ -30,7 +31,6 @@ bool ObjectMgr::Frame()
 		}
 	}
 	ContainerFrame<TerrainList>(m_Terrainlist);
-	ContainerFrame<EnemyList>(m_EnemyList);
 	EffectFrame<P_Effect>(m_PlayerEffect);
 	ContainerFrame<UIList>(m_UIList);
 	return true;
