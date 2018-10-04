@@ -11,14 +11,14 @@ public:
 	Scene() = default;
 	Scene(const std::tstring& Scenename);
 public:
-	virtual bool			Init			() final;
+	virtual bool			Init			();
 	virtual bool			Frame			() = 0;
 	virtual bool			Render			();
 	virtual bool			Release			() = 0;
 	virtual bool			inverseInit		();
 	bool					getPrevScene	() const;
 public:
-	virtual void			setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
+	void					setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
 	void					setSetting		(const bool& set);
 public:
 	bool					getSetting		() const;

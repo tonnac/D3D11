@@ -1,6 +1,7 @@
 #pragma once
 #include "Character.h"
 #include "EnemyBasicState.h"
+#include "LineObject.h"
 
 
 class Player;
@@ -11,8 +12,12 @@ public:
 	Enemy();
 	virtual ~Enemy();
 public:
+	virtual bool	InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+					const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;
 	bool			Init		() override;
 	bool			Frame		() override;
+	bool			Render		(ID3D11DeviceContext* pContext) override;
+	bool			Release		();
 public:
 	D2D1_RECT_F*	getArea();
 	D2D1_RECT_F*	getSight();
@@ -38,6 +43,7 @@ private:
 	D2D1_RECT_F		m_rtSight;
 	D2D1_RECT_F		m_rtAttackRange;
 	FinateStateMachine*	m_fms;
+	LineObject		m_Line[3];
 };
 
 using EnemyPTR = std::shared_ptr<Enemy>;

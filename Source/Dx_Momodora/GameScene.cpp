@@ -1,6 +1,8 @@
 #include "GameScene.h"
 #include "InGameMenu.h"
 #include "GameUI.h"
+#include "ConsumableItem.h"
+
 
 GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename), m_bGameMenu(false)
 {}
@@ -106,40 +108,56 @@ bool GameScene1::SceneChange()
 GameScene2::GameScene2() : GameScene(L"GameScene2")
 {}
 
-GameScene3::GameScene3() : GameScene(L"GameScene3"), m_bAlram(false)
+GameScene3::GameScene3() : GameScene(L"GameScene3"), isItemGet(false), isProcess(false)
 {}
-void GameScene3::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
+bool GameScene3::Init()
 {
-	GameScene::setDevice(pDevice, pContext);
-	m_Bar[0].InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Inve"], Filepath::m_Txtpath[L"Shader"]);
-	m_Bar[0].SetCenterPos({ 177.5f * 3.0f,145.0f * 3.0f });
-	m_Bar[0].SetTexPos({ 0.0f,0.0f,228.0f,48.0f });
-	m_Bar[1].InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Acquire"], Filepath::m_Txtpath[L"Shader"]);
+	GameScene::Init();
+	m_Box[0] = std::make_shared<XMessageBox>();
+	m_Box[1] = std::make_shared<XMessageBox>();
+	m_Box[0]->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Inve"], Filepath::m_Txtpath[L"Shader"]);
+	m_Box[0]->SetCenterPos({ 177.5f * 3.0f,145.0f * 3.0f });
+	m_Box[0]->SetTexPos({ 0.0f,0.0f,228.0f,48.0f });
+	m_Box[1]->InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Acquire"], Filepath::m_Txtpath[L"Shader"]);
+	m_Box[1]->SetCenterPos({ 177.5f * 3.0f,145.0f * 3.0f });
+	m_Box[1]->SetTexPos({ 0.0f,0.0f,309.0f,126.0f });
+	S_Object.AddUI(m_Box[0]);
+	S_Object.AddUI(m_Box[1]);
+	return true;
 }
 bool GameScene3::Frame()
 {
-	if (g_Player->getCenterPos().x > 141.0f * 3.0f && g_Player->getCenterPos().x < 191.0f * 3.0f)
+	if (isItemGet == false || isProcess == true)
 	{
-		m_bAlram = true;
+		if (isItemGet == false && g_Player->getCenterPos().x > 141.0f * 3.0f && g_Player->getCenterPos().x < 191.0f * 3.0f)
+		{
+			m_Box[0]->setPopup(true);
+			if (S_Input.getKeyState(DIK_UP) == Input::KEYSTATE::KEY_PUSH)
+			{
+				m_Box[0]->setPopup(false);
+				isItemGet = true;
+				m_Box[1]->setPopup(true);
+			}
+		}
+		else
+		{
+			m_Box[0]->setPopup(false);
+		}
+		return GameScene::Frame();
 	}
 	else
 	{
-		m_bAlram = false;
+		if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH)
+		{
+			m_Box[1]->setPopup(false);
+			isProcess = true;
+			std::shared_ptr<FlowerItem> pFlower = std::make_shared<FlowerItem>();
+			pFlower->Initset();
+			pFlower->setCount(6);
+			g_Inven->AddConsumable(std::move(pFlower));
+		}
+		return true;
 	}
-	if (m_bAlram == true)
-	{
-		m_Bar[0].Frame();
-	}
-	return GameScene::Frame();
-}
-bool GameScene3::Render()
-{
-	GameScene::Render();
-	if (m_bAlram == true)
-	{
-		m_Bar[0].Render(m_pContext);
-	}
-	return true;
 }
 GameScene4::GameScene4() : GameScene(L"GameScene4")
 {}

@@ -171,6 +171,14 @@ bool Player::isBuff() const
 {
 	return m_bBuff;
 }
+void Player::setHP(const FLOAT& iVal)
+{
+	Character::setHP(iVal);
+	if (m_HP > 100)
+	{
+		m_HP = 100;
+	}
+}
 void Player::setBuff(const bool& flag)
 {
 	m_bBuff = flag;

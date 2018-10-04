@@ -17,6 +17,15 @@ Enemy::Enemy() : m_fTimer(0.0f), m_Damage(8)
 Enemy::~Enemy()
 {}
 
+bool Enemy::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+					const std::string& VSFunc, const std::string& PSFunc)
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		m_Line[i].InitSet(pDevice, L"Terrain", Filepath::m_Txtpath[L"Shader"], "VS", "TerrainPS");
+	}
+	return Character::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
+}
 bool Enemy::Init()
 {
 	Character::Init();
@@ -37,7 +46,29 @@ bool Enemy::Frame()
 		return true;
 	}
 	Collision();
+	m_Line[0].setVertex(m_rtArea);
+	m_Line[1].setVertex(m_rtAttackRange);
+	m_Line[2].setVertex(m_rtSight);
 	return Character::Frame();
+}
+bool Enemy::Render(ID3D11DeviceContext* pContext)
+{
+	if (g_DebugMode)
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			m_Line[i].Render(pContext);
+		}
+	}
+	return Character::Render(pContext);
+}
+bool Enemy::Release()
+{
+	for (int i = 0; i < 3; ++i)
+	{
+		m_Line[i].Release();
+	}
+	return Character::Release();
 }
 D2D1_RECT_F* Enemy::getArea()
 {
@@ -120,6 +151,12 @@ COL	Enemy::Collision()
 bool Enemy::Scroll(const FLOAT& pos)
 {
 	m_Centerpos.x += -pos;
+	m_rtArea.left += -pos;
+	m_rtArea.right += -pos;
+	m_rtSight.left += -pos;
+	m_rtSight.right += -pos;
+	m_rtAttackRange.left += -pos;
+	m_rtAttackRange.right += -pos;
 	return true;
 }
 //bool Enemy::MoveScrollObj(const LONG& size)

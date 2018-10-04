@@ -22,6 +22,7 @@ public:
 	bool			isInvincible() const;
 	bool			isBuff() const;
 public:
+	void			setHP(const FLOAT& iVal) override;
 	void			setBuff(const bool& flag);
 	void			setDead() override;
 	void			setInvincible(const bool& flag);

@@ -31,3 +31,7 @@ void Item::setCount(const INT& iVal)
 {
 	m_iCount = iVal;
 }
+void Item::IncraseCount(const INT& iVal)
+{
+	m_iCount += iVal;
+}

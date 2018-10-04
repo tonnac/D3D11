@@ -19,6 +19,7 @@ public:
 public:
 	void					setGameMenu	(const bool& flag);
 	void					setLobbyScene();
+	void					TextureInit();
 private:
 	Scene*					getScene	(const bool& isPrevScene);
 private:

@@ -7,7 +7,7 @@ class Item
 public:
 	Item(const INT& id = 0);
 public:
-	virtual bool Initset(ID3D11Device* pDevice) = 0;
+	virtual bool Initset() = 0;
 	virtual bool UseItem();
 public:
 	Texture *	getIcon();
@@ -17,6 +17,7 @@ public:
 	INT			getCount() const;
 public:
 	void		setCount(const INT& iVal);
+	void		IncraseCount(const INT& iVal);
 protected:
 	INT			m_iCount;
 	INT			m_ID;

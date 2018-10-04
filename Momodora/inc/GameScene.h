@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-#include "Bar.h"
+#include "MessageBox.h"
 
 class GameScene : public Scene
 {
@@ -42,12 +42,12 @@ class GameScene3 : public GameScene
 public:
 	GameScene3();
 public:
-	void				setDevice	(ID3D11Device * pDevice, ID3D11DeviceContext* pContext) override;
-	bool				Frame		() override;
-	bool				Render		() override;
+	bool	Init		() override;
+	bool	Frame		() override;
 private:
-	Bar					m_Bar[2];
-	bool				m_bAlram;
+	MsgPTR	m_Box[2];
+	bool	isItemGet;
+	bool	isProcess;
 };
 class GameScene4 : public GameScene
 {

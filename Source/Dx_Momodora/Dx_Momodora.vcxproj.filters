@@ -249,6 +249,12 @@
     <ClInclude Include="FSMMgr.h">
       <Filter>헤더 파일\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="LineObject.h">
+      <Filter>헤더 파일\Object\BasicObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBox.h">
+      <Filter>헤더 파일\Object\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -406,6 +412,12 @@
     </ClCompile>
     <ClCompile Include="FSMMgr.cpp">
       <Filter>소스 파일\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="LineObject.cpp">
+      <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageBox.cpp">
+      <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -80,11 +80,12 @@ bool Inventory::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const s
 	m_itemslotCen[3] = { 87.0f, 321.0f };
 	m_itemslotCen[4] = { 165.0f, 321.0f };
 
-	std::shared_ptr<FlowerItem> pFlower(new FlowerItem);
-	pFlower->Initset(pDevice);
+	//std::shared_ptr<FlowerItem> pFlower(new FlowerItem);
+	//pFlower->Initset();
 
 	std::shared_ptr<SeedItem> pSeed(new SeedItem);
-	pSeed->Initset(pDevice);
+	pSeed->Initset();
+	pSeed->setCount(9);
 
 	for(int i=0; i<m_SlotArray.size(); ++i)
 	{
@@ -103,7 +104,6 @@ bool Inventory::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const s
 	m_Description.InitSet(pDevice, L"Basic", Filepath::m_Txtpath[L"Shader"]);
 	m_Description.SetCenterPos({ g_rtClient.right * 0.5f, 522.5f });
 
-	AddConsumable(pFlower);
 	AddConsumable(pSeed);
 	return true;
 }
@@ -181,6 +181,25 @@ bool Inventory::Release()
 }
 void Inventory::AddConsumable(ItemPtr item)
 {
+	bool search = false;
+	ItemPtr pItem = nullptr;
+	auto foo = [item](ItemPtr pItem)
+	{
+		if (item->getID() == pItem->getID())
+		{
+			return true;
+		}
+		return false;
+	};
+	for (int i = 0; i < 3; ++i)
+	{
+		pItem = m_QuickSlot.getItem(i);
+		if (pItem != nullptr && pItem->getID() == item->getID())
+		{
+			search = true;
+			break;
+		}
+	}
 	INT Key = item->getID();
 	if (m_ConsumableName[Key] == nullptr)
 	{
@@ -189,9 +208,23 @@ void Inventory::AddConsumable(ItemPtr item)
 		m_ConsumableName[Key] = pFont;
 		m_ConsumableName[Key]->setTexture(item->getName());
 	}
-	++m_iConsumable;
-	m_Consumable.push_back(std::move(item));
-	std::sort(m_Consumable.begin(), m_Consumable.end(), CompFunc);
+	INT Count = item->getCount();
+	std::vector<ItemPtr>::iterator iter;
+	iter = std::find_if(m_Consumable.begin(), m_Consumable.end(), foo);
+	if (search == true)
+	{
+		pItem->IncraseCount(Count);
+	}
+	else if (iter != m_Consumable.end())
+	{
+		(*iter)->IncraseCount(Count);
+	}
+	else
+	{
+		++m_iConsumable;
+		m_Consumable.push_back(std::move(item));
+		std::sort(m_Consumable.begin(), m_Consumable.end(), CompFunc);
+	}
 }
 //void Inventory::AddEquip(ItemPtr item)
 //{

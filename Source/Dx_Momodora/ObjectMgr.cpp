@@ -129,6 +129,13 @@ void ObjectMgr::Scroll()
 					iter->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
 				}
 			}
+			if (m_UIList.empty() == false)
+			{
+				for (auto & iterator : m_UIList)
+				{
+					iterator->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				}
+			}
 			m_pPlayer->MoveCenterPos({ (m_fLeftFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
 		}
 		if (m_pPlayer->getDir() == -1 && m_pBackground->CanScrollLeft() == true)
@@ -143,6 +150,13 @@ void ObjectMgr::Scroll()
 				for (auto & iter : m_EnemyList)
 				{
 					iter->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				}
+			}
+			if (m_UIList.empty() == false)
+			{
+				for (auto & iterator : m_UIList)
+				{
+					iterator->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
 				}
 			}
 			m_pPlayer->MoveCenterPos({ (m_fRightFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });

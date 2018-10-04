@@ -31,7 +31,7 @@ public:
 	FLOAT				getSpeed() const;
 	bool				getDead() const;
 public:
-	void				setHP(const FLOAT& iVal);
+	virtual void		setHP(const FLOAT& iVal);
 	void				setSpeed(const FLOAT& fVal);
 	virtual void		setDead();
 private:

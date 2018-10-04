@@ -60,6 +60,7 @@ COL Object::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 }
 bool Object::Scroll(const FLOAT& pos)
 {
+	m_Centerpos.x -= pos;
 	return true;
 }
 void Object::MoveCenterPos(const D3DXVECTOR2& vec)

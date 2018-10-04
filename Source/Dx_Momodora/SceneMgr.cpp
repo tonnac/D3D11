@@ -1,5 +1,4 @@
 #include "SceneMgr.h"
-//#include "mSound.h"
 #include "KahoAttack.h"
 #include "Inventory.h"
 #include "LobbyMenu.h"
@@ -17,7 +16,7 @@ std::shared_ptr<InGameMenu>		g_IGM = nullptr;
 std::shared_ptr<Inventory>		g_Inven = nullptr;
 std::shared_ptr<GameUI>			g_GameUI = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(3), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(2), m_iCount(0)
 {
 }
 
@@ -30,16 +29,7 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	m_pDevice = pDevice;
 	m_pContext = pContext;
 
-	S_Texture.LoadTexture(pDevice, L"0", Filepath::m_Pngpath[L"0"]);
-	S_Texture.LoadTexture(pDevice, L"1", Filepath::m_Pngpath[L"1"]);
-	S_Texture.LoadTexture(pDevice, L"2", Filepath::m_Pngpath[L"2"]);
-	S_Texture.LoadTexture(pDevice, L"3", Filepath::m_Pngpath[L"3"]);
-	S_Texture.LoadTexture(pDevice, L"4", Filepath::m_Pngpath[L"4"]);
-	S_Texture.LoadTexture(pDevice, L"5", Filepath::m_Pngpath[L"5"]);
-	S_Texture.LoadTexture(pDevice, L"6", Filepath::m_Pngpath[L"6"]);
-	S_Texture.LoadTexture(pDevice, L"7", Filepath::m_Pngpath[L"7"]);
-	S_Texture.LoadTexture(pDevice, L"8", Filepath::m_Pngpath[L"8"]);
-	S_Texture.LoadTexture(pDevice, L"9", Filepath::m_Pngpath[L"9"]);
+	TextureInit();
 
 	g_Fade = std::make_shared<Fade>();
 	g_Fade->InitSet(pDevice, L"Fade", Filepath::m_Txtpath[L"Shader"], "VS", "FadePS");
@@ -117,6 +107,27 @@ void SceneMgr::setLobbyScene()
 	delete m_pCurrentScene;
 	m_iSceneIndex = -1;
 	m_pCurrentScene = getScene(false);
+}
+void SceneMgr::TextureInit()
+{
+	S_Texture.LoadTexture(m_pDevice, L"0", Filepath::m_Pngpath[L"0"]);
+	S_Texture.LoadTexture(m_pDevice, L"1", Filepath::m_Pngpath[L"1"]);
+	S_Texture.LoadTexture(m_pDevice, L"2", Filepath::m_Pngpath[L"2"]);
+	S_Texture.LoadTexture(m_pDevice, L"3", Filepath::m_Pngpath[L"3"]);
+	S_Texture.LoadTexture(m_pDevice, L"4", Filepath::m_Pngpath[L"4"]);
+	S_Texture.LoadTexture(m_pDevice, L"5", Filepath::m_Pngpath[L"5"]);
+	S_Texture.LoadTexture(m_pDevice, L"6", Filepath::m_Pngpath[L"6"]);
+	S_Texture.LoadTexture(m_pDevice, L"7", Filepath::m_Pngpath[L"7"]);
+	S_Texture.LoadTexture(m_pDevice, L"8", Filepath::m_Pngpath[L"8"]);
+	S_Texture.LoadTexture(m_pDevice, L"9", Filepath::m_Pngpath[L"9"]);
+
+	S_Texture.LoadTexture(m_pDevice, L"Seed.png", Filepath::m_Pngpath[L"Seed"]);
+	S_Texture.LoadTexture(m_pDevice, L"SeedDesc.png", Filepath::m_Pngpath[L"SeedDesc"]);
+	S_Texture.LoadTexture(m_pDevice, L"SeedName.png", Filepath::m_Pngpath[L"SeedName"]);
+
+	S_Texture.LoadTexture(m_pDevice, L"Flower.png", Filepath::m_Pngpath[L"Flower"]);
+	S_Texture.LoadTexture(m_pDevice, L"FlowerDesc.png", Filepath::m_Pngpath[L"FlowerDesc"]);
+	S_Texture.LoadTexture(m_pDevice, L"FlowerName.png", Filepath::m_Pngpath[L"FlowerName"]);
 }
 Scene* SceneMgr::getScene(const bool& isPrevScene)
 {
