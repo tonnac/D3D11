@@ -40,6 +40,13 @@ Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder
 	m_HP = 100;
 	m_pCurrentState = m_StateList[L"Idle"];
 }
+bool Player::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+	const std::string& VSFunc, const std::string& PSFunc)
+{
+	Character::InitSet(pDevice, Name, TexFilepath, ShaderFilepath, VSFunc, PSFunc);
+	m_Misc.InitSet(pDevice, L"Misc", Filepath::m_Pngpath[L"Kaho"], Filepath::m_Txtpath[L"Shader"]);
+	return true;
+}
 bool Player::Frame()
 {
 	if (m_bBuff == true)
@@ -52,6 +59,7 @@ bool Player::Frame()
 			m_bBuff = false;
 		}
 		m_fAttackScale = 1.5f;
+		m_Misc.Frame();
 	}
 	if (m_bInvincible == true)
 	{
@@ -126,7 +134,15 @@ bool Player::Frame()
 	}
 	return Character::Frame();
 }
-
+bool Player::Render(ID3D11DeviceContext* pContext)
+{
+	Character::Render(pContext);
+	if (m_bBuff)
+	{
+		m_Misc.Render(pContext);
+	}
+	return true;
+}
 void Player::setJumpNum(const INT& iNum)
 {
 	m_iJumpNum = iNum;

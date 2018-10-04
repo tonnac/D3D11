@@ -187,6 +187,8 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="LobbyMenu.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MessageBox.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="MiscSet.h" />
     <ClInclude Include="mSound.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectMgr.h" />
@@ -244,6 +246,8 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="LobbyMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MessageBox.cpp" />
+    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="MiscSet.cpp" />
     <ClCompile Include="mSound.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />

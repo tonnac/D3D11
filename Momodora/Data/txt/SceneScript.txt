@@ -33,7 +33,7 @@ Down
 376 112 456 119
 536 112 615 119
 Ladder
-536 100 551 208
+537 100 552 208
 
 GameScene3
 BackGround

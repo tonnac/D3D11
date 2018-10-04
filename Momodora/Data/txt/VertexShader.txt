@@ -74,9 +74,6 @@ VS_OUTPUT Button(in VS_INPUT vIn)
 	vLocal.x -= vCen.x;
 	vLocal.y -= vCen.y;
 
-//	vLocal.x = vLocal.x * cos(Cr.x) + vLocal.y * sin(Cr.x);
-//	vLocal.y = -vLocal.x * sin(Cr.x) + vLocal.y * cos(Cr.x);
-
 	vLocal.x += vCen.x;
 	vLocal.y += vCen.y;
 
@@ -85,12 +82,34 @@ VS_OUTPUT Button(in VS_INPUT vIn)
 	vOut.pos = mul(vLocal, g_proj);
 	vOut.pos.z = 0.5f;
 
-//	vOut.pos.x -= vCen.x;
-//	vOut.pos.y -= vCen.y;
+	vOut.tex.x = vIn.tex.x / Width;
+	vOut.tex.y = vIn.tex.y / Height;
+	return vOut;
+}
+VS_OUTPUT Misc(in VS_INPUT vIn)
+{
+	VS_OUTPUT vOut = (VS_OUTPUT)0;
+	float4 vLocal = float4(vIn.pos.x, vIn.pos.y, 1.0f, 1.0f);
+	float4 Center = float4(Cos, Utilw, 1.0f, 1.0f);
+	vOut.pos = mul(vLocal, g_proj);
+	Center = mul(Center, g_proj);
 
-//	vOut.pos.x = vOut.pos.x * cos(Cr.x) - vOut.pos.y * sin(Cr.x);
-//	vOut.pos.y = vOut.pos.x * sin(Cr.x) + vOut.pos.y * cos(Cr.x);
+	float2 eew = float2(vOut.pos.x, vOut.pos.y);
+	float2 eeq = float2(eew.x - Center.x, eew.y - Center.y);
 
+	eeq.x = eeq.x * (sin(Cr.x) * 0.5f + 0.5f);
+	eeq.y = eeq.y * (sin(Cr.x) * 0.5f + 0.5f);
+
+	eeq.x = eeq.x + (cos(Cr.x) * 80.0f / 960.0f);
+
+	eeq.x = eeq.x + Center.x;
+	eeq.y = eeq.y + Center.y;
+
+	vOut.pos.x = eeq.x;
+	vOut.pos.y = eeq.y;
+
+	vOut.pos.z = 0.5f;
+	vOut.Col = vIn.Col;
 	vOut.tex.x = vIn.tex.x / Width;
 	vOut.tex.y = vIn.tex.y / Height;
 	return vOut;

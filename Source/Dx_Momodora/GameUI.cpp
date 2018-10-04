@@ -47,6 +47,11 @@ bool GameUI::Frame()
 		m_ItemNum.setTexture(S_Texture.LoadTexture(num));
 		m_ItemNum.Frame();
 	}
+	else
+	{
+		m_ItemNum.setTexture(nullptr);
+		m_ItemNum.Frame();
+	}
 	m_QuickNum.setItem(item);
 	m_QuickNum.Frame();
 	return true;

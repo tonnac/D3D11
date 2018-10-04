@@ -234,7 +234,6 @@ bool PlayerIdle::Frame()
 		if (item != nullptr && item->getCount() > 0)
 		{
 			m_pCharacter->setState(L"Item");
-			item->UseItem();
 			S_Sound.PlayEffect(Effect_Snd::ITEM);
 		}
 		return true;
@@ -863,7 +862,10 @@ bool PlayerItem::Frame()
 {
 	if (PlayerState::Frame() == false)
 	{
+		QuickSlot Q = g_Inven->getQuickSlot();
+		ItemPtr item = Q.getItem(m_pCharacter->getConsumableNum());
 		m_pCharacter->setState(L"Idle");
+		item->UseItem();
 	}
 	return true;
 }

@@ -157,28 +157,29 @@ Scene* SceneMgr::getScene(const bool& isPrevScene)
 	switch (m_iSceneIndex)
 	{
 	case 0:
-	{
-		retScene = new LobbyScene;
-	}break;
+		{
+			retScene = new LobbyScene;
+		}break;
 	case 1:
-	{
-		retScene = new GameScene1;
-	}break;
+		{
+			retScene = new GameScene1;
+		}break;
 	case 2:
-	{
-		retScene = new GameScene2;
-	}break;
+		{
+			retScene = new GameScene2;
+		}break;
 	case 3:
-	{
-		retScene = new GameScene3;
-	}break;
+		{
+			retScene = new GameScene3;
+		}break;
 	case 4:
-	{
-		retScene = new GameScene4;
-	}break;
+		{
+			retScene = new GameScene4;
+		}break;
 	case 5:
-		retScene = new GameScene5;
-		break;
+		{
+			retScene = new GameScene5;
+		}	break;
 	}
 	if (m_iSceneIndex == 0)
 	{

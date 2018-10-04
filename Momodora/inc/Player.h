@@ -1,13 +1,16 @@
 #pragma once
 #include "Character.h"
+#include "MiscSet.h"
 
 class Player : public Character
 {
 public:
 	Player();
 public:
+	bool			InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
+					const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;
 	bool			Frame() override;
-
+	bool			Render(ID3D11DeviceContext* pContext) override;
 public:
 	static void		setJumpNum(const INT& iNum);
 	void			setDown(const bool& down);
@@ -37,6 +40,7 @@ private:
 	INT				m_iEquipNumber;
 	INT				m_iQuickSlotNum;
 	FLOAT			m_fAttackScale;
+	MiscSet			m_Misc;
 };
 
 using PlayerPTR = std::shared_ptr<Player>;

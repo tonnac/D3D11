@@ -258,6 +258,12 @@
     <ClInclude Include="EmptyScreen.h">
       <Filter>헤더 파일\Object\BasicObject</Filter>
     </ClInclude>
+    <ClInclude Include="MiscSet.h">
+      <Filter>헤더 파일\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
+      <Filter>헤더 파일\Object\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -424,6 +430,12 @@
     </ClCompile>
     <ClCompile Include="EmptyScreen.cpp">
       <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MiscSet.cpp">
+      <Filter>소스 파일\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>소스 파일\Object\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

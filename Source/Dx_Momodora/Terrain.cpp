@@ -95,6 +95,12 @@ COL Terrain::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 COL	Terrain::Collision(std::shared_ptr<Player> pPlayer)
 {
 	FLOAT Size;
+
+	if (pPlayer->getCurrentState() == L"LadderDown" || pPlayer->getCurrentState() == L"LadderUp")
+	{
+		return COL::NONE;
+	}
+
 	COL col = Collision(pPlayer, &Size);
 
 	if (col == COL::TOP)
