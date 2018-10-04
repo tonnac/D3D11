@@ -27,9 +27,18 @@ public:
 public:
 	std::tstring		getCurrentState();
 	INT					getDir() const;
+	INT					getHP() const;
+	FLOAT				getSpeed() const;
+	bool				getDead() const;
+public:
+	void				setHP(const FLOAT& iVal);
+	void				setSpeed(const FLOAT& fVal);
+	virtual void		setDead();
 private:
 	void				reverseSet();
 protected:
+	bool				isDead;
+	INT					m_HP;
 	bool				m_bLanding;
 	FLOAT				m_fSpeed;
 	INT					m_iDir;

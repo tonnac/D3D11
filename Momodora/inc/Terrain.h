@@ -1,5 +1,6 @@
 #pragma once
 #include "Player.h"
+#include "Enemy.h"
 
 class Terrain : public Plane_Object
 {
@@ -12,6 +13,7 @@ public:
 	virtual COL		Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
 //	virtual COL		Collision(std::shared_ptr<Character> pObject);
 	virtual COL		Collision(std::shared_ptr<Player> pPlayer);
+	virtual COL		Collision(std::shared_ptr<Enemy> pEnemy);
 private:
 	bool			PreRender(ID3D11DeviceContext* pContext);
 };

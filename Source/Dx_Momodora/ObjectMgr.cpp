@@ -22,7 +22,15 @@ bool ObjectMgr::Frame()
 	ObjectFrame<BackgroundPTR>(m_pBackground);
 	Scroll();
 	TerrainCollision();
+	if (m_EnemyList.empty() == false)
+	{
+		for (auto & it : m_EnemyList)
+		{
+			TerrainCollision(it);
+		}
+	}
 	ContainerFrame<TerrainList>(m_Terrainlist);
+	ContainerFrame<EnemyList>(m_EnemyList);
 	EffectFrame<P_Effect>(m_PlayerEffect);
 	ContainerFrame<UIList>(m_UIList);
 	return true;
@@ -30,6 +38,7 @@ bool ObjectMgr::Frame()
 bool ObjectMgr::Render(ID3D11DeviceContext* pContext)
 {
 	ObjectRender<BackgroundPTR>(pContext, m_pBackground);
+	ContainerRender<EnemyList>(pContext, m_EnemyList);
 	ObjectRender<PlayerPTR>(pContext, m_pPlayer);
 	ContainerRender<P_Effect>(pContext, m_PlayerEffect);
 	ContainerRender<UIList>(pContext, m_UIList);
@@ -43,6 +52,7 @@ bool ObjectMgr::Release()
 {
 	ContainerRelease<TerrainList>(m_Terrainlist);
 	ContainerRelease<UIList>(m_UIList);
+	ContainerRelease<EnemyList>(m_EnemyList);
 	if (m_pBackground != nullptr)
 	{
 		m_pBackground->Release();
@@ -69,6 +79,10 @@ void ObjectMgr::AddPlayerEffect(PlayerEffectPtr pEffect)
 void ObjectMgr::AddPlayer(PlayerPTR pPlayer)
 {
 	m_pPlayer = pPlayer;
+}
+void ObjectMgr::AddEnemy(EnemyPTR pEnemy)
+{
+	m_EnemyList.push_back(pEnemy);
 }
 
 void ObjectMgr::Scroll()
@@ -108,6 +122,13 @@ void ObjectMgr::Scroll()
 			{
 				it->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
 			}
+			if (m_EnemyList.empty() == false)
+			{
+				for (auto & iter : m_EnemyList)
+				{
+					iter->Scroll((Cen.x - m_fLeftFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				}
+			}
 			m_pPlayer->MoveCenterPos({ (m_fLeftFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
 		}
 		if (m_pPlayer->getDir() == -1 && m_pBackground->CanScrollLeft() == true)
@@ -116,6 +137,13 @@ void ObjectMgr::Scroll()
 			for (auto& it : m_Terrainlist)
 			{
 				it->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+			}
+			if (m_EnemyList.empty() == false)
+			{
+				for (auto & iter : m_EnemyList)
+				{
+					iter->Scroll((Cen.x - m_fRightFocus) * g_fSecPerFrame * m_fDiameter * 3.0f);
+				}
 			}
 			m_pPlayer->MoveCenterPos({ (m_fRightFocus - Cen.x) * g_fSecPerFrame * m_fDiameter * 3.0f, 0.0f });
 		}
@@ -135,9 +163,23 @@ void ObjectMgr::TerrainCollision()
 		{
 			m_pPlayer->setLanding(false);
 		}
+		else if (type == COL::BOTTOM)
+		{
+			m_pPlayer->setLanding(false);
+		}
 		else
 		{
 			m_pPlayer->setLanding(true);
+		}
+	}
+}
+void ObjectMgr::TerrainCollision(EnemyPTR pEnemy)
+{
+	if (m_Terrainlist.empty() == false)
+	{
+		for (auto & it : m_Terrainlist)
+		{
+			it->Collision(pEnemy);
 		}
 	}
 }

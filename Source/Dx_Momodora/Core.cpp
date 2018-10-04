@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Sprite.h"
+#include "FSMMgr.h"
 
 D3DXMATRIX	g_mToProj;
 bool		g_DebugMode = false;
@@ -21,6 +22,7 @@ bool Core::GameRun()
 }
 bool Core::GameRelease()
 {
+	S_FSMMgr.Release();
 	S_Sprite.Release();
 	S_Texture.Release();
 	S_Shader.Release();
@@ -70,6 +72,9 @@ bool Core::PreInit()
 	MatrixInit();
 	Filepath::Init(L"../../momodora/data/txt/Filepath.txt");
 	S_Sprite.SpriteSet(Filepath::m_Txtpath[L"KahoSprite"]);
+	S_Sprite.SpriteSet(Filepath::m_Txtpath[L"MonkeySprite"]);
+	S_FSMMgr.InitFSM(Filepath::m_Txtpath[L"FSM"]);
+	S_FSMMgr.InitFSM(Filepath::m_Txtpath[L"FSM1"]);
 	S_Sound.Init();
 	S_Sound.LoadFile(Filepath::m_Txtpath[L"Snd"]);
 	return true;

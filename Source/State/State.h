@@ -13,7 +13,7 @@ public:
 	virtual bool		Init		();
 	virtual bool		Frame		();
 public:
-	void				setSprite	(const std::tstring& name, const std::tstring& Spritename);
+	virtual void		setSprite	(const std::tstring& name, const std::tstring& Spritename);
 public:
 //	RECT				getEffectRT	();
 protected:

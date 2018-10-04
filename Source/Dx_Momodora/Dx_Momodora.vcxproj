@@ -167,8 +167,12 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DownableObject.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EnemyBasicState.h" />
     <ClInclude Include="Fade.h" />
+    <ClInclude Include="FinateStateMachine.h" />
     <ClInclude Include="Font.h" />
+    <ClInclude Include="FSMMgr.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="InGameBar.h" />
@@ -217,8 +221,12 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DownableObject.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyBasicState.cpp" />
     <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="FinateStateMachine.cpp" />
     <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FSMMgr.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameUI.cpp" />
     <ClCompile Include="InGameBar.cpp" />

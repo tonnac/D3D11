@@ -1,5 +1,6 @@
 #pragma once
 #include "Scene.h"
+#include "Bar.h"
 
 class GameScene : public Scene
 {
@@ -41,14 +42,19 @@ class GameScene3 : public GameScene
 public:
 	GameScene3();
 public:
+	void				setDevice	(ID3D11Device * pDevice, ID3D11DeviceContext* pContext) override;
 	bool				Frame		() override;
+	bool				Render		() override;
+private:
+	Bar					m_Bar[2];
+	bool				m_bAlram;
 };
 class GameScene4 : public GameScene
 {
 public:
 	GameScene4();
 public:
-	bool				Frame		() override;
+//	bool				Frame		() override;
 };
 
 class GameScene5 : public GameScene

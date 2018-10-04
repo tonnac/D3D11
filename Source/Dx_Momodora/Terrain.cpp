@@ -2,6 +2,7 @@
 #include "DirectInput.h"
 #include "DirectWrite.h"
 #include "Player.h"
+#include "Enemy.h"
 
 bool Terrain::InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& ShaderFilepath,
 			const std::string& VSFunc, const std::string& PSFunc)
@@ -60,7 +61,7 @@ COL Terrain::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 	}break;
 	case COL::BOTTOM:
 	{
-		pObject->MoveCenterPos({ 0.0f, Size + 45.0f });
+		pObject->MoveCenterPos({ 0.0f, Size + 25.0f });
 	}break;
 	}
 	return col;
@@ -121,6 +122,12 @@ COL	Terrain::Collision(std::shared_ptr<Player> pPlayer)
 	{
 		return COL::NONE;
 	}
+}
+COL	Terrain::Collision(std::shared_ptr<Enemy> pEnemy)
+{
+	FLOAT Size;
+	COL col = Collision(pEnemy, &Size);
+	return col;
 }
 bool Terrain::PreRender(ID3D11DeviceContext* pContext)
 {

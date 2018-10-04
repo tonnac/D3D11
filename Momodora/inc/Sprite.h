@@ -36,9 +36,6 @@ class SpriteMgr : public Singleton<SpriteMgr>
 public:
 	~SpriteMgr();
 public:
-	bool				Init();
-	bool				Frame();
-	bool				Render();
 	bool				Release();
 public:
 	bool				SpriteSet(const std::tstring& Filepath);

@@ -5,7 +5,7 @@
 #include "DirectWrite.h"
 
 Character::Character() : m_pShader(nullptr), m_pCurrentState(nullptr), m_iDir(1), m_fSpeed(0.0f),
-							m_bLanding(true)
+							m_bLanding(true), isDead(false)
 {
 	m_fScale = 2.8f;
 }
@@ -50,8 +50,8 @@ bool Character::PostRender(ID3D11DeviceContext* pContext)
 {
 	Plane_Object::PostRender(pContext);
 
-	//std::tstring pos = std::to_tstring(m_Centerpos.x) + L", " + std::to_tstring(m_Centerpos.y);
-	//S_Write.DrawText({ 0.0f,50.0f,CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }, pos, D2D1::ColorF::White);
+//	std::tstring pos = std::to_tstring(m_Centerpos.x) + L", " + std::to_tstring(m_Centerpos.y);
+//	S_Write.DrawText({ 0.0f,50.0f,CASTING(FLOAT,g_rtClient.right), CASTING(FLOAT,g_rtClient.bottom) }, pos, D2D1::ColorF::White);
 
 	if (g_DebugMode == true)
 	{
@@ -100,6 +100,35 @@ INT Character::getDir() const
 {
 	return m_iDir;
 }
+INT Character::getHP() const
+{
+	return m_HP;
+}
+FLOAT Character::getSpeed() const
+{
+	return m_fSpeed;
+}
+bool Character::getDead() const
+{
+	return isDead;
+}
+void Character::setHP(const FLOAT& iVal)
+{
+	m_HP -= iVal;
+	if (m_HP <= 0)
+	{
+		isDead = true;
+		setDead();
+	}
+}
+void Character::setSpeed(const FLOAT& fVal)
+{
+	m_fSpeed = fVal;
+}
+void Character::setDead()
+{
+	return;
+}
 void Character::reverseSet()
 {
 	D3DXVECTOR2 temp = m_VertexList[0].TexPos;
@@ -109,3 +138,5 @@ void Character::reverseSet()
 	m_VertexList[3].TexPos = m_VertexList[2].TexPos;
 	m_VertexList[2].TexPos = temp;
 }
+
+

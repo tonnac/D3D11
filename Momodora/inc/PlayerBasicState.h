@@ -66,7 +66,9 @@ public:
 	bool		Init() override;
 	bool		Frame() override;
 private:
+	FLOAT		m_fOffkeyTime;
 	FLOAT		m_fJumpSpeed;
+	FLOAT		m_fAcceleration;
 };
 class PlayerJump2 : public PlayerState
 {
@@ -76,6 +78,7 @@ public:
 	bool		Init() override;
 	bool		Frame() override;
 private:
+	FLOAT		m_fOffkeyTime;
 	FLOAT		m_fJumpSpeed;
 };
 class PlayerFall : public PlayerState

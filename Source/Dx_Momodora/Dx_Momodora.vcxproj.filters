@@ -85,6 +85,12 @@
     <Filter Include="소스 파일\Item">
       <UniqueIdentifier>{363e3c9b-f79d-42f3-8110-7bdf6b83cf66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\FSM">
+      <UniqueIdentifier>{fb601c70-7a8e-4701-b59f-4fc58e32355a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\FSM">
+      <UniqueIdentifier>{8b6b3101-34b7-41cc-be67-2eb5b6577870}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -231,6 +237,18 @@
     <ClInclude Include="GameUI.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="EnemyBasicState.h">
+      <Filter>헤더 파일\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>헤더 파일\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="FinateStateMachine.h">
+      <Filter>헤더 파일\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="FSMMgr.h">
+      <Filter>헤더 파일\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -376,6 +394,18 @@
     </ClCompile>
     <ClCompile Include="GameUI.cpp">
       <Filter>소스 파일\Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>소스 파일\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBasicState.cpp">
+      <Filter>소스 파일\State</Filter>
+    </ClCompile>
+    <ClCompile Include="FinateStateMachine.cpp">
+      <Filter>소스 파일\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="FSMMgr.cpp">
+      <Filter>소스 파일\FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

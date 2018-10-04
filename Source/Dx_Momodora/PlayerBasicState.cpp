@@ -1,6 +1,7 @@
 #include "PlayerBasicState.h"
 #include "ObjectMgr.h"
 #include "SceneMgr.h"
+#include "Inventory.h"
 
 EffectDel PlayerState::bowdel = [](PlayerEffect* pEffect)
 {
@@ -228,8 +229,14 @@ bool PlayerIdle::Frame()
 	}
 	if (S_Input.getKeyState(DIK_W) == Input::KEYSTATE::KEY_PUSH)
 	{
-		m_pCharacter->setState(L"Item");
-		S_Sound.PlayEffect(Effect_Snd::ITEM);
+		QuickSlot Q = g_Inven->getQuickSlot();
+		ItemPtr item = Q.getItem(m_pCharacter->getConsumableNum());
+		if (item != nullptr && item->getCount() > 0)
+		{
+			m_pCharacter->setState(L"Item");
+			item->UseItem();
+			S_Sound.PlayEffect(Effect_Snd::ITEM);
+		}
 		return true;
 	}
 	if (S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_PUSH || S_Input.getKeyState(DIK_LEFT) == Input::KEYSTATE::KEY_HOLD)
@@ -398,7 +405,7 @@ bool PlayerTurn::Frame()
 	return true;
 }
 
-PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(500.0f)
+PlayerJump::PlayerJump(Player * pPlayer) : PlayerState(pPlayer), m_fJumpSpeed(500.0f), m_fOffkeyTime(0.0f), m_fAcceleration(0.0f)
 {
 	m_pCharacter->AddState(std::tstring(L"Jump"), this);
 }
@@ -411,13 +418,11 @@ bool PlayerJump::Init()
 }
 bool PlayerJump::Frame()
 {
-	static FLOAT ffTimer = 0.0f;
-	static FLOAT Acc = 0.0f;
-	Acc += g_fSecPerFrame * 800.0f;
+	m_fAcceleration += g_fSecPerFrame * 800.0f;
 	m_fTimer += g_fSecPerFrame;
 	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_FREE || S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_UP)
 	{
-		ffTimer += g_fSecPerFrame;
+		m_fOffkeyTime += g_fSecPerFrame;
 	}
 
 	if (AirAttack() == true)
@@ -426,18 +431,18 @@ bool PlayerJump::Frame()
 	}
 	if (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_HOLD && m_fTimer <= 0.3f)
 	{
-		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - Acc) });
+		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - m_fAcceleration) });
 	}
-	else if (ffTimer <= 0.2f && (m_fJumpSpeed - Acc) < 0.0f)
+	else if (m_fOffkeyTime <= 0.2f && (m_fJumpSpeed - m_fJumpSpeed) < 0.0f)
 	{
-		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - Acc) });
+		m_pCharacter->MoveCenterPos({ 0.0f,  -g_fSecPerFrame * (m_fJumpSpeed - m_fAcceleration) });
 	}
 	else
 	{
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
-		Acc = 0.0f;
-		ffTimer = 0.0f;
+		m_fAcceleration = 0.0f;
+		m_fOffkeyTime = 0.0f;
 		m_pCharacter->setState(L"Fall");
 		return true;
 	}
@@ -452,8 +457,8 @@ bool PlayerJump::Frame()
 
 	if (m_fTimer >= 0.1f && Player::getJumpNum() == 0 && (S_Input.getKeyState(DIK_A) == Input::KEYSTATE::KEY_PUSH))
 	{
-		Acc = 0.0f;
-		ffTimer = 0.0f;
+		m_fJumpSpeed = 0.0f;
+		m_fOffkeyTime = 0.0f;
 		S_Sound.PlayEffect(Effect_Snd::JUMP);
 		m_fTimer = 0.0f;
 		m_pSprite->setIndex(0);
@@ -796,38 +801,35 @@ bool PlayerRoll::Frame()
 	return true;
 }
 
-//PlayerHurt::PlayerHurt(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("Hurt"), this);
-//}
-//bool PlayerHurt::Init()
-//{
-//	setSprite(L"Kaho", L"Hurt");
-//	m_pSprite->setDivideTime(0.4f);
-//	return true;
-//}
-//bool PlayerHurt::Frame()
-//{
-//	m_pCharacter->setInvincible(true);
-//	m_CenterPos->y += g_fSecPerFrame * 30.0f;
-//	if (!m_pSprite->Frame())
-//	{
-//		if (m_pCharacter->getHP() <= 0)
-//		{
-//			m_pCharacter->setInvincible(false);
-//			m_pCharacter->setState(L"Death");
-//			return true;
-//		}
-//		m_pSprite->setIndex(0);
-//		m_pCharacter->setState(L"Fall");
-//		return true;
-//	}
-//	FLOAT fSpeed = m_pCharacter->getSpeed();
-//	m_CenterPos->x += m_pCharacter->getDir() * -1 * g_fSecPerFrame * fSpeed * 0.25f;
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
-//
+PlayerHurt::PlayerHurt(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"Hurt"), this);
+}
+bool PlayerHurt::Init()
+{
+	setSprite(L"Kaho", L"Hurt");
+	m_pSprite->setDivideTime(0.4f);
+	return true;
+}
+bool PlayerHurt::Frame()
+{
+	m_pCharacter->setInvincible(true);
+	m_pCharacter->MoveCenterPos({ m_pCharacter->getDir() * -1 * g_fSecPerFrame * g_fSpeed * 0.25f, 0.0f });
+	if (PlayerState::Frame() == false)
+	{
+		if (m_pCharacter->getHP() <= 0)
+		{
+			m_pCharacter->setInvincible(false);
+			m_pCharacter->setState(L"Death");
+			return true;
+		}
+		m_pSprite->setIndex(0);
+		m_pCharacter->setState(L"Fall");
+		return true;
+	}
+	return true;
+}
+
 //PlayerDeath::PlayerDeath(Player * pPlayer) : PlayerState(pPlayer)
 //{
 //	m_pCharacter->AddState(std::tstring("Death"), this);

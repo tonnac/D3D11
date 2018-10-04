@@ -1,4 +1,5 @@
 #include "ConsumableItem.h"
+#include "Player.h"
 
 FlowerItem::FlowerItem() : Item(0)
 {}
@@ -26,6 +27,8 @@ bool FlowerItem::Initset(ID3D11Device* pDevice)
 }
 bool FlowerItem::UseItem()
 {
+	g_Player->setHP(-30);
+	--m_iCount;
 	return true;
 }
 
@@ -54,5 +57,7 @@ bool SeedItem::Initset(ID3D11Device* pDevice)
 }
 bool SeedItem::UseItem()
 {
+	g_Player->setBuff(true);
+	--m_iCount;
 	return true;
 }

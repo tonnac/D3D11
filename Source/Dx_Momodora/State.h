@@ -4,7 +4,6 @@
 #include "DirectInput.h"
 
 class EffectObj;
-class Player;
 
 class State
 {

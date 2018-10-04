@@ -10,3 +10,7 @@ bool State::Init()
 {
 	return true;
 }
+bool State::Frame()
+{
+	return true;
+}

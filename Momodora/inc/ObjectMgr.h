@@ -7,6 +7,7 @@
 #include "DownableObject.h"
 #include "Ladder.h"
 #include "Bar.h"
+#include "Enemy.h"
 
 class ObjectMgr : public Singleton<ObjectMgr>
 {
@@ -17,6 +18,7 @@ class ObjectMgr : public Singleton<ObjectMgr>
 	using UIList = std::list<UIPTR>;
 	using TerrainIter = TerrainList::iterator;
 	using UIIter = UIList::iterator;
+	using EnemyList = std::vector<EnemyPTR>;
 private:
 	ObjectMgr();
 public:
@@ -31,9 +33,10 @@ public:
 	void						AddTerrain		(TerrainPTR pTerrain);
 	void						AddPlayerEffect	(PlayerEffectPtr pEffect);
 	void						AddPlayer		(PlayerPTR pPlayer);
+	void						AddEnemy		(EnemyPTR pEnemy);
 private:
 	template <typename X>
-	inline void					ObjectFrame(X& pData)
+	void						ObjectFrame(X& pData)
 	{
 		if (pData != nullptr)
 		{
@@ -41,18 +44,7 @@ private:
 		}
 	}
 	template <typename X>
-	inline void					ContainerFrame	(X& pData)
-	{
-		if (pData.empty() == false)
-		{
-			for (auto &it : pData)
-			{
-				it->Frame();
-			}
-		}
-	}
-	template <typename X>
-	inline void					EffectFrame(X& pData)
+	void						ContainerFrame	(X& pData)
 	{
 		typename X::iterator iter;
 		if (pData.empty() == false)
@@ -70,11 +62,50 @@ private:
 			}
 		}
 	}
+	template <typename X>
+	void						EffectFrame(X& pData)
+	{
+		typename X::iterator iter;
+		typename X::iterator deliter = pData.end();
+		if (pData.empty() == false)
+		{
+			for (iter = pData.begin(); iter != pData.end();)
+			{
+				if (m_EnemyList.empty() == false)
+				{
+					KahoBowAttack* pAttack = dynamic_cast<KahoBowAttack*>(iter->get());
+					for (auto &it : m_EnemyList)
+					{
+						COL col = (*iter)->Collision(it);
+						if (col > COL::NONE && pAttack != nullptr)
+						{
+							deliter = iter;
+						}
+					}
+				}
+
+				if ((*iter)->Frame() == false)
+				{
+					iter = pData.erase(iter);
+					deliter = pData.end();
+				}
+				else
+				{
+					++iter;
+				}
+			}
+			if (deliter != pData.end())
+			{
+				pData.erase(deliter);
+			}
+		}
+	}
 	void						Scroll			();
 	void						TerrainCollision();
+	void						TerrainCollision(EnemyPTR pEnemy);
 private:
 	template <typename K>
-	inline void					ObjectRender	(ID3D11DeviceContext* pContext, K& pData)
+	void						ObjectRender	(ID3D11DeviceContext* pContext, K& pData)
 	{
 		if (pData != nullptr)
 		{
@@ -82,7 +113,7 @@ private:
 		}
 	}
 	template <typename X>
-	inline void					ContainerRender	(ID3D11DeviceContext* pContext, X& pData)
+	void						ContainerRender	(ID3D11DeviceContext* pContext, X& pData)
 	{
 		if (pData.empty() == false)
 		{
@@ -94,12 +125,11 @@ private:
 	}
 private:
 	template <typename X>
-	inline void					ContainerRelease(X& pData)
+	void						ContainerRelease(X& pData)
 	{
 		typename X::iterator iter;
 		for (iter = pData.begin(); iter != pData.end();)
 		{
-			(*iter)->Release();
 			iter = pData.erase(iter);
 		}
 	}
@@ -109,6 +139,7 @@ private:
 	BackgroundPTR				m_pBackground;
 	TerrainList					m_Terrainlist;
 	UIList						m_UIList;
+	EnemyList					m_EnemyList;
 	P_Effect					m_PlayerEffect;
 private:
 	const FLOAT					m_fLeftFocus;

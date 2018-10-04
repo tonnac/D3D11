@@ -66,19 +66,6 @@ SpriteMgr::~SpriteMgr()
 {
 	Release();
 }
-
-bool SpriteMgr::Init()
-{
-	return true;
-}
-bool SpriteMgr::Frame()
-{
-	return true;
-}
-bool SpriteMgr::Render()
-{
-	return true;
-}
 bool SpriteMgr::Release()
 {
 	for (auto it : m_SpriteMap)

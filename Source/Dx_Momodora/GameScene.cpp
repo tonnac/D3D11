@@ -106,19 +106,43 @@ bool GameScene1::SceneChange()
 GameScene2::GameScene2() : GameScene(L"GameScene2")
 {}
 
-GameScene3::GameScene3() : GameScene(L"GameScene3")
+GameScene3::GameScene3() : GameScene(L"GameScene3"), m_bAlram(false)
 {}
+void GameScene3::setDevice(ID3D11Device * pDevice, ID3D11DeviceContext* pContext)
+{
+	GameScene::setDevice(pDevice, pContext);
+	m_Bar[0].InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Inve"], Filepath::m_Txtpath[L"Shader"]);
+	m_Bar[0].SetCenterPos({ 177.5f * 3.0f,145.0f * 3.0f });
+	m_Bar[0].SetTexPos({ 0.0f,0.0f,228.0f,48.0f });
+	m_Bar[1].InitSet(m_pDevice, L"Basic", Filepath::m_Pngpath[L"Acquire"], Filepath::m_Txtpath[L"Shader"]);
+}
 bool GameScene3::Frame()
 {
+	if (g_Player->getCenterPos().x > 141.0f * 3.0f && g_Player->getCenterPos().x < 191.0f * 3.0f)
+	{
+		m_bAlram = true;
+	}
+	else
+	{
+		m_bAlram = false;
+	}
+	if (m_bAlram == true)
+	{
+		m_Bar[0].Frame();
+	}
 	return GameScene::Frame();
 }
-
-GameScene4::GameScene4()
-{}
-bool GameScene4::Frame()
+bool GameScene3::Render()
 {
+	GameScene::Render();
+	if (m_bAlram == true)
+	{
+		m_Bar[0].Render(m_pContext);
+	}
 	return true;
 }
+GameScene4::GameScene4() : GameScene(L"GameScene4")
+{}
 GameScene5::GameScene5()
 {}
 bool GameScene5::Frame()

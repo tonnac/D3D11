@@ -3,6 +3,9 @@ SceneScript ../../momodora/data/txt/SceneScript.txt
 Shader ../../momodora/data/txt/VertexShader.txt
 KahoSprite ../../momodora/data/txt/Kaho.txt
 Snd ../../momodora/data/txt/Sound.txt
+FSM ../../momodora/data/txt/FSM.txt
+FSM1 ../../momodora/data/txt/FSM1.txt
+MonkeySprite ../../momodora/data/txt/Monkey.txt
 Png
 Kaho ../../momodora/data/character/Kaho2.png
 Map ../../momodora/data/map/map.png
@@ -51,3 +54,6 @@ HPBK ../../momodora/data/ui/ingameui/HPBK.png
 HPBar ../../momodora/data/ui/ingameui/HPBar.png
 QuickSlot ../../momodora/data/ui/ingameui/QuickSlot.png
 Moo ../../momodora/data/ui/ingameui/Moo.png
+Acquire ../../momodora/data/ui/ingameui/Acquire.png
+Inve ../../momodora/data/ui/ingameui/Inve.png
+Monkey ../../momodora/data/character/Monkey.png

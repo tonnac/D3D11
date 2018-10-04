@@ -2,6 +2,8 @@
 #include "ObjectMgr.h"
 #include "mSound.h"
 #include "LobbyMenu.h"
+#include "Enemy.h"
+#include "FSMMgr.h"
 
 Scene::Scene(const std::tstring& Scenename) : m_bSceneChange(false), m_SceneName(Scenename), m_bSetting(false), m_bPrevScene(false)
 {
@@ -51,7 +53,8 @@ void Scene::SceneSet(const bool& isInverse)
 		L"Player",
 		L"Down",
 		L"Ladder",
-		L"LobbyScene"
+		L"LobbyScene",
+		L"Enemy"
 	};
 
 	auto foo = [&ObjType](const std::tstring& buffer)
@@ -148,6 +151,19 @@ void Scene::SceneSet(const bool& isInverse)
 				se->setLobby(pData);
 				g_Fade->setDivideTime(10.0f);
 				g_Fade->FadeIn();
+			}
+			else if (type == ObjType[6])
+			{
+				std::tstring FSM;
+				D3DXVECTOR2 Pos;
+				D3DXVECTOR4 RTPos;
+				std::shared_ptr<Enemy> pData = std::make_shared<Enemy>();
+				is >> Pos.x >> Pos.y >> RTPos.x >> RTPos.y >> RTPos.z >> RTPos.w >> FSM;
+				pData->SetCenterPos(Pos);
+				pData->setArea({ RTPos.x, RTPos.y, RTPos.z, RTPos.w });
+				pData->InitSet(m_pDevice, L"PLAYER", Filepath::m_Pngpath[L"Monkey"], Filepath::m_Txtpath[L"Shader"],"VS","PlayerPS");
+				pData->setFSM(S_FSMMgr.LoadFSM(FSM));
+				S_Object.AddEnemy(pData);
 			}
 		};
 	}

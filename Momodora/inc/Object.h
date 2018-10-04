@@ -7,7 +7,7 @@ enum class COL
 	LEFT,
 	TOP,
 	RIGHT,
-	BOTTOM
+	BOTTOM = 50
 };
 
 COL& operator +=(COL& lhs, const COL& rhs);

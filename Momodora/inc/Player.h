@@ -18,20 +18,24 @@ public:
 	bool			getLadder() const;
 	INT				getConsumableNum() const;
 	INT				getEquipNum() const;
-	INT				getHP() const;
 	INT				getQuickNum() const;
+	bool			isInvincible() const;
+	bool			isBuff() const;
 public:
-	void			setHP(const INT& iVal);
+	void			setBuff(const bool& flag);
+	void			setDead() override;
+	void			setInvincible(const bool& flag);
 private:
-	INT				m_HP;
+	bool			m_bBuff;
 	FLOAT			m_fTimer;
+	FLOAT			m_fInvincibleTimer;
 	bool			m_Ladder;
 	bool			m_bInvincible;
 	static INT		m_iJumpNum;
 	bool			m_Down;
-	INT				m_iConsumableNumber;
 	INT				m_iEquipNumber;
 	INT				m_iQuickSlotNum;
+	FLOAT			m_fAttackScale;
 };
 
 using PlayerPTR = std::shared_ptr<Player>;

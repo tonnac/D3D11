@@ -1,5 +1,6 @@
 #pragma once
 #include "Effect.h"
+#include "Enemy.h"
 
 class PlayerEffect : public Effect
 {
@@ -9,7 +10,11 @@ public:
 public:
 	bool			getEnd() const;
 	void			setDir(const INT& Dir);
+	INT				getDamage() const;
+	virtual COL		Collision(EnemyPTR pEnemy);
+	COL				Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
 protected:
+	INT				m_iDamage;
 	bool			isEnd;
 };
 
@@ -57,5 +62,6 @@ class KahoBowAttack : public PlayerEffect
 public:
 	bool			InitSet(ID3D11Device* pDevice, const std::tstring& Name, const std::tstring& TexFilepath, const std::tstring& ShaderFilepath,
 					const std::string& VSFunc = "VS", const std::string& PSFunc = "PS") override;
+	COL				Collision(EnemyPTR pEnemy) override;
 	bool			Frame() override;
 };

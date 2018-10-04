@@ -49,7 +49,7 @@ bool Timer::Render()
 {
 	if (FrameInfo == true)
 	{
-		S_Write.DrawText({ 0,0,800,600 }, m_TimerInfo, D2D1::ColorF::Black);
+		S_Write.DrawText({ 0,0,800,600 }, m_TimerInfo, D2D1::ColorF::White);
 	}
 	return true;
 }

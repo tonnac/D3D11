@@ -1,6 +1,6 @@
 #include "Button.h"
 
-Button::Button() : m_bActive(false), m_Move(false), m_fTimer(0.0f)
+Button::Button() : m_bActive(false), m_Move(false), m_fTimer(0.0f), m_SRV(nullptr)
 {}
 
 void Button::LoadResourceView(ID3D11Device* pDevice, const std::tstring& TexFilepath)
@@ -54,7 +54,7 @@ bool Button::PreRender(ID3D11DeviceContext* pContext)
 }
 bool Button::Release()
 {
-	m_SRV->Release();
+	RELEASE(m_SRV);
 	return UI::Release();
 }
 bool Button::getActive() const

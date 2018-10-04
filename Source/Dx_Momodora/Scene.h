@@ -18,7 +18,7 @@ public:
 	virtual bool			inverseInit		();
 	bool					getPrevScene	() const;
 public:
-	void					setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
+	virtual void			setDevice		(ID3D11Device * pDevice,ID3D11DeviceContext* pContext);
 	void					setSetting		(const bool& set);
 public:
 	bool					getSetting		() const;
