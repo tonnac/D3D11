@@ -16,7 +16,7 @@ std::shared_ptr<InGameMenu>		g_IGM = nullptr;
 std::shared_ptr<Inventory>		g_Inven = nullptr;
 std::shared_ptr<GameUI>			g_GameUI = nullptr;
 
-SceneMgr::SceneMgr() : m_iSceneIndex(3), m_iCount(0)
+SceneMgr::SceneMgr() : m_iSceneIndex(2), m_iCount(0)
 {
 }
 

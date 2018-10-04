@@ -25,7 +25,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInst, LPWSTR szCmdLine, i
 	try
 	{
 		Sample sd;
-		sd.Set(hInstance, 960, 720, L"Sample");
+		sd.Set(hInstance, 960, 720, L"Momodora");
 		return sd.Run();
 	}
 	catch (DxException &e)
