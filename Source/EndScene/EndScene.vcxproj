@@ -150,8 +150,10 @@
   <ItemGroup>
     <ClCompile Include="EndScene.cpp" />
     <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="EmptyScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EmptyScreen.h" />
     <ClInclude Include="EndScene.h" />
     <ClInclude Include="Sample.h" />
   </ItemGroup>

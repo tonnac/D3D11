@@ -2,6 +2,7 @@
 #include "InGameMenu.h"
 #include "GameUI.h"
 #include "ConsumableItem.h"
+#include "SceneMgr.h"
 
 
 GameScene::GameScene(const std::tstring& Scenename) : Scene(Scenename), m_bGameMenu(false)
@@ -26,7 +27,6 @@ bool GameScene::Frame()
 	{
 		g_Player->SetCenterPos({ CASTING(FLOAT, Pos.x),CASTING(FLOAT, Pos.y) });
 	}
-
 	if (S_Input.getKeyState(DIK_LSHIFT) == Input::KEYSTATE::KEY_PUSH)
 	{
 		m_bGameMenu = true;

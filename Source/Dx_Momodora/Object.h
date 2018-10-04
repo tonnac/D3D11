@@ -26,6 +26,7 @@ public:
 	virtual void				SetTexPos(const D3DXVECTOR4& DrawVec);
 	virtual void				SetCenterPos(const D3DXVECTOR2& Centerpos);
 	virtual void				SetPos(const D3DXVECTOR4& Pos);
+	void						setColor(const D3DXVECTOR4& Color);
 public:
 	virtual COL					Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize);
 	virtual bool				Scroll(const FLOAT& pos);

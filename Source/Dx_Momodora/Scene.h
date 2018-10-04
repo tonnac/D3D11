@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "ObjectMgr.h"
 #include "Fade.h"
+#include "EmptyScreen.h"
 
 class Lobbymenu;
 
@@ -48,14 +49,18 @@ protected:
 };
 
 
-//class EndScene : public Scene
-//{
-//public:
-//	bool			Init		() override;
-//	bool			Frame		() override;
-//	bool			Render		() override;
-//	bool			Release		() override;
-//private:
-//	Background		m_Background;
-//};
-//
+class EndScene : public Scene
+{
+public:
+	bool		Init() override;
+	bool		Frame() override;
+	bool		Render() override;
+	bool		Release() override;
+private:
+	bool		bFlag;
+	FLOAT		m_fTimer;
+	FLOAT		m_ftTimer;
+	bool		isEnd;
+	Bar			m_EndScene;
+	EmptyScreen m_Empty;
+};

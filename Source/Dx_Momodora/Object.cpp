@@ -54,6 +54,10 @@ void Object::SetPos(const D3DXVECTOR4& Pos)
 {
 	return;
 }
+void Object::setColor(const D3DXVECTOR4& Color)
+{
+	m_ConstantData.Color = Color;
+}
 COL Object::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 {
 	return COL::NONE;

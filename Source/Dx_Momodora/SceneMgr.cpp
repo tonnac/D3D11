@@ -66,6 +66,11 @@ void SceneMgr::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 bool SceneMgr::Frame()
 {
+	if (isEndScene == false && g_Player->getHP() <= 0)
+	{
+		isEndScene = true;
+		setEndScene();
+	}
 	if (m_pCurrentScene->Frame() == false)
 	{
 		m_pCurrentScene->Release();
@@ -107,6 +112,15 @@ void SceneMgr::setLobbyScene()
 	delete m_pCurrentScene;
 	m_iSceneIndex = -1;
 	m_pCurrentScene = getScene(false);
+}
+void SceneMgr::setEndScene()
+{
+	m_pCurrentScene->Release();
+	delete m_pCurrentScene;
+	m_iSceneIndex = -1;
+	m_pCurrentScene = new EndScene;
+	m_pCurrentScene->setDevice(m_pDevice, m_pContext);
+	m_pCurrentScene->Init();
 }
 void SceneMgr::TextureInit()
 {

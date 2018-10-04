@@ -19,10 +19,12 @@ public:
 public:
 	void					setGameMenu	(const bool& flag);
 	void					setLobbyScene();
+	void					setEndScene();
 	void					TextureInit();
 private:
 	Scene*					getScene	(const bool& isPrevScene);
 private:
+	bool					isEndScene;
 	INT						m_iSceneIndex;
 	INT						m_iCount;
 	ID3D11Device *			m_pDevice;

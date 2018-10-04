@@ -114,12 +114,7 @@ bool Character::getDead() const
 }
 void Character::setHP(const FLOAT& iVal)
 {
-	m_HP -= iVal;
-	if (m_HP <= 0)
-	{
-		isDead = true;
-		setDead();
-	}
+	m_HP -= CASTING(INT, iVal);
 }
 void Character::setSpeed(const FLOAT& fVal)
 {
@@ -127,7 +122,7 @@ void Character::setSpeed(const FLOAT& fVal)
 }
 void Character::setDead()
 {
-	return;
+	isDead = true;
 }
 void Character::reverseSet()
 {

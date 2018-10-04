@@ -2,22 +2,26 @@
 
 bool Sample::Init()
 {
-	S_Scene.Initialize(m_pDevice, m_pContext);
+//	S_Scene.Initialize(m_pDevice, m_pContext);
+	m_Empty.setDevice(m_pDevice, m_pContext);
+	m_Empty.Init();
 	return true;
 }
 bool Sample::Frame()
 {
-	S_Scene.Frame();
+//	S_Scene.Frame();
+	m_Empty.Frame();
 	return true;
 }
 bool Sample::Render()
 {
-	S_Scene.Render();
+//	S_Scene.Render();
+	m_Empty.Render();
 	return true;
 }
 bool Sample::Release()
 {
-	S_Scene.Release();
+//	S_Scene.Release();
 	return true;
 }
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE prevInst, LPWSTR szCmdLine, int nCmdShow)

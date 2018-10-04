@@ -33,7 +33,7 @@ public:
 public:
 	virtual void		setHP(const FLOAT& iVal);
 	void				setSpeed(const FLOAT& fVal);
-	virtual void		setDead();
+	void				setDead();
 private:
 	void				reverseSet();
 protected:

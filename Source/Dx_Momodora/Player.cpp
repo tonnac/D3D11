@@ -3,6 +3,7 @@
 #include "PlayerAttack.h"
 #include "DirectInput.h"
 #include "Inventory.h"
+#include "SceneMgr.h"
 
 FLOAT g_fSpeed = 0.0f;
 INT Player::m_iJumpNum = 0;
@@ -28,7 +29,7 @@ Player::Player() : m_bInvincible(false), m_fTimer(0.0f), m_Down(false), m_Ladder
 	state = new AirBowAttack(this);
 	state = new CrouchBowAttack(this);
 	state = new PlayerHurt(this);
-	//state = new PlayerDeath(this);
+	state = new PlayerDeath(this);
 
 	state = new PlayerLadderEnter(this);
 	state = new PlayerLadderLeave(this);
@@ -71,8 +72,8 @@ bool Player::Frame()
 
 	if (S_Input.getKeyState(DIK_F8) == Input::KEYSTATE::KEY_PUSH)
 	{
-		m_HP -= 30;
-		m_bInvincible = true;
+		setHP(30);
+	//	m_bInvincible = true;
 	}
 	if (S_Input.getKeyState(DIK_E) == Input::KEYSTATE::KEY_PUSH)
 	{
@@ -174,6 +175,11 @@ bool Player::isBuff() const
 void Player::setHP(const FLOAT& iVal)
 {
 	Character::setHP(iVal);
+	if (m_HP < 0)
+	{
+		m_pCurrentState = m_StateList[L"Death"];
+//		m_bInvincible = false;
+	}
 	if (m_HP > 100)
 	{
 		m_HP = 100;
@@ -183,9 +189,9 @@ void Player::setBuff(const bool& flag)
 {
 	m_bBuff = flag;
 }
-void Player::setDead()
+void Player::setDead(const bool& flag)
 {
-	m_pCurrentState = m_StateList[L"Dead"];
+	isDead = flag;
 }
 void Player::setInvincible(const bool& flag)
 {

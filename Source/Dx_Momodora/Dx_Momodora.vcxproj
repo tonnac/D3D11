@@ -167,6 +167,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DownableObject.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EmptyScreen.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBasicState.h" />
     <ClInclude Include="Fade.h" />
@@ -223,6 +224,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DownableObject.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EmptyScreen.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBasicState.cpp" />
     <ClCompile Include="Fade.cpp" />
@@ -268,6 +270,9 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
   <ItemGroup>
     <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

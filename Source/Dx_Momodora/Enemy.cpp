@@ -82,6 +82,14 @@ D2D1_RECT_F* Enemy::getAttackRange()
 {
 	return &m_rtAttackRange;
 }
+void Enemy::setHP(const FLOAT& iVal)
+{
+	m_HP -= CASTING(INT, iVal);
+	if (m_HP <= 0)
+	{
+		setDead();
+	}
+}
 void Enemy::setArea(const D2D1_RECT_F& area)
 {
 	m_rtArea = area;
@@ -111,10 +119,6 @@ void Enemy::setDir(const INT& iDir)
 void Enemy::setFSM(FinateStateMachine* pFSM)
 {
 	m_fms = pFSM;
-}
-void Enemy::setDead()
-{
-	m_pCurrentState = m_StateList[L"Hit"];
 }
 COL	Enemy::Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize)
 {

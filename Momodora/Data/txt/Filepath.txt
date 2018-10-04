@@ -57,3 +57,4 @@ Moo ../../momodora/data/ui/ingameui/Moo.png
 Acquire ../../momodora/data/ui/ingameui/Acquire.png
 Inve ../../momodora/data/ui/ingameui/Inve.png
 Monkey ../../momodora/data/character/Monkey.png
+EndScene ../../momodora/data/ui/EndScene.png

@@ -830,26 +830,24 @@ bool PlayerHurt::Frame()
 	return true;
 }
 
-//PlayerDeath::PlayerDeath(Player * pPlayer) : PlayerState(pPlayer)
-//{
-//	m_pCharacter->AddState(std::tstring("Death"), this);
-//}
-//bool PlayerDeath::Init()
-//{
-//	setSprite(L"Kaho", L"Death");
-//	m_pSprite->setDivideTime(3.0f);
-//	return true;
-//}
-//bool PlayerDeath::Frame()
-//{
-//	if (!m_pSprite->Frame())
-//	{
-//		m_pCharacter->setDead(true);
-//		m_pSprite->setIndex(0);
-//	}
-//	*m_rtDraw = m_pSprite->getSpriteRt();
-//	return true;
-//}
+PlayerDeath::PlayerDeath(Player * pPlayer) : PlayerState(pPlayer)
+{
+	m_pCharacter->AddState(std::tstring(L"Death"), this);
+}
+bool PlayerDeath::Init()
+{
+	setSprite(L"Kaho", L"Death");
+	m_pSprite->setDivideTime(3.0f);
+	return true;
+}
+bool PlayerDeath::Frame()
+{
+	if (PlayerState::Frame() == false)
+	{
+		m_pCharacter->setDead(true);
+	}
+	return true;
+}
 
 PlayerItem::PlayerItem(Player* pPlayer) : PlayerState(pPlayer)
 {

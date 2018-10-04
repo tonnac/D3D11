@@ -255,6 +255,9 @@
     <ClInclude Include="MessageBox.h">
       <Filter>헤더 파일\Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="EmptyScreen.h">
+      <Filter>헤더 파일\Object\BasicObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shader.cpp">
@@ -419,9 +422,15 @@
     <ClCompile Include="MessageBox.cpp">
       <Filter>소스 파일\Object\UI</Filter>
     </ClCompile>
+    <ClCompile Include="EmptyScreen.cpp">
+      <Filter>소스 파일\Object\BasicObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
     <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

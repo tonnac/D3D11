@@ -23,6 +23,7 @@ public:
 	D2D1_RECT_F*	getSight();
 	D2D1_RECT_F*	getAttackRange();
 public:
+	void			setHP(const FLOAT& iVal) override;
 	void			setArea(const D2D1_RECT_F&);
 	void 			setSight(const D2D1_RECT_F&);
 	void 			setAttackRange(const D2D1_RECT_F&);
@@ -30,7 +31,6 @@ public:
 	std::tstring	setTransition(E_EVENT Event);
 	void			setDir(const INT& iDir);
 	void			setFSM(FinateStateMachine* pFSM);
-	void			setDead() override;
 public:
 	COL				Collision(std::shared_ptr<Object> pObject, FLOAT* ColSize) override;
 	COL				Collision();

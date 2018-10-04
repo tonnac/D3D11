@@ -24,7 +24,7 @@ public:
 public:
 	void			setHP(const FLOAT& iVal) override;
 	void			setBuff(const bool& flag);
-	void			setDead() override;
+	void			setDead(const bool& flag);
 	void			setInvincible(const bool& flag);
 private:
 	bool			m_bBuff;
