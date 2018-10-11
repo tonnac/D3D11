@@ -283,6 +283,9 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../Momodora/inc"</Command>
     <Text Include="..\..\Momodora\Data\txt\Filepath.txt" />
     <Text Include="..\..\Momodora\Data\txt\VertexShader.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -3,14 +3,6 @@
 #include "SceneMgr.h"
 #include "Inventory.h"
 
-EffectDel PlayerState::bowdel = [](PlayerEffect* pEffect)
-{
-	if (pEffect->getEnd() == false)
-	{
-		delete pEffect;
-	}
-};
-
 PlayerState::PlayerState(Player * pPlayer) : m_pCharacter(pPlayer)
 {
 }
@@ -104,7 +96,7 @@ bool PlayerState::BowAttack()
 {
 	if (S_Input.getKeyState(DIK_D) == Input::KEYSTATE::KEY_PUSH)
 	{
-		std::shared_ptr<KahoBowAttack> Arrow(new KahoBowAttack, bowdel);
+		std::shared_ptr<KahoBowAttack> Arrow = std::make_shared<KahoBowAttack>();
 		D3DXVECTOR2 Cen = m_pCharacter->getCenterPos();
 
 		if (m_pCharacter->getDir() == -1)

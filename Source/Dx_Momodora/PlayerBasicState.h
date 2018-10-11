@@ -2,9 +2,6 @@
 #include "State.h"
 #include "Player.h"
 
-class PlayerEffect;
-
-using EffectDel = std::function<void(PlayerEffect*)>;
 
 class PlayerState : public State
 {
@@ -22,7 +19,6 @@ protected:
 	bool				Roll();
 	bool				Fall();
 	void				AirMove();
-	static EffectDel	bowdel;
 protected:
 	Player *			m_pCharacter;
 };

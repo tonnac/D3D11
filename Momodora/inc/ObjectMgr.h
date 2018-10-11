@@ -81,15 +81,15 @@ private:
 						{
 							col = (*iter)->Collision(it);
 						}
-						if (col > COL::NONE && pAttack != nullptr)
-						{
-							it->setTransition(E_EVENT::BEARROWATTACKED);
-							deliter = iter;
-						}
+						//if (col > COL::NONE && pAttack != nullptr)
+						//{
+						//	it->setTransition(E_EVENT::BEARROWATTACKED);
+						//	deliter = iter;
+						//}
 					}
 				}
 
-				if ((*iter)->Frame() == false)
+				if ((*iter)->Frame() == false || (*iter)->getEnd() == false)
 				{
 					iter = pData.erase(iter);
 					deliter = pData.end();
@@ -98,10 +98,6 @@ private:
 				{
 					++iter;
 				}
-			}
-			if (deliter != pData.end())
-			{
-				pData.erase(deliter);
 			}
 		}
 	}

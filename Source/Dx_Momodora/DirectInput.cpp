@@ -73,14 +73,14 @@ Input::KEYSTATE	DirectInput::getKeyState(DWORD dwKey) const
 		int ButtonNum = 0;
 		switch (dwKey)
 		{
-		case DIK_LBUTTON:
-			ButtonNum = 0;
-			break;
-		case DIK_RBUTTON:
-			ButtonNum = 1;
-			break;
-		case DIK_MBUTTON:
-			ButtonNum = 2;
+			case DIK_LBUTTON:
+				ButtonNum = 0;
+				break;
+			case DIK_RBUTTON:
+				ButtonNum = 1;
+				break;
+			case DIK_MBUTTON:
+				ButtonNum = 2;
 		}
 		if (KEYDOWN(m_BeforeMouseState.rgbButtons[ButtonNum]))
 		{
