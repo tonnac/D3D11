@@ -1,5 +1,5 @@
 #pragma once
-#include "d3dUtil.h"
+#include "Define.h"
 
 class Timer
 {
@@ -10,14 +10,16 @@ public:
 	bool			Frame();
 	bool			Render();
 	bool			Release();
+public:
+	std::tstring	getTimeInfo();
 private:
+	bool			FrameShow;
 	LARGE_INTEGER	m_Frequency;
 	LARGE_INTEGER	m_CurrentTick;
-	LARGE_INTEGER	m_OneSecTick;
 	LARGE_INTEGER	m_BeforeTick;
-
-	DWORD			m_dwFPS;
-	std::tstring	m_TimerInfo;
-
-	bool			FrameInfo = true;
+	LARGE_INTEGER	m_OneSecTick;
+	FLOAT			m_fSecPerFrame;
+	FLOAT			m_fGameTime;
+	DWORD			m_FPS;
+	std::tstring	TimeInfo;
 };

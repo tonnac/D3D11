@@ -146,7 +146,7 @@ void Sample::setBlendState()
 }
 bool Sample::Init()
 {
-	LoadTextureFile(&m_pTexNOALPHA, L"../../data/png/MS.png");
+	LoadTextureFile(&m_pTexNOALPHA, L"../../data/effect/fwall36.dds");
 	LoadTextureFile(&m_pTextureSRV, L"../../data/effect/Particlee.dds");
 	//LoadTextureFile(L"../../data/png/MS.png");
 	setBlendState();
