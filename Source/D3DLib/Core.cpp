@@ -21,7 +21,7 @@ bool Core::Initialize()
 		return false;
 	if (!S_Write.Initialize())
 		return false;
-
+	
 	OnResize();
 	return true;
 }

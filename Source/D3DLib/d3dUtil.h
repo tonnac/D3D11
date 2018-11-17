@@ -111,6 +111,66 @@ public:
 	int LineNumber = -1;
 };
 
+class d3dUtil
+{
+public:
+	static void CreateVertexBuffer(
+		ID3D11Device* pDevice,
+		UINT iNumVertex,
+		UINT iVertexSize,
+		LPVOID pData,
+		ID3D11Buffer** ppBuffer);
+
+	static void CreateIndexBuffer(
+		ID3D11Device* pDevice,
+		UINT iNumCount,
+		UINT iIndexSize,
+		LPVOID pData,
+		ID3D11Buffer** ppBuffer);
+
+	static void CreateConstantBuffer(
+		ID3D11Device* pDevice,
+		UINT iNumCount,
+		UINT iIndexSize,
+		ID3D11Buffer** ppBuffer,
+		LPVOID pData = nullptr,
+		bool bDynamic = false);
+
+	static void CreateInputLayout(
+		ID3D11Device* pDevice,
+		DWORD dwSize,
+		LPCVOID lpData,
+		D3D11_INPUT_ELEMENT_DESC* layout,
+		UINT numElements,
+		ID3D11InputLayout ** ppInputLayout);
+
+	static void LoadVertexShaderFile(
+		ID3D11Device* pDevice,
+		const void* pShaderFile,
+		ID3D11VertexShader** pVertexShader,
+		const char * pFuncName,
+		ID3DBlob** ppBlobOut);
+
+	static void LoadPixelShaderFile(
+		ID3D11Device* pDevice,
+		const void* pShaderFile,
+		ID3D11PixelShader** pPixelShader,
+		const char * pFuncName = "PS");
+
+	static void LoadGeometryShaderFile(
+		ID3D11Device* pDevice,
+		const void* pShaderFile,
+		ID3D11GeometryShader** pGeometryShader,
+		const char * pFuncName = "GS");
+
+	static ID3DBlob* CompileShaderFromFile(
+		const WCHAR* szFileName,
+		LPCSTR szEntryPoint,
+		LPCSTR szShaderModel);
+
+	static void CreateShaderResourceView(ID3D11Device* pDevice, const std::tstring& filepath, ID3D11ShaderResourceView** pShaderResource);
+};
+
 #ifndef ThrowifFailed
 #define ThrowifFailed(x)											\
 {																	\

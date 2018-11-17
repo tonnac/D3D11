@@ -22,6 +22,8 @@ protected:
 	virtual bool	GameRun();
 	virtual bool	GameRelease();
 
+	float			AspectRatio();
+
 private:
 	void			CenterWindow(const RECT& rt);
 

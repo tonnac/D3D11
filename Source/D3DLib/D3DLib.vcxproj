@@ -166,6 +166,10 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="d3dUtil.h" />
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="DxObj.h" />
+    <ClInclude Include="MathHelper.h" />
+    <ClInclude Include="ObjectStd.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="wClass.h" />
   </ItemGroup>
@@ -175,6 +179,9 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="DxObj.cpp" />
+    <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wClass.cpp" />
   </ItemGroup>

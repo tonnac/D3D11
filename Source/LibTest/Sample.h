@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "Shape.h"
 
 class Sample : public Core
 {
@@ -11,5 +12,10 @@ protected:
 	bool Init();
 	bool Frame();
 	bool Render();
-	bool Release();
+
+private:
+	BoxShape m_Box;
+	DirectX::XMFLOAT4X4 mWorld;
+	DirectX::XMFLOAT4X4 mView;
+	DirectX::XMFLOAT4X4 mProj;
 };

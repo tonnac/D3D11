@@ -19,6 +19,12 @@
     <Filter Include="헤더 파일\Basicstructure">
       <UniqueIdentifier>{47bf3dfe-f6ed-4449-add7-e3884ce2a585}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object">
+      <UniqueIdentifier>{a61366b1-5861-4594-99b2-0dbe582a7b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object">
+      <UniqueIdentifier>{668456e6-ae09-48df-9aed-619bfb7239de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wClass.h">
@@ -42,6 +48,18 @@
     <ClInclude Include="DirectInput.h">
       <Filter>헤더 파일\Basicstructure</Filter>
     </ClInclude>
+    <ClInclude Include="DxObj.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectStd.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="MathHelper.h">
+      <Filter>헤더 파일\Basicstructure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -63,6 +81,15 @@
       <Filter>소스 파일\Basicstructure</Filter>
     </ClCompile>
     <ClCompile Include="DirectInput.cpp">
+      <Filter>소스 파일\Basicstructure</Filter>
+    </ClCompile>
+    <ClCompile Include="DxObj.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Shape.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MathHelper.cpp">
       <Filter>소스 파일\Basicstructure</Filter>
     </ClCompile>
   </ItemGroup>

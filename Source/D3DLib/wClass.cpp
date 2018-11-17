@@ -22,11 +22,13 @@ wClass::wClass(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 	g_ClientHeight = Height;
 	g_hInstance = hInstance;
 }
+
 wClass* wClass::getWin()
 {
 	assert(g_Window);
 	return g_Window;
 }
+
 bool wClass::InitMainWindow()
 {
 	WNDCLASSEX wc;
@@ -58,6 +60,7 @@ bool wClass::InitMainWindow()
 	UpdateWindow(g_hWnd);
 	return true;
 }
+
 bool wClass::Run()
 {
 	GameInit();
@@ -85,22 +88,32 @@ bool wClass::Run()
 	}
 	return GameRelease();
 }
+
 LRESULT wClass::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+
 bool wClass::GameInit()
 {
 	return true;
 }
+
 bool wClass::GameRun()
 {
 	return true;
 }
+
 bool wClass::GameRelease()
 {
 	return true;
 }
+
+float wClass::AspectRatio()
+{
+	return Casting(float, g_ClientWidth) / Casting(float, g_ClientHeight);
+}
+
 void wClass::CenterWindow(const RECT& rt)
 {
 	int iScreenWidth = GetSystemMetrics(SM_CXFULLSCREEN);
