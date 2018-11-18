@@ -163,7 +163,7 @@ public:
 		ID3D11GeometryShader** pGeometryShader,
 		const char * pFuncName = "GS");
 
-	static ID3DBlob* CompileShaderFromFile(
+	static Microsoft::WRL::ComPtr<ID3DBlob> CompileShaderFromFile(
 		const WCHAR* szFileName,
 		LPCSTR szEntryPoint,
 		LPCSTR szShaderModel);

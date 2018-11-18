@@ -60,6 +60,9 @@
     <ClInclude Include="MathHelper.h">
       <Filter>헤더 파일\Basicstructure</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -91,6 +94,15 @@
     </ClCompile>
     <ClCompile Include="MathHelper.cpp">
       <Filter>소스 파일\Basicstructure</Filter>
+    </ClCompile>
+    <ClCompile Include="Lineshape.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="PlaneShape.cpp">
+      <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

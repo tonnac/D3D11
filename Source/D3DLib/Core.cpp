@@ -30,6 +30,8 @@ bool Core::GameInit()
 {
 	m_Timer.Reset();
 	S_Input.Init();
+
+	m_Dir.Create(m_pd3dDevice.Get(), L"shape.hlsl");
 	Init();
 	return true;
 }
@@ -38,12 +40,6 @@ bool Core::GameRun()
 {
 	GameFrame();
 	GameRender();
-	return true;
-}
-
-bool Core::GameRelease()
-{
-	Release();
 	return true;
 }
 
@@ -159,11 +155,6 @@ bool Core::Render()
 	return true;
 }
 
-bool Core::Release()
-{
-	return true;
-}
-
 void Core::CalculateFrame()
 {
 	static int frameCnt = 0;
@@ -213,8 +204,8 @@ bool Core::PreRender()
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
 	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
-	S_Write.Begin();
 
+	S_Write.Begin();
 	if(m_bFrameinfo)
 		S_Write.DrawText({ 0, 0, 800, 600 }, m_FrameInfo, Colors::Black);
 	return true;
@@ -225,6 +216,7 @@ bool Core::GameRender()
 	PreRender();
 	{
 		Render();
+		m_Dir.Render(m_pImmediateContext.Get());
 	}
 	PostRender();
 	return true;
@@ -236,4 +228,3 @@ bool Core::PostRender()
 	ThrowifFailed(m_pSwapchain->Present(0, 0));
 	return true;
 }
-

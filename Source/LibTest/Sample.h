@@ -14,7 +14,10 @@ protected:
 	bool Render();
 
 private:
+	PlaneShape m_Plane;
+	LineShape m_line;
 	BoxShape m_Box;
+
 	DirectX::XMFLOAT4X4 mWorld;
 	DirectX::XMFLOAT4X4 mView;
 	DirectX::XMFLOAT4X4 mProj;

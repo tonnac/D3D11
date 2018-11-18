@@ -116,7 +116,7 @@ void d3dUtil::LoadVertexShaderFile(
 	const char * pFuncName,
 	ID3DBlob** pBlobOut)
 {
-	*pBlobOut = CompileShaderFromFile((TCHAR*)pShaderFile, pFuncName, "vs_5_0");
+	CompileShaderFromFile((TCHAR*)pShaderFile, pFuncName, "vs_5_0").CopyTo(pBlobOut);
 	ThrowifFailed(pDevice->CreateVertexShader((*pBlobOut)->GetBufferPointer(), (*pBlobOut)->GetBufferSize(), nullptr, pVertexShader));
 }
 
@@ -142,7 +142,7 @@ void d3dUtil::LoadGeometryShaderFile(
 	ThrowifFailed(pDevice->CreateGeometryShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, pGeometryShader));
 }
 
-ID3DBlob* d3dUtil::CompileShaderFromFile(
+ComPtr<ID3DBlob> d3dUtil::CompileShaderFromFile(
 	const WCHAR* szFileName,
 	LPCSTR szEntryPoint,
 	LPCSTR szShaderModel)
@@ -155,9 +155,9 @@ ID3DBlob* d3dUtil::CompileShaderFromFile(
 
 	HRESULT hr = S_OK;
 
-	ID3DBlob* byteCode = nullptr;
+	ComPtr<ID3DBlob> byteCode = nullptr;
 	ComPtr<ID3DBlob> errors = nullptr;
-	hr = D3DX11CompileFromFile(szFileName, NULL, NULL, szEntryPoint, szShaderModel, dwShaderFlags, 0, NULL, &byteCode, errors.GetAddressOf(), NULL);
+	hr = D3DX11CompileFromFile(szFileName, NULL, NULL, szEntryPoint, szShaderModel, dwShaderFlags, 0, NULL, byteCode.GetAddressOf(), errors.GetAddressOf(), NULL);
 
 	if (errors != nullptr)
 		::OutputDebugStringA((char*)errors->GetBufferPointer());

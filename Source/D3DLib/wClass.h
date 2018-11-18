@@ -4,23 +4,22 @@
 
 class wClass : public Device
 {
+	friend LRESULT CALLBACK	MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 protected:
 	wClass(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName);
 
 public:
-	static wClass*	getWin();
+	int				Run();
 
-public:
-	bool			Run();
+protected:
+	static wClass*	getWin();
 
 	virtual LRESULT MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-protected:
 	bool			InitMainWindow();
 
 	virtual bool	GameInit();
 	virtual bool	GameRun();
-	virtual bool	GameRelease();
 
 	float			AspectRatio();
 

@@ -89,49 +89,49 @@ public:
 	void CreateIndexData()override;
 };
 
-//class LineShape : public Shape
-//{
-//public:
-//	LineShape() = default;
-//	virtual ~LineShape() = default;
-//public:
-//	void	CreateInputLayout()override;
-//	void	CreateVertexData()override;
-//	void	CreateIndexData()override;
-//	void	CreateVertexBuffer()override;
-//	void	LoadVertexShader(std::tstring szName)override;
-//	void	LoadPixelShader(std::tstring szName)override;
-//	bool	Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
-//
-//public:
-//	std::array<PC_VERTEX, 2> m_LineVertexList;
-//};
-//
-//class PlaneShape : public Shape
-//{
-//public:
-//	PlaneShape() = default;
-//	virtual ~PlaneShape() = default;
-//
-//public:
-//	void CreateVertexData()override;
-//	void CreateIndexData()override;
-//};
-//
-//class DirectionShape : public Shape
-//{
-//public:
-//	DirectionShape() = default;
-//	virtual ~DirectionShape() = default;
-//
-//public:
-//	void	CreateInputLayout()override;
-//	void	CreateVertexData()override;
-//	void	CreateIndexData()override;
-//	void	CreateVertexBuffer()override;
-//	void	LoadVertexShader(std::tstring szName)override;
-//	void	LoadPixelShader(std::tstring szName)override;
-//
-//public:
-//	std::array<PC_VERTEX, 6> m_LineVertexList;
-//};
+class LineShape : public Shape
+{
+public:
+	LineShape();
+	virtual ~LineShape() = default;
+public:
+	void	CreateInputLayout()override;
+	void	CreateVertexData()override;
+	void	CreateIndexData()override;
+	void	CreateVertexBuffer()override;
+	void	LoadVertexShader(std::tstring szName)override;
+	void	LoadPixelShader(std::tstring szName)override;
+	bool	Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
+
+public:
+	std::array<PC_VERTEX, 2> m_LineVertexList;
+};
+
+class PlaneShape : public Shape
+{
+public:
+	PlaneShape() = default;
+	virtual ~PlaneShape() = default;
+
+public:
+	void CreateVertexData()override;
+	void CreateIndexData()override;
+};
+
+class DirectionShape : public Shape
+{
+public:
+	DirectionShape();
+	virtual ~DirectionShape() = default;
+
+public:
+	void	CreateInputLayout()override;
+	void	CreateVertexData()override;
+	void	CreateIndexData()override;
+	void	CreateVertexBuffer()override;
+	void	LoadVertexShader(std::tstring szName)override;
+	void	LoadPixelShader(std::tstring szName)override;
+
+public:
+	std::array<PC_VERTEX, 6> m_LineVertexList;
+};

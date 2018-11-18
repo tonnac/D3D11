@@ -107,9 +107,9 @@ void Shape::SetMatrix(XMFLOAT4X4* pWorld, XMFLOAT4X4* pView, XMFLOAT4X4* pProj)
 		m_matProj = *pProj;
 	}
 
-	m_vLook = { m_matWorld._11, m_matWorld._12 , m_matWorld._13 };
-	m_vSide = { m_matWorld._21, m_matWorld._22 , m_matWorld._23 };
-	m_vUp = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
+	m_vLook = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
+	m_vSide = { m_matWorld._11, m_matWorld._12 , m_matWorld._13 };
+	m_vUp = { m_matWorld._21, m_matWorld._22 , m_matWorld._23 };
 	m_vPosition = { m_matWorld._41, m_matWorld._42, m_matWorld._43 };
 
 	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);

@@ -61,7 +61,7 @@ bool wClass::InitMainWindow()
 	return true;
 }
 
-bool wClass::Run()
+int wClass::Run()
 {
 	GameInit();
 	MSG MsgEvent;
@@ -86,7 +86,7 @@ bool wClass::Run()
 			}
 		}
 	}
-	return GameRelease();
+	return Casting(int, MsgEvent.wParam);
 }
 
 LRESULT wClass::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -100,11 +100,6 @@ bool wClass::GameInit()
 }
 
 bool wClass::GameRun()
-{
-	return true;
-}
-
-bool wClass::GameRelease()
 {
 	return true;
 }

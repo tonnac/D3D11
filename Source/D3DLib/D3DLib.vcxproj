@@ -161,6 +161,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="d3dUtil.h" />
@@ -174,13 +175,16 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="wClass.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="d3dUtil.cpp" />
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DxObj.cpp" />
+    <ClCompile Include="Lineshape.cpp" />
     <ClCompile Include="MathHelper.cpp" />
+    <ClCompile Include="PlaneShape.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wClass.cpp" />
