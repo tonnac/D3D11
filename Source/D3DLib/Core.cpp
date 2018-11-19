@@ -31,6 +31,11 @@ bool Core::GameInit()
 	m_Timer.Reset();
 	S_Input.Init();
 
+	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-10));
+	m_DefaultCamera.SetProjMatrix(XM_PIDIV4, AspectRatio());
+
+	m_pMainCamera = &m_DefaultCamera;
+
 	m_Dir.Create(m_pd3dDevice.Get(), L"shape.hlsl");
 	Init();
 	return true;
@@ -186,11 +191,46 @@ void Core::OnResize()
 
 bool Core::GameFrame()
 {
+	XMFLOAT4 m_YawPitchRoll(0, 0, 0, 0);
 	CalculateFrame();
 	S_Input.Frame();
 	if (S_Input.getKeyState(DIK_LCONTROL) == KEYSTATE::KEY_HOLD && S_Input.getKeyState(DIK_F) == KEYSTATE::KEY_PUSH)
 	{
 		m_bFrameinfo = !m_bFrameinfo;
+	}
+	{
+		auto mousePos = S_Input.getMousePos();
+		auto deltaTime = m_Timer.DeltaTime();
+
+		if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
+		{
+			m_pMainCamera->MoveSide(-deltaTime * 5.0f);
+		}
+		if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
+		{
+			m_pMainCamera->MoveSide(deltaTime * 5.0f);
+		}
+		if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
+		{
+			m_pMainCamera->MoveLook(deltaTime * 5.0f);
+		}
+		if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
+		{
+			m_pMainCamera->MoveLook(-deltaTime * 5.0f);
+		}
+		if (S_Input.getMouseState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
+		{
+			m_YawPitchRoll.x += 0.1f * XMConvertToRadians(Casting(float, mousePos.lY));
+			m_YawPitchRoll.y += 0.1f * XMConvertToRadians(Casting(float, mousePos.lX));
+		}
+		if (S_Input.getKeyState(DIK_SPACE) == KEYSTATE::KEY_HOLD)
+		{
+			m_pMainCamera->m_fSpeed += m_Timer.DeltaTime() * 5.0f;
+		}
+		float fValue = Casting(float, mousePos.lZ);
+		m_YawPitchRoll.w = fValue * deltaTime;
+		m_pMainCamera->Update(m_YawPitchRoll);
+		m_pMainCamera->Frame();
 	}
 	Frame();
 	S_Input.PostFrame();

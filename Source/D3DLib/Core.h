@@ -3,6 +3,7 @@
 #include "wClass.h"
 #include "Timer.h"
 #include "Shape.h"
+#include "Camera.h"
 
 class Core : public wClass
 {
@@ -35,4 +36,7 @@ protected:
 	std::tstring	m_FrameInfo;
 	Timer			m_Timer;
 	DirectionShape	m_Dir;
+
+	Camera  m_DefaultCamera;
+	Camera* m_pMainCamera = nullptr;
 };

@@ -38,4 +38,7 @@ public:
 	DirectX::XMFLOAT3 m_vLook;
 	DirectX::XMFLOAT3 m_vSide;
 	DirectX::XMFLOAT3 m_vUpvector;
+
+	float m_fCameraYawAngle;
+	float m_fCameraPitchAngle;
 };

@@ -74,21 +74,35 @@ void Camera::UpdateVector()
 	XMStoreFloat3(&m_vLook, LookN);
 	XMStoreFloat3(&m_vUpvector, UpN);
 	XMStoreFloat3(&m_vSide, SideN);
+
+	//XMMATRIX mInvView = DirectX::XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_matView));
+
+	//XMFLOAT3 pZBasis;
+	//XMStoreFloat3(&pZBasis, mInvView.r[3]);
+
+	//m_fCameraYawAngle = atan2f(pZBasis.x, pZBasis.z);
+	//float fLen = sqrtf(pZBasis.x * pZBasis.x + pZBasis.z * pZBasis.z);
+	//m_fCameraPitchAngle = -atan2f(pZBasis.y, fLen);
 }
 
 bool Camera::Update(XMFLOAT4 vValue)
 {
+	m_fCameraYawAngle += vValue.y;
+	m_fCameraPitchAngle += vValue.x;
+	XMVECTOR YawPitchRoll = { m_fCameraPitchAngle, m_fCameraYawAngle, vValue.z };
 
-	//D3DXQUATERNION qRotation;
-	//D3DXQuaternionRotationYawPitchRoll(&qRotation, vValue.y, vValue.x, vValue.z);
+	XMVECTOR LookVec = XMLoadFloat3(&m_vLook);
+	XMVECTOR PosVec = XMLoadFloat3(&m_vPos);
+	PosVec += LookVec * vValue.w;
+	
+	XMStoreFloat3(&m_vPos, PosVec);
 
-	//m_vPos += m_vLook * vValue.w;
 
-	//XMFLOAT4X4AffineTransformation(&matRotation, 1.0f, nullptr, &qRotation, &m_vPos);
+	XMMATRIX matRotation = DirectX::XMMatrixAffineTransformation(XMVECTOR({ 1.0f,1.0f,1.0f,0.0f }), XMVECTOR({ 0.0f,0.0f,0.0f,0.0f }), YawPitchRoll, PosVec);
 
-	//XMFLOAT4X4Inverse(&m_matView, nullptr, &matRotation);
+	XMStoreFloat4x4(&m_matView, DirectX::XMMatrixInverse(nullptr, matRotation));
 
-	//UpdateVector();
+	UpdateVector();
 	return true;
 }
 
