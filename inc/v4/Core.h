@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "Shape.h"
 #include "Camera.h"
+#include "DxState.h"
 
 class Core : public wClass
 {
@@ -39,4 +40,9 @@ protected:
 
 	Camera  m_DefaultCamera;
 	Camera* m_pMainCamera = nullptr;
+
+	E_DSS m_DepthStencilState;
+	E_RSS m_RasterizerState;
+	E_BSS m_BlendState;
+	E_SS  m_SampleState;
 };

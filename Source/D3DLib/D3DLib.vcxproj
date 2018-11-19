@@ -168,6 +168,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="DirectInput.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DxObj.h" />
+    <ClInclude Include="DxState.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="ObjectStd.h" />
     <ClInclude Include="Shape.h" />
@@ -182,6 +183,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="DirectInput.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DxObj.cpp" />
+    <ClCompile Include="DxState.cpp" />
     <ClCompile Include="Lineshape.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="PlaneShape.cpp" />

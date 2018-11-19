@@ -38,7 +38,6 @@ public:
 public:
 	DIMOUSESTATE			getMousePos()const;
 	Input::KEYSTATE			getKeyState(DWORD dwKey)const;
-	Input::KEYSTATE			getMouseState(DWORD dwKey)const;
 
 private:
 	void					SetAcquire(const bool& flag);

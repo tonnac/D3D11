@@ -54,7 +54,7 @@ protected:
 	bool PreRender(ID3D11DeviceContext* pContext);
 	bool PostRender(ID3D11DeviceContext* pContext);
 
-public:
+protected:
 	ID3D11Device* m_pDevice = nullptr;
 
 	DxObj m_DxObject;
@@ -103,7 +103,7 @@ public:
 	void	LoadPixelShader(std::tstring szName)override;
 	bool	Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
 
-public:
+protected:
 	std::array<PC_VERTEX, 2> m_LineVertexList;
 };
 
@@ -132,6 +132,6 @@ public:
 	void	LoadVertexShader(std::tstring szName)override;
 	void	LoadPixelShader(std::tstring szName)override;
 
-public:
+protected:
 	std::array<PC_VERTEX, 6> m_LineVertexList;
 };

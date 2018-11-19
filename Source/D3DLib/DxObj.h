@@ -2,18 +2,15 @@
 
 #include "d3dUtil.h"
 
-class DxObj
+struct DxObj
 {
-public:
 	DxObj() = default;
 	~DxObj() = default;
 
-public:
 	bool PreRender(ID3D11DeviceContext* pContext);
 	bool PostRender(ID3D11DeviceContext* pContext);
 	bool Render(ID3D11DeviceContext* pContext);
 
-public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pVertexBuffer = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pIndexBuffer = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_pConstantBuffer = nullptr;
