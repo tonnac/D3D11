@@ -41,8 +41,8 @@ protected:
 	Camera  m_DefaultCamera;
 	Camera* m_pMainCamera = nullptr;
 
-	E_DSS m_DepthStencilState;
-	E_RSS m_RasterizerState;
-	E_BSS m_BlendState;
-	E_SS  m_SampleState;
+	E_DSS m_DepthStencilState = E_DSS::Default;
+	E_RSS m_RasterizerState = E_RSS::Default;
+	E_BSS m_BlendState = E_BSS::Default;
+	E_SS  m_SampleState = E_SS::Default;
 };

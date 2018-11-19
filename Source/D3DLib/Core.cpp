@@ -11,8 +11,7 @@ using namespace Input;
 
 
 Core::Core(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName) 
-	: wClass(hInstance, Width, Height, WindowName), m_DepthStencilState(E_DSS::Default),
-	m_RasterizerState(E_RSS::Default), m_BlendState(E_BSS::Default), m_SampleState(E_SS::Default)
+	: wClass(hInstance, Width, Height, WindowName)
 {
 }
 
