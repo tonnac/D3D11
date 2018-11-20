@@ -91,8 +91,7 @@ bool Camera::Update(XMFLOAT4 vValue)
 	m_fCameraPitchAngle += vValue.x;
 
 	
-	XMMATRIX matRot = XMMatrixRotationRollPitchYaw(m_fCameraPitchAngle, m_fCameraYawAngle, vValue.z);
-	XMVECTOR Quaternion = XMQuaternionRotationMatrix(matRot);
+	XMVECTOR Quaternion = XMQuaternionRotationRollPitchYaw(m_fCameraPitchAngle, m_fCameraYawAngle, vValue.z);
 
 	XMVECTOR vPos = XMVectorSet(m_vPos.x, m_vPos.y, m_vPos.z, 1.0f);
 	XMVECTOR vLook = XMVectorSet(m_vLook.x, m_vLook.y, m_vLook.z, 1.0f);
@@ -101,7 +100,7 @@ bool Camera::Update(XMFLOAT4 vValue)
 
 	XMStoreFloat3(&m_vPos, vPos);
 
-	matRot = XMMatrixAffineTransformation(
+	XMMATRIX matRot = XMMatrixAffineTransformation(
 		XMVECTOR{ 1.0f,1.0f,1.0f,1.0f }, 
 		XMVECTOR{ 0, 0, 0, 0 }, 
 		Quaternion, 

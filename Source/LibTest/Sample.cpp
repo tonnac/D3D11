@@ -27,9 +27,39 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
+	static float dll = 0;
+	dll += m_Timer.DeltaTime();
+
 	mWorld = MathHelper::Identity4x4();
 
-	m_Box.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	XMVECTOR Axis = { 8,2,4 };
+	XMVECTOR N = XMVector3Normalize(Axis);
+
+	float fSin, fCos;
+	XMScalarSinCos(&fSin, &fCos, dll);
+
+	N *= fSin;
+
+	XMFLOAT3 nn;
+	XMStoreFloat3(&nn, N);
+
+	XMVECTOR quat1 = { nn.x, nn.y, nn.z, fCos };
+
+	XMMATRIX Rot = XMMatrixRotationQuaternion(quat1);
+
+	float Angle;
+	XMVECTOR Axi1s;
+	XMFLOAT3 ee;
+	XMQuaternionToAxisAngle(&Axi1s, &Angle, quat1);
+	XMVECTOR ANormal = XMVector3Normalize(Axi1s);
+	float DAngle = XMConvertToDegrees(Angle);
+	XMVECTOR fL = XMVector3Length(ANormal);
+	XMStoreFloat3(&ee, ANormal);
+
+	XMFLOAT4X4 bWorld;
+	XMStoreFloat4x4(&bWorld, Rot);
+
+	m_Box.SetMatrix(&bWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_line.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 	m_Dir.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
 

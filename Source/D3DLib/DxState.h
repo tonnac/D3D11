@@ -40,10 +40,10 @@ enum class E_SS : unsigned char
 class DxState
 {
 public:
-	static std::array<Microsoft::WRL::ComPtr<ID3D11BlendState>, (int)E_BSS::Count> m_BSS;
-	static std::array<Microsoft::WRL::ComPtr<ID3D11DepthStencilState>, (int)E_DSS::Count> m_DSS;
-	static std::array<Microsoft::WRL::ComPtr<ID3D11RasterizerState>, (int)E_RSS::Count> m_RSS;
-	static std::array<Microsoft::WRL::ComPtr<ID3D11SamplerState>, (int)E_SS::Count> m_SS;
+	static std::array<Microsoft::WRL::ComPtr<ID3D11BlendState>,			(int)E_BSS::Count> m_BSS;
+	static std::array<Microsoft::WRL::ComPtr<ID3D11DepthStencilState>,	(int)E_DSS::Count> m_DSS;
+	static std::array<Microsoft::WRL::ComPtr<ID3D11RasterizerState>,	(int)E_RSS::Count> m_RSS;
+	static std::array<Microsoft::WRL::ComPtr<ID3D11SamplerState>,		(int)E_SS::Count>  m_SS;
 	static void InitState(ID3D11Device* pd3dDevice);
 
 private:

@@ -1,6 +1,9 @@
 #pragma once
-#include <DirectXMath.h>
-#include <Windows.h>
+
+#ifndef CAMERA_H
+#define CAMERA
+
+#include "d3dUtil.h"
 
 class Camera
 {
@@ -42,3 +45,5 @@ public:
 	float m_fCameraYawAngle;
 	float m_fCameraPitchAngle;
 };
+
+#endif // CAMERA_H
