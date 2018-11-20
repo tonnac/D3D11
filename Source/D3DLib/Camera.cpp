@@ -6,7 +6,6 @@ XMFLOAT4X4 Camera::SetViewMatrix(XMFLOAT3 vPos, XMFLOAT3 vTarget, XMFLOAT3 vUp)
 {
 	m_vPos = vPos; m_vTarget = vTarget; m_vUp = vUp;
 
-
 	XMVECTOR Pos = { vPos.x, vPos.y, vPos.z, 1.0f };
 	XMVECTOR Target = XMVectorZero();
 	XMVECTOR Up = XMVectorSet(vUp.x, vUp.y, vUp.z, 0.0f);
@@ -63,7 +62,6 @@ void Camera::UpdateVector()
 	m_vSide.y = m_matView._21;
 	m_vSide.z = m_matView._31;
 
-
 	XMVECTOR look = XMVectorSet(m_vLook.x, m_vLook.y, m_vLook.z, 0.0f);
 	XMVECTOR up = { m_vUpvector.x, m_vUpvector.y, m_vUpvector.z };
 	XMVECTOR side = { m_vSide.x, m_vSide.y, m_vSide.z };
@@ -90,7 +88,6 @@ bool Camera::Update(XMFLOAT4 vValue)
 	m_fCameraYawAngle += vValue.y;
 	m_fCameraPitchAngle += vValue.x;
 
-	
 	XMVECTOR Quaternion = XMQuaternionRotationRollPitchYaw(m_fCameraPitchAngle, m_fCameraYawAngle, vValue.z);
 
 	XMVECTOR vPos = XMVectorSet(m_vPos.x, m_vPos.y, m_vPos.z, 1.0f);
@@ -101,9 +98,9 @@ bool Camera::Update(XMFLOAT4 vValue)
 	XMStoreFloat3(&m_vPos, vPos);
 
 	XMMATRIX matRot = XMMatrixAffineTransformation(
-		XMVECTOR{ 1.0f,1.0f,1.0f,1.0f }, 
-		XMVECTOR{ 0, 0, 0, 0 }, 
-		Quaternion, 
+		XMVECTOR{ 1.0f,1.0f,1.0f,1.0f },
+		XMVECTOR{ 0, 0, 0, 0 },
+		Quaternion,
 		XMLoadFloat3(&m_vPos));
 
 	XMStoreFloat4x4(&m_matView, XMMatrixInverse(nullptr, matRot));

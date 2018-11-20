@@ -18,7 +18,6 @@ protected:
 	bool			GameRun()override;
 	LRESULT			MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)override;
 
-
 	virtual bool	Init();
 	virtual bool	Frame();
 	virtual bool	Render();
@@ -31,6 +30,8 @@ private:
 	bool			PreRender();
 	bool			GameRender();
 	bool			PostRender();
+
+	DirectX::XMFLOAT4 OnKeyboardInput();
 
 protected:
 	bool			m_bFrameinfo = true;

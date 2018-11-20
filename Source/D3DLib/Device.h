@@ -20,6 +20,7 @@ protected:
 	void LogAdapters();
 	void LogAdapterOutput(IDXGIAdapter* pAdapter);
 	void LogOutputDisplayModes(IDXGIOutput* pOutput, DXGI_FORMAT format);
+
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pd3dDevice;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pImmediateContext;

@@ -6,11 +6,7 @@ using namespace DirectX;
 
 Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName)
 	: Core(hInstance, Width, Height, WindowName)
-{
-	mWorld = MathHelper::Identity4x4();
-	mView = MathHelper::Identity4x4();
-	mProj = MathHelper::Identity4x4();
-}
+{}
 
 bool Sample::Init()
 {
@@ -46,7 +42,7 @@ bool Sample::Render()
 	XMVECTOR quat1 = { nn.x, nn.y, nn.z, fCos };
 
 	XMMATRIX Rot = XMMatrixRotationQuaternion(quat1);
-
+	
 	float Angle;
 	XMVECTOR Axi1s;
 	XMFLOAT3 ee;

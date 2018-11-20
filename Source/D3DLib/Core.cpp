@@ -195,67 +195,10 @@ void Core::OnResize()
 
 bool Core::GameFrame()
 {
-	XMFLOAT4 m_YawPitchRoll(0, 0, 0, 0);
 	CalculateFrame();
 	S_Input.Frame();
-	if (S_Input.getKeyState(DIK_LCONTROL) == KEYSTATE::KEY_HOLD && S_Input.getKeyState(DIK_F) == KEYSTATE::KEY_PUSH)
-	{
-		m_bFrameinfo = !m_bFrameinfo;
-	}
-	{
-		auto mousePos = S_Input.getMousePos();
-		auto deltaTime = m_Timer.DeltaTime();
-
-		if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
-		{
-			IncreaseEnum(m_RasterizerState);
-		}
-
-		if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
-		{
-			IncreaseEnum(m_DepthStencilState);
-		}
-
-		if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
-		{
-			IncreaseEnum(m_BlendState);
-		}
-
-		if (S_Input.getKeyState(DIK_4) == KEYSTATE::KEY_PUSH)
-		{
-			IncreaseEnum(m_SampleState);
-		}
-
-		if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
-		{
-			m_pMainCamera->MoveSide(-deltaTime * 5.0f);
-		}
-		if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
-		{
-			m_pMainCamera->MoveSide(deltaTime * 5.0f);
-		}
-		if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
-		{
-			m_pMainCamera->MoveLook(deltaTime * 5.0f);
-		}
-		if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
-		{
-			m_pMainCamera->MoveLook(-deltaTime * 5.0f);
-		}
-		if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
-		{
-			m_YawPitchRoll.x += 0.1f * XMConvertToRadians(Casting(float, mousePos.lY));
-			m_YawPitchRoll.y += 0.1f * XMConvertToRadians(Casting(float, mousePos.lX));
-		}
-		if (S_Input.getKeyState(DIK_SPACE) == KEYSTATE::KEY_HOLD)
-		{
-			m_pMainCamera->m_fSpeed += m_Timer.DeltaTime() * 5.0f;
-		}
-		float fValue = Casting(float, mousePos.lZ);
-		m_YawPitchRoll.w = fValue * deltaTime;
-		m_pMainCamera->Update(m_YawPitchRoll);
-		m_pMainCamera->Frame();
-	}
+	m_pMainCamera->Update(OnKeyboardInput());
+	m_pMainCamera->Frame();
 	Frame();
 	S_Input.PostFrame();
 	return true;
@@ -296,4 +239,71 @@ bool Core::PostRender()
 	S_Write.End();
 	ThrowifFailed(m_pSwapchain->Present(0, 0));
 	return true;
+}
+
+XMFLOAT4 Core::OnKeyboardInput()
+{
+	XMFLOAT4 YawPitchRoll(0, 0, 0, 0);
+	auto mousePos = S_Input.getMousePos();
+	auto deltaTime = m_Timer.DeltaTime();
+
+	if (S_Input.getKeyState(DIK_LCONTROL) == KEYSTATE::KEY_HOLD && S_Input.getKeyState(DIK_F) == KEYSTATE::KEY_PUSH)
+	{
+		m_bFrameinfo = !m_bFrameinfo;
+	}
+
+	if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
+	{
+		IncreaseEnum(m_RasterizerState);
+	}
+
+	if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
+	{
+		IncreaseEnum(m_DepthStencilState);
+	}
+
+	if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
+	{
+		IncreaseEnum(m_BlendState);
+	}
+
+	if (S_Input.getKeyState(DIK_4) == KEYSTATE::KEY_PUSH)
+	{
+		IncreaseEnum(m_SampleState);
+	}
+
+	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
+	{
+		m_pMainCamera->MoveSide(-deltaTime * 5.0f);
+	}
+
+	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
+	{
+		m_pMainCamera->MoveSide(deltaTime * 5.0f);
+	}
+
+	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
+	{
+		m_pMainCamera->MoveLook(deltaTime * 5.0f);
+	}
+
+	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
+	{
+		m_pMainCamera->MoveLook(-deltaTime * 5.0f);
+	}
+
+	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
+	{
+		YawPitchRoll.x += 0.1f * XMConvertToRadians(Casting(float, mousePos.lY));
+		YawPitchRoll.y += 0.1f * XMConvertToRadians(Casting(float, mousePos.lX));
+	}
+
+	if (S_Input.getKeyState(DIK_SPACE) == KEYSTATE::KEY_HOLD)
+	{
+		m_pMainCamera->m_fSpeed += m_Timer.DeltaTime() * 5.0f;
+	}
+
+	float fValue = Casting(float, mousePos.lZ);
+	YawPitchRoll.w = fValue * deltaTime;
+	return YawPitchRoll;
 }

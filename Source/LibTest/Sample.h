@@ -18,7 +18,7 @@ private:
 	LineShape m_line;
 	BoxShape m_Box;
 
-	DirectX::XMFLOAT4X4 mWorld;
-	DirectX::XMFLOAT4X4 mView;
-	DirectX::XMFLOAT4X4 mProj;
+	DirectX::XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 mProj = MathHelper::Identity4x4();
 };
