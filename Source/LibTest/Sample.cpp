@@ -30,6 +30,8 @@ void Sample::FramePassCB()
 	mMainPassCB.FarZ = 1000.0f;
 	mMainPassCB.TotalTime = m_Timer.DeltaTime();
 	mMainPassCB.DeltaTime = m_Timer.TotalTime();
+
+	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
 }
 
 bool Sample::Init()
@@ -52,7 +54,6 @@ bool Sample::Render()
 	static float dll = 0;
 	dll += m_Timer.DeltaTime();
 
-	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 
 	XMVECTOR Axis = { 8,2,4 };
