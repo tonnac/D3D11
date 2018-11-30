@@ -197,7 +197,8 @@ bool Core::GameFrame()
 {
 	CalculateFrame();
 	S_Input.Frame();
-	m_pMainCamera->Update(OnKeyboardInput());
+	XMFLOAT4 retInput = OnKeyboardInput();
+	m_pMainCamera->Update(retInput);
 	m_pMainCamera->Frame();
 	Frame();
 	S_Input.PostFrame();
