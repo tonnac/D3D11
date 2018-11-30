@@ -6,8 +6,6 @@ using namespace DirectX;
 Shape::Shape()
 {
 	m_matWorld = MathHelper::Identity4x4();
-	m_matProj  = MathHelper::Identity4x4();
-	m_matView  = MathHelper::Identity4x4();
 
 	m_Primitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	
@@ -51,7 +49,7 @@ void Shape::CreateIndexBuffer()
 
 void Shape::CreateConstantBuffer()
 {
-	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(CB_DATA), m_DxObject.m_pConstantBuffer.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), m_DxObject.m_pConstantBuffer.GetAddressOf());
 }
 
 void Shape::CreateInputLayout()
@@ -61,7 +59,7 @@ void Shape::CreateInputLayout()
 		{"POSITION"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 0	, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 12	, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR"	, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 24	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"TEXCOORD"	, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	d3dUtil::CreateInputLayout(m_pDevice,
@@ -92,19 +90,15 @@ void Shape::LoadTextureShader(std::tstring szName)
 	d3dUtil::CreateShaderResourceView(m_pDevice, szName, m_DxObject.m_pTextureSRV.GetAddressOf());
 }
 
-void Shape::SetMatrix(XMFLOAT4X4* pWorld, XMFLOAT4X4* pView, XMFLOAT4X4* pProj)
+void Shape::SetMatrix(XMFLOAT4X4* pWorld)
 {
 	if (pWorld != nullptr)
 	{
 		m_matWorld = *pWorld;
 	}
-	if (pView != nullptr)
+	else
 	{
-		m_matView = *pView;
-	}
-	if (pProj != nullptr)
-	{
-		m_matProj = *pProj;
+		m_matWorld = MathHelper::Identity4x4();
 	}
 
 	m_vLook = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
@@ -113,17 +107,8 @@ void Shape::SetMatrix(XMFLOAT4X4* pWorld, XMFLOAT4X4* pView, XMFLOAT4X4* pProj)
 	m_vPosition = { m_matWorld._41, m_matWorld._42, m_matWorld._43 };
 
 	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-	XMMATRIX view = XMLoadFloat4x4(&m_matView);
-	XMMATRIX proj = XMLoadFloat4x4(&m_matProj);
 
-	XMStoreFloat4x4(&m_cbData.matWorld, XMMatrixTranspose(world));
-	XMStoreFloat4x4(&m_cbData.matView, XMMatrixTranspose(view));
-	XMStoreFloat4x4(&m_cbData.matProj, XMMatrixTranspose(proj));
-}
-
-void Shape::SetColor(DirectX::XMFLOAT4 vColor)
-{
-	m_cbData.vColor = vColor;
+	XMStoreFloat4x4(&m_cbData.World, XMMatrixTranspose(world));
 }
 
 bool Shape::Init()

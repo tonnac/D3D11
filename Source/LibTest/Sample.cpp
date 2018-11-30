@@ -8,8 +8,33 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 	: Core(hInstance, Width, Height, WindowName)
 {}
 
+void Sample::FramePassCB()
+{
+	XMMATRIX View = XMLoadFloat4x4(&m_pMainCamera->m_matView);
+	XMMATRIX Proj = XMLoadFloat4x4(&m_pMainCamera->m_matProj);
+
+	XMMATRIX InvView = XMMatrixInverse(&XMMatrixDeterminant(View), View);
+	XMMATRIX InvProj = XMMatrixInverse(&XMMatrixDeterminant(Proj), Proj);
+
+	XMMATRIX ViewProj = View * Proj;
+	XMMATRIX InvViewProj = XMMatrixInverse(&XMMatrixDeterminant(ViewProj), ViewProj);
+
+	XMStoreFloat4x4(&mMainPassCB.View, XMMatrixTranspose(View));
+	XMStoreFloat4x4(&mMainPassCB.Proj, XMMatrixTranspose(Proj));
+	XMStoreFloat4x4(&mMainPassCB.InvView, XMMatrixTranspose(InvView));
+	XMStoreFloat4x4(&mMainPassCB.InvProj, XMMatrixTranspose(InvProj));
+	XMStoreFloat4x4(&mMainPassCB.ViewProj, XMMatrixTranspose(ViewProj));
+	XMStoreFloat4x4(&mMainPassCB.InvViewProj, XMMatrixTranspose(InvViewProj));
+
+	mMainPassCB.NearZ = 1.0f;
+	mMainPassCB.FarZ = 1000.0f;
+	mMainPassCB.TotalTime = m_Timer.DeltaTime();
+	mMainPassCB.DeltaTime = m_Timer.TotalTime();
+}
+
 bool Sample::Init()
 {
+	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), mPassCB.GetAddressOf());
 	m_Plane.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/effect/Particle3.dds");
 	m_Box.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/effect/Particle3.dds");
 	return true;
@@ -17,6 +42,7 @@ bool Sample::Init()
 
 bool Sample::Frame()
 {
+	FramePassCB();
 	m_Box.Frame();
 	return true;
 }
@@ -26,7 +52,8 @@ bool Sample::Render()
 	static float dll = 0;
 	dll += m_Timer.DeltaTime();
 
-	mWorld = MathHelper::Identity4x4();
+	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 
 	XMVECTOR Axis = { 8,2,4 };
 	XMVECTOR N = XMVector3Normalize(Axis);
@@ -55,14 +82,15 @@ bool Sample::Render()
 	XMFLOAT4X4 bWorld;
 	XMStoreFloat4x4(&bWorld, Rot);
 
-	m_Box.SetMatrix(&bWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_line.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
-	m_Dir.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	m_Box.SetMatrix(&bWorld);
+	m_line.SetMatrix();
+	m_Dir.SetMatrix();
 
 	XMMATRIX Move = XMMatrixTranslation(5, 0, 0);
 	
-	XMStoreFloat4x4(&mWorld, Move);
-	m_Plane.SetMatrix(&mWorld, &m_pMainCamera->m_matView, &m_pMainCamera->m_matProj);
+	XMFLOAT4X4 Wd;
+	XMStoreFloat4x4(&Wd, Move);
+	m_Plane.SetMatrix(&Wd);
 
 	m_Box.Render(m_pImmediateContext.Get());
 	m_Plane.Render(m_pImmediateContext.Get());

@@ -1,5 +1,6 @@
 #pragma once
 #include "DxObj.h"
+#include "MathHelper.h"
 
 struct PC_VERTEX
 {
@@ -37,13 +38,24 @@ struct PT_VERTEX
 	DirectX::XMFLOAT2 t;
 };
 
-struct CB_DATA
+struct PassConstants
 {
-	DirectX::XMFLOAT4X4 matWorld;
-	DirectX::XMFLOAT4X4 matView;
-	DirectX::XMFLOAT4X4 matProj;
-	float fTime;
-	float fActiveVP;
-	float z, w;
-	DirectX::XMFLOAT4 vColor;
+	DirectX::XMFLOAT4X4 View = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 InvView = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 Proj = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 InvProj = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 ViewProj = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 InvViewProj = MathHelper::Identity4x4();
+	DirectX::XMFLOAT3 EyePosW = { 0.0f, 0.0f, 0.0f };
+	float cbPerObjectPad1 = 0.0f;
+	float NearZ = 0.0f;
+	float FarZ = 0.0f;
+	float TotalTime = 0.0f;
+	float DeltaTime = 0.0f;
+
+};
+
+struct ObjectConstants
+{
+	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
 };

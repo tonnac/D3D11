@@ -28,17 +28,26 @@ struct PC_OUT
 	float4 c : COLOR;
 };
 
-cbuffer cb0
+cbuffer cbPass : register(b0)
 {
-	matrix g_matWorld	: packoffset(c0);
-	matrix g_matView	: packoffset(c4);
-	matrix g_matProj	: packoffset(c8);
-	float g_fTimer		: packoffset(c12.x);
-	float y				: packoffset(c12.y);
-	float z				: packoffset(c12.z);
-	float w				: packoffset(c12.w);
-	float4 gColor		: packoffset(c13);
+	float4x4 g_matView;
+	float4x4 InvView;
+	float4x4 g_matProj;
+	float4x4 InvProj;
+	float4x4 ViewProj;
+	float4x4 InvViewProj;
+	float3 EyePos;
+	float pad1;
+	float NearZ;
+	float FarZ;
+	float TotalTime;
+	float DeltaTime;
 };
+
+cbuffer cbPerObj : register(b1)
+{
+	float4x4 g_matWorld;
+}
 
 Texture2D g_txDiffuse	: register (t0);
 SamplerState g_SamState	: register (s0);

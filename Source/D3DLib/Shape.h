@@ -2,25 +2,6 @@
 #include "ObjectStd.h"
 #include "MathHelper.h"
 
-struct SRTMatrix
-{
-	float		fSpin = 0.0f;
-	float		fOrbit = 0.0f;
-	DirectX::XMFLOAT4X4	matScale;
-	DirectX::XMFLOAT4X4	matSpinRotation;
-	DirectX::XMFLOAT4X4	matOrbitRotation;
-	DirectX::XMFLOAT4X4	matTranslate;
-	DirectX::XMFLOAT4X4	matWorld;
-	SRTMatrix()
-	{
-		matScale = MathHelper::Identity4x4();
-		matSpinRotation = MathHelper::Identity4x4();
-		matOrbitRotation = MathHelper::Identity4x4();
-		matTranslate = MathHelper::Identity4x4();
-		matWorld = MathHelper::Identity4x4();
-	}
-};
-
 class Shape
 {
 public:
@@ -30,8 +11,7 @@ public:
 public:
 	void Create(ID3D11Device* pDevice, std::tstring szShaderName, std::tstring szTextureName = std::tstring());
 
-	void SetMatrix(DirectX::XMFLOAT4X4* pWorld = nullptr, DirectX::XMFLOAT4X4* pView = nullptr, DirectX::XMFLOAT4X4* pProj = nullptr);
-	void SetColor(DirectX::XMFLOAT4 vColor);
+	void SetMatrix(DirectX::XMFLOAT4X4* pWorld = nullptr);
 
 	bool Init();
 	bool Frame();
@@ -62,13 +42,9 @@ protected:
 	std::vector<PNCT_VERTEX> m_VertexList;
 	std::vector<DWORD>		 m_IndexList;
 
-	CB_DATA m_cbData;
+	ObjectConstants m_cbData;
 
 	DirectX::XMFLOAT4X4 m_matWorld;
-	DirectX::XMFLOAT4X4 m_matView;
-	DirectX::XMFLOAT4X4 m_matProj;
-
-	SRTMatrix  m_SRTMat;
 
 	DirectX::XMFLOAT3 m_vPosition;
 	DirectX::XMFLOAT3 m_vLook;

@@ -242,6 +242,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibTest", "LibTest\LibTest.
 		{18A8D4CF-E817-4AC3-97B7-3EA81B9CC5F6} = {18A8D4CF-E817-4AC3-97B7-3EA81B9CC5F6}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Part_05_Camera", "Part_05_Camera", "{3825F053-B510-4855-9D6E-A3629C12B730}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

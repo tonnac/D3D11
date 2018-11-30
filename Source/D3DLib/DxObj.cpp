@@ -11,8 +11,8 @@ bool DxObj::PreRender(ID3D11DeviceContext* pContext)
 
 	pContext->IASetIndexBuffer(m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	pContext->VSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
-	pContext->PSSetConstantBuffers(0, 1, m_pConstantBuffer.GetAddressOf());
+	pContext->VSSetConstantBuffers(1, 1, m_pConstantBuffer.GetAddressOf());
+	pContext->PSSetConstantBuffers(1, 1, m_pConstantBuffer.GetAddressOf());
 
 	pContext->PSSetShaderResources(0, 1, m_pTextureSRV.GetAddressOf());
 
