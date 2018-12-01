@@ -50,4 +50,10 @@ cbuffer cbPerObj : register(b1)
 }
 
 Texture2D g_txDiffuse	: register (t0);
-SamplerState g_SamState	: register (s0);
+
+SamplerState g_samPointWrap        : register(s0);
+SamplerState g_samPointClamp       : register(s1);
+SamplerState g_samLinearWrap       : register(s2);
+SamplerState g_samLinearClamp      : register(s3);
+SamplerState g_samAnisotropicWrap  : register(s4);
+SamplerState g_samAnisotropicClamp : register(s5);

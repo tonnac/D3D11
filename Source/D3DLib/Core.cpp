@@ -37,8 +37,10 @@ bool Core::GameInit()
 
 	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-10));
 	m_DefaultCamera.SetProjMatrix(XM_PIDIV4, AspectRatio());
-
 	m_pMainCamera = &m_DefaultCamera;
+
+	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), mPassCB.GetAddressOf());
+	m_DxRT.SetPassCB(mPassCB.Get());
 
 	m_Dir.Create(m_pd3dDevice.Get(), L"shape.hlsl");
 	Init();
@@ -186,6 +188,32 @@ void Core::CalculateFrame()
 	}
 }
 
+void Core::FramePassCB()
+{
+	XMMATRIX View = XMLoadFloat4x4(&m_pMainCamera->m_matView);
+	XMMATRIX Proj = XMLoadFloat4x4(&m_pMainCamera->m_matProj);
+
+	XMMATRIX InvView = XMMatrixInverse(&XMMatrixDeterminant(View), View);
+	XMMATRIX InvProj = XMMatrixInverse(&XMMatrixDeterminant(Proj), Proj);
+
+	XMMATRIX ViewProj = View * Proj;
+	XMMATRIX InvViewProj = XMMatrixInverse(&XMMatrixDeterminant(ViewProj), ViewProj);
+
+	XMStoreFloat4x4(&mMainPassCB.View, XMMatrixTranspose(View));
+	XMStoreFloat4x4(&mMainPassCB.Proj, XMMatrixTranspose(Proj));
+	XMStoreFloat4x4(&mMainPassCB.InvView, XMMatrixTranspose(InvView));
+	XMStoreFloat4x4(&mMainPassCB.InvProj, XMMatrixTranspose(InvProj));
+	XMStoreFloat4x4(&mMainPassCB.ViewProj, XMMatrixTranspose(ViewProj));
+	XMStoreFloat4x4(&mMainPassCB.InvViewProj, XMMatrixTranspose(InvViewProj));
+
+	mMainPassCB.NearZ = 1.0f;
+	mMainPassCB.FarZ = 1000.0f;
+	mMainPassCB.TotalTime = m_Timer.DeltaTime();
+	mMainPassCB.DeltaTime = m_Timer.TotalTime();
+
+	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
+}
+
 void Core::OnResize()
 {
 	S_Write.Reset();
@@ -200,6 +228,7 @@ bool Core::GameFrame()
 	XMFLOAT4 retInput = OnKeyboardInput();
 	m_pMainCamera->Update(retInput);
 	m_pMainCamera->Frame();
+	FramePassCB();
 	Frame();
 	S_Input.PostFrame();
 	return true;
@@ -207,15 +236,18 @@ bool Core::GameFrame()
 
 bool Core::PreRender()
 {
-	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), Colors::PaleGreen);
-	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 
+	m_pImmediateContext->ClearRenderTargetView(*m_DxRT.RenderTargetView(), Colors::PaleGreen);
+	m_pImmediateContext->ClearDepthStencilView(m_DxRT.DepthStencilView(), 
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+	m_pImmediateContext->OMSetRenderTargets(1, m_DxRT.RenderTargetView(), m_DxRT.DepthStencilView());
+	m_pImmediateContext->RSSetViewports(1, &m_DxRT.Viewport());
 
+	auto SamplerStates = DxState::GetSamArray();
+
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 	m_pImmediateContext->RSSetState(DxState::m_RSS[(int)m_RasterizerState].Get());
+	m_pImmediateContext->PSSetSamplers(0, Casting(UINT, SamplerStates.size()), SamplerStates.data());
 	m_pImmediateContext->OMSetDepthStencilState(DxState::m_DSS[(int)m_DepthStencilState].Get(), 0);
-	m_pImmediateContext->PSSetSamplers(0, 1, DxState::m_SS[(int)m_SampleState].GetAddressOf());
 	m_pImmediateContext->OMSetBlendState(DxState::m_BSS[(int)m_BlendState].Get(), 0, -1);
 
 	S_Write.Begin();
@@ -228,8 +260,8 @@ bool Core::GameRender()
 {
 	PreRender();
 	{
-		Render();
 		m_Dir.Render(m_pImmediateContext.Get());
+		Render();
 	}
 	PostRender();
 	return true;
@@ -268,35 +300,30 @@ XMFLOAT4 Core::OnKeyboardInput()
 		IncreaseEnum(m_BlendState);
 	}
 
-	if (S_Input.getKeyState(DIK_4) == KEYSTATE::KEY_PUSH)
-	{
-		IncreaseEnum(m_SampleState);
-	}
-
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(-deltaTime * 5.0f);
+		m_pMainCamera->MoveSide(-deltaTime * 25.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(deltaTime * 5.0f);
+		m_pMainCamera->MoveSide(deltaTime * 25.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(deltaTime * 5.0f);
+		m_pMainCamera->MoveLook(deltaTime * 25.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(-deltaTime * 5.0f);
+		m_pMainCamera->MoveLook(-deltaTime * 25.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
 	{
-		YawPitchRoll.x += 0.1f * XMConvertToRadians(Casting(float, mousePos.lY));
-		YawPitchRoll.y += 0.1f * XMConvertToRadians(Casting(float, mousePos.lX));
+		YawPitchRoll.x += 0.2f * XMConvertToRadians(Casting(float, mousePos.lY));
+		YawPitchRoll.y += 0.2f * XMConvertToRadians(Casting(float, mousePos.lX));
 	}
 
 	if (S_Input.getKeyState(DIK_SPACE) == KEYSTATE::KEY_HOLD)

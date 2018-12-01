@@ -15,6 +15,7 @@
 #include <tchar.h>
 #include <cassert>
 #include <iomanip>
+#include <memory>
 #include <array>
 #include <cstdint>
 #include <functional>
@@ -131,7 +132,7 @@ public:
 	static void CreateConstantBuffer(
 		ID3D11Device* pDevice,
 		UINT iNumCount,
-		UINT iIndexSize,
+		UINT iStride,
 		ID3D11Buffer** ppBuffer,
 		LPVOID pData = nullptr,
 		bool bDynamic = false);

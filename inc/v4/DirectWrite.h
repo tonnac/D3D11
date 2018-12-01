@@ -12,7 +12,7 @@ public:
 	bool					Begin();
 	bool					End();
 
-	void					DrawText(const D2D1_RECT_F& rt, const std::tstring& Text, DirectX::FXMVECTOR Color);
+	void					DrawText(const D2D1_RECT_F& rt, const std::tstring& Text, DirectX::FXMVECTOR Color, DWRITE_TEXT_ALIGNMENT alignment = DWRITE_TEXT_ALIGNMENT_LEADING);
 
 	void					OnResize(IDXGISwapChain* pSwapChain);
 	void					Reset();

@@ -14,6 +14,15 @@ XMFLOAT4X4 Camera::SetViewMatrix(XMFLOAT3 vPos, XMFLOAT3 vTarget, XMFLOAT3 vUp)
 
 	XMStoreFloat4x4(&m_matView, view);
 
+	XMMATRIX mInvView = DirectX::XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_matView));
+
+	XMFLOAT3 pZBasis;
+	XMStoreFloat3(&pZBasis, mInvView.r[2]);
+
+	m_fCameraYawAngle = atan2f(pZBasis.x, pZBasis.z);
+	float fLen = sqrtf(pZBasis.x * pZBasis.x + pZBasis.z * pZBasis.z);
+	m_fCameraPitchAngle = -atan2f(pZBasis.y, fLen);
+
 	UpdateVector();
 	return m_matView;
 }
@@ -72,15 +81,6 @@ void Camera::UpdateVector()
 	XMStoreFloat3(&m_vLook, LookN);
 	XMStoreFloat3(&m_vUpvector, UpN);
 	XMStoreFloat3(&m_vSide, SideN);
-
-	XMMATRIX mInvView = DirectX::XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_matView));
-
-	XMFLOAT3 pZBasis;
-	XMStoreFloat3(&pZBasis, mInvView.r[2]);
-
-	m_fCameraYawAngle = atan2f(pZBasis.x, pZBasis.z);
-	float fLen = sqrtf(pZBasis.x * pZBasis.x + pZBasis.z * pZBasis.z);
-	m_fCameraPitchAngle = -atan2f(pZBasis.y, fLen);
 }
 
 bool Camera::Update(XMFLOAT4 vValue)

@@ -64,7 +64,7 @@ void d3dUtil::CreateIndexBuffer(
 void d3dUtil::CreateConstantBuffer(
 	ID3D11Device* pDevice,
 	UINT iNumCount,
-	UINT iIndexSize,
+	UINT iStride,
 	ID3D11Buffer** ppBuffer,
 	LPVOID pData,
 	bool bDynamic)
@@ -84,7 +84,7 @@ void d3dUtil::CreateConstantBuffer(
 		bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	}
-	bd.ByteWidth = iNumCount * iIndexSize;
+	bd.ByteWidth = iNumCount * iStride;
 	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 	if (pData != nullptr)

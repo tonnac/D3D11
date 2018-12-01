@@ -90,6 +90,11 @@ void Shape::LoadTextureShader(std::tstring szName)
 	d3dUtil::CreateShaderResourceView(m_pDevice, szName, m_DxObject.m_pTextureSRV.GetAddressOf());
 }
 
+void Shape::SetShaderResourceView(ID3D11ShaderResourceView * pShaderResourceView)
+{
+	m_DxObject.m_pTextureSRV = pShaderResourceView;
+}
+
 void Shape::SetMatrix(XMFLOAT4X4* pWorld)
 {
 	if (pWorld != nullptr)
@@ -124,12 +129,12 @@ bool Shape::Frame()
 bool Shape::PreRender(ID3D11DeviceContext* pContext)
 {
 	pContext->UpdateSubresource(m_DxObject.m_pConstantBuffer.Get(), 0, nullptr, &m_cbData, 0, 0);
+	pContext->IASetPrimitiveTopology(m_Primitive);
 	return m_DxObject.PreRender(pContext);
 }
 
 bool Shape::PostRender(ID3D11DeviceContext* pContext)
 {
-	pContext->IASetPrimitiveTopology(m_Primitive);
 	return m_DxObject.PostRender(pContext);
 }
 
@@ -140,6 +145,10 @@ bool Shape::Render(ID3D11DeviceContext* pContext)
 	return true;
 }
 
+
+BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
+{
+}
 
 void BoxShape::CreateVertexData()
 {
@@ -178,6 +187,9 @@ void BoxShape::CreateVertexData()
 	m_VertexList[22] = PNCT_VERTEX(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
 	m_VertexList[23] = PNCT_VERTEX(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
+	if (mIsDice)
+		DiceTex();
+
 	m_DxObject.m_iNumVertex = (UINT)m_VertexList.size();
 	m_DxObject.m_iVertexSize = sizeof(PNCT_VERTEX);
 
@@ -197,4 +209,43 @@ void BoxShape::CreateIndexData()
 
 	m_DxObject.m_iNumIndex = (UINT)m_IndexList.size();
 	m_DxObject.m_iIndexSize = (UINT)sizeof(DWORD);
+}
+
+void BoxShape::DiceTex()
+{
+	m_VertexList[0].t = { 0.76f, 0.66f };
+	m_VertexList[1].t = { 0.76f, 0.34f };
+	m_VertexList[2].t = { 1.0f, 0.34f };
+	m_VertexList[3].t = { 1.0f, 0.66f };
+
+	//6
+	m_VertexList[4].t = { 0.5f, 0.33f };
+	m_VertexList[5].t = { 0.25f, 0.33f };
+	m_VertexList[6].t = { 0.25f, 0.0f };
+	m_VertexList[7].t = { 0.5f, 0.0f };
+
+	//2
+	m_VertexList[8].t = { 0.51f, 0.66f };
+	m_VertexList[9].t = { 0.51f, 0.34f };
+	m_VertexList[10].t = { 0.75f, 0.34f };
+	m_VertexList[11].t = { 0.75f, 0.66f };
+
+	//3
+	m_VertexList[12].t = { 0.5f, 0.66f };
+	m_VertexList[13].t = { 0.25f, 0.66f };
+	m_VertexList[14].t = { 0.25f, 0.33f };
+	m_VertexList[15].t = { 0.5f, 0.33f };
+
+	//5
+	m_VertexList[16].t = { 0.26f, 1.0f };
+	m_VertexList[17].t = { 0.26f, 0.67f };
+	m_VertexList[18].t = { 0.5f, 0.67f };
+	m_VertexList[19].t = { 0.5f, 1.0f };
+
+	//4
+
+	m_VertexList[20].t = { 0.0f, 0.66f };
+	m_VertexList[21].t = { 0.0f, 0.33f };
+	m_VertexList[22].t = { 0.25f, 0.33f };
+	m_VertexList[23].t = { 0.25f, 0.66f };
 }

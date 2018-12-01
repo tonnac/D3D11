@@ -31,10 +31,11 @@ bool DirectWrite::End()
 	return true;
 }
 
-void DirectWrite::DrawText(const D2D1_RECT_F& rt, const std::tstring& Text, DirectX::FXMVECTOR Color)
+void DirectWrite::DrawText(const D2D1_RECT_F& rt, const std::tstring& Text, DirectX::FXMVECTOR Color, DWRITE_TEXT_ALIGNMENT alignment)
 {
 	XMFLOAT4 Col;
 	XMStoreFloat4(&Col, Color);
+	m_pTextFormat->SetTextAlignment(alignment);
 	m_pColorBrush->SetColor(D2D1::ColorF(Col.x, Col.y, Col.z, Col.w));
 	m_pRenderTarget->DrawText(Text.c_str(), Casting(UINT, Text.length()), m_pTextFormat.Get(), rt, m_pColorBrush.Get());
 }

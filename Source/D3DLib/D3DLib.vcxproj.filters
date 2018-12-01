@@ -66,6 +66,12 @@
     <ClInclude Include="DxState.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DxRT.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Minimap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -108,6 +114,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DxState.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DxRT.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Minimap.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

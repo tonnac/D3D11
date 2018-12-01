@@ -50,8 +50,7 @@ void Device::OnResize()
 
 	m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 
-	m_pRenderTargetView.Reset();
-	m_pDepthStencilView.Reset();
+	m_DxRT.Reset();
 
 	m_SwapChainDesc.BufferDesc.Width = g_ClientWidth;
 	m_SwapChainDesc.BufferDesc.Height = g_ClientHeight;
@@ -63,11 +62,14 @@ void Device::OnResize()
 		m_SwapChainDesc.BufferDesc.Format,
 		m_SwapChainDesc.Flags));
 
-	SetRenderTargetView();
-	SetDepthStencilView();
-	SetViewport();
-}
+	ComPtr<ID3D11Texture2D> pTexture = nullptr;
+	ThrowifFailed(m_pSwapchain->GetBuffer(0, IID_PPV_ARGS(pTexture.GetAddressOf())));
 
+	m_DxRT.Initialize(m_pd3dDevice.Get(),
+		Casting(float, m_SwapChainDesc.BufferDesc.Width),
+		Casting(float, m_SwapChainDesc.BufferDesc.Height),
+		pTexture.Get());
+}
 
 void Device::CreateSwapChain()
 {
@@ -90,56 +92,6 @@ void Device::CreateSwapChain()
 	m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	ThrowifFailed(m_pdxgiFactory->CreateSwapChain(m_pd3dDevice.Get(), &m_SwapChainDesc, m_pSwapchain.GetAddressOf()));
-}
-
-void Device::SetRenderTargetView()
-{
-	ComPtr<ID3D11Texture2D> pTexture = nullptr;
-	ThrowifFailed(m_pSwapchain->GetBuffer(0, IID_PPV_ARGS(pTexture.GetAddressOf())));
-	ThrowifFailed(m_pd3dDevice->CreateRenderTargetView(
-		pTexture.Get(),
-		nullptr,
-		m_pRenderTargetView.GetAddressOf()));
-}
-
-void Device::SetDepthStencilView()
-{
-	ComPtr<ID3D11Texture2D> pTexture = nullptr;
-	D3D11_TEXTURE2D_DESC td;
-	td.Width = m_SwapChainDesc.BufferDesc.Width;
-	td.Height = m_SwapChainDesc.BufferDesc.Height;
-	td.MipLevels = 1;
-	td.ArraySize = 1;
-	td.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	td.SampleDesc.Count = 1;
-	td.SampleDesc.Quality = 0;
-	td.Usage = D3D11_USAGE_DEFAULT;
-	td.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	td.CPUAccessFlags = 0;
-	td.MiscFlags = 0;
-
-	ThrowifFailed(m_pd3dDevice->CreateTexture2D(&td, nullptr, pTexture.GetAddressOf()));
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC dsvd;
-	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	dsvd.Flags = 0;
-	dsvd.Texture2D.MipSlice = 0;
-
-	ThrowifFailed(m_pd3dDevice->CreateDepthStencilView(
-		pTexture.Get(),
-		&dsvd,
-		m_pDepthStencilView.GetAddressOf()));
-}
-
-void Device::SetViewport()
-{
-	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
-	m_Viewport.Width = Casting(float, m_SwapChainDesc.BufferDesc.Width);
-	m_Viewport.Height = Casting(float, m_SwapChainDesc.BufferDesc.Height);
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
 }
 
 void Device::LogAdapters()

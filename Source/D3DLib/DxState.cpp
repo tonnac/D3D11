@@ -5,7 +5,14 @@ using namespace Microsoft::WRL;
 std::array<ComPtr<ID3D11DepthStencilState>, (int)E_DSS::Count> DxState::m_DSS;
 std::array<ComPtr<ID3D11RasterizerState>, (int)E_RSS::Count> DxState::m_RSS;
 std::array<ComPtr<ID3D11BlendState>, (int)E_BSS::Count> DxState::m_BSS;
+
 std::array<ComPtr<ID3D11SamplerState>, (int)E_SS::Count> DxState::m_SS;
+std::array<ID3D11SamplerState*, (int)E_SS::Count> DxState::m_SamplerStateArray;
+
+std::array<ID3D11SamplerState*, (int)E_SS::Count> DxState::GetSamArray()
+{
+	return m_SamplerStateArray;
+}
 
 void DxState::InitState(ID3D11Device* pd3dDevice)
 {
@@ -47,7 +54,7 @@ void DxState::InitRasterizerState(ID3D11Device* pd3dDevice)
 
 	ZeroMemory(&rsDesc, sizeof(D3D11_RASTERIZER_DESC));
 	rsDesc.FillMode = D3D11_FILL_SOLID;
-	rsDesc.CullMode = D3D11_CULL_NONE;
+	rsDesc.CullMode = D3D11_CULL_BACK;
 	rsDesc.DepthClipEnable = TRUE;
 
 
@@ -66,7 +73,7 @@ void DxState::InitRasterizerState(ID3D11Device* pd3dDevice)
 	m_RSS[(int)E_RSS::Solidfront] = RSS;
 
 	RSS.Reset();
-	rsDesc.CullMode = D3D11_CULL_BACK;
+	rsDesc.CullMode = D3D11_CULL_NONE;
 	ThrowifFailed(pd3dDevice->CreateRasterizerState(&rsDesc, RSS.GetAddressOf()));
 	m_RSS[(int)E_RSS::SolidBack] = RSS;
 }
@@ -107,12 +114,74 @@ void DxState::InitSamplerState(ID3D11Device* pd3dDevice)
 	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 	sd.MaxLOD = FLT_MAX;
 	sd.MinLOD = FLT_MIN;
 
 	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
-	m_SS[(int)E_SS::Default] = pSamplerstate;
-
+	m_SS[(int)E_SS::PointWrap] = pSamplerstate;
+	
 	pSamplerstate.Reset();
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+
+	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
+	m_SS[(int)E_SS::PointClamp] = pSamplerstate;
+	pSamplerstate.Reset();
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
+	m_SS[(int)E_SS::LinearWrap] = pSamplerstate;
+	pSamplerstate.Reset();
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
+	m_SS[(int)E_SS::LinearClamp] = pSamplerstate;
+	pSamplerstate.Reset();
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sd.Filter = D3D11_FILTER_ANISOTROPIC;
+	sd.MipLODBias = 0.0f;
+	sd.MaxAnisotropy = 8;
+
+	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
+	m_SS[(int)E_SS::AnisotropicWrap] = pSamplerstate;
+	pSamplerstate.Reset();
+
+	///////////////////////////////////////////////////////////////////////////////////
+
+	sd.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sd.Filter = D3D11_FILTER_ANISOTROPIC;	
+
+	ThrowifFailed(pd3dDevice->CreateSamplerState(&sd, pSamplerstate.GetAddressOf()));
+	m_SS[(int)E_SS::AnisoTropicClamp] = pSamplerstate;
+	pSamplerstate.Reset();
+
+	for (E_SS index = E_SS::PointWrap; index < E_SS::Count; index = Casting(E_SS,(Casting(int,index) + 1)))
+	{
+		m_SamplerStateArray[Casting(int, index)] = m_SS[Casting(int, index)].Get();
+	}
 }

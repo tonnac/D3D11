@@ -23,6 +23,7 @@ protected:
 	virtual bool	Render();
 
 	void			CalculateFrame();
+	void			FramePassCB();
 	void			OnResize()override;
 
 private:
@@ -42,8 +43,10 @@ protected:
 	Camera  m_DefaultCamera;
 	Camera* m_pMainCamera = nullptr;
 
+	PassConstants mMainPassCB;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mPassCB = nullptr;
+
 	E_DSS m_DepthStencilState = E_DSS::Default;
 	E_RSS m_RasterizerState = E_RSS::Default;
 	E_BSS m_BlendState = E_BSS::Default;
-	E_SS  m_SampleState = E_SS::Default;
 };

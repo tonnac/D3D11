@@ -16,7 +16,12 @@ public:
 	bool Init();
 	bool Frame();
 
+	bool PreRender(ID3D11DeviceContext* pContext);
+	bool PostRender(ID3D11DeviceContext* pContext);
 	bool Render(ID3D11DeviceContext* pContext);
+
+	virtual void SetShaderResourceView(ID3D11ShaderResourceView* pShaderResourceView);
+
 protected:
 	virtual void CreateVertexData() { return; };
 	virtual void CreateIndexData() { return; };
@@ -29,10 +34,6 @@ protected:
 	virtual void LoadPixelShader(std::tstring szName);
 	virtual void LoadGeometryShader(std::tstring szName);
 	virtual void LoadTextureShader(std::tstring szName);
-
-
-	bool PreRender(ID3D11DeviceContext* pContext);
-	bool PostRender(ID3D11DeviceContext* pContext);
 
 protected:
 	ID3D11Device* m_pDevice = nullptr;
@@ -57,12 +58,18 @@ protected:
 class BoxShape : public Shape
 {
 public:
-	BoxShape() = default;
+	BoxShape(bool isDice = false);
 	virtual ~BoxShape() = default;
 
 public:
 	void CreateVertexData()override;
 	void CreateIndexData()override;
+
+private:
+	void DiceTex();
+
+private:
+	bool mIsDice = false;
 };
 
 class LineShape : public Shape
