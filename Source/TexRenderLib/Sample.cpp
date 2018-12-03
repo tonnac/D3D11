@@ -37,7 +37,6 @@ bool Sample::Render()
 
 
 	m_Box.Render(m_pImmediateContext.Get());
-
 	m_Minimap.Render(m_pImmediateContext.Get(), {0 ,400, 200, 200});	
 	return true;
 }

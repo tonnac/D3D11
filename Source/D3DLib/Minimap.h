@@ -15,8 +15,11 @@ public:
 	void SetViewMatrix(const DirectX::FXMMATRIX& matView);
 
 private:
-	PlaneShape		m_PlaneShape;
 	D3D11_VIEWPORT	m_MinimapVP;
+
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> pVertexBlob = nullptr;
 
 	DirectX::XMFLOAT4X4		m_matView;
 };

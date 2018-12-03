@@ -10,9 +10,10 @@ void Minimap::BuildMinimap(ID3D11Device* pd3Device, float width, float height,
 	m_cbData = std::make_unique<PassConstants>();
 	d3dUtil::CreateConstantBuffer(pd3Device, 1, sizeof(PassConstants), m_PassCB.GetAddressOf());
 
-	m_PlaneShape.Create(pd3Device, szShaderFile.c_str());
-
 	XMStoreFloat4x4(&m_matView, matView);
+
+	d3dUtil::LoadVertexShaderFile(pd3Device, L"minimap.hlsl", mVertexShader.GetAddressOf(), "VS", pVertexBlob.GetAddressOf());
+	d3dUtil::LoadPixelShaderFile(pd3Device, L"minimap.hlsl", mPixelShader.GetAddressOf());
 
 	m_MinimapVP.MinDepth = 0.0f;
 	m_MinimapVP.MaxDepth = 1.0f;
@@ -52,14 +53,17 @@ bool Minimap::Render(ID3D11DeviceContext* pContext, const D3D11_RECT& MapPos)
 	m_MinimapVP.Width = Casting(float, MapPos.right);
 	m_MinimapVP.Height = Casting(float,MapPos.bottom );
 
-	m_PlaneShape.SetShaderResourceView(m_pShaderResourceView.Get());
+	pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+	pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
+	pContext->PSSetShaderResources(0, 1, m_pShaderResourceView.GetAddressOf());
 	pContext->RSSetViewports(1, &m_MinimapVP);
-	m_PlaneShape.Render(pContext);
+	pContext->Draw(6, 1);
+
 	S_Write.DrawText({ m_MinimapVP.TopLeftX ,m_MinimapVP.TopLeftY, 
 		m_MinimapVP.TopLeftX + m_MinimapVP.Width, 
 		m_MinimapVP.TopLeftY + m_MinimapVP.Height }, 
 		L"MiniMap", Colors::Black, DWRITE_TEXT_ALIGNMENT_CENTER);
-	return false;
+	return true;
 }
 
 void Minimap::SetViewMatrix(const DirectX::FXMMATRIX & matView)
