@@ -45,7 +45,7 @@ protected:
 
 	ObjectConstants m_cbData;
 
-	DirectX::XMFLOAT4X4 m_matWorld;
+	DirectX::XMFLOAT4X4 m_matWorld = MathHelper::Identity4x4();
 
 	DirectX::XMFLOAT3 m_vPosition;
 	DirectX::XMFLOAT3 m_vLook;

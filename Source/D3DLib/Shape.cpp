@@ -101,10 +101,6 @@ void Shape::SetMatrix(XMFLOAT4X4* pWorld)
 	{
 		m_matWorld = *pWorld;
 	}
-	else
-	{
-		m_matWorld = MathHelper::Identity4x4();
-	}
 
 	m_vLook = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
 	m_vSide = { m_matWorld._11, m_matWorld._12 , m_matWorld._13 };

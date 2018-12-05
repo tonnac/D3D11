@@ -6,6 +6,13 @@ struct PC_VERTEX
 {
 	DirectX::XMFLOAT3 p;
 	DirectX::XMFLOAT4 c;
+	PC_VERTEX()
+	{}
+	PC_VERTEX(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT4 vc)
+	{
+		p = vp;
+		c = vc;
+	}
 };
 
 struct PNCT_VERTEX

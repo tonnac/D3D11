@@ -46,13 +46,15 @@ bool Minimap::Frame()
 	return true;
 }
 
-bool Minimap::Render(ID3D11DeviceContext* pContext, const D3D11_RECT& MapPos)
+bool Minimap::Render(ID3D11DeviceContext* pContext, 
+	float Left, float Top, float Width, float Height, const std::tstring& text)
 {
-	m_MinimapVP.TopLeftX = Casting(float, MapPos.left);
-	m_MinimapVP.TopLeftY = Casting(float, MapPos.top);
-	m_MinimapVP.Width = Casting(float, MapPos.right);
-	m_MinimapVP.Height = Casting(float,MapPos.bottom );
+	m_MinimapVP.TopLeftX = Left;
+	m_MinimapVP.TopLeftY = Top;
+	m_MinimapVP.Width = Width;
+	m_MinimapVP.Height = Height;
 
+	pContext->OMSetBlendState(DxState::m_BSS[(int)E_BSS::No].Get(), 0, -1);
 	pContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 	pContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 	pContext->PSSetShaderResources(0, 1, m_pShaderResourceView.GetAddressOf());
@@ -63,6 +65,13 @@ bool Minimap::Render(ID3D11DeviceContext* pContext, const D3D11_RECT& MapPos)
 		m_MinimapVP.TopLeftX + m_MinimapVP.Width, 
 		m_MinimapVP.TopLeftY + m_MinimapVP.Height }, 
 		L"MiniMap", Colors::Black, DWRITE_TEXT_ALIGNMENT_CENTER);
+	if (!text.empty())
+	{
+		S_Write.DrawText({ m_MinimapVP.TopLeftX ,m_MinimapVP.TopLeftY + m_MinimapVP.Height - 30,
+			m_MinimapVP.TopLeftX + m_MinimapVP.Width,
+			m_MinimapVP.TopLeftY + m_MinimapVP.Height + 200 },
+			text.c_str(), Colors::Black, DWRITE_TEXT_ALIGNMENT_CENTER);
+	}
 	return true;
 }
 

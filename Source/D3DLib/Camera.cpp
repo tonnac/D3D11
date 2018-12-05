@@ -98,8 +98,8 @@ bool Camera::Update(XMFLOAT4 vValue)
 	XMStoreFloat3(&m_vPos, vPos);
 
 	XMMATRIX matRot = XMMatrixAffineTransformation(
-		XMVECTOR{ 1.0f,1.0f,1.0f,1.0f },
-		XMVECTOR{ 0, 0, 0, 0 },
+		XMVectorSplatOne(),
+		XMVectorZero(),
 		Quaternion,
 		XMLoadFloat3(&m_vPos));
 

@@ -10,7 +10,7 @@ public:
 	void BuildMinimap(ID3D11Device* pd3Device, float width, float height,
 					  const std::tstring& szShaderFile, const DirectX::FXMMATRIX& matView);
 	bool Frame();
-	bool Render(ID3D11DeviceContext* pContext, const D3D11_RECT& MapPos);
+	bool Render(ID3D11DeviceContext* pContext, float Left, float Top, float Width, float Height, const std::tstring& text = std::tstring());
 
 	void SetViewMatrix(const DirectX::FXMMATRIX& matView);
 
