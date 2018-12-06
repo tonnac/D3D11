@@ -170,6 +170,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="DxObj.h" />
     <ClInclude Include="DxRT.h" />
     <ClInclude Include="DxState.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="ObjectStd.h" />
@@ -187,6 +188,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="DxObj.cpp" />
     <ClCompile Include="DxRT.cpp" />
     <ClCompile Include="DxState.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Lineshape.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Minimap.cpp" />
