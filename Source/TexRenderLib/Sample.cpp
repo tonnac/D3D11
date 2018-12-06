@@ -46,7 +46,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR szCmdLine, 
 	try
 	{
 		Sample sd(hInstance, 800, 600, L"FirstWindow");
-		
+	
 		if (!sd.Initialize())
 			return 0;
 	

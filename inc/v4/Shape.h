@@ -61,7 +61,7 @@ public:
 	BoxShape(bool isDice = false);
 	virtual ~BoxShape() = default;
 
-public:
+protected:
 	void CreateVertexData()override;
 	void CreateIndexData()override;
 
@@ -96,7 +96,7 @@ public:
 	PlaneShape() = default;
 	virtual ~PlaneShape() = default;
 
-public:
+protected:
 	void CreateVertexData()override;
 	void CreateIndexData()override;
 };
@@ -107,7 +107,7 @@ public:
 	DirectionShape();
 	virtual ~DirectionShape() = default;
 
-public:
+protected:
 	void	CreateInputLayout()override;
 	void	CreateVertexData()override;
 	void	CreateIndexData()override;
