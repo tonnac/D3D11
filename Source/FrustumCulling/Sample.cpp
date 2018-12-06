@@ -74,9 +74,6 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	m_Box.SetMatrix();
-	m_Dir.SetMatrix();
-
 	m_Minimap.Begin(m_pImmediateContext.Get(), Colors::SkyBlue);
 	{
 		

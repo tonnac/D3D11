@@ -19,7 +19,7 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob> pVertexBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11GeometryShader> mGeometryShader = nullptr;
 
 	DirectX::XMFLOAT4X4		m_matView;
 };
