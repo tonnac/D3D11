@@ -42,12 +42,8 @@ void GS(in point VertexOut p[1],
 	{
 		gOut[i].t = TexCoords[i];
 		gOut[i].p = float4(2.0f * gOut[i].t.x - 1.0f, 1.0f - 2.0f * gOut[i].t.y, 0.0f, 1.0f);
+		tristream.Append(gOut[i]);
 	}
-
-	tristream.Append(gOut[0]);
-	tristream.Append(gOut[1]);
-	tristream.Append(gOut[2]);
-	tristream.Append(gOut[3]);
 }
 
 float4 PS(in GeoOut pIn) : SV_Target

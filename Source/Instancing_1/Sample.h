@@ -17,12 +17,17 @@ protected:
 private:
 	std::array<DirectX::XMFLOAT4X4, 100> mWorldarr;
 
-	std::array<DirectX::XMFLOAT4X4, 100> mTWorldarr;
-
-
 	BoxShape m_Box;
 
 	boundingBox box[100];
 
+	Minimap mMinimap;
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mInstanceBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstant = nullptr;
+
+	Frustum mFrustum;
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader[2];
+
+	std::vector<DirectX::XMFLOAT4X4> mInstance;
 };

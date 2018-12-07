@@ -63,11 +63,6 @@ bool Sample::Init()
 	bufDesc.CPUAccessFlags = 0;
 	bufDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 	bufDesc.StructureByteStride = sizeof(XMFLOAT4X4);
-	
-	D3D11_SUBRESOURCE_DATA initdata;
-	initdata.pSysMem = mWorldarr.data();
-	initdata.SysMemPitch = 0;
-	initdata.SysMemSlicePitch = 0;
 
 	m_pd3dDevice->CreateBuffer(&bufDesc, nullptr, mInstanceBuffer.GetAddressOf());
 
@@ -76,7 +71,7 @@ bool Sample::Init()
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 	srvDesc.BufferEx.FirstElement = 0;
 	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.BufferEx.NumElements = 100;
+	srvDesc.BufferEx.NumElements = (UINT)mWorldarr.size();
 
 	m_pd3dDevice->CreateShaderResourceView(mInstanceBuffer.Get(), &srvDesc, mInstanceView.GetAddressOf());
 
@@ -99,11 +94,9 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	int iCount = 0;
 	m_Box.PreRender(m_pImmediateContext.Get());
 	m_pImmediateContext->VSSetShaderResources(1, 1, mInstanceView.GetAddressOf());
 	m_pImmediateContext->DrawIndexedInstanced(36, 100, 0, 0, 0);
-	++iCount;
 	return true;
 }
 

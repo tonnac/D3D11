@@ -10,7 +10,14 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 
 bool Sample::Init()
 {
+	d3dUtil::LoadPixelShaderFile(m_pd3dDevice.Get(), L"frustum1.hlsl", mPixelShader[0].GetAddressOf());
+	d3dUtil::LoadPixelShaderFile(m_pd3dDevice.Get(), L"frustum2.hlsl", mPixelShader[1].GetAddressOf());
+
+	mFrustum.Initialize(m_pd3dDevice.Get(), L"frustum.hlsl", m_pMainCamera->m_matView, m_pMainCamera->m_matProj);
+
 	m_Box.Create(m_pd3dDevice.Get(), L"box.hlsl", L"../../data/misc/dice_unwrap.png");
+	XMMATRIX Look = XMMatrixLookAtLH(XMVECTOR{ 0.0f, 250.f, -0.1f }, XMVectorZero(), XMVECTOR{ 0.0f, 1.0f, 0.0f });
+	mMinimap.BuildMinimap(m_pd3dDevice.Get(), 1024, 1024, L"Minimap.hlsl", Look);
 
 	XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -45,42 +52,60 @@ bool Sample::Init()
 		XMVECTOR max = XMVector3Transform(vMax, sr);
 		XMVECTOR min = XMVector3Transform(vMin, sr);
 		XMVECTOR half = max - XMLoadFloat3(&box[i].mCenter);
-		
+
+
 		box[i].mExtent[0] = XMVectorGetX(XMVector3Dot(XMLoadFloat3(&box[i].mAxis[0]), half));
 		box[i].mExtent[1] = XMVectorGetX(XMVector3Dot(XMLoadFloat3(&box[i].mAxis[1]), half));
 		box[i].mExtent[2] = XMVectorGetX(XMVector3Dot(XMLoadFloat3(&box[i].mAxis[2]), half));
 
-		XMStoreFloat4x4(&mWorldarr[i], sr);
+		XMStoreFloat4x4(&mWorldarr[i], XMMatrixTranspose(sr));
 	}
 
 	D3D11_BUFFER_DESC bufDesc = CD3D11_BUFFER_DESC(sizeof(XMFLOAT4X4) * 100, D3D11_BIND_VERTEX_BUFFER);
 
-	m_pd3dDevice->CreateBuffer(&bufDesc, nullptr, mInstanceBuffer.GetAddressOf());
+	D3D11_SUBRESOURCE_DATA sub;
+	sub.pSysMem = mWorldarr.data();
 
+	m_pd3dDevice->CreateBuffer(&bufDesc, nullptr, mInstanceBuffer.GetAddressOf());
+	m_pd3dDevice->CreateBuffer(&bufDesc, &sub, mConstant.GetAddressOf());
 	return true;
 }
 
 bool Sample::Frame()
 {
 	m_Box.Frame();
+	mMinimap.Frame();
+	mFrustum.UpdateFrustum(m_pMainCamera->m_matView, m_pMainCamera->m_matProj);
 	for (int i = 0; i < 100; ++i)
 	{
-		XMMATRIX T = XMLoadFloat4x4(&mWorldarr[i]);
-		XMStoreFloat4x4(&mTWorldarr[i], XMMatrixTranspose(T));
+		if (mFrustum.Contains(box[i]) == true)
+		{
+			mInstance.push_back(mWorldarr[i]);
+		}
 	}
-	m_pImmediateContext->UpdateSubresource(mInstanceBuffer.Get(), 0, nullptr, mTWorldarr.data(), 0, 0);
+	m_pImmediateContext->UpdateSubresource(mInstanceBuffer.Get(), 0, nullptr, mInstance.data(), 0, 0);
 	return true;
 }
 
 bool Sample::Render()
 {
-	int iCount = 0;
 	UINT stride = sizeof(XMFLOAT4X4);
 	UINT offset = 0;
-	m_pImmediateContext->IASetVertexBuffers(1, 1, mInstanceBuffer.GetAddressOf(), &stride, &offset);
+
+	mMinimap.Begin(m_pImmediateContext.Get(), Colors::Khaki);
+	m_pImmediateContext->IASetVertexBuffers(1, 1, mConstant.GetAddressOf(), &stride, &offset);
 	m_Box.PreRender(m_pImmediateContext.Get());
 	m_pImmediateContext->DrawIndexedInstanced(36, 100, 0, 0, 0);
-	++iCount;
+	mMinimap.End(m_pImmediateContext.Get(), &m_DxRT);
+
+
+	m_pImmediateContext->IASetVertexBuffers(1, 1, mInstanceBuffer.GetAddressOf(), &stride, &offset);
+	m_Box.PreRender(m_pImmediateContext.Get());
+	m_pImmediateContext->DrawIndexedInstanced(36, (UINT)mInstance.size(), 0, 0, 0);
+
+	std::tstring text = L"Infrustum: " + std::to_tstring(mInstance.size());
+	mMinimap.Render(m_pImmediateContext.Get(), 0, 300, 300, 300, text);
+	mInstance.clear();
 	return true;
 }
 
