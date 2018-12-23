@@ -5,54 +5,79 @@ using namespace DirectX;
 
 Shape::Shape()
 {
-	m_matWorld = MathHelper::Identity4x4();
-
-	m_Primitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	
-	m_vLook = { m_matWorld._11, m_matWorld._12 , m_matWorld._13 };
-	m_vSide = { m_matWorld._21, m_matWorld._22 , m_matWorld._23 };
-	m_vUp = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
-	m_vPosition = { m_matWorld._41, m_matWorld._42, m_matWorld._43 };
 }
 
-void Shape::Create(ID3D11Device* pDevice, std::tstring szShaderName, std::tstring szTextureName)
+void Shape::Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const std::tstring& textureFile)
 {
 	m_pDevice = pDevice;
-	CreateVertexData();
-	CreateIndexData();
-	CreateVertexBuffer();
-	CreateIndexBuffer();
-	CreateConstantBuffer();
-	LoadVertexShader(szShaderName);
-	LoadPixelShader(szShaderName);
-//	LoadGeometryShader(szShaderName);
-	CreateInputLayout();
-	if (!szTextureName.empty())
-	{
-		LoadTextureShader(szTextureName);
-	}
-}
 
-void Shape::CreateVertexBuffer()
-{
+	mDxObject = std::make_unique<DxObj>();
+
+	BuildGeometry();
+	BuildRenderItem(textureFile);
+
 	d3dUtil::CreateVertexBuffer(m_pDevice,
-		(UINT)m_VertexList.size(),
-		m_DxObject.m_iVertexSize,
-		m_VertexList.data(),
-		m_DxObject.m_pVertexBuffer.GetAddressOf());
+		mGeometries->VertexBufferByteSize,
+		mGeometries->VertexBufferCPU->GetBufferPointer(),
+		mGeometries->VertexBuffer.GetAddressOf());
+
+	d3dUtil::CreateIndexBuffer(m_pDevice,
+		mGeometries->IndexBufferByteSize,
+		mGeometries->IndexBufferCPU->GetBufferPointer(),
+		mGeometries->IndexBuffer.GetAddressOf());
+
+	BuildDxObject(m_pDevice, shaderFile, nullptr);
 }
 
-void Shape::CreateIndexBuffer()
+void Shape::BuildRenderItem(const std::tstring & textureFile)
 {
-	d3dUtil::CreateIndexBuffer(m_pDevice, (UINT)m_IndexList.size(), m_DxObject.m_iIndexSize, m_IndexList.data(), m_DxObject.m_pIndexBuffer.GetAddressOf());
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometries.get();
+	rItem->World = MathHelper::Identity4x4();
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	if (!textureFile.empty())
+		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem.push_back(rItem.get());
+	S_RItem.SaveRenderItem(rItem);
 }
 
-void Shape::CreateConstantBuffer()
+void Shape::BuildDxObject(ID3D11Device * device, const std::tstring & filename, const D3D10_SHADER_MACRO * defines)
 {
-	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), m_DxObject.m_pConstantBuffer.GetAddressOf());
+	if(mDxObject == nullptr)
+		mDxObject = std::make_unique<DxObj>();
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
+	if (mDxObject->m_pVertexShader == nullptr)
+	{
+		d3dUtil::LoadVertexShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
+		CreateInputLayout(vertexBlob.Get());
+	}
+	if (mDxObject->m_pPixelShader == nullptr)
+		d3dUtil::LoadPixelShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
 }
 
-void Shape::CreateInputLayout()
+void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
+{
+	mGeometries = std::make_unique<MeshGeometry>();
+
+	D3DCreateBlob(vbByteSize, mGeometries->VertexBufferCPU.GetAddressOf());
+	CopyMemory(mGeometries->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
+
+	D3DCreateBlob(ibByteSize, mGeometries->IndexBufferCPU.GetAddressOf());
+	CopyMemory(mGeometries->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
+
+	mGeometries->VertexBufferByteSize = vbByteSize;
+	mGeometries->VertexByteStride = vertexStride;
+	Stride = vertexStride;
+	mGeometries->IndexBufferByteSize = ibByteSize;
+	mGeometries->IndexFormat = DXGI_FORMAT_R32_UINT;
+}
+
+void Shape::CreateInputLayout(ID3DBlob * vertexblob)
 {
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -60,192 +85,151 @@ void Shape::CreateInputLayout()
 		{"NORMAL"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 12	, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR"	, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 24	, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD"	, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 	d3dUtil::CreateInputLayout(m_pDevice,
-		(DWORD)m_DxObject.m_pVSBlob->GetBufferSize(),
-		m_DxObject.m_pVSBlob->GetBufferPointer(),
+		(DWORD)vertexblob->GetBufferSize(),
+		vertexblob->GetBufferPointer(),
 		layout,
 		(UINT)std::size(layout),
-		m_DxObject.m_pInputLayout.GetAddressOf());
+		mDxObject->m_pInputLayout.GetAddressOf());
 }
 
-void Shape::LoadVertexShader(std::tstring szName)
-{
-	d3dUtil::LoadVertexShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pVertexShader.GetAddressOf(), "VS", m_DxObject.m_pVSBlob.GetAddressOf());
-}
-
-void Shape::LoadPixelShader(std::tstring szName)
-{
-	d3dUtil::LoadPixelShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pPixelShader.GetAddressOf());
-}
-
-void Shape::LoadGeometryShader(std::tstring szName)
-{
-	d3dUtil::LoadGeometryShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pGeometryShader.GetAddressOf());
-}
-
-void Shape::LoadTextureShader(std::tstring szName)
-{
-	d3dUtil::CreateShaderResourceView(m_pDevice, szName, m_DxObject.m_pTextureSRV.GetAddressOf());
-}
-
-void Shape::SetShaderResourceView(ID3D11ShaderResourceView * pShaderResourceView)
-{
-	m_DxObject.m_pTextureSRV = pShaderResourceView;
-}
-
-void Shape::SetMatrix(XMFLOAT4X4* pWorld)
-{
-	if (pWorld != nullptr)
-	{
-		m_matWorld = *pWorld;
-	}
-
-	m_vLook = { m_matWorld._31, m_matWorld._32 , m_matWorld._33 };
-	m_vSide = { m_matWorld._11, m_matWorld._12 , m_matWorld._13 };
-	m_vUp = { m_matWorld._21, m_matWorld._22 , m_matWorld._23 };
-	m_vPosition = { m_matWorld._41, m_matWorld._42, m_matWorld._43 };
-
-	XMMATRIX world = XMLoadFloat4x4(&m_matWorld);
-
-	XMStoreFloat4x4(&m_cbData.World, XMMatrixTranspose(world));
-}
-
-bool Shape::Init()
-{
-	return true;
-}
 
 bool Shape::Frame()
 {
 	return true;
 }
 
-bool Shape::PreRender(ID3D11DeviceContext* pContext)
-{
-	pContext->UpdateSubresource(m_DxObject.m_pConstantBuffer.Get(), 0, nullptr, &m_cbData, 0, 0);
-	pContext->IASetPrimitiveTopology(m_Primitive);
-	return m_DxObject.PreRender(pContext);
-}
-
-bool Shape::PostRender(ID3D11DeviceContext* pContext)
-{
-	return m_DxObject.PostRender(pContext);
-}
-
 bool Shape::Render(ID3D11DeviceContext* pContext)
 {
-	PreRender(pContext);
-	PostRender(pContext);
+	UpdateObjectCBs(pContext);
+	pContext->IASetVertexBuffers(0, 1, mGeometries->VertexBuffer.GetAddressOf(), &Stride, &offset);
+	pContext->IASetIndexBuffer(mGeometries->IndexBuffer.Get(), mGeometries->IndexFormat, 0);
+	if(mDxObject != nullptr)
+		mDxObject->SetResource(pContext);
+	for (auto&x : mRenderItem)
+	{
+		pContext->IASetPrimitiveTopology(x->PrimitiveType);
+		pContext->PSSetShaderResources(0, 1, x->ShaderResourceView.GetAddressOf());
+		pContext->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
+		pContext->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
+	}
 	return true;
 }
 
+void Shape::UpdateObjectCBs(ID3D11DeviceContext * pContext)
+{
+	for (auto&x : mRenderItem)
+	{
+		ObjectConstants obj;
+
+		XMMATRIX texTransform = XMLoadFloat4x4(&x->TexTransform);
+		XMMATRIX World = XMLoadFloat4x4(&x->World);
+
+		XMStoreFloat4x4(&obj.TexTransform, XMMatrixTranspose(texTransform));
+		XMStoreFloat4x4(&obj.World, XMMatrixTranspose(World));
+
+		pContext->UpdateSubresource(x->ConstantBuffer.Get(), 0, nullptr, &obj, 0, 0);
+	}
+}
 
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 {
 }
 
-void BoxShape::CreateVertexData()
+void BoxShape::BuildGeometry()
 {
-	m_VertexList.resize(24);
-	m_VertexList[0] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[1] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[2] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[3] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	std::vector<Vertex> vertices;
+
+	vertices.resize(24);
+	vertices[0] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[1] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[2] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[3] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 	// µÞ¸é
-	m_VertexList[4] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[5] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[6] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[7] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[4] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[5] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[6] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[7] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
 	// ¿À¸¥ÂÊ
-	m_VertexList[8] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[9] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[10] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[11] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[8] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[9] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[10] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[11] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
 	// ¿ÞÂÊ
-	m_VertexList[12] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[13] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[14] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[15] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[12] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[13] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[14] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[15] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
 	// À­¸é
-	m_VertexList[16] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[17] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[18] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[19] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[16] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[17] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[18] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[19] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
 	// ¾Æ·§¸é
-	m_VertexList[20] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[21] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[22] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_VertexList[23] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[20] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[21] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[22] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
+	vertices[23] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
 
 	if (mIsDice)
-		DiceTex();
+	{
+		vertices[0].t = { 0.76f, 0.66f };
+		vertices[1].t = { 0.76f, 0.34f };
+		vertices[2].t = { 1.0f, 0.34f };
+		vertices[3].t = { 1.0f, 0.66f };
 
-	m_DxObject.m_iNumVertex = (UINT)m_VertexList.size();
-	m_DxObject.m_iVertexSize = sizeof(Vertex);
+		vertices[4].t = { 0.5f, 0.33f };
+		vertices[5].t = { 0.25f, 0.33f };
+		vertices[6].t = { 0.25f, 0.0f };
+		vertices[7].t = { 0.5f, 0.0f };
+		
+		vertices[8].t = { 0.51f, 0.66f };
+		vertices[9].t = { 0.51f, 0.34f };
+		vertices[10].t = { 0.75f, 0.34f };
+		vertices[11].t = { 0.75f, 0.66f };
 
-}
+		vertices[12].t = { 0.5f, 0.66f };
+		vertices[13].t = { 0.25f, 0.66f };
+		vertices[14].t = { 0.25f, 0.33f };
+		vertices[15].t = { 0.5f, 0.33f };
+		
+		vertices[16].t = { 0.26f, 1.0f };
+		vertices[17].t = { 0.26f, 0.67f };
+		vertices[18].t = { 0.5f, 0.67f };
+		vertices[19].t = { 0.5f, 1.0f };
+		
+		vertices[20].t = { 0.0f, 0.66f };
+		vertices[21].t = { 0.0f, 0.33f };
+		vertices[22].t = { 0.25f, 0.33f };
+		vertices[23].t = { 0.25f, 0.66f };
+	}
 
-void BoxShape::CreateIndexData()
-{
-	m_IndexList.resize(36);
+	std::vector<DWORD> indices;
+
+	indices.resize(36);
 
 	int iIndex = 0;
-	m_IndexList[iIndex++] = 0; 	m_IndexList[iIndex++] = 1; 	m_IndexList[iIndex++] = 2; 	m_IndexList[iIndex++] = 0;	m_IndexList[iIndex++] = 2; 	m_IndexList[iIndex++] = 3;
-	m_IndexList[iIndex++] = 4; 	m_IndexList[iIndex++] = 5; 	m_IndexList[iIndex++] = 6; 	m_IndexList[iIndex++] = 4;	m_IndexList[iIndex++] = 6; 	m_IndexList[iIndex++] = 7;
-	m_IndexList[iIndex++] = 8; 	m_IndexList[iIndex++] = 9; 	m_IndexList[iIndex++] = 10; m_IndexList[iIndex++] = 8;	m_IndexList[iIndex++] = 10; m_IndexList[iIndex++] = 11;
-	m_IndexList[iIndex++] = 12; m_IndexList[iIndex++] = 13; m_IndexList[iIndex++] = 14; m_IndexList[iIndex++] = 12;	m_IndexList[iIndex++] = 14; m_IndexList[iIndex++] = 15;
-	m_IndexList[iIndex++] = 16; m_IndexList[iIndex++] = 17; m_IndexList[iIndex++] = 18; m_IndexList[iIndex++] = 16;	m_IndexList[iIndex++] = 18; m_IndexList[iIndex++] = 19;
-	m_IndexList[iIndex++] = 20; m_IndexList[iIndex++] = 21; m_IndexList[iIndex++] = 22; m_IndexList[iIndex++] = 20;	m_IndexList[iIndex++] = 22; m_IndexList[iIndex++] = 23;
+	indices[iIndex++] = 0; 	indices[iIndex++] = 1; 	indices[iIndex++] = 2; 	indices[iIndex++] = 0;	indices[iIndex++] = 2; 	indices[iIndex++] = 3;
+	indices[iIndex++] = 4; 	indices[iIndex++] = 5; 	indices[iIndex++] = 6; 	indices[iIndex++] = 4;	indices[iIndex++] = 6; 	indices[iIndex++] = 7;
+	indices[iIndex++] = 8; 	indices[iIndex++] = 9; 	indices[iIndex++] = 10; indices[iIndex++] = 8;	indices[iIndex++] = 10; indices[iIndex++] = 11;
+	indices[iIndex++] = 12; indices[iIndex++] = 13; indices[iIndex++] = 14; indices[iIndex++] = 12;	indices[iIndex++] = 14; indices[iIndex++] = 15;
+	indices[iIndex++] = 16; indices[iIndex++] = 17; indices[iIndex++] = 18; indices[iIndex++] = 16;	indices[iIndex++] = 18; indices[iIndex++] = 19;
+	indices[iIndex++] = 20; indices[iIndex++] = 21; indices[iIndex++] = 22; indices[iIndex++] = 20;	indices[iIndex++] = 22; indices[iIndex++] = 23;
 
-	m_DxObject.m_iNumIndex = (UINT)m_IndexList.size();
-	m_DxObject.m_iIndexSize = (UINT)sizeof(DWORD);
-}
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-void BoxShape::DiceTex()
-{
-	m_VertexList[0].t = { 0.76f, 0.66f };
-	m_VertexList[1].t = { 0.76f, 0.34f };
-	m_VertexList[2].t = { 1.0f, 0.34f };
-	m_VertexList[3].t = { 1.0f, 0.66f };
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
-	//6
-	m_VertexList[4].t = { 0.5f, 0.33f };
-	m_VertexList[5].t = { 0.25f, 0.33f };
-	m_VertexList[6].t = { 0.25f, 0.0f };
-	m_VertexList[7].t = { 0.5f, 0.0f };
-
-	//2
-	m_VertexList[8].t = { 0.51f, 0.66f };
-	m_VertexList[9].t = { 0.51f, 0.34f };
-	m_VertexList[10].t = { 0.75f, 0.34f };
-	m_VertexList[11].t = { 0.75f, 0.66f };
-
-	//3
-	m_VertexList[12].t = { 0.5f, 0.66f };
-	m_VertexList[13].t = { 0.25f, 0.66f };
-	m_VertexList[14].t = { 0.25f, 0.33f };
-	m_VertexList[15].t = { 0.5f, 0.33f };
-
-	//5
-	m_VertexList[16].t = { 0.26f, 1.0f };
-	m_VertexList[17].t = { 0.26f, 0.67f };
-	m_VertexList[18].t = { 0.5f, 0.67f };
-	m_VertexList[19].t = { 0.5f, 1.0f };
-
-	//4
-
-	m_VertexList[20].t = { 0.0f, 0.66f };
-	m_VertexList[21].t = { 0.0f, 0.33f };
-	m_VertexList[22].t = { 0.25f, 0.33f };
-	m_VertexList[23].t = { 0.25f, 0.66f };
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometries->DrawArgs["default"] = sub;
 }

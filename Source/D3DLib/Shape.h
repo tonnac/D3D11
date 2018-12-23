@@ -1,4 +1,5 @@
 #pragma once
+#include "RenderItemStorage.h"
 #include "ObjectStd.h"
 #include "MathHelper.h"
 
@@ -9,50 +10,35 @@ public:
 	virtual ~Shape() = default;
 
 public:
-	void Create(ID3D11Device* pDevice, std::tstring szShaderName, std::tstring szTextureName = std::tstring());
+	virtual void Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const std::tstring& textureFile = std::tstring());
 
-	void SetMatrix(DirectX::XMFLOAT4X4* pWorld = nullptr);
-
-	bool Init();
 	bool Frame();
 
-	bool PreRender(ID3D11DeviceContext* pContext);
-	bool PostRender(ID3D11DeviceContext* pContext);
-	bool Render(ID3D11DeviceContext* pContext);
-
-	virtual void SetShaderResourceView(ID3D11ShaderResourceView* pShaderResourceView);
+	virtual bool Render(ID3D11DeviceContext* pContext);
 
 protected:
-	virtual void CreateVertexData() { return; };
-	virtual void CreateIndexData() { return; };
+	void UpdateObjectCBs(ID3D11DeviceContext* pContext);
 
-	virtual void CreateVertexBuffer();
-	virtual void CreateIndexBuffer();
-	virtual void CreateConstantBuffer();
-	virtual void CreateInputLayout();
-	virtual void LoadVertexShader(std::tstring szName);
-	virtual void LoadPixelShader(std::tstring szName);
-	virtual void LoadGeometryShader(std::tstring szName);
-	virtual void LoadTextureShader(std::tstring szName);
+	virtual void BuildGeometry() { return; };
+	virtual void BuildRenderItem(const std::tstring& textureFile);
+	virtual void BuildDxObject(ID3D11Device* device, const std::tstring& filename, const D3D10_SHADER_MACRO* defines);
+	void CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
 
+	virtual void CreateInputLayout(ID3DBlob * vertexblob);
 protected:
 	ID3D11Device* m_pDevice = nullptr;
 
-	DxObj m_DxObject;
-
-	std::vector<Vertex> m_VertexList;
-	std::vector<DWORD>		 m_IndexList;
-
-	ObjectConstants m_cbData;
-
-	DirectX::XMFLOAT4X4 m_matWorld = MathHelper::Identity4x4();
+	std::vector<RenderItem*> mRenderItem;
+	std::unique_ptr<MeshGeometry> mGeometries = nullptr;
+	std::unique_ptr<DxObj> mDxObject = nullptr;
 
 	DirectX::XMFLOAT3 m_vPosition;
 	DirectX::XMFLOAT3 m_vLook;
 	DirectX::XMFLOAT3 m_vSide;
 	DirectX::XMFLOAT3 m_vUp;
 
-	D3D_PRIMITIVE_TOPOLOGY m_Primitive;
+	UINT Stride = 0;
+	UINT offset = 0;
 };
 
 class BoxShape : public Shape
@@ -62,11 +48,7 @@ public:
 	virtual ~BoxShape() = default;
 
 protected:
-	void CreateVertexData()override;
-	void CreateIndexData()override;
-
-private:
-	void DiceTex();
+	void BuildGeometry()override;
 
 private:
 	bool mIsDice = false;
@@ -78,13 +60,10 @@ public:
 	LineShape();
 	virtual ~LineShape() = default;
 public:
-	void	CreateInputLayout()override;
-	void	CreateVertexData()override;
-	void	CreateIndexData()override;
-	void	CreateVertexBuffer()override;
-	void	LoadVertexShader(std::tstring szName)override;
-	void	LoadPixelShader(std::tstring szName)override;
-	bool	Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
+	virtual void	CreateInputLayout(ID3DBlob * vertexblob)override;
+	virtual void	BuildRenderItem(const std::tstring& textureFile)override;
+	virtual void	BuildGeometry()override;
+	bool			Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
 
 protected:
 	std::array<VertexC, 2> m_LineVertexList;
@@ -97,8 +76,7 @@ public:
 	virtual ~PlaneShape() = default;
 
 protected:
-	void CreateVertexData()override;
-	void CreateIndexData()override;
+	virtual void BuildGeometry()override;
 };
 
 class DirectionShape : public Shape
@@ -108,12 +86,9 @@ public:
 	virtual ~DirectionShape() = default;
 
 protected:
-	void	CreateInputLayout()override;
-	void	CreateVertexData()override;
-	void	CreateIndexData()override;
-	void	CreateVertexBuffer()override;
-	void	LoadVertexShader(std::tstring szName)override;
-	void	LoadPixelShader(std::tstring szName)override;
+	virtual void BuildGeometry()override;
+	virtual void BuildRenderItem(const std::tstring& textureFile)override;
+	virtual void CreateInputLayout(ID3DBlob * vertexblob)override;
 
 protected:
 	std::array<VertexC, 6> m_LineVertexList;

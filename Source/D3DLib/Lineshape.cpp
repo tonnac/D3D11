@@ -5,10 +5,10 @@ using namespace DirectX;
 
 LineShape::LineShape()
 {
-	m_Primitive = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	
 }
 
-void LineShape::CreateInputLayout()
+void LineShape::CreateInputLayout(ID3DBlob * vertexblob)
 {
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -16,50 +16,61 @@ void LineShape::CreateInputLayout()
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)m_DxObject.m_pVSBlob.Get()->GetBufferSize(),
-		m_DxObject.m_pVSBlob.Get()->GetBufferPointer(), layout, (UINT)std::size(layout), 
-		m_DxObject.m_pInputLayout.GetAddressOf());
+	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)vertexblob->GetBufferSize(),
+		vertexblob->GetBufferPointer(), layout, (UINT)std::size(layout),
+		mDxObject->m_pInputLayout.GetAddressOf());
 }
 
-void LineShape::CreateVertexData()
+void LineShape::BuildRenderItem(const std::tstring & textureFile)
 {
-	m_LineVertexList =
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometries.get();
+	rItem->World = MathHelper::Identity4x4();
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	if (!textureFile.empty())
+		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem.push_back(rItem.get());
+	S_RItem.SaveMiscItem(rItem);
+}
+
+void LineShape::BuildGeometry()
+{
+	std::vector<VertexC> vertices;
+	std::vector<DWORD> indices;
+
+	vertices =
 	{
 		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
 		VertexC({XMFLOAT3(1.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)})
 	};
 
-	m_DxObject.m_iVertexSize = sizeof(VertexC);
-	m_DxObject.m_iNumVertex = (UINT)std::size(m_LineVertexList);
-}
-
-void LineShape::CreateIndexData()
-{
-	m_IndexList =
+	indices =
 	{ 0, 1 };
 
-	m_DxObject.m_iNumIndex = (UINT)std::size(m_IndexList);
-	m_DxObject.m_iIndexSize = sizeof(DWORD);
-}
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-void LineShape::CreateVertexBuffer()
-{
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		(UINT)m_LineVertexList.size(),
-		m_DxObject.m_iVertexSize,
-		m_LineVertexList.data(),
-		m_DxObject.m_pVertexBuffer.GetAddressOf());
-}
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
 
-void LineShape::LoadVertexShader(std::tstring szName)
-{
-	d3dUtil::LoadVertexShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pVertexShader.GetAddressOf()
-		, "VS_PC", m_DxObject.m_pVSBlob.GetAddressOf());
-}
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
+	if (mDxObject->m_pVertexShader == nullptr)
+	{
+		d3dUtil::LoadVertexShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
+		CreateInputLayout(vertexBlob.Get());
+	}
+	if (mDxObject->m_pPixelShader == nullptr)
+		d3dUtil::LoadPixelShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
 
-void LineShape::LoadPixelShader(std::tstring szName)
-{
-	d3dUtil::LoadPixelShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pPixelShader.GetAddressOf(), "PSLine");
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometries->DrawArgs["default"] = sub;
 }
 
 bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vEnd, XMFLOAT4 vColor)
@@ -70,7 +81,7 @@ bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vE
 		VertexC({XMFLOAT3(vEnd), XMFLOAT4(vColor)})
 	};
 
-	pContext->UpdateSubresource(m_DxObject.m_pVertexBuffer.Get(), 0, nullptr, m_LineVertexList.data(), 0, 0);
+	pContext->UpdateSubresource(mGeometries->VertexBuffer.Get(), 0, nullptr, m_LineVertexList.data(), 0, 0);
 
 	return Render(pContext);
 }
@@ -81,10 +92,9 @@ bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vE
 
 DirectionShape::DirectionShape()
 {
-	m_Primitive = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 }
 
-void DirectionShape::CreateInputLayout()
+void DirectionShape::CreateInputLayout(ID3DBlob * vertexblob)
 {
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
@@ -92,13 +102,16 @@ void DirectionShape::CreateInputLayout()
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)m_DxObject.m_pVSBlob.Get()->GetBufferSize(),
-		m_DxObject.m_pVSBlob.Get()->GetBufferPointer(), layout, (UINT)std::size(layout), m_DxObject.m_pInputLayout.GetAddressOf());
+	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)vertexblob->GetBufferSize(),
+		vertexblob->GetBufferPointer(), layout, (UINT)std::size(layout), mDxObject->m_pInputLayout.GetAddressOf());
 }
 
-void DirectionShape::CreateVertexData()
+void DirectionShape::BuildGeometry()
 {
-	m_LineVertexList =
+	std::vector<VertexC> vertices;
+	std::vector<DWORD> indices;
+
+	vertices =
 	{
 		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
 		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Green)}),
@@ -108,36 +121,43 @@ void DirectionShape::CreateVertexData()
 		VertexC({XMFLOAT3(0.0f,0.0f,1000.0f), XMFLOAT4(DirectX::Colors::Blue)}),
 	};
 
-	m_DxObject.m_iVertexSize = sizeof(VertexC);
-	m_DxObject.m_iNumVertex = (UINT)std::size(m_LineVertexList);
-}
-
-void DirectionShape::CreateIndexData()
-{
-	m_IndexList =
+	indices =
 	{ 0, 3, 1, 4, 2, 5 };
 
-	m_DxObject.m_iNumIndex = (UINT)std::size(m_IndexList);
-	m_DxObject.m_iIndexSize = sizeof(DWORD);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
+
+	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
+	if (mDxObject->m_pVertexShader == nullptr)
+	{
+		d3dUtil::LoadVertexShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
+		CreateInputLayout(vertexBlob.Get());
+	}
+	if (mDxObject->m_pPixelShader == nullptr)
+		d3dUtil::LoadPixelShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
+
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometries->DrawArgs["default"] = sub;
 }
 
-void DirectionShape::CreateVertexBuffer()
+void DirectionShape::BuildRenderItem(const std::tstring & textureFile)
 {
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		(UINT)m_LineVertexList.size(),
-		m_DxObject.m_iVertexSize,
-		m_LineVertexList.data(),
-		m_DxObject.m_pVertexBuffer.GetAddressOf());
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometries.get();
+	rItem->World = MathHelper::Identity4x4();
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	if (!textureFile.empty())
+		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem.push_back(rItem.get());
+	S_RItem.SaveMiscItem(rItem);
 }
-
-void DirectionShape::LoadVertexShader(std::tstring szName)
-{
-	d3dUtil::LoadVertexShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pVertexShader.GetAddressOf(),
-		"VS_PC", m_DxObject.m_pVSBlob.GetAddressOf());
-}
-
-void DirectionShape::LoadPixelShader(std::tstring szName)
-{
-	d3dUtil::LoadPixelShaderFile(m_pDevice, szName.c_str(), m_DxObject.m_pPixelShader.GetAddressOf(), "PSLine");
-}
-

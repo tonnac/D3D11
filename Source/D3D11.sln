@@ -279,7 +279,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZXCExporter_v1.1", "ZXCExpo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZXCParser_v1.1", "ZXCParser_v1.1\ZXCParser_v1.1.vcxproj", "{52057D15-BDDB-493B-AA26-15A4E7AB1871}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeshGeometry", "MeshGeometry\MeshGeometry.vcxproj", "{EB8F3568-55A9-491F-8F8D-1824DE47D3FD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "01_MeshGeometry", "MeshGeometry\MeshGeometry.vcxproj", "{EB8F3568-55A9-491F-8F8D-1824DE47D3FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{18A8D4CF-E817-4AC3-97B7-3EA81B9CC5F6} = {18A8D4CF-E817-4AC3-97B7-3EA81B9CC5F6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

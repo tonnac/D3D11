@@ -50,7 +50,7 @@ bool ZXCWriter::Savefile()
 	numMaterials = (UINT)mMaterial.size();
 
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>> subsetID;
-	
+	UINT subsetNum = 0;
 	for (auto& x : mObjects)
 	{
 		if (x->Type == ObjectType::MESH)
@@ -64,22 +64,24 @@ bool ZXCWriter::Savefile()
 				Subset subset;
 				subset.VertexCount = (UINT)k.second.size();
 				subset.VertexStart = numVertices;
-				subset.FaceCount = (UINT)x->mIndices[k.first].size();
+				subset.FaceCount = (UINT)(x->mIndices[k.first].size()) / 3;
 				subset.FaceStart = numTriangles;
 				numVertices += subset.VertexCount;
 				numTriangles += subset.FaceCount;
 				subsetID[std::pair<UINT, int>(x->mMaterialRef, k.first)].push_back(std::pair<int, Subset>((int)x->mNodeName.second, subset));
+				++subsetNum;
 			}
 		}
 	}
 
-	std::wstring info = 
-		L"#Materials " + std::to_wstring(numMaterials) 
-		+ L"\n#Helpers " + std::to_wstring(numHelpers) + 
-		+ L"\n#Meshes " + std::to_wstring(numMeshes) +
-		+ L"\n#Vertices " + std::to_wstring(numVertices) + 
-		+ L"\n#Triangles " + std::to_wstring(numTriangles) + 
-		+ L"\n#AnimationClips " + std::to_wstring(numAnimationClip);
+	std::wstring info =
+		L"#Materials " + std::to_wstring(numMaterials) +
+		L"\n#Helpers " + std::to_wstring(numHelpers) +
+		L"\n#Meshes " + std::to_wstring(numMeshes) +
+		L"\n#Vertices " + std::to_wstring(numVertices) +
+		L"\n#Triangles " + std::to_wstring(numTriangles) +
+		L"\n#AnimationClips " + std::to_wstring(numAnimationClip) +
+		L"\n#Subset " + std::to_wstring(subsetNum);
 
 	std::wstring header = L"**********ZXC_Header**********\n#" + mExporterVersion + L"\n#" + Savetime();
 	os << header << info;
@@ -168,7 +170,7 @@ void ZXCWriter::WriteMaterial(std::wofstream & os)
 				for (auto &x : mMaterial[i].TexMap)
 				{
 					std::wstring TexInfo =
-						L"\n\t\t#MapSubNO" + std::to_wstring(x.SubNo) +
+						L"\n\t\t#MapSubNO " + std::to_wstring(x.SubNo) +
 						L"\t#TexFile " + x.Filename;
 					os << TexInfo;
 				}
@@ -288,8 +290,6 @@ void ZXCWriter::WriteVertex(std::wofstream & os)
 			}
 		}
 	}
-
-	os << std::endl;
 }
 
 void ZXCWriter::WriteAnimations(std::wofstream & os)

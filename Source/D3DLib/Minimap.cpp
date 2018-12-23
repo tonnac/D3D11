@@ -11,9 +11,9 @@ void Minimap::BuildMinimap(ID3D11Device* pd3Device, float width, float height,
 
 	ComPtr<ID3DBlob> vertexBlob = nullptr;
 	
-	d3dUtil::LoadVertexShaderFile(pd3Device, L"minimap.hlsl", mVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
-	d3dUtil::LoadGeometryShaderFile(pd3Device, L"minimap.hlsl", mGeometryShader.GetAddressOf());
-	d3dUtil::LoadPixelShaderFile(pd3Device, L"minimap.hlsl", mPixelShader.GetAddressOf());
+	d3dUtil::LoadVertexShaderFile(pd3Device, L"minimap.hlsl", nullptr, mVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
+	d3dUtil::LoadGeometryShaderFile(pd3Device, L"minimap.hlsl", nullptr, mGeometryShader.GetAddressOf());
+	d3dUtil::LoadPixelShaderFile(pd3Device, L"minimap.hlsl", nullptr, mPixelShader.GetAddressOf());
 
 	m_MinimapVP.MinDepth = 0.0f;
 	m_MinimapVP.MaxDepth = 1.0f;

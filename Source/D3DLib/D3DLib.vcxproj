@@ -174,6 +174,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="ObjectStd.h" />
+    <ClInclude Include="RenderItemStorage.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="wClass.h" />
@@ -193,6 +194,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="PlaneShape.cpp" />
+    <ClCompile Include="RenderItemStorage.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wClass.cpp" />

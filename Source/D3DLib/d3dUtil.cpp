@@ -19,8 +19,7 @@ std::tstring DxException::ToString() const
 
 void d3dUtil::CreateVertexBuffer(
 	ID3D11Device* pDevice,
-	UINT iNumVertex,
-	UINT iVertexSize,
+	UINT byteSize,
 	LPVOID pData,
 	ID3D11Buffer** ppBuffer)
 {
@@ -31,7 +30,7 @@ void d3dUtil::CreateVertexBuffer(
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.CPUAccessFlags = 0;
-	bd.ByteWidth = iVertexSize * iNumVertex;
+	bd.ByteWidth = byteSize;
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	sd.pSysMem = pData;
@@ -41,8 +40,7 @@ void d3dUtil::CreateVertexBuffer(
 
 void d3dUtil::CreateIndexBuffer(
 	ID3D11Device* pDevice,
-	UINT iNumCount,
-	UINT iIndexSize,
+	UINT byteSize,
 	LPVOID pData,
 	ID3D11Buffer** ppBuffer)
 {
@@ -53,7 +51,7 @@ void d3dUtil::CreateIndexBuffer(
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.CPUAccessFlags = 0;
-	bd.ByteWidth = iNumCount * iIndexSize;
+	bd.ByteWidth = byteSize;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 	sd.pSysMem = pData;
@@ -112,38 +110,42 @@ void d3dUtil::CreateInputLayout(
 void d3dUtil::LoadVertexShaderFile(
 	ID3D11Device* pDevice,
 	const void* pShaderFile,
+	const D3D10_SHADER_MACRO* defines,
 	ID3D11VertexShader** pVertexShader,
 	const char * pFuncName,
 	ID3DBlob** pBlobOut)
 {
-	CompileShaderFromFile((TCHAR*)pShaderFile, pFuncName, "vs_5_0").CopyTo(pBlobOut);
+	CompileShaderFromFile((TCHAR*)pShaderFile, defines,pFuncName, "vs_5_0").CopyTo(pBlobOut);
 	ThrowifFailed(pDevice->CreateVertexShader((*pBlobOut)->GetBufferPointer(), (*pBlobOut)->GetBufferSize(), nullptr, pVertexShader));
 }
 
 void d3dUtil::LoadPixelShaderFile(
 	ID3D11Device* pDevice,
 	const void* pShaderFile,
+	const D3D10_SHADER_MACRO* defines,
 	ID3D11PixelShader** pPixelShader,
 	const char * pFuncName)
 {
 	ComPtr<ID3DBlob> byteCode = nullptr;
-	byteCode = CompileShaderFromFile((TCHAR*)pShaderFile, pFuncName, "ps_5_0");
+	byteCode = CompileShaderFromFile((TCHAR*)pShaderFile, defines, pFuncName, "ps_5_0");
 	ThrowifFailed(pDevice->CreatePixelShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, pPixelShader));
 }
 
 void d3dUtil::LoadGeometryShaderFile(
 	ID3D11Device* pDevice,
 	const void* pShaderFile,
+	const D3D10_SHADER_MACRO* defines,
 	ID3D11GeometryShader** pGeometryShader,
 	const char * pFuncName)
 {
 	ComPtr<ID3DBlob> byteCode = nullptr;
-	byteCode = CompileShaderFromFile((TCHAR*)pShaderFile, pFuncName, "gs_5_0");
+	byteCode = CompileShaderFromFile((TCHAR*)pShaderFile, defines, pFuncName, "gs_5_0");
 	ThrowifFailed(pDevice->CreateGeometryShader(byteCode->GetBufferPointer(), byteCode->GetBufferSize(), nullptr, pGeometryShader));
 }
 
 ComPtr<ID3DBlob> d3dUtil::CompileShaderFromFile(
 	const WCHAR* szFileName,
+	const D3D10_SHADER_MACRO* defines,
 	LPCSTR szEntryPoint,
 	LPCSTR szShaderModel)
 {
@@ -157,7 +159,7 @@ ComPtr<ID3DBlob> d3dUtil::CompileShaderFromFile(
 
 	ComPtr<ID3DBlob> byteCode = nullptr;
 	ComPtr<ID3DBlob> errors = nullptr;
-	hr = D3DX11CompileFromFile(szFileName, NULL, NULL, szEntryPoint, szShaderModel, dwShaderFlags, 0, NULL, byteCode.GetAddressOf(), errors.GetAddressOf(), NULL);
+	hr = D3DX11CompileFromFile(szFileName, defines, NULL, szEntryPoint, szShaderModel, dwShaderFlags, 0, NULL, byteCode.GetAddressOf(), errors.GetAddressOf(), NULL);
 
 	if (errors != nullptr)
 		::OutputDebugStringA((char*)errors->GetBufferPointer());
@@ -173,6 +175,8 @@ void d3dUtil::CreateShaderResourceView(ID3D11Device* pDevice, const std::tstring
 	ZeroMemory(&loadinfo, sizeof(D3DX11_IMAGE_LOAD_INFO));
 	loadinfo.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	loadinfo.Format = DXGI_FORMAT_FROM_FILE;
-
+	
+	if (filepath.empty())
+		return;
 	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, filepath.c_str(), &loadinfo, nullptr, pShaderResource, nullptr));
 }

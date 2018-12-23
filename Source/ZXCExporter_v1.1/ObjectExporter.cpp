@@ -206,15 +206,6 @@ void ObjectExporter::BuildVBIB(ZXCObject* mesh)
 			std::uint32_t i1 = indices[i * 3 + 1];
 			std::uint32_t i2 = indices[i * 3 + 2];
 
-			std::set<std::uint32_t> index;
-			index.insert(i0);
-			index.insert(i1);
-			index.insert(i2);
-
-			indices[i * 3 + 0] = *index.begin();
-			indices[i * 3 + 1] = *std::next(index.begin(), 1);
-			indices[i * 3 + 2] = *std::next(index.begin(), 2);
-
 			for (int k = i; k >= 1; --k)
 			{
 				std::uint32_t n0 = indices[k * 3 + 0];

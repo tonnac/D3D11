@@ -229,7 +229,7 @@ void Frustum::CreateVertex(ID3D11Device * pDevice)
 	mVertices[22] = VertexC(mFrustum[7], XMFLOAT4(Colors::Pink));
 	mVertices[23] = VertexC(mFrustum[4], XMFLOAT4(Colors::Pink));
 
-	d3dUtil::CreateVertexBuffer(pDevice, (UINT)mVertices.size(), sizeof(VertexC), mVertices.data(), mVertexBuffer.GetAddressOf());
+	d3dUtil::CreateVertexBuffer(pDevice, (UINT)mVertices.size() * sizeof(VertexC), mVertices.data(), mVertexBuffer.GetAddressOf());
 
 }
 
@@ -253,7 +253,7 @@ void Frustum::CreateIndex(ID3D11Device * pDevice)
 	mIndices[30] = 20; mIndices[31] = 21; mIndices[32] = 22;
 	mIndices[33] = 20; mIndices[34] = 22; mIndices[35] = 23;
 
-	d3dUtil::CreateIndexBuffer(pDevice, (UINT)mIndices.size(), sizeof(UINT16), mIndices.data(), mIndexBuffer.GetAddressOf());
+	d3dUtil::CreateIndexBuffer(pDevice, (UINT)mIndices.size() * sizeof(UINT16), mIndices.data(), mIndexBuffer.GetAddressOf());
 }
 
 void Frustum::CreateShader(ID3D11Device * pDevice, const std::tstring & ShaderFile)
@@ -264,7 +264,7 @@ void Frustum::CreateShader(ID3D11Device * pDevice, const std::tstring & ShaderFi
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT,0 ,12, D3D11_INPUT_PER_VERTEX_DATA},
 	};
 	ComPtr<ID3DBlob> VertexBlob;
-	d3dUtil::LoadVertexShaderFile(pDevice, ShaderFile.c_str(), mVertexShader.GetAddressOf(), "VS", VertexBlob.GetAddressOf());
-	d3dUtil::LoadPixelShaderFile(pDevice, ShaderFile.c_str(), mPixelShader.GetAddressOf());
+	d3dUtil::LoadVertexShaderFile(pDevice, ShaderFile.c_str(), nullptr ,mVertexShader.GetAddressOf(), "VS", VertexBlob.GetAddressOf());
+	d3dUtil::LoadPixelShaderFile(pDevice, ShaderFile.c_str(), nullptr ,mPixelShader.GetAddressOf());
 	d3dUtil::CreateInputLayout(pDevice, (DWORD)VertexBlob->GetBufferSize(), VertexBlob->GetBufferPointer(), inputlayout, (UINT)std::size(inputlayout), mInputLayout.GetAddressOf());
 }

@@ -26,6 +26,7 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
+#include <DirectXCollision.h>
 
 #pragma region DirectWrite
 #include "D2D1.h"
@@ -44,7 +45,7 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"d3dx11.lib")
 #pragma comment(lib,"D3DLib.lib")
-
+#pragma comment(lib,"d3dcompiler.lib")
 namespace std
 {
 	using tstring = std::basic_string<TCHAR>;
@@ -117,15 +118,13 @@ class d3dUtil
 public:
 	static void CreateVertexBuffer(
 		ID3D11Device* pDevice,
-		UINT iNumVertex,
-		UINT iVertexSize,
+		UINT byteSize,
 		LPVOID pData,
 		ID3D11Buffer** ppBuffer);
 
 	static void CreateIndexBuffer(
 		ID3D11Device* pDevice,
-		UINT iNumCount,
-		UINT iIndexSize,
+		UINT byteSize,
 		LPVOID pData,
 		ID3D11Buffer** ppBuffer);
 
@@ -148,6 +147,7 @@ public:
 	static void LoadVertexShaderFile(
 		ID3D11Device* pDevice,
 		const void* pShaderFile,
+		const D3D10_SHADER_MACRO* defines,
 		ID3D11VertexShader** pVertexShader,
 		const char * pFuncName,
 		ID3DBlob** ppBlobOut);
@@ -155,17 +155,20 @@ public:
 	static void LoadPixelShaderFile(
 		ID3D11Device* pDevice,
 		const void* pShaderFile,
+		const D3D10_SHADER_MACRO* defines,
 		ID3D11PixelShader** pPixelShader,
 		const char * pFuncName = "PS");
 
 	static void LoadGeometryShaderFile(
 		ID3D11Device* pDevice,
 		const void* pShaderFile,
+		const D3D10_SHADER_MACRO* defines,
 		ID3D11GeometryShader** pGeometryShader,
 		const char * pFuncName = "GS");
 
 	static Microsoft::WRL::ComPtr<ID3DBlob> CompileShaderFromFile(
 		const WCHAR* szFileName,
+		const D3D10_SHADER_MACRO* defines,
 		LPCSTR szEntryPoint,
 		LPCSTR szShaderModel);
 

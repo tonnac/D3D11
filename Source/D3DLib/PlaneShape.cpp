@@ -2,27 +2,27 @@
 
 using namespace DirectX;
 
-void PlaneShape::CreateVertexData()
+void PlaneShape::BuildGeometry()
 {
-	m_VertexList.resize(4);
-	m_VertexList[0] = Vertex(XMFLOAT3(-1.0f, +1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	m_VertexList[1] = Vertex(XMFLOAT3(+1.0f, +1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	m_VertexList[2] = Vertex(XMFLOAT3(+1.0f, -1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
-	m_VertexList[3] = Vertex(XMFLOAT3(-1.0f, -1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	m_DxObject.m_iVertexSize = sizeof(Vertex);
-	m_DxObject.m_iNumVertex = (UINT)m_VertexList.size();
-}
+	std::vector<Vertex> vertices;
+	std::vector<DWORD> indices;
 
-void PlaneShape::CreateIndexData()
-{
-	m_IndexList.resize(6);
-	m_IndexList[0] = 0;
-	m_IndexList[1] = 1;
-	m_IndexList[2] = 2;
-	m_IndexList[3] = 0;
-	m_IndexList[4] = 2;
-	m_IndexList[5] = 3;
+	vertices.resize(4);
+	vertices[0] = Vertex(XMFLOAT3(-1.0f, +1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
+	vertices[1] = Vertex(XMFLOAT3(+1.0f, +1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
+	vertices[2] = Vertex(XMFLOAT3(+1.0f, -1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	vertices[3] = Vertex(XMFLOAT3(-1.0f, -1.0f, +0.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
 
-	m_DxObject.m_iNumIndex = (UINT)m_IndexList.size();
-	m_DxObject.m_iIndexSize = sizeof(DWORD);
+	indices.resize(6);
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 0;
+	indices[4] = 2;
+	indices[5] = 3;
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 }

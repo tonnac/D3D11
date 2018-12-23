@@ -1,3 +1,4 @@
+#include "..\MeshGeometry\Mesh.h"
 #include "Mesh.h"
 
 HRESULT Mesh::CreateVertexData()
