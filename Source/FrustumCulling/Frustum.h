@@ -82,7 +82,7 @@ private:
 
 private:
 	
-	std::array<PC_VERTEX, 24> mVertices;
+	std::array<VertexC, 24> mVertices;
 	std::array<UINT16, 36> mIndices;
 	std::array<DirectX::XMFLOAT3, 8> mFrustum;
 	std::array<Plane, 6> mPlane;
@@ -93,6 +93,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShader = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> mPixelShader = nullptr;
 
-	UINT stride = sizeof(PC_VERTEX);
+	UINT stride = sizeof(VertexC);
 	UINT offset = 0;
 };

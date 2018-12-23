@@ -25,11 +25,11 @@ void LineShape::CreateVertexData()
 {
 	m_LineVertexList =
 	{
-		PC_VERTEX({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
-		PC_VERTEX({XMFLOAT3(1.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)})
+		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
+		VertexC({XMFLOAT3(1.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)})
 	};
 
-	m_DxObject.m_iVertexSize = sizeof(PC_VERTEX);
+	m_DxObject.m_iVertexSize = sizeof(VertexC);
 	m_DxObject.m_iNumVertex = (UINT)std::size(m_LineVertexList);
 }
 
@@ -66,8 +66,8 @@ bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vE
 {
 	m_LineVertexList =
 	{
-		PC_VERTEX({XMFLOAT3(vStart), XMFLOAT4(vColor)}),
-		PC_VERTEX({XMFLOAT3(vEnd), XMFLOAT4(vColor)})
+		VertexC({XMFLOAT3(vStart), XMFLOAT4(vColor)}),
+		VertexC({XMFLOAT3(vEnd), XMFLOAT4(vColor)})
 	};
 
 	pContext->UpdateSubresource(m_DxObject.m_pVertexBuffer.Get(), 0, nullptr, m_LineVertexList.data(), 0, 0);
@@ -100,15 +100,15 @@ void DirectionShape::CreateVertexData()
 {
 	m_LineVertexList =
 	{
-		PC_VERTEX({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
-		PC_VERTEX({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Green)}),
-		PC_VERTEX({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Blue)}),
-		PC_VERTEX({XMFLOAT3(1000.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
-		PC_VERTEX({XMFLOAT3(0.0f,1000.0f,0.0f), XMFLOAT4(DirectX::Colors::Green)}),
-		PC_VERTEX({XMFLOAT3(0.0f,0.0f,1000.0f), XMFLOAT4(DirectX::Colors::Blue)}),
+		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
+		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Green)}),
+		VertexC({XMFLOAT3(0.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Blue)}),
+		VertexC({XMFLOAT3(1000.0f,0.0f,0.0f), XMFLOAT4(DirectX::Colors::Red)}),
+		VertexC({XMFLOAT3(0.0f,1000.0f,0.0f), XMFLOAT4(DirectX::Colors::Green)}),
+		VertexC({XMFLOAT3(0.0f,0.0f,1000.0f), XMFLOAT4(DirectX::Colors::Blue)}),
 	};
 
-	m_DxObject.m_iVertexSize = sizeof(PC_VERTEX);
+	m_DxObject.m_iVertexSize = sizeof(VertexC);
 	m_DxObject.m_iNumVertex = (UINT)std::size(m_LineVertexList);
 }
 

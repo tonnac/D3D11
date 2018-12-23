@@ -40,7 +40,7 @@ protected:
 
 	DxObj m_DxObject;
 
-	std::vector<PNCT_VERTEX> m_VertexList;
+	std::vector<Vertex> m_VertexList;
 	std::vector<DWORD>		 m_IndexList;
 
 	ObjectConstants m_cbData;
@@ -87,7 +87,7 @@ public:
 	bool	Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
 
 protected:
-	std::array<PC_VERTEX, 2> m_LineVertexList;
+	std::array<VertexC, 2> m_LineVertexList;
 };
 
 class PlaneShape : public Shape
@@ -116,5 +116,5 @@ protected:
 	void	LoadPixelShader(std::tstring szName)override;
 
 protected:
-	std::array<PC_VERTEX, 6> m_LineVertexList;
+	std::array<VertexC, 6> m_LineVertexList;
 };

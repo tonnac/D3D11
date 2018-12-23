@@ -15,8 +15,6 @@ public:
 	void OnResize(ID3D11Device* pd3Device, float width, float height, ID3D11Texture2D* pTexture = nullptr);
 	void Reset();
 
-	void SetPassCB(ID3D11Buffer* ConstantBuffer);
-
 	ID3D11ShaderResourceView* ShaderResourceView();
 	ID3D11RenderTargetView** RenderTargetView();
 	ID3D11DepthStencilView* DepthStencilView();
@@ -37,7 +35,4 @@ protected:
 	D3D11_TEXTURE2D_DESC m_TexDesc;
 
 	D3D11_VIEWPORT m_Viewport;
-
-	std::unique_ptr<PassConstants> m_cbData = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_PassCB = nullptr;
 };

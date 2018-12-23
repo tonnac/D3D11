@@ -44,11 +44,6 @@ void DxRT::Begin(ID3D11DeviceContext * pContext, DirectX::FXMVECTOR vColor)
 	XMVECTOR Color = vColor;
 	pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<FLOAT*>(&Color));
 	pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	if (m_cbData != nullptr)
-	{
-		pContext->UpdateSubresource(m_PassCB.Get(), 0, nullptr, m_cbData.get(), 0, 0);
-		pContext->VSSetConstantBuffers(0, 1, m_PassCB.GetAddressOf());
-	}
 }
 
 void DxRT::End(ID3D11DeviceContext * pContext, DxRT * pDxrt)
@@ -59,8 +54,6 @@ void DxRT::End(ID3D11DeviceContext * pContext, DxRT * pDxrt)
 		ID3D11RenderTargetView* pRender = nullptr;
 		pContext->OMSetRenderTargets(1, &pRender, nullptr);
 		pContext->OMSetRenderTargets(1, pDxrt->m_pRenderTargetView.GetAddressOf(), pDxrt->m_pDepthStencilView.Get());
-		if (m_cbData != nullptr)
-			pContext->VSSetConstantBuffers(0, 1, pDxrt->m_PassCB.GetAddressOf());
 	}
 }
 
@@ -73,11 +66,6 @@ void DxRT::Reset()
 {
 	m_pRenderTargetView.Reset();
 	m_pDepthStencilView.Reset();
-}
-
-void DxRT::SetPassCB(ID3D11Buffer * ConstantBuffer)
-{
-	m_PassCB = ConstantBuffer;
 }
 
 ID3D11ShaderResourceView * DxRT::ShaderResourceView() 

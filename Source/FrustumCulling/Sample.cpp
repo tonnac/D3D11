@@ -16,8 +16,11 @@ bool Sample::Init()
 
 	m_Box.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/misc/dice_unwrap.png");
 	XMMATRIX minimapLook = XMMatrixLookAtLH(XMVECTOR({ 0.0f, 250.0f, -0.1f }), XMVectorZero(), XMVECTOR({ 0.0f, 1.0f, 0.0f }));
-	m_Minimap.BuildMinimap(m_pd3dDevice.Get(), 1024, 1024, L"Minimap.hlsl", minimapLook);
+	XMStoreFloat4x4(&mMinimapView, minimapLook);
+	m_Minimap.BuildMinimap(m_pd3dDevice.Get(), 1024, 1024, L"Minimap.hlsl");
 	mFrustum.Initialize(m_pd3dDevice.Get(), L"frustum.hlsl", m_pMainCamera->m_matView, m_pMainCamera->m_matProj);
+
+	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), &mMinimapCB);
 
 	XMVECTOR right = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
@@ -66,6 +69,7 @@ bool Sample::Init()
 bool Sample::Frame()
 {
 	m_Box.Frame();
+	UpdateMinimapCB();
 	mFrustum.UpdateFrustum(m_pMainCamera->m_matView, m_pMainCamera->m_matProj);
 	m_Minimap.Frame();
 
@@ -79,6 +83,7 @@ bool Sample::Render()
 		
 		for (int i = 0; i < 100; ++i)
 		{
+			m_pImmediateContext->VSSetConstantBuffers(0, 1, mMinimapCB.GetAddressOf());
 			m_Box.SetMatrix(&mWorldarr[i]);
 			if (mFrustum.Contains({ mWorldarr[i]._41, mWorldarr[i]._42, mWorldarr[i]._43 }) == true)
 			{
@@ -105,6 +110,8 @@ bool Sample::Render()
 	}
 	m_Minimap.End(m_pImmediateContext.Get(), &m_DxRT);
 
+	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
+
 	int iCount = 0;
 	for (int i = 0; i < 100; ++i)
 	{
@@ -119,6 +126,32 @@ bool Sample::Render()
 	std::tstring text = L"InFrustum: " + std::to_tstring(iCount);
 	m_Minimap.Render(m_pImmediateContext.Get(), 0, 300, 300, 300, text);	
 	return true;
+}
+
+void Sample::UpdateMinimapCB()
+{
+	XMMATRIX View = XMLoadFloat4x4(&mMinimapView);
+	XMMATRIX Proj = XMLoadFloat4x4(&m_pMainCamera->m_matProj);
+
+	XMMATRIX InvView = XMMatrixInverse(&XMMatrixDeterminant(View), View);
+	XMMATRIX InvProj = XMMatrixInverse(&XMMatrixDeterminant(Proj), Proj);
+
+	XMMATRIX ViewProj = View * Proj;
+	XMMATRIX InvViewProj = XMMatrixInverse(&XMMatrixDeterminant(ViewProj), ViewProj);
+
+	XMStoreFloat4x4(&mMinimapConstants.View, XMMatrixTranspose(View));
+	XMStoreFloat4x4(&mMinimapConstants.Proj, XMMatrixTranspose(Proj));
+	XMStoreFloat4x4(&mMinimapConstants.InvView, XMMatrixTranspose(InvView));
+	XMStoreFloat4x4(&mMinimapConstants.InvProj, XMMatrixTranspose(InvProj));
+	XMStoreFloat4x4(&mMinimapConstants.ViewProj, XMMatrixTranspose(ViewProj));
+	XMStoreFloat4x4(&mMinimapConstants.InvViewProj, XMMatrixTranspose(InvViewProj));
+
+	mMinimapConstants.NearZ = 1.0f;
+	mMinimapConstants.FarZ = 1000.0f;
+	mMinimapConstants.TotalTime = m_Timer.DeltaTime();
+	mMinimapConstants.DeltaTime = m_Timer.TotalTime();
+
+	m_pImmediateContext->UpdateSubresource(mMinimapCB.Get(), 0, nullptr, &mMinimapConstants, 0, 0);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR szCmdLine, int nCmdShow)

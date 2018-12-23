@@ -134,37 +134,37 @@ bool Frustum::Render(ID3D11DeviceContext * pContext)
 
 void Frustum::CreateVertex(ID3D11Device * pDevice)
 {
-	mVertices[0] = PC_VERTEX(mFrustum[1], XMFLOAT4(Colors::Black));
-	mVertices[1] = PC_VERTEX(mFrustum[2], XMFLOAT4(Colors::Black));
-	mVertices[2] = PC_VERTEX(mFrustum[3], XMFLOAT4(Colors::Black));
-	mVertices[3] = PC_VERTEX(mFrustum[0], XMFLOAT4(Colors::Black));
+	mVertices[0] = VertexC(mFrustum[1], XMFLOAT4(Colors::Black));
+	mVertices[1] = VertexC(mFrustum[2], XMFLOAT4(Colors::Black));
+	mVertices[2] = VertexC(mFrustum[3], XMFLOAT4(Colors::Black));
+	mVertices[3] = VertexC(mFrustum[0], XMFLOAT4(Colors::Black));
 
-	mVertices[4] = PC_VERTEX(mFrustum[6], XMFLOAT4(Colors::Cornsilk));
-	mVertices[5] = PC_VERTEX(mFrustum[5], XMFLOAT4(Colors::Cornsilk));
-	mVertices[6] = PC_VERTEX(mFrustum[4], XMFLOAT4(Colors::Cornsilk));
-	mVertices[7] = PC_VERTEX(mFrustum[7], XMFLOAT4(Colors::Cornsilk));
+	mVertices[4] = VertexC(mFrustum[6], XMFLOAT4(Colors::Cornsilk));
+	mVertices[5] = VertexC(mFrustum[5], XMFLOAT4(Colors::Cornsilk));
+	mVertices[6] = VertexC(mFrustum[4], XMFLOAT4(Colors::Cornsilk));
+	mVertices[7] = VertexC(mFrustum[7], XMFLOAT4(Colors::Cornsilk));
 
-	mVertices[8] = PC_VERTEX(mFrustum[5], XMFLOAT4(Colors::Purple));
-	mVertices[9] = PC_VERTEX(mFrustum[1], XMFLOAT4(Colors::Purple));
-	mVertices[10] = PC_VERTEX(mFrustum[0], XMFLOAT4(Colors::Purple));
-	mVertices[11] = PC_VERTEX(mFrustum[4], XMFLOAT4(Colors::Purple));
+	mVertices[8] = VertexC(mFrustum[5], XMFLOAT4(Colors::Purple));
+	mVertices[9] = VertexC(mFrustum[1], XMFLOAT4(Colors::Purple));
+	mVertices[10] = VertexC(mFrustum[0], XMFLOAT4(Colors::Purple));
+	mVertices[11] = VertexC(mFrustum[4], XMFLOAT4(Colors::Purple));
 
-	mVertices[12] = PC_VERTEX(mFrustum[2], XMFLOAT4(Colors::Olive));
-	mVertices[13] = PC_VERTEX(mFrustum[6], XMFLOAT4(Colors::Olive));
-	mVertices[14] = PC_VERTEX(mFrustum[7], XMFLOAT4(Colors::Olive));
-	mVertices[15] = PC_VERTEX(mFrustum[3], XMFLOAT4(Colors::Olive));
+	mVertices[12] = VertexC(mFrustum[2], XMFLOAT4(Colors::Olive));
+	mVertices[13] = VertexC(mFrustum[6], XMFLOAT4(Colors::Olive));
+	mVertices[14] = VertexC(mFrustum[7], XMFLOAT4(Colors::Olive));
+	mVertices[15] = VertexC(mFrustum[3], XMFLOAT4(Colors::Olive));
 
-	mVertices[16] = PC_VERTEX(mFrustum[5], XMFLOAT4(Colors::Yellow));
-	mVertices[17] = PC_VERTEX(mFrustum[6], XMFLOAT4(Colors::Yellow));
-	mVertices[18] = PC_VERTEX(mFrustum[2], XMFLOAT4(Colors::Yellow));
-	mVertices[19] = PC_VERTEX(mFrustum[1], XMFLOAT4(Colors::Yellow));
+	mVertices[16] = VertexC(mFrustum[5], XMFLOAT4(Colors::Yellow));
+	mVertices[17] = VertexC(mFrustum[6], XMFLOAT4(Colors::Yellow));
+	mVertices[18] = VertexC(mFrustum[2], XMFLOAT4(Colors::Yellow));
+	mVertices[19] = VertexC(mFrustum[1], XMFLOAT4(Colors::Yellow));
 
-	mVertices[20] = PC_VERTEX(mFrustum[0], XMFLOAT4(Colors::Pink));
-	mVertices[21] = PC_VERTEX(mFrustum[3], XMFLOAT4(Colors::Pink));
-	mVertices[22] = PC_VERTEX(mFrustum[7], XMFLOAT4(Colors::Pink));
-	mVertices[23] = PC_VERTEX(mFrustum[4], XMFLOAT4(Colors::Pink));
+	mVertices[20] = VertexC(mFrustum[0], XMFLOAT4(Colors::Pink));
+	mVertices[21] = VertexC(mFrustum[3], XMFLOAT4(Colors::Pink));
+	mVertices[22] = VertexC(mFrustum[7], XMFLOAT4(Colors::Pink));
+	mVertices[23] = VertexC(mFrustum[4], XMFLOAT4(Colors::Pink));
 
-	d3dUtil::CreateVertexBuffer(pDevice, (UINT)mVertices.size(), sizeof(PC_VERTEX), mVertices.data(), mVertexBuffer.GetAddressOf());
+	d3dUtil::CreateVertexBuffer(pDevice, (UINT)mVertices.size(), sizeof(VertexC), mVertices.data(), mVertexBuffer.GetAddressOf());
 
 }
 

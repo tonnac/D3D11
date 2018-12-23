@@ -40,7 +40,6 @@ bool Core::GameInit()
 	m_pMainCamera = &m_DefaultCamera;
 
 	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), mPassCB.GetAddressOf());
-	m_DxRT.SetPassCB(mPassCB.Get());
 
 	m_Dir.Create(m_pd3dDevice.Get(), L"shape.hlsl");
 	Init();

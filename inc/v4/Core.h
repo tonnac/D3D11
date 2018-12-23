@@ -14,8 +14,8 @@ public:
 	bool			Initialize();
 
 protected:
-	bool			GameInit()override;
-	bool			GameRun()override;
+	virtual bool	GameInit()override;
+	virtual bool	GameRun()override;
 	LRESULT			MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)override;
 
 	virtual bool	Init();
@@ -24,7 +24,7 @@ protected:
 
 	void			CalculateFrame();
 	void			FramePassCB();
-	void			OnResize()override;
+	virtual void	OnResize()override;
 
 private:
 	bool			GameFrame();

@@ -5,13 +5,9 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 void Minimap::BuildMinimap(ID3D11Device* pd3Device, float width, float height,
-						   const std::tstring& szShaderFile, const DirectX::FXMMATRIX& matView)
+						   const std::tstring& szShaderFile)
 {
 	DxRT::Initialize(pd3Device, width, height);
-	m_cbData = std::make_unique<PassConstants>();
-	d3dUtil::CreateConstantBuffer(pd3Device, 1, sizeof(PassConstants), m_PassCB.GetAddressOf());
-
-	XMStoreFloat4x4(&m_matView, matView);
 
 	ComPtr<ID3DBlob> vertexBlob = nullptr;
 	
@@ -25,28 +21,6 @@ void Minimap::BuildMinimap(ID3D11Device* pd3Device, float width, float height,
 
 bool Minimap::Frame()
 {
-	XMMATRIX View = XMLoadFloat4x4(&m_matView);
-
-	XMMATRIX Proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, Casting(float, g_ClientWidth) / Casting(float, g_ClientHeight), 1.0f, 1000.0f);
-
-	XMMATRIX InvView = XMMatrixInverse(&XMMatrixDeterminant(View), View);
-	XMMATRIX InvProj = XMMatrixInverse(&XMMatrixDeterminant(Proj), Proj);
-
-	XMMATRIX ViewProj = View * Proj;
-	XMMATRIX InvViewProj = XMMatrixInverse(&XMMatrixDeterminant(ViewProj), ViewProj);
-
-	XMStoreFloat4x4(&m_cbData->View, XMMatrixTranspose(View));
-	XMStoreFloat4x4(&m_cbData->Proj, XMMatrixTranspose(Proj));
-	XMStoreFloat4x4(&m_cbData->InvView, XMMatrixTranspose(InvView));
-	XMStoreFloat4x4(&m_cbData->InvProj, XMMatrixTranspose(InvProj));
-	XMStoreFloat4x4(&m_cbData->ViewProj, XMMatrixTranspose(ViewProj));
-	XMStoreFloat4x4(&m_cbData->InvViewProj, XMMatrixTranspose(InvViewProj));
-
-	m_cbData->NearZ = 1.0f;
-	m_cbData->FarZ = 1000.0f;
-//	m_MinimapPassCB.TotalTime = m_Timer.DeltaTime();
-//	m_MinimapPassCB.DeltaTime = m_Timer.TotalTime();
-
 	return true;
 }
 
@@ -80,9 +54,3 @@ bool Minimap::Render(ID3D11DeviceContext* pContext,
 	}
 	return true;
 }
-
-void Minimap::SetViewMatrix(const DirectX::FXMMATRIX & matView)
-{
-	XMStoreFloat4x4(&m_matView, matView);
-}
-

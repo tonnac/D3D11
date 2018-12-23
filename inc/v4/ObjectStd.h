@@ -2,35 +2,35 @@
 #include "DxObj.h"
 #include "MathHelper.h"
 
-struct PC_VERTEX
+struct VertexC
 {
 	DirectX::XMFLOAT3 p;
 	DirectX::XMFLOAT4 c;
-	PC_VERTEX()
+	VertexC()
 	{}
-	PC_VERTEX(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT4 vc)
+	VertexC(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT4 vc)
 	{
 		p = vp;
 		c = vc;
 	}
 };
 
-struct PNCT_VERTEX
+struct Vertex
 {
 	DirectX::XMFLOAT3 p;
 	DirectX::XMFLOAT3 n;
 	DirectX::XMFLOAT4 c;
 	DirectX::XMFLOAT2 t;
-	PNCT_VERTEX()
+	Vertex()
 	{}
-	PNCT_VERTEX(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT3 np, DirectX::XMFLOAT4 vc, DirectX::XMFLOAT2 vt)
+	Vertex(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT3 np, DirectX::XMFLOAT4 vc, DirectX::XMFLOAT2 vt)
 	{
 		p = vp;
 		n = np;
 		c = vc;
 		t = vt;
 	}
-	PNCT_VERTEX(const PNCT_VERTEX& rhs)
+	Vertex(const Vertex& rhs)
 	{
 		p = rhs.p;
 		n = rhs.n;
@@ -39,7 +39,7 @@ struct PNCT_VERTEX
 	}
 };
 
-struct PT_VERTEX
+struct VertexT
 {
 	DirectX::XMFLOAT3 p;
 	DirectX::XMFLOAT2 t;
