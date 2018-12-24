@@ -111,17 +111,19 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 		
 		Point3 v;
 
+		int vertt = mesh.getNumVerts();
+
 		if (mesh.getNumVerts() > 0)
 		{
-			v = mesh.verts[mesh.faces[i].v[i0]] * tm * Inv;
+			v = mesh.verts[mesh.faces[i].v[i0]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[0].p);
 			o->mTriangles[i].v[0].VertexWNum = mesh.faces[i].v[i0];
 
-			v = mesh.verts[mesh.faces[i].v[i2]] * tm * Inv;
+			v = mesh.verts[mesh.faces[i].v[i2]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[1].p);
 			o->mTriangles[i].v[1].VertexWNum = mesh.faces[i].v[i2];
 
-			v = mesh.verts[mesh.faces[i].v[i1]] * tm * Inv;
+			v = mesh.verts[mesh.faces[i].v[i1]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[2].p);
 			o->mTriangles[i].v[2].VertexWNum = mesh.faces[i].v[i1];
 

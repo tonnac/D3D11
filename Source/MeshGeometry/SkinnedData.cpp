@@ -154,7 +154,7 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, int timePos,
 	UINT p = 0;
 	for (;mBoneHierarchy[p] == -1; ++p)
 	{
-		toRootTransforms[p] = toParentTransforms[0];
+		toRootTransforms[p] = toParentTransforms[p];
 	}
 
 	for (; p < numBones; ++p)
@@ -183,7 +183,7 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, int timePos,
 	{
 		for (UINT i = 0; i < numBones; ++i)
 		{
-			finalTransforms[i] = toRootTransforms[i];
+			XMStoreFloat4x4(&finalTransforms[i], XMMatrixTranspose(XMLoadFloat4x4(&toRootTransforms[i])));
 		}
 	}
 }

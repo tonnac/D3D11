@@ -11,7 +11,7 @@ VertexOut VS(VertexIn vIn)
 	weights[0] = vIn.BoneWeights.x;
 	weights[1] = vIn.BoneWeights.y;
 	weights[2] = vIn.BoneWeights.z;
-	weights[3] = 1.0f - weights[0] - weights[1] - weights[2];
+	weights[3] = 1.0f - (weights[0] + weights[1] + weights[2]);
 	Index = (uint)vIn.BoneWeights.w;
 
 	float3 posL = float3(0.0f, 0.0f, 0.0f);

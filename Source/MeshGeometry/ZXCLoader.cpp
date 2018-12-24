@@ -120,6 +120,7 @@ bool ZXCLoader::LoadZXC(
 	ReadVertex(fp, numVertices, vertices);
 	ReadIndex(fp, numTriangles, indices);
 	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
+	SetBoneOffsets(boneOffsets, nodes);
 
 	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
 	{
@@ -298,6 +299,7 @@ void ZXCLoader::ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Ski
 			if (k == 3)
 			{
 				fp >> ignore >> boneIndices[k] >> ignore;
+				break;
 			}
 			fp >> ignore >> boneIndices[k] >> weights[k];
 		}
@@ -415,5 +417,17 @@ void ZXCLoader::AdjustAnimations(AnimationClip& animations, const std::vector<Me
 
 			XMStoreFloat4x4(&animations.BoneAnimations[i].InitialPos, W);
 		}
+	}
+}
+
+void ZXCLoader::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes)
+{
+	boneOffsets.resize(nodes.size());
+
+	for (UINT i = 0; i < (UINT)boneOffsets.size(); ++i)
+	{
+		XMMATRIX W = XMLoadFloat4x4(&nodes[i].World);
+		XMMATRIX InvW = XMMatrixInverse(&XMMatrixDeterminant(W), W);
+		XMStoreFloat4x4(&boneOffsets[i], InvW);
 	}
 }

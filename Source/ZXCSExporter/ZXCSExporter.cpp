@@ -50,15 +50,19 @@ void ZXCSExporter::LoadNode(INode * node)
 {
 	if (node == nullptr) return;
 
-	AddObject(node);
-	AddMaterial(node);
-
 	int ChildNum = node->NumberOfChildren();
 	for (int i = 0; i < ChildNum; ++i)
 	{
 		INode* childNode = node->GetChildNode(i);
 		mQueue.push(childNode);
 	}
+
+	if (node->Selected())
+	{
+		AddObject(node);
+		AddMaterial(node);
+	}
+
 	while (!mQueue.empty())
 	{
 		INode * fNode = mQueue.front();

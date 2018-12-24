@@ -76,6 +76,8 @@ private:
 
 	void AdjustAnimations(AnimationClip& animations, const std::vector<MeshNode>& meshNodes);
 
+	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes);
+
 	UINT mFirstFrame = 0;
 	UINT mLastFrame = 0;
 	UINT mFrameSpeed = 0;

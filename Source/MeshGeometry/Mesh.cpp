@@ -28,7 +28,6 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 			false;
 	}
 
-	mGeometries = std::make_unique<MeshGeometry>();
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
 
 	mSkinnedInst->FinalTransforms.resize(nodes.size());
@@ -70,14 +69,15 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 			SubmeshGeometry submesh;
 			std::string name = std::to_string(++c);
 
-			std::unique_ptr<RenderItem> ritem = std::make_unique<RenderItem>();
-			ritem->BaseVertexLocation = k.second.VertexStart;
-			ritem->IndexCount = k.second.FaceCount * 3;
-			ritem->StartIndexLocation = k.second.FaceStart * 3;
+			std::unique_ptr<RenderItem> ritem = std::make_unique<RenderItem>(); 
+			ritem->BaseVertexLocation = submesh.BaseVertexLocation = k.second.VertexStart;
+			ritem->IndexCount = submesh.IndexCount = k.second.FaceCount * 3;
+			ritem->StartIndexLocation = submesh.StartIndexLocation = k.second.FaceStart * 3;
 			ritem->Geo = mGeometries.get();
 			ritem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			ritem->TexTransform = MathHelper::Identity4x4();
-			ritem->World = mNodeList[nodeIndex]->World;
+			//ritem->World = mNodeList[nodeIndex]->World;
+			XMStoreFloat4x4(&ritem->World, XMMatrixIdentity());
 
 			auto matindex = std::pair<UINT, int>(mtrlRef, mtlID);
 
@@ -132,14 +132,6 @@ bool Mesh::Frame()
 		&mSkinnedConstants.BoneTransforms[0]
 	);
 
-	//for (UINT i = 0; i < (UINT)mNodeList.size(); ++i)
-	//{
-	//	for (auto&x : mNodeList[i]->Ritem)
-	//	{
-	//		x->World = MathHelper::Identity4x4();
-	//	}
-	//}
-
 	return true;
 }
 
@@ -151,7 +143,7 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	context->VSSetConstantBuffers(2, 1, mConstantbuffer.GetAddressOf());
 	if (mDxObject != nullptr)
 		mDxObject->SetResource(context);
-	UINT i = 0;
+
 	if (!mNodeList.empty())
 	{
 		for (auto&x : mNodeList)
@@ -160,6 +152,8 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 			{
 				for (auto&k : x->Ritem)
 				{
+					if (k->ShaderResourceView == nullptr)
+						continue;
 					context->IASetPrimitiveTopology(k->PrimitiveType);
 					context->PSSetShaderResources(0, 1, k->ShaderResourceView.GetAddressOf());
 					context->VSSetConstantBuffers(1, 1, k->ConstantBuffer.GetAddressOf());

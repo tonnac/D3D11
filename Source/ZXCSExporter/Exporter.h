@@ -2,7 +2,7 @@
 
 #include "ZXCSExporter.h"
 
-#define Export_Class_ID Class_ID(0x20777bb2, 0x4fba606d)
+#define Export_Class_ID Class_ID(0x6a67556d, 0x2c781ab3)
 
 class Exporter : public SceneExport
 {
