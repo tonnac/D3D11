@@ -19,8 +19,8 @@ bool Sample::Init()
 
 bool Sample::Frame()
 {
+	mesh.Frame();
 	S_RItem.UpdateObjectCBs(m_pImmediateContext.Get());
-
 	return true;
 }
 

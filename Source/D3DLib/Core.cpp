@@ -301,22 +301,22 @@ XMFLOAT4 Core::OnKeyboardInput()
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(-deltaTime * 25.0f);
+		m_pMainCamera->MoveSide(-deltaTime * 75.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(deltaTime * 25.0f);
+		m_pMainCamera->MoveSide(deltaTime * 75.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(deltaTime * 25.0f);
+		m_pMainCamera->MoveLook(deltaTime * 75.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(-deltaTime * 25.0f);
+		m_pMainCamera->MoveLook(-deltaTime * 75.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)

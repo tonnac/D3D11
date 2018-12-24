@@ -1,6 +1,8 @@
 #include "..\MeshGeometry\Mesh.h"
 #include "Mesh.h"
 
+using namespace DirectX;
+
 bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 {
 	m_pDevice = device;
@@ -16,7 +18,13 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 		false;
 
 	mGeometries = std::make_unique<MeshGeometry>();
-	
+	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
+
+	mSkinnedInst->FinalTransforms.resize(nodes.size());
+	mSkinnedInst->SkinnedInfo = new SkinnedData;
+	*(mSkinnedInst->SkinnedInfo) = skininfo;
+	mSkinnedInst->ClipName = "default";
+
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
@@ -91,7 +99,49 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 		}
 	}
 
+	D3D11_BUFFER_DESC bufDesc = {};
+	ZeroMemory(&bufDesc, sizeof(D3D11_BUFFER_DESC));
+
+	bufDesc.ByteWidth = sizeof(XMFLOAT4X4) * (UINT)mNodeList.size();
+	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bufDesc.CPUAccessFlags = 0;
+	bufDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	bufDesc.StructureByteStride = sizeof(XMFLOAT4X4);
+
+	m_pDevice->CreateBuffer(&bufDesc, nullptr, mConstantbuffer.GetAddressOf());
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+	srvDesc.BufferEx.FirstElement = 0;
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.BufferEx.NumElements = (UINT)mNodeList.size();
+
+	m_pDevice->CreateShaderResourceView(mConstantbuffer.Get(), &srvDesc, mBufferview.GetAddressOf());
+
 	BuildDxObject(m_pDevice, L"shape.hlsl", nullptr);
+
+	return true;
+}
+
+bool Mesh::Frame()
+{
+	XMFLOAT4X4 ppp[16];
+	mSkinnedInst->UpdateSkinnedAnimation(g_fSecPerFrame);
+	for (size_t i = 0; i < mSkinnedInst->FinalTransforms.size(); ++i)
+	{
+		XMMATRIX E = XMLoadFloat4x4(&mSkinnedInst->FinalTransforms[i]);
+		XMStoreFloat4x4(&ppp[i], XMMatrixTranspose(E));
+	}
+
+	for (UINT i = 0; i < (UINT)mNodeList.size(); ++i)
+	{
+		for (auto&x : mNodeList[i]->Ritem)
+		{
+			x->World = mSkinnedInst->FinalTransforms[i];
+		}
+	}
 
 	return true;
 }

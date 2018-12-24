@@ -3,6 +3,14 @@
 #include "d3dUtil.h"
 #include "MathHelper.h"
 
+struct SceneInfo
+{
+	UINT FirstFrame = 0;
+	UINT LastFrame = 0;
+	UINT FrameSpeed = 0;
+	UINT FrameTick = 0;
+};
+
 struct KeyFrame
 {
 	KeyFrame() {}
@@ -22,6 +30,7 @@ struct BoneAnimation
 
 	void Interpoloate(int t, DirectX::XMFLOAT4X4& M)const;
 
+	DirectX::XMFLOAT4X4 InitialPos;
 	std::vector<KeyFrame> Keyframes;
 };
 
@@ -32,6 +41,7 @@ struct AnimationClip
 
 	void Interpoloate(int t, std::vector<DirectX::XMFLOAT4X4>& boneTransforms)const;
 
+	SceneInfo SceneInf;
 	std::vector<BoneAnimation> BoneAnimations;
 };
 
@@ -67,9 +77,9 @@ struct SkinnedModelInstance
 	std::string ClipName;
 	int TimePos = 0;
 
-	void UpdateSkinnedAnimation(int dt)
+	void UpdateSkinnedAnimation(float dt)
 	{
-		TimePos += dt;
+		TimePos += (int)(dt * 30.0f * 160.0f);
 
 		if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
 			TimePos = 0;

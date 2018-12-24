@@ -44,6 +44,9 @@ bool ZXCLoader::LoadZXC(
 	fp >> ignore >> numSubSet;
 
 	nodes.resize(numMeshes + numHelpers);
+	std::vector<int> boneHierarchy;
+	boneHierarchy.resize(numMeshes + numHelpers);
+	std::vector<XMFLOAT4X4> boneOffsets;
 	std::unordered_map<std::string, AnimationClip> animations;
 
 	ReadScene(fp);
@@ -53,9 +56,13 @@ bool ZXCLoader::LoadZXC(
 	ReadSubsetTable(fp, numSubSet, subsets);
 	ReadVertex(fp, numVertices, vertices);
 	ReadIndex(fp, numTriangles, indices);
-	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations);
+	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
 
-//	skinInfo.Set(, , );
+	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
+	{
+		boneHierarchy[i] = nodes[i].ParentIndex;
+	}
+	skinInfo.Set(boneHierarchy, boneOffsets, animations);
 
 	return true;
 }
@@ -238,7 +245,7 @@ void ZXCLoader::ReadSubsetTable(std::wifstream & fp, UINT numSubsets, std::map<s
 	}
 }
 
-void ZXCLoader::ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations)
+void ZXCLoader::ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes)
 {
 	std::wstring ignore;
 	for (UINT clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
@@ -249,13 +256,19 @@ void ZXCLoader::ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAn
 		AnimationClip clip;
 		clip.BoneAnimations.resize(numBones);
 
+		clip.SceneInf.FirstFrame = mFirstFrame;
+		clip.SceneInf.LastFrame = mLastFrame;
+		clip.SceneInf.FrameSpeed = mFrameSpeed;
+		clip.SceneInf.FrameTick = mFrameTick;
+
 		for (UINT boneIndex = 0; boneIndex < numBones; ++boneIndex)
 		{
 			fp >> ignore >> nodeIndex >> ignore >> frameNum;
 			ReadBoneKeyframes(fp, numBones, frameNum, clip.BoneAnimations[boneIndex]);
 		}
 
-		animations[std::to_string(clipIndex)] = clip;
+		animations["default"] = clip;
+		AdjustAnimations(animations["default"], meshNodes);
 	}
 }
 
@@ -283,5 +296,27 @@ void ZXCLoader::ReadBoneKeyframes(std::wifstream & fp, UINT numBones, UINT numKe
 		boneAnimation.Keyframes[i].Scale		= s;
 		boneAnimation.Keyframes[i].ScaleQuat	= sq;
 		boneAnimation.Keyframes[i].RotationQuat = r;
+	}
+}
+
+void ZXCLoader::AdjustAnimations(AnimationClip& animations, const std::vector<MeshNode>& meshNodes)
+{
+	for (UINT i = 0; i < (UINT)meshNodes.size(); ++i)
+	{
+		if (animations.BoneAnimations[i].Keyframes.empty())
+		{
+			XMMATRIX W = XMLoadFloat4x4(&meshNodes[i].World);
+			XMMATRIX InvW = XMMatrixIdentity();
+			if (meshNodes[i].ParentIndex != -1)
+			{
+				int pIndex = meshNodes[i].ParentIndex;
+				XMMATRIX PW = XMLoadFloat4x4(&meshNodes[pIndex].World);
+				InvW = XMMatrixInverse(&XMMatrixDeterminant(PW), PW);
+			}
+			
+			W = XMMatrixMultiply(W, InvW);
+
+			XMStoreFloat4x4(&animations.BoneAnimations[i].InitialPos, W);
+		}
 	}
 }

@@ -61,8 +61,10 @@ private:
 	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Vertex>& vertices);
 	void ReadIndex(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets);
-	void ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations);
+	void ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes);
 	void ReadBoneKeyframes(std::wifstream& fp, UINT numBones, UINT numKeyframe ,BoneAnimation& boneAnimation);
+
+	void AdjustAnimations(AnimationClip& animations, const std::vector<MeshNode>& meshNodes);
 
 	UINT mFirstFrame = 0;
 	UINT mLastFrame = 0;

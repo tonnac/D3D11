@@ -2,6 +2,8 @@
 #include "DirectWrite.h"
 #include <Windows.h>
 
+float g_fSecPerFrame = 0.0f;
+
 Timer::Timer()
 {
 	__int64 countsPerSec;
@@ -76,6 +78,7 @@ void Timer::Tick()
 	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currTime));
 	m_CurrTime = currTime;
 	m_DeltaTime = (m_CurrTime - m_PrevTime) * m_SecondsPerCount;
+	g_fSecPerFrame = (float)m_DeltaTime;
 	m_PrevTime = m_CurrTime;
 
 	if (m_DeltaTime < 0.0)
