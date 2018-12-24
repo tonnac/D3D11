@@ -13,11 +13,15 @@ public:
 
 	bool Frame();
 	bool Render(ID3D11DeviceContext* context);
+
+private:
+	virtual void CreateInputLayout(ID3DBlob * vertexblob)override;
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantbuffer = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mBufferview = nullptr;
 	std::vector<std::unique_ptr<MeshNode>> mNodeList;
 	std::vector<RenderItem*> mDrawItem;
 	std::vector<RenderItem*> mDebugItem;
 	std::unique_ptr<SkinnedModelInstance> mSkinnedInst = nullptr;
+
+	SkinnedConstants mSkinnedConstants;
 };

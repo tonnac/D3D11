@@ -8,14 +8,25 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 	m_pDevice = device;
 	ZXCLoader loader;
 
+	std::tstring Ext(filename, filename.find_last_of(L".") + 1, filename.length());
+
 	std::vector<Vertex> vertices;
+	std::vector<SkinnedVertex> vertices0;
 	std::vector<DWORD> indices;
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
 	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>> materials;
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
-	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes, skininfo))
-		false;
+	if (Ext == L"ZXCS")
+	{
+		if (!loader.LoadZXC(filename, vertices0, indices, subsets, materials, nodes, skininfo))
+			false;
+	}
+	else
+	{
+		if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes, skininfo))
+			false;
+	}
 
 	mGeometries = std::make_unique<MeshGeometry>();
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
@@ -25,10 +36,10 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 	*(mSkinnedInst->SkinnedInfo) = skininfo;
 	mSkinnedInst->ClipName = "default";
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)vertices0.size() * sizeof(SkinnedVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	CreateCPUBuffer(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
 		mGeometries->VertexBufferByteSize,
@@ -99,57 +110,45 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 		}
 	}
 
-	D3D11_BUFFER_DESC bufDesc = {};
-	ZeroMemory(&bufDesc, sizeof(D3D11_BUFFER_DESC));
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
 
-	bufDesc.ByteWidth = sizeof(XMFLOAT4X4) * (UINT)mNodeList.size();
-	bufDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	bufDesc.CPUAccessFlags = 0;
-	bufDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	bufDesc.StructureByteStride = sizeof(XMFLOAT4X4);
-
-	m_pDevice->CreateBuffer(&bufDesc, nullptr, mConstantbuffer.GetAddressOf());
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
-	srvDesc.BufferEx.FirstElement = 0;
-	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
-	srvDesc.BufferEx.NumElements = (UINT)mNodeList.size();
-
-	m_pDevice->CreateShaderResourceView(mConstantbuffer.Get(), &srvDesc, mBufferview.GetAddressOf());
-
-	BuildDxObject(m_pDevice, L"shape.hlsl", nullptr);
+	const D3D10_SHADER_MACRO skinnedDefines[] =
+	{
+		"SKINNED", "1",
+		NULL, NULL
+	};
+	BuildDxObject(m_pDevice, L"shape.hlsl", skinnedDefines);
 
 	return true;
 }
 
 bool Mesh::Frame()
 {
-	XMFLOAT4X4 ppp[16];
 	mSkinnedInst->UpdateSkinnedAnimation(g_fSecPerFrame);
-	for (size_t i = 0; i < mSkinnedInst->FinalTransforms.size(); ++i)
-	{
-		XMMATRIX E = XMLoadFloat4x4(&mSkinnedInst->FinalTransforms[i]);
-		XMStoreFloat4x4(&ppp[i], XMMatrixTranspose(E));
-	}
 
-	for (UINT i = 0; i < (UINT)mNodeList.size(); ++i)
-	{
-		for (auto&x : mNodeList[i]->Ritem)
-		{
-			x->World = mSkinnedInst->FinalTransforms[i];
-		}
-	}
+	std::copy(
+		std::begin(mSkinnedInst->FinalTransforms),
+		std::end(mSkinnedInst->FinalTransforms),
+		&mSkinnedConstants.BoneTransforms[0]
+	);
+
+	//for (UINT i = 0; i < (UINT)mNodeList.size(); ++i)
+	//{
+	//	for (auto&x : mNodeList[i]->Ritem)
+	//	{
+	//		x->World = MathHelper::Identity4x4();
+	//	}
+	//}
 
 	return true;
 }
 
 bool Mesh::Render(ID3D11DeviceContext * context)
 {
+	context->UpdateSubresource(mConstantbuffer.Get(), 0, nullptr, &mSkinnedConstants, 0, 0);
 	context->IASetVertexBuffers(0, 1, mGeometries->VertexBuffer.GetAddressOf(), &Stride, &offset);
 	context->IASetIndexBuffer(mGeometries->IndexBuffer.Get(), mGeometries->IndexFormat, 0);
+	context->VSSetConstantBuffers(2, 1, mConstantbuffer.GetAddressOf());
 	if (mDxObject != nullptr)
 		mDxObject->SetResource(context);
 	UINT i = 0;
@@ -170,4 +169,24 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 		}
 	}
 	return true;
+}
+
+void Mesh::CreateInputLayout(ID3DBlob * vertexblob)
+{
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{"POSITION"		, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 0	, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 12	, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 24	, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHTS"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 48	, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEINDICES"	, 0, DXGI_FORMAT_R8G8B8A8_UINT		, 0, 64	, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	d3dUtil::CreateInputLayout(m_pDevice,
+		(DWORD)vertexblob->GetBufferSize(),
+		vertexblob->GetBufferPointer(),
+		layout,
+		(UINT)std::size(layout),
+		mDxObject->m_pInputLayout.GetAddressOf());
 }

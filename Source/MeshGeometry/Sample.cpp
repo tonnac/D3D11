@@ -12,7 +12,7 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 
 bool Sample::Init()
 {
-	mesh.LoadFile(L"turret.ZXC", m_pd3dDevice.Get());
+	mesh.LoadFile(L"asdfdasf.ZXCS", m_pd3dDevice.Get());
 
 	return true;
 }

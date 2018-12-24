@@ -5,8 +5,6 @@
 
 class Mesh;
 
-
-
 enum class ObjectType : unsigned char
 {
 	MESH,
@@ -53,12 +51,24 @@ public:
 		std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
 		std::vector<MeshNode>& nodes,
 		SkinnedData& skinInfo);
+
+	bool LoadZXC(
+		const std::wstring & FileName,
+		std::vector<SkinnedVertex>& vertices,
+		std::vector<DWORD>& indices,
+		std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
+		std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+		std::vector<MeshNode>& nodes,
+		SkinnedData& skinInfo);
 private:
 	void ReadScene(std::wifstream& fp);
 	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials);
 	void ReadMesh(std::wifstream& fp, UINT numMeshes, std::vector<MeshNode>& nodes);
 	void ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
+
 	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Vertex>& vertices);
+	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<SkinnedVertex>& vertices);
+
 	void ReadIndex(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets);
 	void ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes);

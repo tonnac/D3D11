@@ -25,16 +25,6 @@ private:
 	void AddMaterial(INode* node);
 
 private:
-	bool CheckForAnimation(INode* node, bool& isPos, bool& isRot, bool& isScale);
-	void DecompAffine(TimeValue t, INode * node, AffineParts& ap, Point3* rotAxis = nullptr, float* rotAngle = nullptr);
-
-	void InputPosSample(INode* node, ZXCObject& o);
-	void InputRotSample(INode* node, ZXCObject& o);
-	void InputSclaeSample(INode* node, ZXCObject& o);
-
-	void OverlappedTrackErase(ZXCObject& o);
-
-private:
 	Interface*	mMaxInterface = nullptr;
 	INode*		mRootNode = nullptr;
 	Interval	mInterval;
@@ -55,6 +45,4 @@ private:
 
 	std::unique_ptr<ZXCWriter> mWriter = nullptr;
 	std::unique_ptr<ObjectExporter> mObjectExporter = nullptr;
-
-	bool misBipedObejct = false;
 };

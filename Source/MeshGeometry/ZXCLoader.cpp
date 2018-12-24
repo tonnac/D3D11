@@ -67,6 +67,69 @@ bool ZXCLoader::LoadZXC(
 	return true;
 }
 
+bool ZXCLoader::LoadZXC(
+	const std::wstring & FileName,
+	std::vector<SkinnedVertex>& vertices,
+	std::vector<DWORD>& indices,
+	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
+	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+	std::vector<MeshNode>& nodes,
+	SkinnedData& skinInfo)
+{
+	std::wifstream fp(FileName.c_str());
+	std::wstring ignore;
+
+	UINT numMaterials;
+	UINT numHelpers;
+	UINT numMeshes;
+	UINT numVertices;
+	UINT numTriangles;
+	UINT numAnimationClips;
+	UINT numSubSet;
+
+	if (!fp.is_open())
+	{
+		std::wstring message = FileName + L"Not Found.";
+		MessageBox(nullptr, message.c_str(), 0, 0);
+		return false;
+	}
+
+	std::getline(fp, ignore);
+	std::getline(fp, ignore);
+	std::getline(fp, ignore);
+
+	fp >> ignore >> numMaterials;
+	fp >> ignore >> numHelpers;
+	fp >> ignore >> numMeshes;
+	fp >> ignore >> numVertices;
+	fp >> ignore >> numTriangles;
+	fp >> ignore >> numAnimationClips;
+	fp >> ignore >> numSubSet;
+
+	nodes.resize(numMeshes + numHelpers);
+	std::vector<int> boneHierarchy;
+	boneHierarchy.resize(numMeshes + numHelpers);
+	std::vector<XMFLOAT4X4> boneOffsets;
+	std::unordered_map<std::string, AnimationClip> animations;
+
+	ReadScene(fp);
+	ReadMaterial(fp, numMaterials, materials);
+	ReadHelper(fp, numHelpers, nodes);
+	ReadMesh(fp, numMeshes, nodes);
+	ReadSubsetTable(fp, numSubSet, subsets);
+	ReadVertex(fp, numVertices, vertices);
+	ReadIndex(fp, numTriangles, indices);
+	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
+
+	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
+	{
+		boneHierarchy[i] = nodes[i].ParentIndex;
+	}
+	skinInfo.Set(boneHierarchy, boneOffsets, animations);
+
+	return true;
+}
+
 void ZXCLoader::ReadScene(std::wifstream& fp)
 {
 	std::wstring ignore;
@@ -210,6 +273,40 @@ void ZXCLoader::ReadVertex(std::wifstream & fp, UINT numVertices, std::vector<Ve
 		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
 		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
 		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
+	}
+}
+
+void ZXCLoader::ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<SkinnedVertex>& vertices)
+{
+	std::wstring ignore;
+	fp >> ignore;
+
+	vertices.resize(numVertices);
+	for (UINT i = 0; i < numVertices; ++i)
+	{
+		float weights[4] = { 0.0f };
+		int boneIndices[4] = {0,};
+
+		fp >> ignore >> vertices[i].p.x >> vertices[i].p.y >> vertices[i].p.z;
+		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
+		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
+		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
+		fp >> ignore >> weights[3];
+
+		for (int k = 0; k < (int)weights[3]; ++k)
+		{
+			if (k == 3)
+			{
+				fp >> ignore >> boneIndices[k] >> ignore;
+			}
+			fp >> ignore >> boneIndices[k] >> weights[k];
+		}
+		vertices[i].BoneWeights = XMFLOAT4(weights);
+
+		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
+		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
+		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
+		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
 	}
 }
 

@@ -151,18 +151,22 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, int timePos,
 
 	std::vector<XMFLOAT4X4> toRootTransforms(numBones);
 
-	toRootTransforms[0] = toParentTransforms[0];
-
-	for (UINT i = 1; i < numBones; ++i)
+	UINT p = 0;
+	for (;mBoneHierarchy[p] == -1; ++p)
 	{
-		XMMATRIX toParent = XMLoadFloat4x4(&toParentTransforms[i]);
+		toRootTransforms[p] = toParentTransforms[0];
+	}
 
-		int parentIndex = mBoneHierarchy[i];
+	for (; p < numBones; ++p)
+	{
+		XMMATRIX toParent = XMLoadFloat4x4(&toParentTransforms[p]);
+
+		int parentIndex = mBoneHierarchy[p];
 		XMMATRIX parentToRoot = XMLoadFloat4x4(&toRootTransforms[parentIndex]);
 
 		XMMATRIX toRoot = XMMatrixMultiply(toParent, parentToRoot);
 
-		XMStoreFloat4x4(&toRootTransforms[i], toRoot);
+		XMStoreFloat4x4(&toRootTransforms[p], toRoot);
 	}
 
 	if (!mBoneOffsets.empty())
@@ -179,7 +183,7 @@ void SkinnedData::GetFinalTransforms(const std::string& clipName, int timePos,
 	{
 		for (UINT i = 0; i < numBones; ++i)
 		{
-			XMStoreFloat4x4(&finalTransforms[i], XMMatrixTranspose(XMLoadFloat4x4(&toRootTransforms[i])));
+			finalTransforms[i] = toRootTransforms[i];
 		}
 	}
 }

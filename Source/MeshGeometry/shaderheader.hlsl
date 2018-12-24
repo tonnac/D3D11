@@ -6,6 +6,10 @@ struct VertexIn
 	float3 n : NORMAL;
 	float4 c : COLOR;
 	float2 t : TEXCOORD;
+#ifdef SKINNED
+	float4 BoneWeights : WEIGHTS;
+	uint4 BoneIndices  : BONEINDICES;
+#endif
 };
 
 struct VertexOut
@@ -47,6 +51,12 @@ cbuffer cbPass : register(b0)
 cbuffer cbPerObj : register(b1)
 {
 	float4x4 gWorld;
+	float4x4 gTexTransform;
+}
+
+cbuffer cbSkinned : register(b2)
+{
+	float4x4 gBoneTransforms[96];
 }
 
 Texture2D g_txDiffuse	: register (t0);

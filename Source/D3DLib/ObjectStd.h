@@ -39,6 +39,16 @@ struct Vertex
 	}
 };
 
+struct SkinnedVertex
+{
+	DirectX::XMFLOAT3 p;
+	DirectX::XMFLOAT3 n;
+	DirectX::XMFLOAT4 c;
+	DirectX::XMFLOAT2 t;
+	DirectX::XMFLOAT4 BoneWeights;
+	BYTE BoneIndices[4];
+};
+
 struct VertexT
 {
 	DirectX::XMFLOAT3 p;
@@ -60,6 +70,11 @@ struct PassConstants
 	float TotalTime = 0.0f;
 	float DeltaTime = 0.0f;
 
+};
+
+struct SkinnedConstants
+{
+	DirectX::XMFLOAT4X4 BoneTransforms[96];
 };
 
 struct ObjectConstants

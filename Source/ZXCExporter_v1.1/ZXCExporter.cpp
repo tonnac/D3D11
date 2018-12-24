@@ -50,8 +50,6 @@ void ZXCExporter::LoadNode(INode * node)
 {
 	if (node == nullptr) return;
 
-	if (MaxUtil::isBipedObject(node)) misBipedObejct = true;
-
 	AddObject(node);
 	AddMaterial(node);
 
