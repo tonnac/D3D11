@@ -48,5 +48,5 @@ protected:
 
 	E_DSS m_DepthStencilState = E_DSS::Default;
 	E_RSS m_RasterizerState = E_RSS::Default;
-	E_BSS m_BlendState = E_BSS::No;
+	E_BSS m_BlendState = E_BSS::Default;
 };
