@@ -17,7 +17,7 @@ VertexOut VS(VertexIn vIn)
 	float3 posL = float3(0.0f, 0.0f, 0.0f);
 	float3 normalL = float3(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i < Index; ++i)
+	for (uint i = 0; i < Index; ++i)
 	{
 		posL += weights[i] * mul(float4(vIn.p, 1.0f), gBoneTransforms[vIn.BoneIndices[i]]).xyz;
 		normalL += weights[i] * mul(vIn.n, (float3x3)gBoneTransforms[vIn.BoneIndices[i]]);

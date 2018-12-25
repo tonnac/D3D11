@@ -10,8 +10,8 @@ struct BipedVertex
 	int			 mNodeIndex = -1;
 	int			 mNumWeight = -1;
 
-	std::map<float, int, std::greater<float>>	 mWeightList;
-	std::map<float, int, std::greater<float>>::const_iterator iter;
+	std::multimap<float, int, std::greater<float>>	 mWeightList;
+	std::multimap<float, int, std::greater<float>>::const_iterator iter;
 };
 
 class ObjectExporter
@@ -20,7 +20,7 @@ public:
 	ObjectExporter(ZXCSExporter * exporter);
 
 public:
-	void LoadObject(INode ** nodearray, size_t arraysize, 
+	void LoadObject(std::unordered_map<std::wstring, INode*>& nodes, 
 		std::vector<std::unique_ptr<ZXCSObject>>& objectlist,
 		std::unordered_map<std::wstring, size_t>& nodeIndex);
 
@@ -33,12 +33,13 @@ private:
 	int GetMaterialRef(Mtl* mtl);
 
 private:
-	void LoadBipedInfo(INode* node, std::vector<BipedVertex>& bipedes);
+	void LoadBipedInfo(INode* node, std::vector<BipedVertex>& bipedes, const std::wstring& name);
 
 	void InputBipedes(VertexW& vertex, const BipedVertex& bipedes);
-	void ExportPhysiqueData(INode* node, std::vector<BipedVertex>& bipedes, Modifier* phyMod);
-	void ExportSkinData(INode* node, std::vector<BipedVertex>& bipedes, Modifier* skinMod);
+	void ExportPhysiqueData(INode* node, std::vector<BipedVertex>& bipedes, Modifier* phyMod, const std::wstring& name);
+	void ExportSkinData(INode* node, std::vector<BipedVertex>& bipedes, Modifier* skinMod, const std::wstring& name);
 
+	void GetNodeName(INode* node, std::wstring& name);
 private:
 	ZXCSExporter* mExporter = nullptr;
 };

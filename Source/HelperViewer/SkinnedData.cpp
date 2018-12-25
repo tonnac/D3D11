@@ -84,6 +84,7 @@ void BoneAnimation::Interpoloate(int t, XMFLOAT4X4& M)const
 int AnimationClip::GetClipStartTime()const
 {
 	int t = INT_MAX;
+	SceneInf.FirstFrame;
 	for (UINT i = 0; i < (UINT)BoneAnimations.size(); ++i)
 	{
 		t = MathHelper::Min(t, BoneAnimations[i].GetStartTime());
@@ -94,6 +95,7 @@ int AnimationClip::GetClipStartTime()const
 int AnimationClip::GetClipEndTime()const
 {
 	int t = 0;
+	SceneInf.LastFrame;
 	for (UINT i = 0; i < (UINT)BoneAnimations.size(); ++i)
 	{
 		t = MathHelper::Max(t, BoneAnimations[i].GetEndTime());

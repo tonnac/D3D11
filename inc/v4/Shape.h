@@ -19,7 +19,11 @@ protected:
 
 	virtual void BuildGeometry() { return; };
 	virtual void BuildRenderItem(const std::tstring& textureFile);
-	virtual void BuildDxObject(ID3D11Device* device, const std::tstring& filename, const D3D10_SHADER_MACRO* defines);
+	virtual void BuildDxObject(
+		ID3D11Device* device,
+		const std::tstring& filename,
+		const D3D10_SHADER_MACRO* defines,
+		std::function<void(ID3DBlob*)> createinput = nullptr);
 	void CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
 
 	virtual void CreateInputLayout(ID3DBlob * vertexblob);

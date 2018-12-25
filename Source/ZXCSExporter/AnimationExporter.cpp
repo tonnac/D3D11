@@ -1,22 +1,26 @@
 #include "AnimationExporter.h"
 
-std::unique_ptr<AnimationClip> AnimationExporter::LoadAnimation(INode** nodearr, size_t arraysize, std::unordered_map<std::wstring, size_t>& nodeIndex, TimeValue start, TimeValue end)
+std::unique_ptr<AnimationClip> AnimationExporter::LoadAnimation(
+	std::unordered_map<std::wstring, INode*>& nodes,
+	std::unordered_map<std::wstring, size_t>& nodeIndex, TimeValue start, TimeValue end)
 {
 	std::unique_ptr<AnimationClip> clip = nullptr;
-	for (size_t i = 0; i < arraysize; ++i)
+
+	for (auto & x : nodes)
 	{
-		size_t k = nodeIndex[nodearr[i]->GetName()];
-		if (CheckForAnimation(nodearr[i], start, end))
+		size_t k = nodeIndex[x.first];
+		if (CheckForAnimation(x.second, start, end))
 		{
 			if (clip == nullptr)
 			{
 				clip = std::make_unique<AnimationClip>();
 				clip->BoneAnimations.resize(nodeIndex.size());
 			}
-			InputAnimations(nodearr[i], clip->BoneAnimations[k], start, end);
+			InputAnimations(x.second, clip->BoneAnimations[k], start, end);
 			OverlappedTrackErase(clip->BoneAnimations[k]);
 		}
 	}
+
 	return std::move(clip);
 }
 

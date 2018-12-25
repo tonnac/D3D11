@@ -35,7 +35,7 @@ bool Core::GameInit()
 
 	DxState::InitState(m_pd3dDevice.Get());
 
-	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-10));
+	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-150));
 	m_DefaultCamera.SetProjMatrix(XM_PIDIV4, AspectRatio());
 	m_pMainCamera = &m_DefaultCamera;
 
@@ -301,22 +301,22 @@ XMFLOAT4 Core::OnKeyboardInput()
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(-deltaTime * 75.0f);
+		m_pMainCamera->MoveSide(-deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(deltaTime * 75.0f);
+		m_pMainCamera->MoveSide(deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(deltaTime * 75.0f);
+		m_pMainCamera->MoveLook(deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(-deltaTime * 75.0f);
+		m_pMainCamera->MoveLook(-deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)

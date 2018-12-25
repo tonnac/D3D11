@@ -7,6 +7,8 @@ struct RenderItem
 	RenderItem() = default;
 	RenderItem(const RenderItem& rhs) = delete;
 
+	std::string Name;
+
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
 
 	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();

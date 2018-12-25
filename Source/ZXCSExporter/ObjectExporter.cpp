@@ -1,16 +1,17 @@
 #include "ZXCSExporter.h"
 
-void ObjectExporter::LoadObject(INode ** n, size_t arraysize,
+void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	std::vector<std::unique_ptr<ZXCSObject>>& ObjectList,
 	std::unordered_map<std::wstring, size_t>& nodeIndex)
 {
 	ObjectList.resize(nodeIndex.size());
-	for (size_t i = 0; i < arraysize; ++i)
+
+	for (auto& x : nodes)
 	{
 		std::unique_ptr<ZXCSObject> maxObj = std::make_unique<ZXCSObject>();
-		size_t objIndex = nodeIndex[n[i]->GetName()];
-		maxObj->mNodeName = std::make_pair(n[i]->GetName(), objIndex);
-		INode* parent = n[i]->GetParentNode();
+		size_t objIndex = nodeIndex[x.first];
+		maxObj->mNodeName = std::make_pair(x.first, objIndex);
+		INode* parent = x.second->GetParentNode();
 
 		maxObj->mParentName = std::make_pair(L"NONE", -1);
 		if (parent != nullptr && (!parent->IsRootNode()))
@@ -23,10 +24,10 @@ void ObjectExporter::LoadObject(INode ** n, size_t arraysize,
 
 		TimeValue t = mExporter->mInterval.Start();
 
-		Matrix3 world = n[i]->GetNodeTM(t);
+		Matrix3 world = x.second->GetNodeTM(t);
 		MaxUtil::ConvertMatrix(world, maxObj->mWorld);
 		Matrix3 painv = Inverse(parent->GetNodeTM(t));
-		Matrix3 local = n[i]->GetNodeTM(t) * painv;
+		Matrix3 local = x.second->GetNodeTM(t) * painv;
 
 		AffineParts ap;
 		decomp_affine(local, &ap);
@@ -35,10 +36,10 @@ void ObjectExporter::LoadObject(INode ** n, size_t arraysize,
 		MaxUtil::ConvertVector(ap.q, maxObj->InititalPos.q);
 		MaxUtil::ConvertVector(ap.u, maxObj->InititalPos.u);
 		MaxUtil::ConvertVector(ap.k, maxObj->InititalPos.k);
-		
-		LoadMesh(n[i], maxObj.get());
 
-		ObjectState os = n[i]->EvalWorldState(t);
+		LoadMesh(x.second, maxObj.get());
+
+		ObjectState os = x.second->EvalWorldState(t);
 		os.obj->SuperClassID();
 
 		switch (os.obj->SuperClassID())
@@ -52,7 +53,7 @@ void ObjectExporter::LoadObject(INode ** n, size_t arraysize,
 				maxObj->Type = ObjectType::BONE;
 			if (os.obj->ClassID() == Class_ID(DUMMY_CLASS_ID, 0))
 				maxObj->Type = ObjectType::DUMMY;
-			if (os.obj->ClassID() == BIPSLAVE_CONTROL_CLASS_ID || 
+			if (os.obj->ClassID() == BIPSLAVE_CONTROL_CLASS_ID ||
 				os.obj->ClassID() == BIPBODY_CONTROL_CLASS_ID)
 				maxObj->Type = ObjectType::BIPED;
 		}
@@ -62,6 +63,7 @@ void ObjectExporter::LoadObject(INode ** n, size_t arraysize,
 		}
 		ObjectList[objIndex] = std::move(maxObj);
 	}
+
 	for (auto&x : ObjectList)
 		BuildVBIB(x.get());
 }
@@ -103,7 +105,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 	o->mTriangles.resize(mesh.getNumFaces());
 
 	std::vector<BipedVertex> bv;
-	LoadBipedInfo(node, bv);
+	LoadBipedInfo(node, bv, o->mNodeName.first);
 
 	for (int i = 0; i < (int)o->mTriangles.size(); ++i)
 	{
@@ -143,9 +145,17 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			}
 			else
 			{
-				InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexWNum]);
-				InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexWNum]);
-				InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexWNum]);
+				if (o->mTriangles[i].v[0].VertexWNum >= (int)bv.size() || 
+					o->mTriangles[i].v[1].VertexWNum >= (int)bv.size() ||
+					o->mTriangles[i].v[2].VertexWNum >= (int)bv.size())
+				{
+				}
+				else
+				{
+					InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexWNum]);
+					InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexWNum]);
+					InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexWNum]);
+				}
 			}
 
 		}
@@ -335,18 +345,18 @@ int ObjectExporter::GetMaterialRef(Mtl * mtl)
 	return -1;
 }
 
-void ObjectExporter::LoadBipedInfo(INode * node, std::vector<BipedVertex>& bipedes)
+void ObjectExporter::LoadBipedInfo(INode * node, std::vector<BipedVertex>& bipedes, const std::wstring& name)
 {
 	Modifier * phyMod = MaxUtil::FindModifer(node, Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B));
 	Modifier * skinMod = MaxUtil::FindModifer(node, SKIN_CLASSID);
 
 	if (phyMod != nullptr)
 	{
-		ExportPhysiqueData(node, bipedes, phyMod);
+		ExportPhysiqueData(node, bipedes, phyMod, name);
 	}
 	else if (skinMod != nullptr)
 	{
-		ExportSkinData(node, bipedes, skinMod);
+		ExportSkinData(node, bipedes, skinMod, name);
 	}
 }
 
@@ -362,7 +372,7 @@ void ObjectExporter::InputBipedes(VertexW & vertex, const BipedVertex & bipedes)
 	vertex.w[3] = (float)i;
 }
 
-void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& bipedes, Modifier * phyMod)
+void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& bipedes, Modifier * phyMod, const std::wstring& name)
 {
 	IPhysiqueExport * phyExport = (IPhysiqueExport*)phyMod->GetInterface(I_PHYEXPORT);
 	IPhyContextExport * mcExport = (IPhyContextExport *)phyExport->GetContextInterface(node);
@@ -381,7 +391,7 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 	for (int i = 0; i < numverts; ++i)
 	{
 		float totalWeight = 0.0f, wieght = 0.0f;
-		TSTR nodeName;
+		std::wstring nodeName;
 
 		IPhyVertexExport * vi = mcExport->GetVertexInterface(i);
 		if (vi == nullptr)
@@ -402,17 +412,19 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 
 			if (iNode > MAXWEIGHTNUM)
 			{
-				std::map<float, int> weightList;
+				std::multimap<float, int, std::greater<float>> weightList;
 				bipedes[i].mNumWeight = MAXWEIGHTNUM;
 				for (int j = 0; j < iNode; ++j)
 				{
-					
 					INode* node0 = rb_vtx->GetNode(j);
-					nodeName = node0->GetName();
+
+					GetNodeName(node0, nodeName);
+					if (nodeName.empty())
+						nodeName = node->GetName();
 
 					float weight = rb_vtx->GetWeight(j);
 
-					auto pair = std::make_pair(weight, (int)nodeindex[std::wstring(nodeName)]);
+					auto pair = std::make_pair(weight, (int)nodeindex[nodeName]);
 					weightList.insert(pair);
 				}
 				int Count = 0;
@@ -426,16 +438,19 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 				for (int j = 0; j < iNode; ++j)
 				{
 					INode* node0 = rb_vtx->GetNode(j);
-					nodeName = node0->GetName();
+
+					GetNodeName(node0, nodeName);
+					if (nodeName.empty())
+						nodeName = node->GetName();
 
 					float weight = rb_vtx->GetWeight(j);
 
-					auto pair = std::make_pair(weight, (int)nodeindex[std::wstring(nodeName)]);
+					auto pair = std::make_pair(weight, (int)nodeindex[nodeName]);
 					bipedes[i].mWeightList.insert(pair);
 				}
 			}
-			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[std::wstring(node->GetName())];
-			bipedes[i].mNodename = node->GetName();
+			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[name];
+			bipedes[i].mNodename = name;
 		}break;
 		case RIGID_NON_BLENDED_TYPE:
 		{
@@ -445,11 +460,14 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 
 			bipedes[i].mNumWeight = 1;
 
-			std::wstring name = node0->GetName();
-			bipedes[i].mWeightList.insert(std::make_pair(1.0f, (int)nodeindex[name]));
+			GetNodeName(node0, nodeName);
+			if (nodeName.empty())
+				nodeName = node->GetName();
+
+			bipedes[i].mWeightList.insert(std::make_pair(1.0f, (int)nodeindex[nodeName]));
 			
-			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[std::wstring(node->GetName())];
-			bipedes[i].mNodename = node->GetName();
+			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[name];
+			bipedes[i].mNodename = name;
 		}break;
 		default:
 			MessageBox(nullptr, L"No Biped ID.", L"Error", 0);
@@ -461,7 +479,7 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 	phyMod->ReleaseInterface(I_PHYINTERFACE, phyExport);
 }
 
-void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipedes, Modifier * skinMod)
+void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipedes, Modifier * skinMod, const std::wstring& name)
 {
 	if (node == nullptr || skinMod == nullptr) return;
 
@@ -469,6 +487,8 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 	ISkinContextData * skinData = skin->GetContextInterface(node);
 
 	auto& nodeindex = mExporter->mNodeIndex;
+
+	std::wstring nodeName;
 
 	if (skin != nullptr && skinData != nullptr)
 	{
@@ -491,9 +511,11 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 					INode * bone = skin->GetBone(boneIndex);
 					if (bone == nullptr) break;
 
+					GetNodeName(bone, nodeName);
+
 					float boneWeight = skinData->GetBoneWeight(i, j);
 
-					weightList.insert(std::make_pair(boneWeight, (int)nodeindex[std::wstring(bone->GetName())]));
+					weightList.insert(std::make_pair(boneWeight, (int)nodeindex[nodeName]));
 				}
 
 				int Cnt = 0;
@@ -511,14 +533,34 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 					INode * bone = skin->GetBone(boneIndex);
 					if (bone == nullptr) break;
 
+					GetNodeName(bone, nodeName);
+
 					float boneWeight = skinData->GetBoneWeight(i, j);
 
-					bipedes[i].mWeightList.insert(std::make_pair(boneWeight, (int)nodeindex[std::wstring(bone->GetName())]));
+					bipedes[i].mWeightList.insert(std::make_pair(boneWeight, (int)nodeindex[nodeName]));
 				}
 			}
-			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[std::wstring(node->GetName())];
-			bipedes[i].mNodename = node->GetName();
+			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[name];
+			bipedes[i].mNodename = name;
 		}
+	}
+}
+
+void ObjectExporter::GetNodeName(INode * node, std::wstring & name)
+{
+	auto iter = std::find_if(std::begin(mExporter->mMaxObject), std::end(mExporter->mMaxObject), [&name, node](std::pair<std::wstring, INode*> rhs)
+	{
+		if (node == rhs.second)
+		{
+			name = rhs.first;
+			return true;
+		}
+		return false;
+	});
+
+	if (iter == mExporter->mMaxObject.end())
+	{
+		name.clear();
 	}
 }
 

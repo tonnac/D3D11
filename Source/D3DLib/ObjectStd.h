@@ -74,7 +74,7 @@ struct PassConstants
 
 struct SkinnedConstants
 {
-	DirectX::XMFLOAT4X4 BoneTransforms[96];
+	DirectX::XMFLOAT4X4 BoneTransforms[255];
 };
 
 struct ObjectConstants

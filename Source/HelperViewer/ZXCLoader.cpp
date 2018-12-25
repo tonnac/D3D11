@@ -26,7 +26,7 @@ bool ZXCLoader::LoadZXC(
 
 	if (!fp.is_open())
 	{
-		std::wstring message = FileName + L"Not Found.";
+		std::wstring message = FileName + L" Not Found.";
 		MessageBox(nullptr, message.c_str(), 0, 0);
 		return false;
 	}
@@ -56,13 +56,16 @@ bool ZXCLoader::LoadZXC(
 	ReadSubsetTable(fp, numSubSet, subsets);
 	ReadVertex(fp, numVertices, vertices);
 	ReadIndex(fp, numTriangles, indices);
-	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
-
-	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
+	if (numAnimationClips > 0)
 	{
-		boneHierarchy[i] = nodes[i].ParentIndex;
+		ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
+
+		for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
+		{
+			boneHierarchy[i] = nodes[i].ParentIndex;
+		}
+		skinInfo.Set(boneHierarchy, boneOffsets, animations);
 	}
-	skinInfo.Set(boneHierarchy, boneOffsets, animations);
 
 	return true;
 }

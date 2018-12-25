@@ -161,6 +161,11 @@
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="ZXCLoader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shape.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

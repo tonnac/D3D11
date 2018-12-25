@@ -32,7 +32,7 @@ private:
 	SceneInfo	mSceneInfo;
 
 	std::vector<Mtl*> mMaxMaterial;
-	std::vector<INode*> mMaxObjects;
+	std::unordered_map<std::wstring, INode*> mMaxObject;
 	std::queue<INode*> mQueue;
 
 	std::vector<ZXCSMaterial> mOutputMaterial;

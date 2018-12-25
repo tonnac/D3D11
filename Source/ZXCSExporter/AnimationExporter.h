@@ -6,8 +6,7 @@ class AnimationExporter
 {
 public:
 	static std::unique_ptr<AnimationClip> LoadAnimation(
-		INode** nodearr, 
-		size_t arraysize, 
+		std::unordered_map<std::wstring, INode*>& nodes,
 		std::unordered_map<std::wstring, size_t>& nodeIndex,
 		TimeValue start, TimeValue end);
 

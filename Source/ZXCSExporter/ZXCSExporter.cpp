@@ -27,9 +27,9 @@ bool ZXCSExporter::Run()
 	LoadMaterial();
 
 	mObjectExporter = std::make_unique<ObjectExporter>(this);	
-	mObjectExporter->LoadObject(mMaxObjects.data(), mMaxObjects.size(), mOutputObjects, mNodeIndex);
+	mObjectExporter->LoadObject(mMaxObject, mOutputObjects, mNodeIndex);
 
-	mAnimation = AnimationExporter::LoadAnimation(mMaxObjects.data(), mMaxObjects.size(), mNodeIndex, mInterval.Start(), mInterval.End());
+	mAnimation = AnimationExporter::LoadAnimation(mMaxObject, mNodeIndex, mInterval.Start(), mInterval.End());
 
 	mWriter = std::make_unique<ZXCSWriter>(mVersion, mFilename, mSceneInfo, 
 		mOutputMaterial, mOutputObjects, mAnimation.get());
@@ -87,12 +87,13 @@ void ZXCSExporter::AddObject(INode * node)
 		case GEOMOBJECT_CLASS_ID:
 		case HELPER_CLASS_ID:
 		{
-			if (os.obj->SuperClassID() == HELPER_CLASS_ID && node->NumChildren() == 0)
+			auto iter = mMaxObject.find(nodeName);
+			if (iter != mMaxObject.end())
 			{
-				return;
+				nodeName += L'_';
 			}
-			mNodeIndex[node->GetName()] = mNodeIndex.size();
-			mMaxObjects.push_back(node);
+			mNodeIndex[nodeName] = mNodeIndex.size();
+			mMaxObject.insert(std::make_pair(nodeName, node));
 		}break;
 	}
 

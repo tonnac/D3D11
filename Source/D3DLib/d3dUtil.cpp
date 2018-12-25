@@ -178,5 +178,6 @@ void d3dUtil::CreateShaderResourceView(ID3D11Device* pDevice, const std::tstring
 	
 	if (filepath.empty())
 		return;
-	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, filepath.c_str(), &loadinfo, nullptr, pShaderResource, nullptr));
+//	ThrowifFailed(D3DX11CreateShaderResourceViewFromFile(pDevice, filepath.c_str(), &loadinfo, nullptr, pShaderResource, nullptr));
+	D3DX11CreateShaderResourceViewFromFile(pDevice, filepath.c_str(), &loadinfo, nullptr, pShaderResource, nullptr);
 }

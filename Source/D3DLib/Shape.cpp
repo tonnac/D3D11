@@ -49,7 +49,10 @@ void Shape::BuildRenderItem(const std::tstring & textureFile)
 	S_RItem.SaveRenderItem(rItem);
 }
 
-void Shape::BuildDxObject(ID3D11Device * device, const std::tstring & filename, const D3D10_SHADER_MACRO * defines)
+void Shape::BuildDxObject(ID3D11Device* device,
+	const std::tstring& filename,
+	const D3D10_SHADER_MACRO* defines,
+	std::function<void(ID3DBlob*)> createinput)
 {
 	if (mDxObject == nullptr)
 		mDxObject = std::make_unique<DxObj>();
@@ -57,7 +60,12 @@ void Shape::BuildDxObject(ID3D11Device * device, const std::tstring & filename, 
 	if (mDxObject->m_pVertexShader == nullptr)
 	{
 		d3dUtil::LoadVertexShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
-		CreateInputLayout(vertexBlob.Get());
+		if (createinput == nullptr)
+		{
+			CreateInputLayout(vertexBlob.Get());
+		}
+		else
+			createinput(vertexBlob.Get());
 	}
 	if (mDxObject->m_pPixelShader == nullptr)
 		d3dUtil::LoadPixelShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pPixelShader.GetAddressOf(), "PS");

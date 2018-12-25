@@ -15,5 +15,6 @@ protected:
 	virtual bool Frame()override;
 	virtual bool Render()override;
 private:
+	std::array<Mesh, 3> meshes;
 	Mesh mesh;
 };
