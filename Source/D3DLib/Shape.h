@@ -1,7 +1,6 @@
 #pragma once
+#include "GeometryStroage.h"
 #include "RenderItemStorage.h"
-#include "ObjectStd.h"
-#include "MathHelper.h"
 
 class Shape
 {
@@ -17,7 +16,6 @@ public:
 	virtual bool Render(ID3D11DeviceContext* pContext);
 
 protected:
-	void UpdateObjectCBs(ID3D11DeviceContext* pContext);
 
 	virtual void BuildGeometry() { return; };
 	virtual void BuildRenderItem(const std::tstring& textureFile);
@@ -28,8 +26,8 @@ protected:
 protected:
 	ID3D11Device* m_pDevice = nullptr;
 
-	std::vector<RenderItem*> mRenderItem;
-	std::unique_ptr<MeshGeometry> mGeometries = nullptr;
+	RenderItem* mRenderItem = nullptr;
+	MeshGeometry* mGeometry = nullptr;
 	std::unique_ptr<DxObj> mDxObject = nullptr;
 
 	DirectX::XMFLOAT3 m_vPosition;

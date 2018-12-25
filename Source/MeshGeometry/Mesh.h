@@ -17,6 +17,8 @@ public:
 private:
 	virtual void CreateInputLayout(ID3DBlob * vertexblob)override;
 private:
+	std::unique_ptr<DxObj> mDebugShader = nullptr;
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantbuffer = nullptr;
 	std::vector<std::unique_ptr<MeshNode>> mNodeList;
 	std::vector<RenderItem*> mDrawItem;

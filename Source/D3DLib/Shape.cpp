@@ -12,19 +12,22 @@ void Shape::Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const 
 	m_pDevice = pDevice;
 
 	mDxObject = std::make_unique<DxObj>();
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
 
 	BuildGeometry();
 	BuildRenderItem(textureFile);
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
-		mGeometries->VertexBufferByteSize,
-		mGeometries->VertexBufferCPU->GetBufferPointer(),
-		mGeometries->VertexBuffer.GetAddressOf());
+		mGeometry->VertexBufferByteSize,
+		mGeometry->VertexBufferCPU->GetBufferPointer(),
+		mGeometry->VertexBuffer.GetAddressOf());
 
 	d3dUtil::CreateIndexBuffer(m_pDevice,
-		mGeometries->IndexBufferByteSize,
-		mGeometries->IndexBufferCPU->GetBufferPointer(),
-		mGeometries->IndexBuffer.GetAddressOf());
+		mGeometry->IndexBufferByteSize,
+		mGeometry->IndexBufferCPU->GetBufferPointer(),
+		mGeometry->IndexBuffer.GetAddressOf());
 
 	BuildDxObject(m_pDevice, shaderFile, nullptr);
 }
@@ -32,7 +35,7 @@ void Shape::Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const 
 void Shape::BuildRenderItem(const std::tstring & textureFile)
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
-	rItem->Geo = mGeometries.get();
+	rItem->Geo = mGeometry;
 	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
 	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
@@ -42,13 +45,13 @@ void Shape::BuildRenderItem(const std::tstring & textureFile)
 	if (!textureFile.empty())
 		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
-	mRenderItem.push_back(rItem.get());
+	mRenderItem = rItem.get();
 	S_RItem.SaveRenderItem(rItem);
 }
 
 void Shape::BuildDxObject(ID3D11Device * device, const std::tstring & filename, const D3D10_SHADER_MACRO * defines)
 {
-	if(mDxObject == nullptr)
+	if (mDxObject == nullptr)
 		mDxObject = std::make_unique<DxObj>();
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
 	if (mDxObject->m_pVertexShader == nullptr)
@@ -62,19 +65,16 @@ void Shape::BuildDxObject(ID3D11Device * device, const std::tstring & filename, 
 
 void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
 {
-	mGeometries = std::make_unique<MeshGeometry>();
+	D3DCreateBlob(vbByteSize, mGeometry->VertexBufferCPU.GetAddressOf());
+	CopyMemory(mGeometry->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
 
-	D3DCreateBlob(vbByteSize, mGeometries->VertexBufferCPU.GetAddressOf());
-	CopyMemory(mGeometries->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
+	D3DCreateBlob(ibByteSize, mGeometry->IndexBufferCPU.GetAddressOf());
+	CopyMemory(mGeometry->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
 
-	D3DCreateBlob(ibByteSize, mGeometries->IndexBufferCPU.GetAddressOf());
-	CopyMemory(mGeometries->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
-
-	mGeometries->VertexBufferByteSize = vbByteSize;
-	mGeometries->VertexByteStride = vertexStride;
-	Stride = vertexStride;
-	mGeometries->IndexBufferByteSize = ibByteSize;
-	mGeometries->IndexFormat = DXGI_FORMAT_R32_UINT;
+	mGeometry->VertexBufferByteSize = vbByteSize;
+	mGeometry->VertexByteStride = Stride = vertexStride;
+	mGeometry->IndexBufferByteSize = ibByteSize;
+	mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
 }
 
 void Shape::CreateInputLayout(ID3DBlob * vertexblob)
@@ -103,35 +103,19 @@ bool Shape::Frame()
 
 bool Shape::Render(ID3D11DeviceContext* pContext)
 {
-	UpdateObjectCBs(pContext);
-	pContext->IASetVertexBuffers(0, 1, mGeometries->VertexBuffer.GetAddressOf(), &Stride, &offset);
-	pContext->IASetIndexBuffer(mGeometries->IndexBuffer.Get(), mGeometries->IndexFormat, 0);
-	if(mDxObject != nullptr)
+	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &Stride, &offset);
+	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
+	if (mDxObject != nullptr)
 		mDxObject->SetResource(pContext);
-	for (auto&x : mRenderItem)
+
+	if (mRenderItem != nullptr)
 	{
-		pContext->IASetPrimitiveTopology(x->PrimitiveType);
-		pContext->PSSetShaderResources(0, 1, x->ShaderResourceView.GetAddressOf());
-		pContext->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
-		pContext->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
+		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
+		pContext->PSSetShaderResources(0, 1, mRenderItem->ShaderResourceView.GetAddressOf());
+		pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
+		pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
 	}
 	return true;
-}
-
-void Shape::UpdateObjectCBs(ID3D11DeviceContext * pContext)
-{
-	for (auto&x : mRenderItem)
-	{
-		ObjectConstants obj;
-
-		XMMATRIX texTransform = XMLoadFloat4x4(&x->TexTransform);
-		XMMATRIX World = XMLoadFloat4x4(&x->World);
-
-		XMStoreFloat4x4(&obj.TexTransform, XMMatrixTranspose(texTransform));
-		XMStoreFloat4x4(&obj.World, XMMatrixTranspose(World));
-
-		pContext->UpdateSubresource(x->ConstantBuffer.Get(), 0, nullptr, &obj, 0, 0);
-	}
 }
 
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
@@ -188,7 +172,7 @@ void BoxShape::BuildGeometry()
 		vertices[5].t = { 0.25f, 0.33f };
 		vertices[6].t = { 0.25f, 0.0f };
 		vertices[7].t = { 0.5f, 0.0f };
-		
+
 		vertices[8].t = { 0.51f, 0.66f };
 		vertices[9].t = { 0.51f, 0.34f };
 		vertices[10].t = { 0.75f, 0.34f };
@@ -198,12 +182,12 @@ void BoxShape::BuildGeometry()
 		vertices[13].t = { 0.25f, 0.66f };
 		vertices[14].t = { 0.25f, 0.33f };
 		vertices[15].t = { 0.5f, 0.33f };
-		
+
 		vertices[16].t = { 0.26f, 1.0f };
 		vertices[17].t = { 0.26f, 0.67f };
 		vertices[18].t = { 0.5f, 0.67f };
 		vertices[19].t = { 0.5f, 1.0f };
-		
+
 		vertices[20].t = { 0.0f, 0.66f };
 		vertices[21].t = { 0.0f, 0.33f };
 		vertices[22].t = { 0.25f, 0.33f };
@@ -231,5 +215,5 @@ void BoxShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometries->DrawArgs["default"] = sub;
+	mGeometry->DrawArgs["default"] = sub;
 }

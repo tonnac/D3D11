@@ -103,9 +103,15 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 			mGeometries->DrawArgs[name] = submesh;
 			mNodeList[nodeIndex]->Ritem.push_back(ritem.get());
 			if (mNodeList[nodeIndex]->Type == ObjectType::MESH)
+			{
+				mDrawItem.push_back(ritem.get());
 				S_RItem.mOpaqueItem.push_back(ritem.get());
+			}
 			else
+			{
+				mDebugItem.push_back(ritem.get());
 				S_RItem.mMiscItem.push_back(ritem.get());
+			}
 			S_RItem.mAllRitem.push_back(std::move(ritem));
 		}
 	}
@@ -146,20 +152,29 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 
 	if (!mNodeList.empty())
 	{
-		for (auto&x : mNodeList)
+		//for (auto&x : mNodeList)
+		//{
+		//	if (x->Type == ObjectType::MESH)
+		//	{
+		//		for (auto&k : x->Ritem)
+		//		{
+		//			if (k->ShaderResourceView == nullptr)
+		//				continue;
+		//			context->IASetPrimitiveTopology(k->PrimitiveType);
+		//			context->PSSetShaderResources(0, 1, k->ShaderResourceView.GetAddressOf());
+		//			context->VSSetConstantBuffers(1, 1, k->ConstantBuffer.GetAddressOf());
+		//			context->DrawIndexedInstanced(k->IndexCount, 1, k->StartIndexLocation, k->BaseVertexLocation, 0);
+		//		}
+		//	}
+		//}
+		for (auto&x : mDrawItem)
 		{
-			if (x->Type == ObjectType::MESH)
-			{
-				for (auto&k : x->Ritem)
-				{
-					if (k->ShaderResourceView == nullptr)
-						continue;
-					context->IASetPrimitiveTopology(k->PrimitiveType);
-					context->PSSetShaderResources(0, 1, k->ShaderResourceView.GetAddressOf());
-					context->VSSetConstantBuffers(1, 1, k->ConstantBuffer.GetAddressOf());
-					context->DrawIndexedInstanced(k->IndexCount, 1, k->StartIndexLocation, k->BaseVertexLocation, 0);
-				}
-			}
+			if (x->ShaderResourceView == nullptr)
+				continue;
+			context->IASetPrimitiveTopology(x->PrimitiveType);
+			context->PSSetShaderResources(0, 1, x->ShaderResourceView.GetAddressOf());
+			context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
+			context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
 		}
 	}
 	return true;

@@ -25,4 +25,10 @@ void PlaneShape::BuildGeometry()
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
 	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometry->DrawArgs["default"] = sub;
 }
