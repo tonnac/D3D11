@@ -96,6 +96,12 @@
     <ClInclude Include="SkinnedData.h">
       <Filter>헤더 파일\Object\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderStorage.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryGenerator.h">
+      <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -163,6 +169,12 @@
     </ClCompile>
     <ClCompile Include="SkinnedData.cpp">
       <Filter>소스 파일\Object\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderStorage.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryGenerator.cpp">
+      <Filter>소스 파일\Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

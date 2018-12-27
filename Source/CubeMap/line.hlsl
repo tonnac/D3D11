@@ -1,20 +1,20 @@
 #include "common.hlsl"
 
-struct CVertexIn
+struct VertexIn
 {
 	float3 p : POSITION;
 	float4 c : COLOR;
 };
 
-struct CVertexOut
+struct VertexOut
 {
 	float4 p : SV_POSITION;
 	float4 c : COLOR;
 };
 
-CVertexOut VS(CVertexIn vIn)
+VertexOut VS(VertexIn vIn)
 {
-	CVertexOut vOut;
+	VertexOut vOut;
 	float4 vPos = float4(vIn.p, 1.0f);
 	float4 vWorld = mul(vPos, gWorld);
 	float4 vView = mul(vWorld, gView);
@@ -24,7 +24,7 @@ CVertexOut VS(CVertexIn vIn)
 	return vOut;
 }
 
-float4 PS(CVertexOut vOut) : SV_Target
+float4 PS(VertexOut vOut) : SV_Target
 {
 	float4 Color = vOut.c;
 	return Color;

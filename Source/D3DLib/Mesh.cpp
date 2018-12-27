@@ -126,13 +126,6 @@ bool Mesh::LoadZXC(const std::tstring & filename)
 		}
 	}
 
-	auto foo = [this](ID3DBlob* blob)
-	{
-		this->Shape::CreateInputLayout(blob);
-	};
-
-	BuildDxObject(m_pDevice, L"shape.hlsl", nullptr, foo);
-
 	return true;
 }
 
@@ -254,12 +247,6 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
 
-	const D3D10_SHADER_MACRO skinnedDefines[] =
-	{
-		"SKINNED", "1",
-		NULL, NULL
-	};
-	BuildDxObject(m_pDevice, L"shape.hlsl", skinnedDefines);
 	return true;
 }
 
@@ -291,8 +278,6 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	
 	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &Stride, &offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
-	if (mDxObject != nullptr)
-		mDxObject->SetResource(context);
 
 	if (!mNodeList.empty())
 	{
@@ -339,24 +324,4 @@ void Mesh::SetWorld(const DirectX::XMFLOAT4X4 & world)
 			x->World = world;
 		}
 	}
-}
-
-void Mesh::CreateInputLayout(ID3DBlob * vertexblob)
-{
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION"		, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 0	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 12	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 24	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"WEIGHTS"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 48	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BONEINDICES"	, 0, DXGI_FORMAT_R8G8B8A8_UINT		, 0, 64	, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	d3dUtil::CreateInputLayout(m_pDevice,
-		(DWORD)vertexblob->GetBufferSize(),
-		vertexblob->GetBufferPointer(),
-		layout,
-		(UINT)std::size(layout),
-		mDxObject->m_pInputLayout.GetAddressOf());
 }

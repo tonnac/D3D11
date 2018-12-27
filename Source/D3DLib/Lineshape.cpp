@@ -8,19 +8,6 @@ LineShape::LineShape()
 	
 }
 
-void LineShape::CreateInputLayout(ID3DBlob * vertexblob)
-{
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)vertexblob->GetBufferSize(),
-		vertexblob->GetBufferPointer(), layout, (UINT)std::size(layout),
-		mDxObject->m_pInputLayout.GetAddressOf());
-}
-
 void LineShape::BuildRenderItem(const std::tstring & textureFile)
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
@@ -52,19 +39,10 @@ void LineShape::BuildGeometry()
 	indices =
 	{ 0, 1 };
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexC);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
 	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
-
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
-	if (mDxObject->m_pVertexShader == nullptr)
-	{
-		d3dUtil::LoadVertexShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
-		CreateInputLayout(vertexBlob.Get());
-	}
-	if (mDxObject->m_pPixelShader == nullptr)
-		d3dUtil::LoadPixelShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -86,24 +64,8 @@ bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vE
 	return Render(pContext);
 }
 
-
-
-
-
 DirectionShape::DirectionShape()
 {
-}
-
-void DirectionShape::CreateInputLayout(ID3DBlob * vertexblob)
-{
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	d3dUtil::CreateInputLayout(m_pDevice, (DWORD)vertexblob->GetBufferSize(),
-		vertexblob->GetBufferPointer(), layout, (UINT)std::size(layout), mDxObject->m_pInputLayout.GetAddressOf());
 }
 
 void DirectionShape::BuildGeometry()
@@ -124,19 +86,10 @@ void DirectionShape::BuildGeometry()
 	indices =
 	{ 0, 3, 1, 4, 2, 5 };
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexC);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
 	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
-
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
-	if (mDxObject->m_pVertexShader == nullptr)
-	{
-		d3dUtil::LoadVertexShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
-		CreateInputLayout(vertexBlob.Get());
-	}
-	if (mDxObject->m_pPixelShader == nullptr)
-		d3dUtil::LoadPixelShaderFile(m_pDevice, L"line.hlsl", nullptr, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();

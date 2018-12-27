@@ -13,7 +13,6 @@ public:
 	void SetWorld(DirectX::FXMMATRIX world);
 	void SetWorld(const DirectX::XMFLOAT4X4& world);
 private:
-	virtual void CreateInputLayout(ID3DBlob * vertexblob)override;
 
 	bool LoadZXC(const std::tstring& filename);
 	bool LoadZXCS(const std::tstring& filename);

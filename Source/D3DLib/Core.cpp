@@ -34,14 +34,17 @@ bool Core::GameInit()
 	S_Input.Init();
 
 	DxState::InitState(m_pd3dDevice.Get());
-
+	mShaderStorage->Initialize(m_pd3dDevice.Get());
+	mDxObj = std::move(DxObjStorage::Dxobj()->GetDxobjList());
+	 
 	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-150));
 	m_DefaultCamera.SetProjMatrix(XM_PIDIV4, AspectRatio());
 	m_pMainCamera = &m_DefaultCamera;
 
 	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), mPassCB.GetAddressOf());
 
-	m_Dir.Create(m_pd3dDevice.Get(), L"shape.hlsl");
+	m_Dir.Create(m_pd3dDevice.Get());
+	mSkybox.Create(m_pd3dDevice.Get(), L"..\\..\\data\\cube\\snowcube1024.dds");
 	Init();
 	return true;
 }
@@ -204,6 +207,7 @@ void Core::FramePassCB()
 	XMStoreFloat4x4(&mMainPassCB.InvProj, XMMatrixTranspose(InvProj));
 	XMStoreFloat4x4(&mMainPassCB.ViewProj, XMMatrixTranspose(ViewProj));
 	XMStoreFloat4x4(&mMainPassCB.InvViewProj, XMMatrixTranspose(InvViewProj));
+	mMainPassCB.EyePosW = m_pMainCamera->m_vPos;
 
 	mMainPassCB.NearZ = 1.0f;
 	mMainPassCB.FarZ = 1000.0f;
@@ -229,6 +233,7 @@ bool Core::GameFrame()
 	m_pMainCamera->Frame();
 	FramePassCB();
 	Frame();
+	S_RItem.UpdateObjectCBs(m_pImmediateContext.Get());
 	S_Input.PostFrame();
 	return true;
 }
@@ -244,10 +249,7 @@ bool Core::PreRender()
 	auto SamplerStates = DxState::GetSamArray();
 
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
-	m_pImmediateContext->RSSetState(DxState::m_RSS[(int)m_RasterizerState].Get());
 	m_pImmediateContext->PSSetSamplers(0, Casting(UINT, SamplerStates.size()), SamplerStates.data());
-	m_pImmediateContext->OMSetDepthStencilState(DxState::m_DSS[(int)m_DepthStencilState].Get(), 0);
-	m_pImmediateContext->OMSetBlendState(DxState::m_BSS[(int)m_BlendState].Get(), 0, -1);
 
 	S_Write.Begin();
 	if(m_bFrameinfo)
@@ -259,8 +261,11 @@ bool Core::GameRender()
 {
 	PreRender();
 	{
+		mDxObj[DxType::LINE]->SetResource(m_pImmediateContext.Get());
 		m_Dir.Render(m_pImmediateContext.Get());
 		Render();
+		mDxObj[DxType::SKY]->SetResource(m_pImmediateContext.Get());
+		mSkybox.Render(m_pImmediateContext.Get());
 	}
 	PostRender();
 	return true;
@@ -284,20 +289,20 @@ XMFLOAT4 Core::OnKeyboardInput()
 		m_bFrameinfo = !m_bFrameinfo;
 	}
 
-	if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
-	{
-		IncreaseEnum(m_RasterizerState);
-	}
+	//if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
+	//{
+	//	IncreaseEnum(m_RasterizerState);
+	//}
 
-	if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
-	{
-		IncreaseEnum(m_DepthStencilState);
-	}
+	//if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
+	//{
+	//	IncreaseEnum(m_DepthStencilState);
+	//}
 
-	if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
-	{
-		IncreaseEnum(m_BlendState);
-	}
+	//if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
+	//{
+	//	IncreaseEnum(m_BlendState);
+	//}
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{

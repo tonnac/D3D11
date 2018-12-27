@@ -4,13 +4,11 @@
 #include "Minimap.h"
 #include "Frustum.h"
 #include "Mesh.h"
+#include "GeometryGenerator.h"
 
 /*	To do
 	{
-		Dxobj추가 Rasterizer, Blendstate, DepthstencilState
-		ShaderStroage 추가,
 		Mesh Manager(?) 보류,
-		SkyBox,
 		<Material>, Lights
 		Mesh Load 함수화(?)
 	}
@@ -27,5 +25,6 @@ protected:
 	virtual bool Frame()override;
 	virtual bool Render()override;
 private:
+	GridShape grid;
 	Mesh mesh;
 };

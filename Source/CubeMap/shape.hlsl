@@ -55,7 +55,7 @@ VertexOut VS(VertexIn vIn)
 
 	float4 texC = mul(float4(vIn.t, 0.0f, 1.0f), gTexTransform);
 //	vOut.t = mul(texC, matData.MatTransform).xy;
-	vOut.t = texC;
+	vOut.t = texC.xy;
 	return vOut;
 }
 

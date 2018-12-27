@@ -1,6 +1,7 @@
 #pragma once
 
-#include "d3dUtil.h"
+#include "DxState.h"
+#include "ShaderStorage.h"
 
 struct DxObj
 {
@@ -9,8 +10,39 @@ struct DxObj
 
 	void SetResource(ID3D11DeviceContext* pContext);
 
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> m_pInputLayout = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> m_pVertexShader = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pPixelShader = nullptr;
-	Microsoft::WRL::ComPtr<ID3D11GeometryShader> m_pGeometryShader = nullptr;
+	ID3D11InputLayout* m_pInputLayout = nullptr;
+	ID3D11VertexShader* m_pVertexShader = nullptr;
+	ID3D11PixelShader* m_pPixelShader = nullptr;
+	ID3D11GeometryShader* m_pGeometryShader = nullptr;
+
+	E_DSS m_DepthStencilState = E_DSS::Default;
+	E_RSS m_RasterizerState = E_RSS::Default;
+	E_BSS m_BlendState = E_BSS::Default;
+};
+
+enum class DxType
+{
+	DEFAULT,
+	SKINNED,
+	LINE,
+	SKY
+};
+
+struct DxObjStorage
+{
+private:
+	DxObjStorage() = default;
+
+public:
+	DxObjStorage(const DxObjStorage& rhs) = delete;
+	DxObjStorage& operator=(const DxObjStorage& rhs) = delete;
+	~DxObjStorage() = default;
+
+	static DxObjStorage * Dxobj()
+	{
+		static DxObjStorage storage;
+		return &storage;
+	}
+
+	static std::unordered_map<DxType, std::unique_ptr<DxObj>> GetDxobjList();
 };

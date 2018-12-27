@@ -171,12 +171,14 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="DxRT.h" />
     <ClInclude Include="DxState.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="GeometryStroage.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Minimap.h" />
     <ClInclude Include="ObjectStd.h" />
     <ClInclude Include="RenderItemStorage.h" />
+    <ClInclude Include="ShaderStorage.h" />
     <ClInclude Include="Shape.h" />
     <ClInclude Include="SkinnedData.h" />
     <ClInclude Include="Timer.h" />
@@ -194,6 +196,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="DxRT.cpp" />
     <ClCompile Include="DxState.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="GeometryStroage.cpp" />
     <ClCompile Include="Lineshape.cpp" />
     <ClCompile Include="MathHelper.cpp" />
@@ -201,6 +204,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="Minimap.cpp" />
     <ClCompile Include="PlaneShape.cpp" />
     <ClCompile Include="RenderItemStorage.cpp" />
+    <ClCompile Include="ShaderStorage.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="SkinnedData.cpp" />
     <ClCompile Include="Timer.cpp" />

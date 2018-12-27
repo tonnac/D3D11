@@ -7,11 +7,10 @@ Shape::Shape()
 {
 }
 
-void Shape::Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const std::tstring& textureFile)
+void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile)
 {
 	m_pDevice = pDevice;
 
-	mDxObject = std::make_unique<DxObj>();
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
@@ -28,8 +27,6 @@ void Shape::Create(ID3D11Device* pDevice, const std::tstring& shaderFile, const 
 		mGeometry->IndexBufferByteSize,
 		mGeometry->IndexBufferCPU->GetBufferPointer(),
 		mGeometry->IndexBuffer.GetAddressOf());
-
-	BuildDxObject(m_pDevice, shaderFile, nullptr);
 }
 
 void Shape::BuildRenderItem(const std::tstring & textureFile)
@@ -49,28 +46,6 @@ void Shape::BuildRenderItem(const std::tstring & textureFile)
 	S_RItem.SaveRenderItem(rItem);
 }
 
-void Shape::BuildDxObject(ID3D11Device* device,
-	const std::tstring& filename,
-	const D3D10_SHADER_MACRO* defines,
-	std::function<void(ID3DBlob*)> createinput)
-{
-	if (mDxObject == nullptr)
-		mDxObject = std::make_unique<DxObj>();
-	Microsoft::WRL::ComPtr<ID3DBlob> vertexBlob = nullptr;
-	if (mDxObject->m_pVertexShader == nullptr)
-	{
-		d3dUtil::LoadVertexShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pVertexShader.GetAddressOf(), "VS", vertexBlob.GetAddressOf());
-		if (createinput == nullptr)
-		{
-			CreateInputLayout(vertexBlob.Get());
-		}
-		else
-			createinput(vertexBlob.Get());
-	}
-	if (mDxObject->m_pPixelShader == nullptr)
-		d3dUtil::LoadPixelShaderFile(m_pDevice, filename.c_str(), defines, mDxObject->m_pPixelShader.GetAddressOf(), "PS");
-}
-
 void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
 {
 	D3DCreateBlob(vbByteSize, mGeometry->VertexBufferCPU.GetAddressOf());
@@ -85,25 +60,6 @@ void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSi
 	mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
 }
 
-void Shape::CreateInputLayout(ID3DBlob * vertexblob)
-{
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{"POSITION"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 0	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL"	, 0, DXGI_FORMAT_R32G32B32_FLOAT	, 0, 12	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR"	, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, 24	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD"	, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, 40	, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	d3dUtil::CreateInputLayout(m_pDevice,
-		(DWORD)vertexblob->GetBufferSize(),
-		vertexblob->GetBufferPointer(),
-		layout,
-		(UINT)std::size(layout),
-		mDxObject->m_pInputLayout.GetAddressOf());
-}
-
-
 bool Shape::Frame()
 {
 	return true;
@@ -113,8 +69,6 @@ bool Shape::Render(ID3D11DeviceContext* pContext)
 {
 	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &Stride, &offset);
 	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
-	if (mDxObject != nullptr)
-		mDxObject->SetResource(pContext);
 
 	if (mRenderItem != nullptr)
 	{
@@ -125,6 +79,7 @@ bool Shape::Render(ID3D11DeviceContext* pContext)
 	}
 	return true;
 }
+
 
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 {
@@ -223,5 +178,115 @@ void BoxShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
+	mGeometry->DrawArgs["box"] = sub;
+}
+
+void SkyBox::BuildGeometry()
+{
+	struct Vertex_
+	{
+		XMFLOAT3 Pos;
+	};
+
+	GeometryGenerator geo;
+	GeometryGenerator::MeshData sphere = geo.CreateSphere(0.5f, 20, 20);
+
+	std::vector<Vertex_> vertices;
+	for (UINT i = 0; i < (UINT)sphere.Vertices.size(); ++i)
+	{
+		Vertex_ v;
+		v.Pos = sphere.Vertices[i].Position;
+		vertices.push_back(v);
+	}
+
+	std::vector<DWORD> indices;
+	for (UINT i = 0; i < (UINT)sphere.Indices32.size(); ++i)
+	{
+		indices.push_back(sphere.Indices32[i]);
+	}
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex_);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(Vertex_));
+
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
 	mGeometry->DrawArgs["default"] = sub;
+
+	mGeometry->Name = "Sphere";
+}
+
+void SkyBox::BuildRenderItem(const std::tstring & textureFile)
+{
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometry;
+	XMMATRIX S = XMMatrixScaling(5000.0f, 5000.0f, 5000.0f);
+	XMStoreFloat4x4(&rItem->World, S);
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	if (!textureFile.empty())
+		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem = rItem.get();
+	S_RItem.SaveOpaqueItem(rItem);
+}
+
+void GridShape::BuildGeometry()
+{
+	GeometryGenerator geo;
+	GeometryGenerator::MeshData grid = geo.CreateGrid(20.0f, 30.0f, 60, 40);
+
+	std::vector<Vertex> vertices;
+	for (UINT i = 0; i < (UINT)grid.Vertices.size(); ++i)
+	{
+		Vertex v;
+		v.p = grid.Vertices[i].Position;
+		v.n = grid.Vertices[i].Normal;
+		v.t = grid.Vertices[i].TexC;
+		v.c = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		vertices.push_back(v);
+	}
+
+	std::vector<DWORD> indices;
+	for (UINT i = 0; i < (UINT)grid.Indices32.size(); ++i)
+	{
+		indices.push_back(grid.Indices32[i]);
+	}
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+
+	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometry->DrawArgs["default"] = sub;
+
+	mGeometry->Name = "Grid";
+}
+
+void GridShape::BuildRenderItem(const std::tstring & textureFile)
+{
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometry;
+	rItem->World = MathHelper::Identity4x4();
+	XMMATRIX S = XMMatrixScaling(8.0f, 8.0f, 8.0f);
+	XMStoreFloat4x4(&rItem->TexTransform, S);
+	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	if (!textureFile.empty())
+		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem = rItem.get();
+	S_RItem.SaveOpaqueItem(rItem);
 }
