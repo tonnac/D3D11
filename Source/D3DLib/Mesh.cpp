@@ -3,22 +3,22 @@
 
 using namespace DirectX;
 
-bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
+bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepath, ID3D11Device * device)
 {
 	m_pDevice = device;
 
 	std::tstring Ext(filename, filename.find_last_of(L".") + 1, filename.length());
 	if (Ext == L"ZXCS")
 	{
-		return LoadZXCS(filename);
+		return LoadZXCS(filename, texfilepath);
 	}
 	else
 	{
-		return LoadZXC(filename);
+		return LoadZXC(filename, texfilepath);
 	}
 }
 
-bool Mesh::LoadZXC(const std::tstring & filename)
+bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath)
 {
 	ZXCLoader loader;
 
@@ -27,7 +27,7 @@ bool Mesh::LoadZXC(const std::tstring & filename)
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
-	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>> materials;
+	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes, skininfo))
@@ -70,66 +70,12 @@ bool Mesh::LoadZXC(const std::tstring & filename)
 		*(mNodeList[i].get()) = nodes[i];
 	}
 
-	for (auto&x : subsets)
-	{
-		for (auto&k : x.second)
-		{
-			UINT nodeIndex = x.first.first;
-			int mtrlRef = x.first.second;
-			int mtlID = k.first;
-
-			SubmeshGeometry submesh;
-
-			std::unique_ptr<RenderItem> ritem = std::make_unique<RenderItem>();
-			ritem->BaseVertexLocation = k.second.VertexStart;
-			ritem->IndexCount = k.second.FaceCount * 3;
-			ritem->StartIndexLocation = k.second.FaceStart * 3;
-			ritem->Geo = mGeometry;
-			ritem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			ritem->TexTransform = MathHelper::Identity4x4();
-			ritem->World = mNodeList[nodeIndex]->World;
-
-			auto matindex = std::pair<UINT, int>(mtrlRef, mtlID);
-
-			std::wstring texPath = L"..\\..\\data\\tex\\";
-			std::wstring texFile;
-			if (!materials[matindex].empty())
-			{
-				texFile = materials[matindex][0].second;
-			}
-			else if (materials.size() == 1)
-			{
-				texFile = materials[std::pair<UINT, int>(mtrlRef, -1)][0].second;
-			}
-			else
-			{
-				texPath = std::wstring();
-				texFile = std::wstring();
-			}
-
-			d3dUtil::CreateShaderResourceView(m_pDevice, texPath + texFile, ritem->ShaderResourceView.GetAddressOf());
-			d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
-
-			std::string name = mNodeList[nodeIndex]->NodeName;
-			mGeometry->DrawArgs[name] = submesh;
-
-			if (mNodeList[nodeIndex]->Type == ObjectType::MESH)
-			{
-				mDrawItem.push_back(ritem.get());
-				S_RItem.SaveOpaqueItem(ritem);
-			}
-			else
-			{
-				mDebugItem.push_back(ritem.get());
-				S_RItem.SaveMiscItem(ritem);
-			}
-		}
-	}
+	BuildRenderItem(subsets, materials, texfilepath);
 
 	return true;
 }
 
-bool Mesh::LoadZXCS(const std::tstring & filename)
+bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepath)
 {
 	ZXCLoader loader;
 
@@ -139,7 +85,7 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 	std::vector<SkinnedVertex> vertices0;
 	std::vector<DWORD> indices;
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
-	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>> materials;
+	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 
@@ -184,6 +130,17 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 		*(mNodeList[i].get()) = nodes[i];
 	}
 
+	BuildRenderItem(subsets, materials, texfilepath);
+
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
+
+	return true;
+}
+
+void Mesh::BuildRenderItem(
+	const std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>>& subsets,
+	const std::vector<ZXCSMaterial>& materials, const std::tstring& texfilepath)
+{
 	for (auto&x : subsets)
 	{
 		for (auto&k : x.second)
@@ -203,30 +160,29 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 			ritem->TexTransform = MathHelper::Identity4x4();
 			ritem->World = MathHelper::Identity4x4();
 
-			auto matindex = std::pair<UINT, int>(mtrlRef, mtlID);
-
-			std::wstring texPath = L"..\\..\\data\\tex\\";
 			std::wstring texFile;
 			if (materials.empty())
 			{
-				texPath = std::wstring();
 				texFile = std::wstring();
 			}
-			else if (!materials[matindex].empty())
+			if (mtlID != -1 )
 			{
-				texFile = materials[matindex][0].second;
+				auto p = materials[mtrlRef].TexMap;
+				texFile = p[0];
 			}
-			else if (materials.size() == 1)
+			else if (auto iter = materials[mtrlRef]);
+			else if (!materials[mtrlRef].SubMaterial[mtlID].TexMap.empty())
 			{
-				texFile = materials[std::pair<UINT, int>(mtrlRef, -1)][0].second;
+				auto p = materials[mtrlRef].SubMaterial[mtlID].TexMap;
+				texFile = p[0];
 			}
-			else
+			else if (materials[mtrlRef].SubMaterial.size() == 1)
 			{
-				texPath = std::wstring();
-				texFile = std::wstring();
+				auto p = materials[mtrlRef].TexMap;
+				texFile = p[0];
 			}
 
-			d3dUtil::CreateShaderResourceView(m_pDevice, texPath + texFile, ritem->ShaderResourceView.GetAddressOf());
+			d3dUtil::CreateShaderResourceView(m_pDevice, texFile, ritem->ShaderResourceView.GetAddressOf());
 			d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
 
 			std::string name = mNodeList[nodeIndex]->NodeName;
@@ -244,10 +200,6 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 			}
 		}
 	}
-
-	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
-
-	return true;
 }
 
 bool Mesh::Frame()

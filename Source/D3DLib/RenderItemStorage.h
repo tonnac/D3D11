@@ -1,5 +1,6 @@
 #pragma once
 #include "ObjectStd.h"
+#include "FrameResource.h"
 #include "GeometryStroage.h"
 
 struct RenderItem

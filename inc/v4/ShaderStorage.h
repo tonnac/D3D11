@@ -10,7 +10,7 @@ enum Inputlayout
 	SKY
 };
 
-struct ShaderStorage
+class ShaderStorage
 {
 private:
 	ShaderStorage() = default;

@@ -5,6 +5,7 @@
 #include "Shape.h"
 #include "Camera.h"
 #include "ShaderStorage.h"
+#include "FrameResource.h"
 
 
 class Core : public wClass

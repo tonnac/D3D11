@@ -2,11 +2,12 @@
 
 #include "ZXCLoader.h"
 #include "Shape.h"
+#include "FrameResource.h"
 
 class Mesh : public Shape
 {
 public:
-	bool LoadFile(const std::tstring& filename, ID3D11Device * device);
+	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath, ID3D11Device * device);
 
 	bool Frame();
 	bool Render(ID3D11DeviceContext* context);
@@ -14,8 +15,11 @@ public:
 	void SetWorld(const DirectX::XMFLOAT4X4& world);
 private:
 
-	bool LoadZXC(const std::tstring& filename);
-	bool LoadZXCS(const std::tstring& filename);
+	bool LoadZXC(const std::tstring& filename, const std::tstring& texfilepath);
+	bool LoadZXCS(const std::tstring& filename, const std::tstring& texfilepath);
+
+	void BuildRenderItem(const std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>>& subsets,
+		const std::vector<ZXCSMaterial>& materials, const std::tstring& texfilepath);
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantbuffer = nullptr;
 	std::vector<std::unique_ptr<MeshNode>> mNodeList;

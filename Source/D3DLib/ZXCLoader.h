@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "SkinnedData.h"
 #include "RenderItemStorage.h"
+#include "MaterialStorage.h"
 
 class Mesh;
 
@@ -28,6 +29,19 @@ struct MeshNode
 	std::vector<RenderItem*> Ritem;
 };
 
+struct ZXCSMaterial
+{
+	std::wstring Name;
+
+	DirectX::XMFLOAT3 Ambient;
+	DirectX::XMFLOAT3 Diffuse;
+	DirectX::XMFLOAT3 Specular;
+	float Shininess;
+
+	std::map<int, std::wstring> TexMap;
+	std::vector<ZXCSMaterial> SubMaterial;
+};
+
 class ZXCLoader
 {
 public:
@@ -47,7 +61,7 @@ public:
 		std::vector<Vertex>& vertices,
 		std::vector<DWORD>& indices,
 		std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
-		std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
 		SkinnedData& skinInfo);
 
@@ -56,12 +70,12 @@ public:
 		std::vector<SkinnedVertex>& vertices,
 		std::vector<DWORD>& indices,
 		std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
-		std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
 		SkinnedData& skinInfo);
 private:
 	void ReadScene(std::wifstream& fp);
-	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials);
+	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials);
 	void ReadMesh(std::wifstream& fp, UINT numMeshes, std::vector<MeshNode>& nodes);
 	void ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
 

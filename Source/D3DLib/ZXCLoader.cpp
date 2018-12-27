@@ -9,7 +9,7 @@ bool ZXCLoader::LoadZXC(
 	std::vector<Vertex>& vertices,
 	std::vector<DWORD>& indices,
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
-	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+	std::vector<ZXCSMaterial>& materials,
 	std::vector<MeshNode>& nodes,
 	SkinnedData& skinInfo)
 {
@@ -75,7 +75,7 @@ bool ZXCLoader::LoadZXCS(
 	std::vector<SkinnedVertex>& vertices,
 	std::vector<DWORD>& indices,
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
-	std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials,
+	std::vector<ZXCSMaterial>& materials,
 	std::vector<MeshNode>& nodes,
 	SkinnedData& skinInfo)
 {
@@ -109,6 +109,7 @@ bool ZXCLoader::LoadZXCS(
 	fp >> ignore >> numAnimationClips;
 	fp >> ignore >> numSubSet;
 
+	materials.resize(numMaterials);
 	nodes.resize(numMeshes + numHelpers);
 	std::vector<int> boneHierarchy;
 	boneHierarchy.resize(numMeshes + numHelpers);
@@ -147,7 +148,7 @@ void ZXCLoader::ReadScene(std::wifstream& fp)
 	fp >> ignore >> mFrameTick;
 }
 
-void ZXCLoader::ReadMaterial(std::wifstream& fp, UINT numMaterials, std::map<std::pair<UINT, int>, std::vector<std::pair<UINT, std::wstring>>>& materials)
+void ZXCLoader::ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials)
 {
 	std::wstring ignore;
 	fp >> ignore;
@@ -156,23 +157,32 @@ void ZXCLoader::ReadMaterial(std::wifstream& fp, UINT numMaterials, std::map<std
 	{
 		UINT rootMapNum;
 		UINT subMtlNum;
-		fp >> ignore >> ignore;
+		fp >> ignore >> materials[i].Name;
+		fp >> ignore >> materials[i].Diffuse.x >> materials[i].Diffuse.y >> materials[i].Diffuse.z;
+		fp >> ignore >> materials[i].Specular.x >> materials[i].Specular.y >> materials[i].Specular.z;
+		fp >> ignore >> materials[i].Ambient.x >> materials[i].Ambient.y >> materials[i].Ambient.z;
+		fp >> ignore >> materials[i].Shininess;
 		fp >> ignore >> rootMapNum;
 		fp >> ignore >> subMtlNum;
 
+		materials[i].SubMaterial.resize(subMtlNum);
 		for (UINT j = 0; j < subMtlNum; ++j)
 		{
 			UINT subMapNum;
 			UINT subNo;
 
-			fp >> ignore >> ignore;
+			fp >> ignore >> materials[i].SubMaterial[j].Name;
+			fp >> ignore >> materials[i].SubMaterial[j].Diffuse.x >> materials[i].SubMaterial[j].Diffuse.y >> materials[i].SubMaterial[j].Diffuse.z;
+			fp >> ignore >> materials[i].SubMaterial[j].Specular.x >> materials[i].SubMaterial[j].Specular.y >> materials[i].SubMaterial[j].Specular.z;
+			fp >> ignore >> materials[i].SubMaterial[j].Ambient.x >> materials[i].SubMaterial[j].Ambient.y >> materials[i].SubMaterial[j].Ambient.z;
+			fp >> ignore >> materials[i].SubMaterial[j].Shininess;
 			fp >> ignore >> subMapNum;
 
 			for (UINT k = 0; k < subMapNum; ++k)
 			{
 				fp >> ignore >> subNo;
 				fp >> ignore >> ignore;
-				materials[std::pair<UINT, UINT>(i, j)].push_back(std::pair<UINT, std::wstring>(subNo, ignore));
+				materials[i].SubMaterial[j].TexMap[subNo] = ignore;
 			}
 		}
 		for (UINT j = 0; j < rootMapNum; ++j)
@@ -181,8 +191,7 @@ void ZXCLoader::ReadMaterial(std::wifstream& fp, UINT numMaterials, std::map<std
 
 			fp >> ignore >> subNo;
 			fp >> ignore >> ignore;
-
-			materials[std::pair<UINT, int>(i, -1)].push_back(std::pair<UINT, std::wstring>(subNo, ignore));
+			materials[i].TexMap[subNo] = ignore;
 		}
 	}
 }

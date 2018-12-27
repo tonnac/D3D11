@@ -170,9 +170,11 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="DxObj.h" />
     <ClInclude Include="DxRT.h" />
     <ClInclude Include="DxState.h" />
+    <ClInclude Include="FrameResource.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="GeometryStroage.h" />
+    <ClInclude Include="MaterialStorage.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Minimap.h" />
@@ -195,10 +197,12 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="DxObj.cpp" />
     <ClCompile Include="DxRT.cpp" />
     <ClCompile Include="DxState.cpp" />
+    <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="GeometryStroage.cpp" />
     <ClCompile Include="Lineshape.cpp" />
+    <ClCompile Include="MaterialStorage.cpp" />
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Minimap.cpp" />
