@@ -2,6 +2,8 @@
 #include "DxObj.h"
 #include "MathHelper.h"
 
+constexpr UINT MaxBoneNum = 255;
+
 struct VertexC
 {
 	DirectX::XMFLOAT3 p;
@@ -74,7 +76,7 @@ struct PassConstants
 
 struct SkinnedConstants
 {
-	DirectX::XMFLOAT4X4 BoneTransforms[255];
+	DirectX::XMFLOAT4X4 BoneTransforms[MaxBoneNum];
 };
 
 struct ObjectConstants

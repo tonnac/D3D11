@@ -149,6 +149,38 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 					o->mTriangles[i].v[1].VertexWNum >= (int)bv.size() ||
 					o->mTriangles[i].v[2].VertexWNum >= (int)bv.size())
 				{
+					if (o->mTriangles[i].v[0].VertexWNum >= (int)bv.size())
+					{
+						o->mTriangles[i].v[0].w[0] = 1.0f;
+						o->mTriangles[i].v[0].i[0] = (int)o->mNodeName.second;
+						o->mTriangles[i].v[0].w[3] = 1.0f;
+					}
+					else
+					{
+						InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexWNum]);
+					}
+
+					if (o->mTriangles[i].v[1].VertexWNum >= (int)bv.size())
+					{
+						o->mTriangles[i].v[1].w[0] = 1.0f;
+						o->mTriangles[i].v[1].i[0] = (int)o->mNodeName.second;
+						o->mTriangles[i].v[1].w[3] = 1.0f;
+					}
+					else
+					{
+						InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexWNum]);
+					}
+
+					if (o->mTriangles[i].v[2].VertexWNum >= (int)bv.size())
+					{
+						o->mTriangles[i].v[2].w[0] = 1.0f;
+ 						o->mTriangles[i].v[2].i[0] = (int)o->mNodeName.second;
+						o->mTriangles[i].v[2].w[3] = 1.0f;
+					}
+					else
+					{
+						InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexWNum]);
+					}
 				}
 				else
 				{
@@ -176,7 +208,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			CopyMemory(&o->mTriangles[i].v[1].c, &mesh.vertCol[mesh.vcFace[i].t[i2]], sizeof(VertColor));
 			CopyMemory(&o->mTriangles[i].v[2].c, &mesh.vertCol[mesh.vcFace[i].t[i1]], sizeof(VertColor));
 		}
-
+		
 		mesh.buildNormals();
 
 		int vert = mesh.faces[i].getVert(i0);
@@ -227,6 +259,7 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 				}
 				return -1;
 			}(mesh->mTriangles[i].v[j]);
+
 			if (vNumber == -1)
 			{
 				vertices.push_back(mesh->mTriangles[i].v[j]);
@@ -493,7 +526,7 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 	if (skin != nullptr && skinData != nullptr)
 	{
 		int numOfPoints = skinData->GetNumPoints();
-
+		
 		bipedes.resize(numOfPoints);
 
 		for (int i = 0; i < numOfPoints; ++i)

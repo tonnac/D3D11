@@ -4,7 +4,6 @@
 #include "Timer.h"
 #include "Shape.h"
 #include "Camera.h"
-#include "DxState.h"
 
 class Core : public wClass
 {

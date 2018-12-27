@@ -25,6 +25,12 @@
     <Filter Include="헤더 파일\Object">
       <UniqueIdentifier>{668456e6-ae09-48df-9aed-619bfb7239de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Object\Mesh">
+      <UniqueIdentifier>{ba6f40f7-742a-419d-877a-61bd608978aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Object\Mesh">
+      <UniqueIdentifier>{fb0a643d-3a1a-468d-87e5-4daf7f291993}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wClass.h">
@@ -80,6 +86,15 @@
     </ClInclude>
     <ClInclude Include="GeometryStroage.h">
       <Filter>헤더 파일\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ZXCLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>헤더 파일\Object\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedData.h">
+      <Filter>헤더 파일\Object\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +154,15 @@
     </ClCompile>
     <ClCompile Include="GeometryStroage.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ZXCLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>소스 파일\Object\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedData.cpp">
+      <Filter>소스 파일\Object\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

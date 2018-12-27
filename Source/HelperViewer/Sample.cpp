@@ -19,8 +19,11 @@ bool Sample::Init()
 	steady_clock::time_point bef = steady_clock::now();
 	steady_clock::time_point aft[3];
 	
-	mesh.LoadFile(L"deathwing.ZXCS", m_pd3dDevice.Get());
+	mesh.LoadFile(L"bbb.ZXCS", m_pd3dDevice.Get());
 
+	aft[0] = steady_clock::now();
+	
+	seconds p = duration_cast<seconds>(aft[0] - bef);
 	//meshes[0].LoadFile(L"bbb.ZXCS", m_pd3dDevice.Get());
 	//aft[0] = steady_clock::now();
 	//duration<double> af0 = aft[0] - bef;

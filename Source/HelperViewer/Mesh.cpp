@@ -153,15 +153,16 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 	if (!loader.LoadZXCS(filename, vertices0, indices, subsets, materials, nodes, skininfo))
 		return false;
 
+	if (skininfo.BoneCount() > 0)
+	{
+		mSkinnedInst = std::make_unique<SkinnedModelInstance>();
+		mSkinInfo = std::make_unique<SkinnedData>();
 
-	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
-	mSkinInfo = std::make_unique<SkinnedData>();
-
-	mSkinnedInst->FinalTransforms.resize(nodes.size());
-	*(mSkinInfo.get()) = skininfo;
-	mSkinnedInst->SkinnedInfo = mSkinInfo.get();
-	mSkinnedInst->ClipName = "default";
-
+		mSkinnedInst->FinalTransforms.resize(nodes.size());
+		*(mSkinInfo.get()) = skininfo;
+		mSkinnedInst->SkinnedInfo = mSkinInfo.get();
+		mSkinnedInst->ClipName = "default";
+	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
 	mGeometry = geo.get();
@@ -274,6 +275,8 @@ bool Mesh::Frame()
 			&mSkinnedConstants.BoneTransforms[0]
 		);
 	}
+
+	mSkinnedConstants.BoneTransforms[0] = MathHelper::Identity4x4();
 
 	return true;
 }
