@@ -5,6 +5,18 @@
 #include "Frustum.h"
 #include "Mesh.h"
 
+/*	To do
+	{
+		Dxobj추가 Rasterizer, Blendstate, DepthstencilState
+		ShaderStroage 추가,
+		Mesh Manager(?) 보류,
+		SkyBox,
+		<Material>, Lights
+		Mesh Load 함수화(?)
+	}
+*/
+
+
 class Sample : public Core
 {
 public:
