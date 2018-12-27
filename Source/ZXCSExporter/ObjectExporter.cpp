@@ -16,7 +16,15 @@ void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 		maxObj->mParentName = std::make_pair(L"NONE", -1);
 		if (parent != nullptr && (!parent->IsRootNode()))
 		{
-			maxObj->mParentName = std::make_pair(parent->GetName(), nodeIndex[parent->GetName()]);
+			std::wstring parentN;
+			for (auto&x : nodes)
+			{
+				if (parent == x.second)
+				{
+					parentN = x.first;
+				}
+			}
+			maxObj->mParentName = std::make_pair(parentN, nodeIndex[parentN]);
 			std::ReplaceString(maxObj->mParentName.first);
 		}
 

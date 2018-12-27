@@ -19,7 +19,7 @@ bool Sample::Init()
 	steady_clock::time_point bef = steady_clock::now();
 	steady_clock::time_point aft[3];
 	
-	mesh.LoadFile(L"bbb.ZXCS", m_pd3dDevice.Get());
+	mesh.LoadFile(L"gggg2.ZXCS", m_pd3dDevice.Get());
 	
 	aft[0] = steady_clock::now();
 	
