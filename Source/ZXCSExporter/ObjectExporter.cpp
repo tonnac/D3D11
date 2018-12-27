@@ -537,7 +537,7 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 
 			if (numOfWeights > MAXWEIGHTNUM)
 			{
-				std::map<float, int> weightList;
+				std::multimap<float, int, std::greater<float>> weightList;
 				for (int j = 0; j < numOfWeights; ++j)
 				{
 					int boneIndex = skinData->GetAssignedBone(i, j);
