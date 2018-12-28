@@ -38,9 +38,9 @@ private:
 public:
 	void SaveGeometry(std::unique_ptr<MeshGeometry>& geometry);
 
-	MeshGeometry* operator[] (int index);
+	MeshGeometry* operator[] (const std::string& name);
 private:
-	std::vector<std::unique_ptr<MeshGeometry>> mGeometries;
+	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometries;
 };
 
 #define S_Geometry GeometryStroage::getInst()

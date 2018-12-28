@@ -7,15 +7,12 @@ Shape::Shape()
 {
 }
 
-void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile)
+void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile, const std::tstring& normalTex)
 {
 	m_pDevice = pDevice;
 
-	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	mGeometry = geo.get();
-	S_Geometry.SaveGeometry(geo);
-
 	BuildGeometry();
+	BuildMaterials(textureFile, normalTex);
 	BuildRenderItem(textureFile);
 }
 
@@ -25,12 +22,11 @@ void Shape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->Geo = mGeometry;
 	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
-	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Box");
+	rItem->IndexCount = rItem->Geo->DrawArgs["box"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["box"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["box"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//if (!textureFile.empty())
-	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveRenderItem(rItem);
@@ -73,13 +69,13 @@ bool Shape::Render(ID3D11DeviceContext* pContext)
 	if (mRenderItem != nullptr)
 	{
 		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
-		mRenderItem->Mat->SetResource(pContext);
+		if(mRenderItem->Mat != nullptr)
+			mRenderItem->Mat->SetResource(pContext);
 		pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
 		pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
 	}
 	return true;
 }
-
 
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 {
@@ -87,6 +83,17 @@ BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 
 void BoxShape::BuildGeometry()
 {
+	if (S_Geometry["Box"] != nullptr)
+	{
+		mGeometry = S_Geometry["Box"];
+		return;
+	}
+
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	geo->Name = "Box";
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
+
 	std::vector<Vertex> vertices;
 
 	vertices.resize(24);
@@ -181,15 +188,46 @@ void BoxShape::BuildGeometry()
 	mGeometry->DrawArgs["box"] = sub;
 }
 
+void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
+{
+	MaterialStorage * storage = MaterialStorage::GetStorage();
+	if (storage->GetMaterial(L"Box") != nullptr)
+		return;
+
+	std::unique_ptr<Material> mat = std::make_unique<Material>();
+	mat->Name = L"Box";
+	mat->Ambient = XMFLOAT3(0.25f, 0.25f, 0.25f);
+	mat->Specular = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->Diffuse = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
+	mat->MatTransform = MathHelper::Identity4x4();
+	mat->Roughness = .25f;
+	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
+	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+	
+	storage->StoreMaterial(mat);
+}
+
 void SkyBox::BuildGeometry()
 {
+	if (S_Geometry["SkyBox"] != nullptr)
+	{
+		mGeometry = S_Geometry["SkyBox"];
+		return;
+	}
+
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	geo->Name = "SkyBox";
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
+
 	struct Vertex_
 	{
 		XMFLOAT3 Pos;
 	};
 
-	GeometryGenerator geo;
-	GeometryGenerator::MeshData sphere = geo.CreateSphere(0.5f, 20, 20);
+	GeometryGenerator geoMesh;
+	GeometryGenerator::MeshData sphere = geoMesh.CreateSphere(0.5f, 20, 20);
 
 	std::vector<Vertex_> vertices;
 	for (UINT i = 0; i < (UINT)sphere.Vertices.size(); ++i)
@@ -214,7 +252,7 @@ void SkyBox::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["default"] = sub;
+	mGeometry->DrawArgs["sphere"] = sub;
 
 	mGeometry->Name = "Sphere";
 }
@@ -226,21 +264,51 @@ void SkyBox::BuildRenderItem(const std::tstring & textureFile)
 	XMMATRIX S = XMMatrixScaling(5000.0f, 5000.0f, 5000.0f);
 	XMStoreFloat4x4(&rItem->World, S);
 	rItem->TexTransform = MathHelper::Identity4x4();
-	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"SkyBox");
+	rItem->IndexCount = rItem->Geo->DrawArgs["sphere"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["sphere"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["sphere"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//if (!textureFile.empty())
-	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveOpaqueItem(rItem);
 }
 
+void SkyBox::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
+{
+	MaterialStorage * storage = MaterialStorage::GetStorage();
+	if (storage->GetMaterial(L"SkyBox") != nullptr)
+		return;
+
+	std::unique_ptr<Material> mat = std::make_unique<Material>();
+	mat->Name = L"SkyBox";
+	mat->Ambient = XMFLOAT3(0.25f, 0.25f, 0.25f);
+	mat->Specular = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->Diffuse = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
+	mat->MatTransform = MathHelper::Identity4x4();
+	mat->Roughness = .25f;
+	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
+	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+
+	storage->StoreMaterial(mat);
+}
+
 void GridShape::BuildGeometry()
 {
-	GeometryGenerator geo;
-	GeometryGenerator::MeshData grid = geo.CreateGrid(20.0f, 30.0f, 60, 40);
+	if (S_Geometry["Quad"] != nullptr)
+	{
+		mGeometry = S_Geometry["Quad"];
+		return;
+	}
+
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	geo->Name = "Quad";
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
+
+	GeometryGenerator geoMesh;
+	GeometryGenerator::MeshData grid = geoMesh.CreateGrid(20.0f, 30.0f, 60, 40);
 
 	std::vector<Vertex> vertices;
 	for (UINT i = 0; i < (UINT)grid.Vertices.size(); ++i)
@@ -268,7 +336,7 @@ void GridShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["default"] = sub;
+	mGeometry->DrawArgs["grid"] = sub;
 
 	mGeometry->Name = "Grid";
 }
@@ -280,13 +348,32 @@ void GridShape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->World = MathHelper::Identity4x4();
 	XMMATRIX S = XMMatrixScaling(8.0f, 8.0f, 8.0f);
 	XMStoreFloat4x4(&rItem->TexTransform, S);
-	rItem->IndexCount = rItem->Geo->DrawArgs["default"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
+	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Grid");
+	rItem->IndexCount = rItem->Geo->DrawArgs["grid"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["grid"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["grid"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//if (!textureFile.empty())
-	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveOpaqueItem(rItem);
+}
+
+void GridShape::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
+{
+	MaterialStorage * storage = MaterialStorage::GetStorage();
+	if (storage->GetMaterial(L"Grid") != nullptr)
+		return;
+
+	std::unique_ptr<Material> mat = std::make_unique<Material>();
+	mat->Name = L"Grid";
+	mat->Ambient = XMFLOAT3(0.25f, 0.25f, 0.25f);
+	mat->Specular = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->Diffuse = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
+	mat->MatTransform = MathHelper::Identity4x4();
+	mat->Roughness = .25f;
+	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
+	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+
+	storage->StoreMaterial(mat);
 }

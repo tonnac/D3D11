@@ -19,6 +19,8 @@ struct Material
 	DirectX::XMFLOAT3 FresnelR0 = DirectX::XMFLOAT3(0.03f, 0.03f, 0.03f);
 	float Roughness = .25f;
 	DirectX::XMFLOAT4X4 MatTransform = MathHelper::Identity4x4();
+
+	void SetResource(ID3D11DeviceContext* context);
 };
 
 

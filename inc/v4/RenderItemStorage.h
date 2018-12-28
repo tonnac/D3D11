@@ -14,7 +14,6 @@ struct RenderItem
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
 	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceView = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer = nullptr;
 
 	MeshGeometry* Geo = nullptr;

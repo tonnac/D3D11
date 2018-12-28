@@ -42,26 +42,35 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 		mSkinnedInst->ClipName = "default";
 		mSkinnedInst->FinalTransforms.resize(nodes.size());
 	}
+	
+	std::string name = std::string(file.begin(), file.end());
 
-	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	mGeometry = geo.get();
-	mGeometry->Name = std::string(file.begin(), file.end());
-	S_Geometry.SaveGeometry(geo);
+	if (S_Geometry[name] != nullptr)
+	{
+		mGeometry = S_Geometry[name];
+	}
+	else
+	{
+		std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+		geo->Name = name;
+		mGeometry = geo.get();
+		S_Geometry.SaveGeometry(geo);
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+		const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+		const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+		BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		mGeometry->VertexBufferByteSize,
-		mGeometry->VertexBufferCPU->GetBufferPointer(),
-		mGeometry->VertexBuffer.GetAddressOf());
+		d3dUtil::CreateVertexBuffer(m_pDevice,
+			mGeometry->VertexBufferByteSize,
+			mGeometry->VertexBufferCPU->GetBufferPointer(),
+			mGeometry->VertexBuffer.GetAddressOf());
 
-	d3dUtil::CreateIndexBuffer(m_pDevice,
-		mGeometry->IndexBufferByteSize,
-		mGeometry->IndexBufferCPU->GetBufferPointer(),
-		mGeometry->IndexBuffer.GetAddressOf());
+		d3dUtil::CreateIndexBuffer(m_pDevice,
+			mGeometry->IndexBufferByteSize,
+			mGeometry->IndexBufferCPU->GetBufferPointer(),
+			mGeometry->IndexBuffer.GetAddressOf());
+	}
 
 	mNodeList.resize(nodes.size());
 	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
@@ -300,7 +309,8 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 			//if (x->ShaderResourceView == nullptr)
 			//	continue;
 			context->IASetPrimitiveTopology(x->PrimitiveType);
-			context->PSSetShaderResources(0, 1, x->ShaderResourceView.GetAddressOf());
+			if (x->Mat != nullptr)
+				x->Mat->SetResource(context);
 			context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
 			context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
 		}

@@ -10,7 +10,7 @@ public:
 	virtual ~Shape() = default;
 
 public:
-	virtual void Create(ID3D11Device* pDevice, const std::tstring& textureFile = std::tstring());
+	virtual void Create(ID3D11Device* pDevice, const std::tstring& textureFile = std::tstring(), const std::tstring& normalTex = std::tstring());
 
 	bool Frame();
 
@@ -20,6 +20,7 @@ protected:
 
 	virtual void BuildGeometry() { return; };
 	virtual void BuildRenderItem(const std::tstring& textureFile);
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex) { return; };
 
 	void BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
 
@@ -45,8 +46,8 @@ public:
 	virtual ~BoxShape() = default;
 
 protected:
-	void BuildGeometry()override;
-
+	virtual void BuildGeometry()override;
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
 private:
 	bool mIsDice = false;
 };
@@ -98,6 +99,7 @@ public:
 protected:
 	virtual void BuildGeometry()override;
 	virtual void BuildRenderItem(const std::tstring& textureFile)override;
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
 };
 
 class GridShape : public Shape
@@ -109,4 +111,5 @@ public:
 protected:
 	virtual void BuildGeometry()override;
 	virtual void BuildRenderItem(const std::tstring& textureFile)override;
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
 };
