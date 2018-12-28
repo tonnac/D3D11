@@ -21,7 +21,7 @@ protected:
 	virtual void BuildGeometry() { return; };
 	virtual void BuildRenderItem(const std::tstring& textureFile);
 
-	void CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
+	void BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
 
 protected:
 	ID3D11Device* m_pDevice = nullptr;

@@ -1,8 +1,15 @@
 #include "MaterialStorage.h"
 
+void Material::SetResource(ID3D11DeviceContext * context)
+{
+	context->PSSetShaderResources(0, 1, &ShaderResourceView);
+	context->PSSetShaderResources(1, 1, &NormalView);
+}
+
+
 void MaterialStorage::StoreMaterial(std::unique_ptr<Material>& material)
 {
-	material->MatCBIndex = (int)mMaterials.size();
+	material->MatCBIndex = ++MaterialIndex;
 
 	if ((int)mCache.size() > 3)
 		mCache.pop_back();
@@ -12,8 +19,11 @@ void MaterialStorage::StoreMaterial(std::unique_ptr<Material>& material)
 	mMaterials.insert(std::make_pair(material->Name, std::move(material)));
 }
 
-Material * MaterialStorage::GetMaterial(const std::string & name)
+Material * MaterialStorage::GetMaterial(const std::wstring & name)
 {
+	if (name.empty())
+		return nullptr;
+
 	for (auto & x : mCache)
 	{
 		if (x->Name == name)
@@ -31,3 +41,4 @@ Material * MaterialStorage::GetMaterial(const std::string & name)
 
 	return iter->second.get();
 }
+

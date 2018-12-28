@@ -17,16 +17,6 @@ void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile)
 
 	BuildGeometry();
 	BuildRenderItem(textureFile);
-
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		mGeometry->VertexBufferByteSize,
-		mGeometry->VertexBufferCPU->GetBufferPointer(),
-		mGeometry->VertexBuffer.GetAddressOf());
-
-	d3dUtil::CreateIndexBuffer(m_pDevice,
-		mGeometry->IndexBufferByteSize,
-		mGeometry->IndexBufferCPU->GetBufferPointer(),
-		mGeometry->IndexBuffer.GetAddressOf());
 }
 
 void Shape::BuildRenderItem(const std::tstring & textureFile)
@@ -39,14 +29,14 @@ void Shape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
 	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	if (!textureFile.empty())
-		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	//if (!textureFile.empty())
+	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveRenderItem(rItem);
 }
 
-void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
+void Shape::BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
 {
 	D3DCreateBlob(vbByteSize, mGeometry->VertexBufferCPU.GetAddressOf());
 	CopyMemory(mGeometry->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
@@ -58,6 +48,16 @@ void Shape::CreateCPUBuffer(LPVOID vertices, LPVOID indices, const UINT vbByteSi
 	mGeometry->VertexByteStride = Stride = vertexStride;
 	mGeometry->IndexBufferByteSize = ibByteSize;
 	mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
+
+	d3dUtil::CreateVertexBuffer(m_pDevice,
+		mGeometry->VertexBufferByteSize,
+		mGeometry->VertexBufferCPU->GetBufferPointer(),
+		mGeometry->VertexBuffer.GetAddressOf());
+
+	d3dUtil::CreateIndexBuffer(m_pDevice,
+		mGeometry->IndexBufferByteSize,
+		mGeometry->IndexBufferCPU->GetBufferPointer(),
+		mGeometry->IndexBuffer.GetAddressOf());
 }
 
 bool Shape::Frame()
@@ -73,7 +73,7 @@ bool Shape::Render(ID3D11DeviceContext* pContext)
 	if (mRenderItem != nullptr)
 	{
 		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
-		pContext->PSSetShaderResources(0, 1, mRenderItem->ShaderResourceView.GetAddressOf());
+		mRenderItem->Mat->SetResource(pContext);
 		pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
 		pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
 	}
@@ -172,7 +172,7 @@ void BoxShape::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -208,7 +208,7 @@ void SkyBox::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex_);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(Vertex_));
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(Vertex_));
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -230,8 +230,8 @@ void SkyBox::BuildRenderItem(const std::tstring & textureFile)
 	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
 	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	if (!textureFile.empty())
-		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	//if (!textureFile.empty())
+	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveOpaqueItem(rItem);
@@ -262,7 +262,7 @@ void GridShape::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -284,8 +284,8 @@ void GridShape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->StartIndexLocation = rItem->Geo->DrawArgs["default"].StartIndexLocation;
 	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["default"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	if (!textureFile.empty())
-		d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
+	//if (!textureFile.empty())
+	//	d3dUtil::CreateShaderResourceView(m_pDevice, textureFile.c_str(), rItem->ShaderResourceView.GetAddressOf());
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveOpaqueItem(rItem);

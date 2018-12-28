@@ -51,7 +51,7 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
 		mGeometry->VertexBufferByteSize,
@@ -70,7 +70,7 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 		*(mNodeList[i].get()) = nodes[i];
 	}
 
-	BuildRenderItem(subsets, materials, texfilepath);
+	BuildRenderItem(subsets, materials);
 
 	return true;
 }
@@ -92,6 +92,8 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 	if (!loader.LoadZXCS(filename, vertices0, indices, subsets, materials, nodes, skininfo))
 		return false;
 
+	BuildMaterials(texfilepath, materials);
+
 	if (skininfo.BoneCount() > 0)
 	{
 		mSkinnedInst = std::make_unique<SkinnedModelInstance>();
@@ -111,17 +113,7 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 	const UINT vbByteSize = (UINT)vertices0.size() * sizeof(SkinnedVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
-
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		mGeometry->VertexBufferByteSize,
-		mGeometry->VertexBufferCPU->GetBufferPointer(),
-		mGeometry->VertexBuffer.GetAddressOf());
-
-	d3dUtil::CreateIndexBuffer(m_pDevice,
-		mGeometry->IndexBufferByteSize,
-		mGeometry->IndexBufferCPU->GetBufferPointer(),
-		mGeometry->IndexBuffer.GetAddressOf());
+	BuildVBIB(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
 
 	mNodeList.resize(nodes.size());
 	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
@@ -130,7 +122,7 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 		*(mNodeList[i].get()) = nodes[i];
 	}
 
-	BuildRenderItem(subsets, materials, texfilepath);
+	BuildRenderItem(subsets, materials);
 
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
 
@@ -139,7 +131,7 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 
 void Mesh::BuildRenderItem(
 	const std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>>& subsets,
-	const std::vector<ZXCSMaterial>& materials, const std::tstring& texfilepath)
+	const std::vector<ZXCSMaterial>& materials)
 {
 	for (auto&x : subsets)
 	{
@@ -156,39 +148,30 @@ void Mesh::BuildRenderItem(
 			ritem->IndexCount = submesh.IndexCount = k.second.FaceCount * 3;
 			ritem->StartIndexLocation = submesh.StartIndexLocation = k.second.FaceStart * 3;
 			ritem->Geo = mGeometry;
+
+			if (mtlID == -2 || mtlID > (int)materials[mtrlRef].SubMaterial.size())
+			{
+				ritem->Mat = nullptr;
+			}
+			else if (mtlID == -1)
+			{
+				ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].Name);
+			}
+			else
+			{
+				ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].SubMaterial[mtlID].Name);
+			}
+			
 			ritem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			ritem->TexTransform = MathHelper::Identity4x4();
 			ritem->World = MathHelper::Identity4x4();
 
-			std::wstring texFile;
-			if (materials.empty())
-			{
-				texFile = std::wstring();
-			}
-			if (mtlID != -1 )
-			{
-				auto p = materials[mtrlRef].TexMap;
-				texFile = p[0];
-			}
-			else if (auto iter = materials[mtrlRef]);
-			else if (!materials[mtrlRef].SubMaterial[mtlID].TexMap.empty())
-			{
-				auto p = materials[mtrlRef].SubMaterial[mtlID].TexMap;
-				texFile = p[0];
-			}
-			else if (materials[mtrlRef].SubMaterial.size() == 1)
-			{
-				auto p = materials[mtrlRef].TexMap;
-				texFile = p[0];
-			}
-
-			d3dUtil::CreateShaderResourceView(m_pDevice, texFile, ritem->ShaderResourceView.GetAddressOf());
 			d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
 
 			std::string name = mNodeList[nodeIndex]->NodeName;
 			mGeometry->DrawArgs[name] = submesh;
 			ritem->Name = mNodeList[nodeIndex]->NodeName;
-			if (mNodeList[nodeIndex]->Type == ObjectType::MESH && !texFile.empty())
+			if (mNodeList[nodeIndex]->Type == ObjectType::MESH || ritem->Mat == nullptr)
 			{
 				mDrawItem.push_back(ritem.get());
 				S_RItem.SaveOpaqueItem(ritem);
@@ -198,6 +181,75 @@ void Mesh::BuildRenderItem(
 				mDebugItem.push_back(ritem.get());
 				S_RItem.SaveMiscItem(ritem);
 			}
+		}
+	}
+}
+
+void Mesh::BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXCSMaterial>& materials)
+{
+	SrvStorage* srvStorage = SrvStorage::GetStorage();
+
+	for (UINT i = 0; i < (UINT)materials.size(); ++i)
+	{
+		if (!materials[i].SubMaterial.empty())
+		{
+			for (UINT k = 0; k < (UINT)materials[i].SubMaterial.size(); ++k)
+			{
+				auto m = materials[i].SubMaterial[k];
+				if (m.TexMap.empty())
+				{
+					continue;
+				}
+				std::unique_ptr<Material> mat = std::make_unique<Material>();
+				mat->Name = m.Name;
+				mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
+				mat->MatTransform = MathHelper::Identity4x4();
+				mat->Ambient = m.Ambient;
+				mat->Diffuse = m.Diffuse;
+				mat->Specular = m.Specular;
+				mat->Roughness = 1.0f - m.Shininess;
+				
+				auto iter = m.TexMap.find(8);
+				if (iter != m.TexMap.end())
+				{
+					std::wstring texFile = texfilepath;
+					texFile += m.TexMap[8];
+					mat->NormalView = srvStorage->LoadSRV(texFile);
+				}
+
+				std::wstring texFile = texfilepath;
+				texFile += m.TexMap[1];
+				mat->ShaderResourceView = srvStorage->LoadSRV(texFile);
+
+				MaterialStorage::GetStorage()->StoreMaterial(mat);
+			}
+		}
+		else
+		{
+			auto m = materials[i];
+
+			std::unique_ptr<Material> mat = std::make_unique<Material>();
+			mat->Name = m.Name;
+			mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
+			mat->MatTransform = MathHelper::Identity4x4();
+			mat->Ambient = m.Ambient;
+			mat->Diffuse = m.Diffuse;
+			mat->Specular = m.Specular;
+			mat->Roughness = 1.0f - m.Shininess;
+
+			auto iter = m.TexMap.find(8);
+			if (iter != m.TexMap.end())
+			{
+				std::wstring texFile = texfilepath;
+				texFile += m.TexMap[8];
+				mat->NormalView = srvStorage->LoadSRV(texFile);
+			}
+
+			std::wstring texFile = texfilepath;
+			texFile += m.TexMap[1];
+			mat->ShaderResourceView = srvStorage->LoadSRV(texFile);
+
+			MaterialStorage::GetStorage()->StoreMaterial(mat);
 		}
 	}
 }

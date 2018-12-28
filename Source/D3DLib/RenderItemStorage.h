@@ -2,6 +2,7 @@
 #include "ObjectStd.h"
 #include "FrameResource.h"
 #include "GeometryStroage.h"
+#include "MaterialStorage.h"
 
 struct RenderItem
 {
@@ -13,9 +14,10 @@ struct RenderItem
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
 	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
 
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ShaderResourceView = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> ConstantBuffer = nullptr;
+
 	MeshGeometry* Geo = nullptr;
+	Material* Mat = nullptr;
 
 	D3D11_PRIMITIVE_TOPOLOGY PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 

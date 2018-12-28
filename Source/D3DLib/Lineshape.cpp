@@ -42,7 +42,7 @@ void LineShape::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexC);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -89,7 +89,7 @@ void DirectionShape::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexC);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexC));
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();

@@ -31,6 +31,12 @@
     <Filter Include="헤더 파일\Object\Mesh">
       <UniqueIdentifier>{fb0a643d-3a1a-468d-87e5-4daf7f291993}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Storage">
+      <UniqueIdentifier>{7868bc64-9b75-4e05-be39-2922130a4557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Storage">
+      <UniqueIdentifier>{54597136-83fc-4cb7-bf8f-0de18d21d001}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wClass.h">
@@ -81,12 +87,6 @@
     <ClInclude Include="Frustum.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="RenderItemStorage.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="GeometryStroage.h">
-      <Filter>헤더 파일\Object</Filter>
-    </ClInclude>
     <ClInclude Include="ZXCLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -96,17 +96,26 @@
     <ClInclude Include="SkinnedData.h">
       <Filter>헤더 파일\Object\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderStorage.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="GeometryGenerator.h">
       <Filter>헤더 파일\Object</Filter>
     </ClInclude>
     <ClInclude Include="FrameResource.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ShaderStorage.h">
+      <Filter>헤더 파일\Storage</Filter>
+    </ClInclude>
     <ClInclude Include="MaterialStorage.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryStroage.h">
+      <Filter>헤더 파일\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderItemStorage.h">
+      <Filter>헤더 파일\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="SRVStorage.h">
+      <Filter>헤더 파일\Storage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,12 +170,6 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="RenderItemStorage.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="GeometryStroage.cpp">
-      <Filter>소스 파일\Object</Filter>
-    </ClCompile>
     <ClCompile Include="ZXCLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -176,17 +179,26 @@
     <ClCompile Include="SkinnedData.cpp">
       <Filter>소스 파일\Object\Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderStorage.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="GeometryGenerator.cpp">
       <Filter>소스 파일\Object</Filter>
     </ClCompile>
     <ClCompile Include="FrameResource.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryStroage.cpp">
+      <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderItemStorage.cpp">
+      <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
     <ClCompile Include="MaterialStorage.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderStorage.cpp">
+      <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="SRVStorage.cpp">
+      <Filter>소스 파일\Storage</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

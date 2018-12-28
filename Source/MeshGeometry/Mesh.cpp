@@ -38,7 +38,7 @@ bool Mesh::LoadFile(const std::tstring & filename, ID3D11Device * device)
 	const UINT vbByteSize = (UINT)vertices0.size() * sizeof(SkinnedVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
+	BuildVBIB(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
 		mGeometries->VertexBufferByteSize,

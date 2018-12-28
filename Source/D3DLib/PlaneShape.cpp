@@ -24,7 +24,7 @@ void PlaneShape::BuildGeometry()
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();

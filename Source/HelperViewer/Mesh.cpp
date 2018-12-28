@@ -51,7 +51,7 @@ bool Mesh::LoadZXC(const std::tstring & filename)
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
 		mGeometry->VertexBufferByteSize,
@@ -172,7 +172,7 @@ bool Mesh::LoadZXCS(const std::tstring & filename)
 	const UINT vbByteSize = (UINT)vertices0.size() * sizeof(SkinnedVertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	CreateCPUBuffer(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
+	BuildVBIB(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
 
 	d3dUtil::CreateVertexBuffer(m_pDevice,
 		mGeometry->VertexBufferByteSize,

@@ -2,6 +2,7 @@
 #include "Core.h"
 #include "DirectWrite.h"
 #include "DirectInput.h"
+#include "SRVStorage.h"
 
 
 using namespace DirectX;
@@ -35,6 +36,7 @@ bool Core::GameInit()
 
 	DxState::InitState(m_pd3dDevice.Get());
 	mShaderStorage->Initialize(m_pd3dDevice.Get());
+	SrvStorage::GetStorage()->SetDevice(m_pd3dDevice.Get());
 	mDxObj = std::move(DxObjStorage::Dxobj()->GetDxobjList());
 	 
 	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-150));

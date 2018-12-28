@@ -17,7 +17,7 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 bool Sample::Init()
 {
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds");
-	mesh.LoadFile(L"t.ZXCS", m_pd3dDevice.Get());
+	mesh.LoadFile(L"t.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	return true;
 }
 
