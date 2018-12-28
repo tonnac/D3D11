@@ -4,6 +4,16 @@
 #include "Minimap.h"
 #include "Frustum.h"
 #include "Mesh.h"
+#include "GeometryGenerator.h"
+
+/*	To do
+	{
+		Mesh Manager(?) 보류,
+		<Material>, Lights
+		Mesh Load 함수화(?)
+	}
+*/
+
 
 class Sample : public Core
 {
@@ -15,5 +25,8 @@ protected:
 	virtual bool Frame()override;
 	virtual bool Render()override;
 private:
+	GridShape grid;
 	Mesh mesh;
+
+
 };

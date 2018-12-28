@@ -18,7 +18,6 @@ struct PassConstants
 	float FarZ = 0.0f;
 	float TotalTime = 0.0f;
 	float DeltaTime = 0.0f;
-
 };
 
 struct SkinnedConstants
@@ -29,8 +28,8 @@ struct SkinnedConstants
 struct ObjectConstants
 {
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 WorldInv = MathHelper::Identity4x4();
 	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
-	int MaterialIndex;
 };
 
 struct MaterialData

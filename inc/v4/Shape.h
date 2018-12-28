@@ -19,7 +19,7 @@ public:
 protected:
 
 	virtual void BuildGeometry() { return; };
-	virtual void BuildRenderItem(const std::tstring& textureFile);
+	virtual void BuildRenderItem(const std::tstring& textureFile) { return; };
 	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex) { return; };
 
 	void BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
@@ -34,9 +34,6 @@ protected:
 	DirectX::XMFLOAT3 m_vLook;
 	DirectX::XMFLOAT3 m_vSide;
 	DirectX::XMFLOAT3 m_vUp;
-
-	UINT Stride = 0;
-	UINT offset = 0;
 };
 
 class BoxShape : public Shape
@@ -57,10 +54,13 @@ class LineShape : public Shape
 public:
 	LineShape();
 	virtual ~LineShape() = default;
-public:
+protected:
 	virtual void	BuildRenderItem(const std::tstring& textureFile)override;
 	virtual void	BuildGeometry()override;
-	bool			Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
+
+public:
+	virtual	bool Render(ID3D11DeviceContext* pContext)override;
+	bool		 Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
 
 protected:
 	std::array<VertexC, 2> m_LineVertexList;
@@ -72,6 +72,9 @@ public:
 	PlaneShape() = default;
 	virtual ~PlaneShape() = default;
 
+public:
+	virtual bool Render(ID3D11DeviceContext* pContext)override;
+
 protected:
 	virtual void BuildGeometry()override;
 };
@@ -81,6 +84,9 @@ class DirectionShape : public Shape
 public:
 	DirectionShape();
 	virtual ~DirectionShape() = default;
+
+public:
+	virtual bool Render(ID3D11DeviceContext* pContext)override;
 
 protected:
 	virtual void BuildGeometry()override;

@@ -52,4 +52,6 @@ protected:
 	std::unordered_map<DxType, std::unique_ptr<DxObj>> mDxObj;
 
 	SkyBox mSkybox;
+
+	MaterialStorage * MatStorage = MaterialStorage::GetStorage();
 };

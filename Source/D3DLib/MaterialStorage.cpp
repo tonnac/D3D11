@@ -1,9 +1,12 @@
 #include "MaterialStorage.h"
 
+using namespace DirectX;
+
 void Material::SetResource(ID3D11DeviceContext * context)
 {
 	context->PSSetShaderResources(0, 1, &ShaderResourceView);
 	context->PSSetShaderResources(1, 1, &NormalView);
+	context->VSSetConstantBuffers(2, 1, MaterialBuffer.GetAddressOf());
 }
 
 
@@ -42,3 +45,26 @@ Material * MaterialStorage::GetMaterial(const std::wstring & name)
 	return iter->second.get();
 }
 
+void MaterialStorage::UpdateMaterialCBs(ID3D11DeviceContext * context)
+{
+	for (auto&x : mMaterials)
+	{
+		if (x.second->NumFramesDirty > 0)
+		{
+			MaterialData matData;
+			matData.Ambient = XMFLOAT4(x.second->Ambient.x, x.second->Ambient.y, x.second->Ambient.z, 1.0f);
+			matData.Diffuse = XMFLOAT4(x.second->Diffuse.x, x.second->Diffuse.y, x.second->Diffuse.z, 1.0f);
+			matData.Specular = XMFLOAT4(x.second->Specular.x, x.second->Specular.y, x.second->Specular.z, 1.0f);
+			matData.FresnelR0 = x.second->FresnelR0;
+
+			XMMATRIX M = XMLoadFloat4x4(&x.second->MatTransform);
+			XMStoreFloat4x4(&matData.MatTransform, M);
+			matData.Roughness = x.second->Roughness;
+
+			x.second->MaterialBuffer;
+			context->UpdateSubresource(x.second->MaterialBuffer.Get(), 0, nullptr, &matData, 0, 0);
+
+			--x.second->NumFramesDirty;
+		}
+	}
+}

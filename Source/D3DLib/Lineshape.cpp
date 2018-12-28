@@ -61,6 +61,18 @@ void LineShape::BuildGeometry()
 	mGeometry->DrawArgs["line"] = sub;
 }
 
+bool LineShape::Render(ID3D11DeviceContext * pContext)
+{
+	UINT Offset = 0;
+	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
+	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
+
+	pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
+	pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
+	pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
+	return true;
+}
+
 bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vEnd, XMFLOAT4 vColor)
 {
 	m_LineVertexList =
@@ -76,6 +88,18 @@ bool LineShape::Draw(ID3D11DeviceContext* pContext, XMFLOAT3 vStart, XMFLOAT3 vE
 
 DirectionShape::DirectionShape()
 {
+}
+
+bool DirectionShape::Render(ID3D11DeviceContext * pContext)
+{
+	UINT Offset = 0;
+	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
+	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
+
+	pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
+	pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
+	pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
+	return true;
 }
 
 void DirectionShape::BuildGeometry()

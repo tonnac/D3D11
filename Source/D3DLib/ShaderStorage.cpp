@@ -22,8 +22,8 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 	}
 
 	{
-		d3dUtil::LoadVertexShaderFile(Device, L"shape.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
-		d3dUtil::LoadPixelShaderFile(Device, L"shape.hlsl", nullptr, pixelShader.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"Default.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"Default.hlsl", nullptr, pixelShader.GetAddressOf());
 		CreateInputLayout(Device, DEFAULT, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader["default"] = std::move(vertexShader);
@@ -52,7 +52,7 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 			NULL, NULL
 		};
 
-		d3dUtil::LoadVertexShaderFile(Device, L"shape.hlsl", defines, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"Default.hlsl", defines, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
 		CreateInputLayout(Device, SKINNED, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader["skinned"] = std::move(vertexShader);

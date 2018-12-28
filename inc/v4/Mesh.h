@@ -30,4 +30,6 @@ private:
 	std::unique_ptr<SkinnedData> mSkinInfo = nullptr;
 	std::unique_ptr<SkinnedModelInstance> mSkinnedInst = nullptr;
 	SkinnedConstants mSkinnedConstants;
+
+	UINT Cnt = 0;
 };

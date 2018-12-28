@@ -27,9 +27,11 @@ void RenderItemStorage::UpdateObjectCBs(ID3D11DeviceContext * context)
 
 		XMMATRIX texTransform = XMLoadFloat4x4(&x->TexTransform);
 		XMMATRIX World = XMLoadFloat4x4(&x->World);
+		XMMATRIX WorldInv = XMMatrixInverse(&XMMatrixDeterminant(World), World);
 
 		XMStoreFloat4x4(&obj.TexTransform, XMMatrixTranspose(texTransform));
 		XMStoreFloat4x4(&obj.World, XMMatrixTranspose(World));
+		XMStoreFloat4x4(&obj.WorldInv, XMMatrixTranspose(WorldInv));
 
 		context->UpdateSubresource(x->ConstantBuffer.Get(), 0, nullptr, &obj, 0, 0);
 	}

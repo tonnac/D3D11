@@ -3,6 +3,17 @@
 #include "MathHelper.h"
 
 constexpr UINT MaxBoneNum = 255;
+constexpr UINT MaxLights = 16;
+
+struct Light
+{
+	DirectX::XMFLOAT3 Strength = {0.5f, 0.5f, 0.5f};
+	float FalloffStart = 1.0f;
+	DirectX::XMFLOAT3 Direction = { 0.0f, -1.0f, 0.0f };
+	float FalloffEnd = 10.0f;
+	DirectX::XMFLOAT3 Position = { 0.0f, 0.0f, 0.0f };
+	float SpotPower = 64.0f;
+};
 
 struct PassConstants
 {
@@ -18,7 +29,12 @@ struct PassConstants
 	float FarZ = 0.0f;
 	float TotalTime = 0.0f;
 	float DeltaTime = 0.0f;
+	int DirectionalNum = 0;
+	int PointNum = 0;
+	int SpotNum = 0;
+	int cbPerObjectPad2 = 0;
 
+	Light Lights[MaxLights];
 };
 
 struct SkinnedConstants
@@ -29,8 +45,8 @@ struct SkinnedConstants
 struct ObjectConstants
 {
 	DirectX::XMFLOAT4X4 World = MathHelper::Identity4x4();
+	DirectX::XMFLOAT4X4 WorldInv = MathHelper::Identity4x4();
 	DirectX::XMFLOAT4X4 TexTransform = MathHelper::Identity4x4();
-	int MaterialIndex;
 };
 
 struct MaterialData

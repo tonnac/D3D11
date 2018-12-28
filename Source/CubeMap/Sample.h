@@ -27,4 +27,6 @@ protected:
 private:
 	GridShape grid;
 	Mesh mesh;
+
+
 };

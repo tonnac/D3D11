@@ -526,7 +526,7 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 
 	ISkin * skin = (ISkin*)skinMod->GetInterface(I_SKIN);
 	ISkinContextData * skinData = skin->GetContextInterface(node);
-
+	
 	auto& nodeindex = mExporter->mNodeIndex;
 
 	std::wstring nodeName;

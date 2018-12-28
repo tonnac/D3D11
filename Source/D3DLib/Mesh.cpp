@@ -60,16 +60,6 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 		const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
 		BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
-
-		d3dUtil::CreateVertexBuffer(m_pDevice,
-			mGeometry->VertexBufferByteSize,
-			mGeometry->VertexBufferCPU->GetBufferPointer(),
-			mGeometry->VertexBuffer.GetAddressOf());
-
-		d3dUtil::CreateIndexBuffer(m_pDevice,
-			mGeometry->IndexBufferByteSize,
-			mGeometry->IndexBufferCPU->GetBufferPointer(),
-			mGeometry->IndexBuffer.GetAddressOf());
 	}
 
 	mNodeList.resize(nodes.size());
@@ -90,15 +80,14 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 
 	std::tstring file(filename, 0, filename.find_last_of(L".") - 1);
 
-	std::vector<Vertex> vertices;
-	std::vector<SkinnedVertex> vertices0;
+	std::vector<SkinnedVertex> vertices;
 	std::vector<DWORD> indices;
 	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 
-	if (!loader.LoadZXCS(filename, vertices0, indices, subsets, materials, nodes, skininfo))
+	if (!loader.LoadZXCS(filename, vertices, indices, subsets, materials, nodes, skininfo))
 		return false;
 
 	BuildMaterials(texfilepath, materials);
@@ -114,15 +103,23 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 		mSkinnedInst->ClipName = "default";
 	}
 
-	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	mGeometry = geo.get();
-	mGeometry->Name = std::string(file.begin(), file.end());
-	S_Geometry.SaveGeometry(geo);
+	std::string name = std::string(file.begin(), file.end());
+	if (S_Geometry[name] != nullptr)
+	{
+		mGeometry = S_Geometry[name];
+	}
+	else
+	{
+		std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+		geo->Name = name;
+		mGeometry = geo.get();
+		S_Geometry.SaveGeometry(geo);
 
-	const UINT vbByteSize = (UINT)vertices0.size() * sizeof(SkinnedVertex);
-	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+		const UINT vbByteSize = (UINT)vertices.size() * sizeof(SkinnedVertex);
+		const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	BuildVBIB(vertices0.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
+		BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
+	}
 
 	mNodeList.resize(nodes.size());
 	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
@@ -180,7 +177,7 @@ void Mesh::BuildRenderItem(
 			std::string name = mNodeList[nodeIndex]->NodeName;
 			mGeometry->DrawArgs[name] = submesh;
 			ritem->Name = mNodeList[nodeIndex]->NodeName;
-			if (mNodeList[nodeIndex]->Type == ObjectType::MESH || ritem->Mat == nullptr)
+			if (mNodeList[nodeIndex]->Type == ObjectType::MESH && ritem->Mat != nullptr)
 			{
 				mDrawItem.push_back(ritem.get());
 				S_RItem.SaveOpaqueItem(ritem);
@@ -230,6 +227,8 @@ void Mesh::BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXC
 				texFile += m.TexMap[1];
 				mat->ShaderResourceView = srvStorage->LoadSRV(texFile);
 
+				d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
+
 				MaterialStorage::GetStorage()->StoreMaterial(mat);
 			}
 		}
@@ -257,6 +256,8 @@ void Mesh::BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXC
 			std::wstring texFile = texfilepath;
 			texFile += m.TexMap[1];
 			mat->ShaderResourceView = srvStorage->LoadSRV(texFile);
+
+			d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
 
 			MaterialStorage::GetStorage()->StoreMaterial(mat);
 		}
@@ -286,35 +287,22 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	if (mConstantbuffer != nullptr)
 	{
 		context->UpdateSubresource(mConstantbuffer.Get(), 0, nullptr, &mSkinnedConstants, 0, 0);
-		context->VSSetConstantBuffers(2, 1, mConstantbuffer.GetAddressOf());
+		context->VSSetConstantBuffers(3, 1, mConstantbuffer.GetAddressOf());
 	}
-	
-	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &Stride, &offset);
+	UINT Offset = 0;
+	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
-	if (!mNodeList.empty())
+	for (auto&x : mDrawItem)
 	{
-		//for (UINT i = 0; i < (UINT)mDrawItem.size(); ++i)
-		//{
-		//	//if (x->ShaderResourceView == nullptr)
-		//	//	continue;
-		//	context->IASetPrimitiveTopology(mDrawItem[i]->PrimitiveType);
-		//	context->PSSetShaderResources(0, 1, mDrawItem[i]->ShaderResourceView.GetAddressOf());
-		//	context->VSSetConstantBuffers(1, 1, mDrawItem[i]->ConstantBuffer.GetAddressOf());
-		//	context->DrawIndexedInstanced(mDrawItem[i]->IndexCount, 1, mDrawItem[i]->StartIndexLocation, mDrawItem[i]->BaseVertexLocation, 0);
-		//}
-
-		for (auto&x : mDrawItem)
-		{
-			//if (x->ShaderResourceView == nullptr)
-			//	continue;
-			context->IASetPrimitiveTopology(x->PrimitiveType);
-			if (x->Mat != nullptr)
-				x->Mat->SetResource(context);
-			context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
-			context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
-		}
+		//if (x->ShaderResourceView == nullptr)
+		//	continue;
+		context->IASetPrimitiveTopology(x->PrimitiveType);
+		x->Mat->SetResource(context);
+		context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
+		context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
 	}
+	
 	return true;
 }
 

@@ -233,8 +233,9 @@ bool Core::GameFrame()
 	XMFLOAT4 retInput = OnKeyboardInput();
 	m_pMainCamera->Update(retInput);
 	m_pMainCamera->Frame();
-	FramePassCB();
 	Frame();
+	FramePassCB();
+	MatStorage->UpdateMaterialCBs(m_pImmediateContext.Get());
 	S_RItem.UpdateObjectCBs(m_pImmediateContext.Get());
 	S_Input.PostFrame();
 	return true;
@@ -291,10 +292,17 @@ XMFLOAT4 Core::OnKeyboardInput()
 		m_bFrameinfo = !m_bFrameinfo;
 	}
 
-	//if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
-	//{
-	//	IncreaseEnum(m_RasterizerState);
-	//}
+	if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
+	{
+		if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Wireframe)
+		{
+			mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Default;
+		}
+		else if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Default)
+		{
+			mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Wireframe;
+		}	
+	}
 
 	//if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
 	//{

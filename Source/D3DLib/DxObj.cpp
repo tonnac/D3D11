@@ -36,6 +36,7 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pVertexShader = storage->getVertexShader("skinned");
 	dxobj->m_pPixelShader = storage->getPixelShader("default");
 	dxobj->m_pInputLayout = storage->getInputLayout("skinned");
+	dxobj->m_BlendState = E_BSS::No;
 
 	_DxObj[DxType::SKINNED] = std::move(dxobj);
 

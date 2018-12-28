@@ -8,28 +8,12 @@ Shape::Shape()
 }
 
 void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile, const std::tstring& normalTex)
-{
+ {
 	m_pDevice = pDevice;
 
 	BuildGeometry();
 	BuildMaterials(textureFile, normalTex);
 	BuildRenderItem(textureFile);
-}
-
-void Shape::BuildRenderItem(const std::tstring & textureFile)
-{
-	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
-	rItem->Geo = mGeometry;
-	rItem->World = MathHelper::Identity4x4();
-	rItem->TexTransform = MathHelper::Identity4x4();
-	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Box");
-	rItem->IndexCount = rItem->Geo->DrawArgs["box"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["box"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["box"].BaseVertexLocation;
-	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
-	mRenderItem = rItem.get();
-	S_RItem.SaveRenderItem(rItem);
 }
 
 void Shape::BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
@@ -41,7 +25,7 @@ void Shape::BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, co
 	CopyMemory(mGeometry->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
 
 	mGeometry->VertexBufferByteSize = vbByteSize;
-	mGeometry->VertexByteStride = Stride = vertexStride;
+	mGeometry->VertexByteStride = vertexStride;
 	mGeometry->IndexBufferByteSize = ibByteSize;
 	mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
 
@@ -63,17 +47,15 @@ bool Shape::Frame()
 
 bool Shape::Render(ID3D11DeviceContext* pContext)
 {
-	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &Stride, &offset);
+	UINT Offset = 0;
+	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
-	if (mRenderItem != nullptr)
-	{
-		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
-		if(mRenderItem->Mat != nullptr)
-			mRenderItem->Mat->SetResource(pContext);
-		pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
-		pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
-	}
+	pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
+	mRenderItem->Mat->SetResource(pContext);
+	pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
+	pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
+
 	return true;
 }
 
@@ -204,6 +186,7 @@ void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstrin
 	mat->Roughness = .25f;
 	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
 	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
 	
 	storage->StoreMaterial(mat);
 }
@@ -290,20 +273,21 @@ void SkyBox::BuildMaterials(const std::tstring& textureFile, const std::tstring&
 	mat->Roughness = .25f;
 	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
 	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
 
 	storage->StoreMaterial(mat);
 }
 
 void GridShape::BuildGeometry()
 {
-	if (S_Geometry["Quad"] != nullptr)
+	if (S_Geometry["Grid"] != nullptr)
 	{
-		mGeometry = S_Geometry["Quad"];
+		mGeometry = S_Geometry["Grid"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Quad";
+	geo->Name = "Grid";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -374,6 +358,7 @@ void GridShape::BuildMaterials(const std::tstring& textureFile, const std::tstri
 	mat->Roughness = .25f;
 	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
 	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
 
 	storage->StoreMaterial(mat);
 }

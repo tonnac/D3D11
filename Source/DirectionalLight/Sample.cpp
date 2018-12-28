@@ -16,28 +16,25 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 
 bool Sample::Init()
 {
-	steady_clock::time_point bef = steady_clock::now();
-	steady_clock::time_point aft[3];
-	
-	mesh.LoadFile(L"bbb.ZXCS", m_pd3dDevice.Get());
-	
-	aft[0] = steady_clock::now();
-	
-	seconds p = duration_cast<seconds>(aft[0] - bef);
+	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds");
 
+	mesh.LoadFile(L"hhh.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	return true;
 }
 
 bool Sample::Frame()
 {
 	mesh.Frame();
-	S_RItem.UpdateObjectCBs(m_pImmediateContext.Get());
 	return true;
 }
 
 bool Sample::Render()
 {
+	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	grid.Render(m_pImmediateContext.Get());
+	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
+
 	return true;
 }
 
@@ -50,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR szCmdLine, 
 		
 		if (!sd.Initialize())
 			return 0;
-	
+
 		return sd.Run();
 	}
 	catch (DxException& e)
