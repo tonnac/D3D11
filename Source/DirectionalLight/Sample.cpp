@@ -18,8 +18,8 @@ bool Sample::Init()
 {
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds");
 	spe.Create(m_pd3dDevice.Get());
-	mesh.LoadFile(L"t.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
-	
+	mesh.LoadFile(L"hhh.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.SetWorld(XMMatrixRotationY(XM_PIDIV2));
 	return true;
 }
 
@@ -32,8 +32,8 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
-//	grid.Render(m_pImmediateContext.Get());
-	spe.Render(m_pImmediateContext.Get());
+	grid.Render(m_pImmediateContext.Get());
+//	spe.Render(m_pImmediateContext.Get());
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
 

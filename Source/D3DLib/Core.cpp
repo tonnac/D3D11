@@ -216,7 +216,7 @@ void Core::FramePassCB()
 	mMainPassCB.TotalTime = m_Timer.DeltaTime();
 	mMainPassCB.DeltaTime = m_Timer.TotalTime();
 
-	XMVECTOR D = -XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	XMVECTOR D = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
 	D = XMVector3Normalize(D);
 
 	XMStoreFloat3(&mMainPassCB.Lights[0].Direction, D);
@@ -228,14 +228,14 @@ void Core::FramePassCB()
 
 	XMStoreFloat3(&mMainPassCB.Lights[1].Direction, D);
 
-	mMainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
+	mMainPassCB.Lights[1].Strength = { 0.6f, 0.6f, 0.6f };
 	
-	D = -XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f);
+	D = -XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f);
 	D = XMVector3Normalize(D);
 
 	XMStoreFloat3(&mMainPassCB.Lights[2].Direction, D);
 
-	mMainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
+	mMainPassCB.Lights[2].Strength = { 0.4f, 0.4f, 0.4f };
 	mMainPassCB.DirectionalNum = 3;
 
 	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
@@ -346,22 +346,22 @@ XMFLOAT4 Core::OnKeyboardInput()
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(-deltaTime * 50.0f);
+		m_pMainCamera->MoveSide(-deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(deltaTime * 50.0f);
+		m_pMainCamera->MoveSide(deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(deltaTime * 50.0f);
+		m_pMainCamera->MoveLook(deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(-deltaTime * 50.0f);
+		m_pMainCamera->MoveLook(-deltaTime * 150.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
