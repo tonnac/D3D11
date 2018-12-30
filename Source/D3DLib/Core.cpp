@@ -216,6 +216,28 @@ void Core::FramePassCB()
 	mMainPassCB.TotalTime = m_Timer.DeltaTime();
 	mMainPassCB.DeltaTime = m_Timer.TotalTime();
 
+	XMVECTOR D = -XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
+	D = XMVector3Normalize(D);
+
+	XMStoreFloat3(&mMainPassCB.Lights[0].Direction, D);
+
+	mMainPassCB.Lights[0].Strength = { 0.9f, 0.9f, 0.9f };
+
+	D = -XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f);
+	D = XMVector3Normalize(D);
+
+	XMStoreFloat3(&mMainPassCB.Lights[1].Direction, D);
+
+	mMainPassCB.Lights[1].Strength = { 0.4f, 0.4f, 0.4f };
+	
+	D = -XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f);
+	D = XMVector3Normalize(D);
+
+	XMStoreFloat3(&mMainPassCB.Lights[2].Direction, D);
+
+	mMainPassCB.Lights[2].Strength = { 0.2f, 0.2f, 0.2f };
+	mMainPassCB.DirectionalNum = 3;
+
 	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
 }
 
@@ -252,6 +274,7 @@ bool Core::PreRender()
 	auto SamplerStates = DxState::GetSamArray();
 
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
+	m_pImmediateContext->PSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 	m_pImmediateContext->PSSetSamplers(0, Casting(UINT, SamplerStates.size()), SamplerStates.data());
 
 	S_Write.Begin();
@@ -304,10 +327,17 @@ XMFLOAT4 Core::OnKeyboardInput()
 		}	
 	}
 
-	//if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
-	//{
-	//	IncreaseEnum(m_DepthStencilState);
-	//}
+	if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
+	{
+		if (mDxObj[DxType::DEFAULT]->m_RasterizerState == E_RSS::Wireframe)
+		{
+			mDxObj[DxType::DEFAULT]->m_RasterizerState = E_RSS::Default;
+		}
+		else if (mDxObj[DxType::DEFAULT]->m_RasterizerState == E_RSS::Default)
+		{
+			mDxObj[DxType::DEFAULT]->m_RasterizerState = E_RSS::Wireframe;
+		}
+	}
 
 	//if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
 	//{
@@ -316,22 +346,22 @@ XMFLOAT4 Core::OnKeyboardInput()
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(-deltaTime * 150.0f);
+		m_pMainCamera->MoveSide(-deltaTime * 50.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_D) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveSide(deltaTime * 150.0f);
+		m_pMainCamera->MoveSide(deltaTime * 50.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_W) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(deltaTime * 150.0f);
+		m_pMainCamera->MoveLook(deltaTime * 50.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_S) == KEYSTATE::KEY_HOLD)
 	{
-		m_pMainCamera->MoveLook(-deltaTime * 150.0f);
+		m_pMainCamera->MoveLook(-deltaTime * 50.0f);
 	}
 
 	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)

@@ -119,3 +119,15 @@ protected:
 	virtual void BuildRenderItem(const std::tstring& textureFile)override;
 	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
 };
+
+class SphereShape : public Shape
+{
+public:
+	SphereShape() = default;
+	~SphereShape() = default;
+
+protected:
+	virtual void BuildGeometry()override;
+	virtual void BuildRenderItem(const std::tstring& textureFile)override;
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
+};

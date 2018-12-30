@@ -20,7 +20,7 @@ cbuffer cbPass : register(b0)
 	int gSpotNum;
 	int cbPerObjectPad2;
 
-	Light Lights[MaxLights];
+	Light gLights[MaxLights];
 };
 
 cbuffer cbPerObj : register(b1)

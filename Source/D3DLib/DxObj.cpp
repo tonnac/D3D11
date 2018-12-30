@@ -22,6 +22,7 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pVertexShader = storage->getVertexShader("default");
 	dxobj->m_pPixelShader = storage->getPixelShader("default");
 	dxobj->m_pInputLayout = storage->getInputLayout("default");
+	dxobj->m_RasterizerState = E_RSS::Wireframe;
 
 	_DxObj[DxType::DEFAULT] = std::move(dxobj);
 

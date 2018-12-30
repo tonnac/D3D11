@@ -18,7 +18,7 @@ bool Sample::Init()
 {
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds");
 
-	mesh.LoadFile(L"t.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"hhh.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	return true;
 }
 

@@ -48,10 +48,10 @@ VertexOut VS(VertexIn vIn)
 	vIn.n = normalL;
 #endif
 
-	float4 vPosW = float4(vIn.p, 1.0f);
-	vPosW = mul(vPos, gWorld);
-	vOut.PosW = vPosW;
-	vOut.p = mul(vPos, gViewProj);
+	float4 vPos = float4(vIn.p, 1.0f);
+	float4 vPosW = mul(vPos, gWorld);
+	vOut.PosW = vPosW.xyz;
+	vOut.p = mul(vPosW, gViewProj);
 	vOut.c = vIn.c;
 	vOut.n = mul(vIn.n, (float3x3)gWoridInv);
 
@@ -68,16 +68,16 @@ float4 PS(VertexOut vOut) : SV_Target
 	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 
 	vOut.n = normalize(vOut.n);
-	
+
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
 	const float shininess = 1.0f - gRoughness;
-	Material mat = {texColor, gDiffuse, gSpecular, gFresnelR0, shininess, gAmbient };
+	Material mat = {gDiffuse, gSpecular, gFresnelR0, shininess, gAmbient };
 	float3 shadowFactor = 1.0f;
 
-	float4 litColor = ComputeLighting(gLights, mat, vOut.PosW, vOut.n, toEyeW, shadowFactor);
+	float3 litColor = ComputeLighting(gLights, mat, vOut.PosW, vOut.n, toEyeW, shadowFactor, gDirctionNum, gPointNum, gSpotNum);
 
-	litColor.a = 1.0f;
+	float3 finalColor = litColor * texColor.rgb;
 
-	return litColor;
+	return float4(finalColor, 1.0f);
 }

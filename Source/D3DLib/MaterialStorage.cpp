@@ -7,6 +7,7 @@ void Material::SetResource(ID3D11DeviceContext * context)
 	context->PSSetShaderResources(0, 1, &ShaderResourceView);
 	context->PSSetShaderResources(1, 1, &NormalView);
 	context->VSSetConstantBuffers(2, 1, MaterialBuffer.GetAddressOf());
+	context->PSSetConstantBuffers(2, 1, MaterialBuffer.GetAddressOf());
 }
 
 

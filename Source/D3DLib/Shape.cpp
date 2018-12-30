@@ -193,14 +193,14 @@ void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstrin
 
 void SkyBox::BuildGeometry()
 {
-	if (S_Geometry["SkyBox"] != nullptr)
+	if (S_Geometry["Sphere"] != nullptr)
 	{
-		mGeometry = S_Geometry["SkyBox"];
+		mGeometry = S_Geometry["Sphere"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "SkyBox";
+	geo->Name = "Sphere";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -236,8 +236,6 @@ void SkyBox::BuildGeometry()
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
 	mGeometry->DrawArgs["sphere"] = sub;
-
-	mGeometry->Name = "Sphere";
 }
 
 void SkyBox::BuildRenderItem(const std::tstring & textureFile)
@@ -356,6 +354,91 @@ void GridShape::BuildMaterials(const std::tstring& textureFile, const std::tstri
 	mat->FresnelR0 = XMFLOAT3(0.03f, 0.03f, 0.03f);
 	mat->MatTransform = MathHelper::Identity4x4();
 	mat->Roughness = .25f;
+	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
+	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
+
+	storage->StoreMaterial(mat);
+}
+
+void SphereShape::BuildGeometry()
+{
+	if (S_Geometry["SphereV3"] != nullptr)
+	{
+		mGeometry = S_Geometry["SphereV3"];
+		return;
+	}
+
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	geo->Name = "SphereV3";
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
+
+	GeometryGenerator geoMesh;
+	GeometryGenerator::MeshData sphere = geoMesh.CreateSphere(0.5f, 20, 20);
+
+	std::vector<Vertex> vertices;
+	for (UINT i = 0; i < (UINT)sphere.Vertices.size(); ++i)
+	{
+		Vertex v;
+		v.p = sphere.Vertices[i].Position;
+		v.n = sphere.Vertices[i].Normal;
+		v.t = sphere.Vertices[i].TexC;
+		vertices.push_back(v);
+	}
+
+	std::vector<DWORD> indices;
+	for (UINT i = 0; i < (UINT)sphere.Indices32.size(); ++i)
+	{
+		indices.push_back(sphere.Indices32[i]);
+	}
+
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
+
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
+
+	SubmeshGeometry sub;
+	sub.IndexCount = (UINT)indices.size();
+	sub.BaseVertexLocation = 0;
+	sub.StartIndexLocation = 0;
+	mGeometry->DrawArgs["sphere"] = sub;
+}
+
+void SphereShape::BuildRenderItem(const std::tstring & textureFile)
+{
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometry;
+
+	XMMATRIX W = XMMatrixScaling(20.0f, 20.0f, 20.0f);
+	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, -15.0f);
+	XMStoreFloat4x4(&rItem->World, W * T);
+//	rItem->World = MathHelper::Identity4x4();
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Sphere");
+	rItem->IndexCount = rItem->Geo->DrawArgs["sphere"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["sphere"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["sphere"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem = rItem.get();
+	S_RItem.SaveOpaqueItem(rItem);
+}
+
+void SphereShape::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
+{
+	MaterialStorage * storage = MaterialStorage::GetStorage();
+	if (storage->GetMaterial(L"Sphere") != nullptr)
+		return;
+
+	std::unique_ptr<Material> mat = std::make_unique<Material>();
+	mat->Name = L"Sphere";
+	mat->Ambient = XMFLOAT3(0.25f, 0.25f, 0.25f);
+	mat->Specular = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	mat->Diffuse = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	mat->FresnelR0 = XMFLOAT3(0.2f, 0.2f, 0.2f);
+	mat->MatTransform = MathHelper::Identity4x4();
+	mat->Roughness = .125f;
 	mat->ShaderResourceView = SrvStorage::GetStorage()->LoadSRV(textureFile);
 	mat->NormalView = SrvStorage::GetStorage()->LoadSRV(normalTex);
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(MaterialData), mat->MaterialBuffer.GetAddressOf());
