@@ -33,6 +33,8 @@ private:
 	int GetMaterialRef(Mtl* mtl);
 
 private:
+	int FindIndex(int faceIndex, int vertIndex, int faceVertIndex);
+
 	void LoadBipedInfo(INode* node, std::vector<BipedVertex>& bipedes, const std::wstring& name);
 
 	void InputBipedes(VertexW& vertex, const BipedVertex& bipedes);
@@ -42,4 +44,6 @@ private:
 	void GetNodeName(INode* node, std::wstring& name);
 private:
 	ZXCSExporter* mExporter = nullptr;
+
+	
 };

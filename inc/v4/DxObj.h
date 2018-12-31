@@ -25,7 +25,8 @@ enum class DxType
 	DEFAULT,
 	SKINNED,
 	LINE,
-	SKY
+	SKY,
+	NOTEX
 };
 
 struct DxObjStorage

@@ -78,7 +78,7 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 {
 	ZXCLoader loader;
 
-	std::tstring file(filename, 0, filename.find_last_of(L".") - 1);
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
 
 	std::vector<SkinnedVertex> vertices;
 	std::vector<DWORD> indices;

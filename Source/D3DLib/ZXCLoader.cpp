@@ -121,7 +121,7 @@ bool ZXCLoader::LoadZXCS(
 	ReadHelper(fp, numHelpers, nodes);
 	ReadMesh(fp, numMeshes, nodes);
 	ReadSubsetTable(fp, numSubSet, subsets);
-	ReadVertex(fp, numVertices, vertices);
+	ReadVertex(fp, numVertices, vertices);    
 	ReadIndex(fp, numTriangles, indices);
 	if (numAnimationClips > 0)
 	{
@@ -288,6 +288,7 @@ void ZXCLoader::ReadVertex(std::wifstream & fp, UINT numVertices, std::vector<Ve
 		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
 		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
 		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
+		fp >> ignore >> vertices[i].Tangent.x >> vertices[i].Tangent.y >> vertices[i].Tangent.z;
 	}
 }
 
@@ -306,6 +307,7 @@ void ZXCLoader::ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Ski
 		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
 		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
 		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
+		fp >> ignore >> vertices[i].Tangent.x >> vertices[i].Tangent.y >> vertices[i].Tangent.z;
 		fp >> ignore >> weights[3];
 
 		for (int k = 0; k < (int)weights[3]; ++k)

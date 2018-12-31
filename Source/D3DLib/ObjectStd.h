@@ -21,6 +21,7 @@ struct Vertex
 	DirectX::XMFLOAT3 n;
 	DirectX::XMFLOAT4 c;
 	DirectX::XMFLOAT2 t;
+	DirectX::XMFLOAT3 Tangent;
 	Vertex()
 	{}
 	Vertex(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT3 np, DirectX::XMFLOAT4 vc, DirectX::XMFLOAT2 vt)
@@ -45,6 +46,7 @@ struct SkinnedVertex
 	DirectX::XMFLOAT3 n;
 	DirectX::XMFLOAT4 c;
 	DirectX::XMFLOAT2 t;
+	DirectX::XMFLOAT3 Tangent;
 	DirectX::XMFLOAT4 BoneWeights;
 	BYTE BoneIndices[4];
 };

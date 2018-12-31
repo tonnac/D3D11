@@ -216,27 +216,15 @@ void Core::FramePassCB()
 	mMainPassCB.TotalTime = m_Timer.DeltaTime();
 	mMainPassCB.DeltaTime = m_Timer.TotalTime();
 
-	XMVECTOR D = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f);
-	D = XMVector3Normalize(D);
+	LightStorage * light = LightStorage::getLight();
 
-	XMStoreFloat3(&mMainPassCB.Lights[0].Direction, D);
+	light->CopyDirectional(mMainPassCB.Lights);
+	light->CopyPoint(mMainPassCB.Lights);
+	light->CopySpot(mMainPassCB.Lights);
 
-	mMainPassCB.Lights[0].Strength = { 0.9f, 0.9f, 0.9f };
-
-	D = -XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f);
-	D = XMVector3Normalize(D);
-
-	XMStoreFloat3(&mMainPassCB.Lights[1].Direction, D);
-
-	mMainPassCB.Lights[1].Strength = { 0.6f, 0.6f, 0.6f };
-	
-	D = -XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f);
-	D = XMVector3Normalize(D);
-
-	XMStoreFloat3(&mMainPassCB.Lights[2].Direction, D);
-
-	mMainPassCB.Lights[2].Strength = { 0.4f, 0.4f, 0.4f };
-	mMainPassCB.DirectionalNum = 3;
+	mMainPassCB.DirectionalNum = light->NumDirectional();
+	mMainPassCB.PointNum = light->NumPoint();
+	mMainPassCB.SpotNum = light->NumSpot();
 
 	m_pImmediateContext->UpdateSubresource(mPassCB.Get(), 0, nullptr, &mMainPassCB, 0, 0);
 }

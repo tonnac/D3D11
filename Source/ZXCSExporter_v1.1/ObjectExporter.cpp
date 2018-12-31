@@ -17,11 +17,11 @@ void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 		if (parent != nullptr && (!parent->IsRootNode()))
 		{
 			std::wstring parentN;
-			for (auto&x : nodes)
+			for (auto&k : nodes)
 			{
-				if (parent == x.second)
+				if (parent == k.second)
 				{
-					parentN = x.first;
+					parentN = k.first;
 				}
 			}
 			maxObj->mParentName = std::make_pair(parentN, nodeIndex[parentN]);
@@ -114,6 +114,9 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 
 	std::vector<BipedVertex> bv;
 	LoadBipedInfo(node, bv, o->mNodeName.first);
+
+	o->mTangent.resize(mesh.getNumVerts(), Point3(0.0f, 0.0f, 0.0f));
+	o->mBiTangent.resize(mesh.getNumVerts(), Point3(0.0f, 0.0f, 0.0f));
 
 	for (int i = 0; i < (int)o->mTriangles.size(); ++i)
 	{
@@ -209,6 +212,98 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			 
 			o->mTriangles[i].v[2].t.x = mesh.tVerts[mesh.tvFace[i].t[i1]].x;
 			o->mTriangles[i].v[2].t.y = 1.0f - mesh.tVerts[mesh.tvFace[i].t[i1]].y;
+
+			// Compute Tangent v0
+
+			Point3 Tangent[3];
+			Point3 BiTangent[3];
+
+			auto& v0 = o->mTriangles[i].v[0];
+			auto& v1 = o->mTriangles[i].v[1];
+			auto& v2 = o->mTriangles[i].v[2];
+
+			Point3 e1 = v1.p - v0.p;
+			Point3 e2 = v2.p - v0.p;
+
+			Point2 deltaUV1 = v1.t - v0.t;
+			Point2 deltaUV2 = v2.t - v0.t;
+
+			float r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
+
+			if (fabsf(1.0f / r) < Epsilon)
+			{
+				Tangent[0] = { 1.0f, 0.0f, 0.0f };
+				BiTangent[0] = { 0.0f, 1.0f, 0.0f };
+
+			}
+			else
+			{
+				Tangent[0] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
+				BiTangent[0] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
+				Tangent[0] = Tangent[0].Normalize();
+			}
+
+			o->mTangent[v0.VertexWNum] += Tangent[0];
+			o->mBiTangent[v0.VertexWNum] += BiTangent[0];
+
+			// Compute Tangent v1
+
+			e1 = v0.p - v1.p;
+			e2 = v2.p - v1.p;
+
+			deltaUV1 = v0.t - v1.t;
+			deltaUV2 = v2.t - v1.t;
+
+			r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
+
+			if (fabsf(1.0f / r) < Epsilon)
+			{
+				Tangent[1] = { 1.0f, 0.0f, 0.0f };
+				BiTangent[1] = { 0.0f, 1.0f, 0.0f };
+			}
+			else
+			{
+				Tangent[1] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
+				BiTangent[1] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
+				Tangent[1] = Tangent[1].Normalize();
+			}
+
+			o->mTangent[v1.VertexWNum] += Tangent[1];
+			o->mBiTangent[v1.VertexWNum] += BiTangent[1];
+
+			// Compute Tangent v2
+
+			e1 = v0.p - v2.p;
+			e2 = v1.p - v2.p;
+
+			deltaUV1 = v0.t - v2.t;
+			deltaUV2 = v1.t - v2.t;
+
+			r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
+
+			if (fabsf(1.0f / r) < Epsilon)
+			{
+				Tangent[2] = { 1.0f, 0.0f, 0.0f };
+				BiTangent[2] = { 0.0f, 1.0f, 0.0f };
+			}
+			else
+			{
+				Tangent[2] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
+				BiTangent[2] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
+				Tangent[2] = Tangent[2].Normalize();
+			}
+
+
+			o->mTangent[v2.VertexWNum] += Tangent[2];
+			o->mBiTangent[v2.VertexWNum] += BiTangent[2];
+			
+			Point3 geomTri[3] = { v0.p, v1.p, v2.p };
+			Point3 mapTri[3] = { v0.t, v1.t, v2.t };
+			Point3 basisVec[2];
+
+			ComputeTangentAndBinormal(mapTri, geomTri, basisVec);
+
+			int a = 5;
 		}
 		if (mesh.getNumVertCol() > 0)
 		{
@@ -218,7 +313,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 		}
 		
 		mesh.buildNormals();
-
+		
 		int vert = mesh.faces[i].getVert(i0);
 		Point3 vn = GetVertexWNormal(mesh, i, mesh.getRVert(vert));
 		MaxUtil::ConvertVector(vn, o->mTriangles[i].v[0].n);
@@ -241,6 +336,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			o->mTriangles[i].mSubMtrl = -1;
 		}
 	}
+
 	if (needDel)
 		delete tri;
 }
@@ -270,6 +366,21 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 
 			if (vNumber == -1)
 			{
+				Point3 T = mesh->mTangent[mesh->mTriangles[i].v[j].VertexWNum].Normalize();
+				Point3 B = mesh->mBiTangent[mesh->mTriangles[i].v[j].VertexWNum].Normalize();
+				Point3 N = mesh->mTriangles[i].v[j].n;
+
+				T = (T - DotProd(T, N) * N).Normalize();
+
+				float d = DotProd(CrossProd(N, T), B);
+
+				if (d < 0.0f)
+				{
+					T *= -1.0f;
+				}
+
+				mesh->mTriangles[i].v[j].Tangent = T;
+
 				vertices.push_back(mesh->mTriangles[i].v[j]);
 				indices.push_back((UINT)(vertices.size() - 1));
 			}

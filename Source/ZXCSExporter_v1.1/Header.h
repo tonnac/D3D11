@@ -11,6 +11,7 @@
 #include <CS\\bipexp.h>
 #include <CS\\phyexp.h>
 #include <iskin.h>
+#include <MeshNormalSpec.h>
 
 #include <vector>
 #include <unordered_map>
@@ -53,6 +54,7 @@ struct VertexW
 	Point3 n;
 	Point4 c = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Point2 t;
+	Point3 Tangent;
 	std::array<float, 4> w;
 	std::array<UINT, 4> i;
 	int VertexWNum = -1;
@@ -155,6 +157,9 @@ struct ZXCSObject
 	int MeshNum = -1;
 	std::map<int, std::vector<VertexW>> mVertices;
 	std::map<int, std::vector<std::uint32_t>> mIndices;
+	std::vector<Point3> mTangent;
+	std::vector<Point3> mBiTangent;
+	std::vector<VertexW> vertices;
 };
 
 

@@ -65,7 +65,7 @@ float3 ComputeLighting(Light gLights[MaxLights], Material mat,
 
 	for (i = 0; i < DirectNum; ++i)
 	{
-		ambient = mat.Ambient.rgb;
+		ambient = mat.Ambient.rgb * gLights[i].Strength;
 		result += shadowFactor[i] * ComputeDirectionalLight(gLights[i], mat, normal, toEye) + ambient;
 	}
 

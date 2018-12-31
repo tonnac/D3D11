@@ -117,6 +117,9 @@
     <ClInclude Include="SRVStorage.h">
       <Filter>헤더 파일\Storage</Filter>
     </ClInclude>
+    <ClInclude Include="LightStorage.h">
+      <Filter>헤더 파일\Storage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -198,6 +201,9 @@
       <Filter>소스 파일\Storage</Filter>
     </ClCompile>
     <ClCompile Include="SRVStorage.cpp">
+      <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="LightStorage.cpp">
       <Filter>소스 파일\Storage</Filter>
     </ClCompile>
   </ItemGroup>

@@ -300,6 +300,7 @@ void GridShape::BuildGeometry()
 		v.n = grid.Vertices[i].Normal;
 		v.t = grid.Vertices[i].TexC;
 		v.c = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		v.Tangent = grid.Vertices[i].TangentU;
 		vertices.push_back(v);
 	}
 
@@ -327,8 +328,10 @@ void GridShape::BuildRenderItem(const std::tstring & textureFile)
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
-	rItem->World = MathHelper::Identity4x4();
-	XMMATRIX S = XMMatrixScaling(8.0f, 8.0f, 8.0f);
+//	rItem->World = MathHelper::Identity4x4();
+	XMMATRIX S = XMMatrixScaling(16.0f, 16.0f, 16.0f);
+	XMMATRIX S1 = XMMatrixScaling(25.0f, 25.0f, 25.0f);
+	XMStoreFloat4x4(&rItem->World, S1);
 	XMStoreFloat4x4(&rItem->TexTransform, S);
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Grid");
 	rItem->IndexCount = rItem->Geo->DrawArgs["grid"].IndexCount;
@@ -384,6 +387,8 @@ void SphereShape::BuildGeometry()
 		v.p = sphere.Vertices[i].Position;
 		v.n = sphere.Vertices[i].Normal;
 		v.t = sphere.Vertices[i].TexC;
+		v.c = XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f);
+		v.Tangent = sphere.Vertices[i].TangentU;
 		vertices.push_back(v);
 	}
 
@@ -410,8 +415,8 @@ void SphereShape::BuildRenderItem(const std::tstring & textureFile)
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
 
-	XMMATRIX W = XMMatrixScaling(20.0f, 20.0f, 20.0f);
-	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, -15.0f);
+	XMMATRIX W = XMMatrixScaling(40.0f, 40.0f, 40.0f);
+	XMMATRIX T = XMMatrixTranslation(0.0f, 15.0f, -45.0f);
 	XMStoreFloat4x4(&rItem->World, W * T);
 //	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();

@@ -22,7 +22,6 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pVertexShader = storage->getVertexShader("default");
 	dxobj->m_pPixelShader = storage->getPixelShader("default");
 	dxobj->m_pInputLayout = storage->getInputLayout("default");
-	dxobj->m_RasterizerState = E_RSS::Wireframe;
 
 	_DxObj[DxType::DEFAULT] = std::move(dxobj);
 
@@ -47,6 +46,13 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pInputLayout = storage->getInputLayout("sky");
 	dxobj->m_RasterizerState = E_RSS::SolidBack;
 	_DxObj[DxType::SKY] = std::move(dxobj);
+
+	dxobj = std::make_unique<DxObj>();
+	dxobj->m_pVertexShader = storage->getVertexShader("default");
+	dxobj->m_pPixelShader = storage->getPixelShader("notex");
+	dxobj->m_pInputLayout = storage->getInputLayout("default");
+	dxobj->m_RasterizerState = E_RSS::Default;
+	_DxObj[DxType::NOTEX] = std::move(dxobj);
 
 	return _DxObj;
 }
