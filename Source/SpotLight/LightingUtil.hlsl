@@ -119,13 +119,13 @@ float3 ComputeLighting(Light gLights[MaxLights], Material mat,
 
 	for (i = DirectNum; i < DirectNum + PointNum; ++i)
 	{
-		ambient = mat.Ambient * gLights[i].Strength;
+		ambient = mat.Ambient.rgb * gLights[i].Strength;
 		result += ComputePointLight(gLights[i], mat, pos, normal, toEye) + ambient;
 	}
 
 	for (i = DirectNum + PointNum; i < DirectNum + PointNum + SpotNum; ++i)
 	{
-		ambient = mat.Ambient * gLights[i].Strength;
+		ambient = mat.Ambient.rgb * gLights[i].Strength;
 		result += ComputeSpotLight(gLights[i], mat, pos, normal, toEye) + ambient;
 	}
 

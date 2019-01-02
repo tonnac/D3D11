@@ -8,10 +8,9 @@ bool ZXCLoader::LoadZXC(
 	const std::wstring & FileName,
 	std::vector<Vertex>& vertices,
 	std::vector<DWORD>& indices,
-	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
+	std::vector<Subset>& subsets,
 	std::vector<ZXCSMaterial>& materials,
-	std::vector<MeshNode>& nodes,
-	SkinnedData& skinInfo)
+	std::vector<MeshNode>& nodes)
 {
 	std::wifstream fp(FileName.c_str());
 	std::wstring ignore;
@@ -21,7 +20,6 @@ bool ZXCLoader::LoadZXC(
 	UINT numMeshes;
 	UINT numVertices;
 	UINT numTriangles;
-	UINT numAnimationClips;
 	UINT numSubSet;
 
 	if (!fp.is_open())
@@ -40,32 +38,18 @@ bool ZXCLoader::LoadZXC(
 	fp >> ignore >> numMeshes;
 	fp >> ignore >> numVertices;
 	fp >> ignore >> numTriangles;
-	fp >> ignore >> numAnimationClips;
 	fp >> ignore >> numSubSet;
 
+	materials.resize(numMaterials);
 	nodes.resize(numMeshes + numHelpers);
-	std::vector<int> boneHierarchy;
-	boneHierarchy.resize(numMeshes + numHelpers);
-	std::vector<XMFLOAT4X4> boneOffsets;
-	std::unordered_map<std::string, AnimationClip> animations;
 
 	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
 	ReadHelper(fp, numHelpers, nodes);
 	ReadMesh(fp, numMeshes, nodes);
-	ReadSubsetTable(fp, numSubSet, subsets);
 	ReadVertex(fp, numVertices, vertices);
 	ReadIndex(fp, numTriangles, indices);
-	if (numAnimationClips > 0)
-	{
-		ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
-
-		for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
-		{
-			boneHierarchy[i] = nodes[i].ParentIndex;
-		}
-		skinInfo.Set(boneHierarchy, boneOffsets, animations);
-	}
+	ReadSubsetTable(fp, numSubSet, subsets);
 
 	return true;
 }
@@ -74,7 +58,7 @@ bool ZXCLoader::LoadZXCS(
 	const std::wstring & FileName,
 	std::vector<SkinnedVertex>& vertices,
 	std::vector<DWORD>& indices,
-	std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets,
+	std::vector<Subset>& subsets,
 	std::vector<ZXCSMaterial>& materials,
 	std::vector<MeshNode>& nodes,
 	SkinnedData& skinInfo)
@@ -120,20 +104,17 @@ bool ZXCLoader::LoadZXCS(
 	ReadMaterial(fp, numMaterials, materials);
 	ReadHelper(fp, numHelpers, nodes);
 	ReadMesh(fp, numMeshes, nodes);
-	ReadSubsetTable(fp, numSubSet, subsets);
 	ReadVertex(fp, numVertices, vertices);    
 	ReadIndex(fp, numTriangles, indices);
-	if (numAnimationClips > 0)
-	{
-		ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
-		SetBoneOffsets(boneOffsets, nodes);
+	ReadSubsetTable(fp, numSubSet, subsets);
 
-		for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
-		{
-			boneHierarchy[i] = nodes[i].ParentIndex;
-		}
-		skinInfo.Set(boneHierarchy, boneOffsets, animations);
+	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
+	SetBoneOffsets(boneOffsets, nodes);
+	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
+	{
+		boneHierarchy[i] = nodes[i].ParentIndex;
 	}
+	skinInfo.Set(boneHierarchy, boneOffsets, animations);
 	return true;
 }
 
@@ -339,30 +320,36 @@ void ZXCLoader::ReadIndex(std::wifstream & fp, UINT numIndices, std::vector<DWOR
 	}
 }
 
-void ZXCLoader::ReadSubsetTable(std::wifstream & fp, UINT numSubsets, std::map<std::pair<UINT, int>, std::vector<std::pair<int, Subset>>>& subsets)
+void ZXCLoader::ReadSubsetTable(std::wifstream & fp, UINT numSubsets, std::vector<Subset>& subsets)
 {
 	std::wstring ignore;
 	fp >> ignore;
 
 	for (UINT i = 0; i < numSubsets; ++i)
 	{
-		UINT nodeIndex;
-		UINT mtrlRef;
-		UINT subMtlID;
 		Subset subset;
-		fp >> ignore >> nodeIndex >> mtrlRef >> subMtlID;
+		fp >> ignore >> ignore >> subset.NodeIndex;
+		fp >> ignore >> subset.MtrlRef;
+		fp >> ignore >> subset.SubMtlID;
 		fp >> ignore >> subset.VertexStart;
 		fp >> ignore >> subset.VertexCount;
 		fp >> ignore >> subset.FaceStart;
 		fp >> ignore >> subset.FaceCount;
 
-		subsets[std::pair<UINT, int>(nodeIndex, mtrlRef)].push_back(std::pair<int, Subset>(subMtlID, subset));
+		subsets.push_back(subset);
 	}
 }
 
 void ZXCLoader::ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes)
 {
 	std::wstring ignore;
+
+	//AnimationClip clip;
+	//clip.BoneAnimations.resize(numBones);
+
+	//animations["default"] = clip;
+	//AdjustAnimations(animations["default"], meshNodes);
+
 	for (UINT clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
 	{
 		UINT nodeIndex;

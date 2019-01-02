@@ -96,7 +96,6 @@ void ZXCSExporter::AddObject(INode * node)
 			mMaxObject.insert(std::make_pair(nodeName, node));
 		}break;
 	}
-
 }
 
 void ZXCSExporter::AddMaterial(INode * node)
@@ -114,7 +113,6 @@ void ZXCSExporter::AddMaterial(INode * node)
 			return;
 		}
 	}
-
 	mMaxMaterial.push_back(mtl);
 }
 

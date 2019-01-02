@@ -81,8 +81,11 @@ struct SkinnedModelInstance
 	{
 		TimePos += (int)(dt * 30.0f * 160.0f);
 
-		if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
-			TimePos = 0;
+		if (ClipName == "default")
+		{
+			if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
+				TimePos = 0;
+		}
 
 		SkinnedInfo->GetFinalTransforms(ClipName, TimePos, FinalTransforms);
 	}

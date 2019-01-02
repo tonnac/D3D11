@@ -18,7 +18,7 @@ private:
 	bool LoadZXC(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadZXCS(const std::tstring& filename, const std::tstring& texfilepath);
 
-	void BuildRenderItem(const std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>>& subsets,
+	void BuildRenderItem(const std::vector<ZXCLoader::Subset>& subsets,
 		const std::vector<ZXCSMaterial>& materials);
 	void BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXCSMaterial>& materials);
 private:

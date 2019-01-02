@@ -26,5 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="MeshNoTex.hlsl" />
+    <FxCompile Include="Default.hlsl" />
   </ItemGroup>
 </Project>

@@ -78,40 +78,18 @@ void BoxShape::BuildGeometry()
 
 	std::vector<Vertex> vertices;
 
-	vertices.resize(24);
-	vertices[0] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[1] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[2] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[3] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, 0.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
-	// µÞ¸é
-	vertices[4] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[5] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[6] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[7] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	GeometryGenerator geomesh;
+	GeometryGenerator::MeshData mesh = geomesh.CreateBox(10, 10, 10, 0);
+	vertices.resize(mesh.Vertices.size());
 
-	// ¿À¸¥ÂÊ
-	vertices[8] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[9] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[10] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[11] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(1.0f, 0.0f, 0.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
-
-	// ¿ÞÂÊ
-	vertices[12] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[13] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[14] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[15] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(-1.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
-
-	// À­¸é
-	vertices[16] = Vertex(XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[17] = Vertex(XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[18] = Vertex(XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[19] = Vertex(XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
-
-	// ¾Æ·§¸é
-	vertices[20] = Vertex(XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f));
-	vertices[21] = Vertex(XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f));
-	vertices[22] = Vertex(XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f));
-	vertices[23] = Vertex(XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT3(0.0f, -1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f));
+	for (UINT i = 0; i < (UINT)mesh.Vertices.size(); ++i)
+	{
+		vertices[i].p = mesh.Vertices[i].Position;
+		vertices[i].n = mesh.Vertices[i].Normal;
+		vertices[i].t = mesh.Vertices[i].TexC;
+		vertices[i].Tangent = mesh.Vertices[i].TangentU;
+		vertices[i].c = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 
 	if (mIsDice)
 	{
@@ -150,13 +128,10 @@ void BoxShape::BuildGeometry()
 
 	indices.resize(36);
 
-	int iIndex = 0;
-	indices[iIndex++] = 0; 	indices[iIndex++] = 1; 	indices[iIndex++] = 2; 	indices[iIndex++] = 0;	indices[iIndex++] = 2; 	indices[iIndex++] = 3;
-	indices[iIndex++] = 4; 	indices[iIndex++] = 5; 	indices[iIndex++] = 6; 	indices[iIndex++] = 4;	indices[iIndex++] = 6; 	indices[iIndex++] = 7;
-	indices[iIndex++] = 8; 	indices[iIndex++] = 9; 	indices[iIndex++] = 10; indices[iIndex++] = 8;	indices[iIndex++] = 10; indices[iIndex++] = 11;
-	indices[iIndex++] = 12; indices[iIndex++] = 13; indices[iIndex++] = 14; indices[iIndex++] = 12;	indices[iIndex++] = 14; indices[iIndex++] = 15;
-	indices[iIndex++] = 16; indices[iIndex++] = 17; indices[iIndex++] = 18; indices[iIndex++] = 16;	indices[iIndex++] = 18; indices[iIndex++] = 19;
-	indices[iIndex++] = 20; indices[iIndex++] = 21; indices[iIndex++] = 22; indices[iIndex++] = 20;	indices[iIndex++] = 22; indices[iIndex++] = 23;
+	for (UINT i = 0; i < (UINT)mesh.Indices32.size(); ++i)
+	{
+		indices[i] = mesh.Indices32[i];
+	}
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
@@ -190,6 +165,24 @@ void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstrin
 	
 	storage->StoreMaterial(mat);
 }
+
+void BoxShape::BuildRenderItem(const std::tstring & textureFile)
+{
+	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
+	rItem->Geo = mGeometry;
+
+	rItem->World = MathHelper::Identity4x4();
+	rItem->TexTransform = MathHelper::Identity4x4();
+	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Box");
+	rItem->IndexCount = rItem->Geo->DrawArgs["box"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs["box"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["box"].BaseVertexLocation;
+	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
+	mRenderItem = rItem.get();
+	S_RItem.SaveOpaqueItem(rItem);
+}
+
 
 void SkyBox::BuildGeometry()
 {
@@ -381,21 +374,21 @@ void SphereShape::BuildGeometry()
 	GeometryGenerator::MeshData sphere = geoMesh.CreateSphere(0.5f, 20, 20);
 
 	std::vector<Vertex> vertices;
+	vertices.resize(sphere.Vertices.size());
 	for (UINT i = 0; i < (UINT)sphere.Vertices.size(); ++i)
 	{
-		Vertex v;
-		v.p = sphere.Vertices[i].Position;
-		v.n = sphere.Vertices[i].Normal;
-		v.t = sphere.Vertices[i].TexC;
-		v.c = XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f);
-		v.Tangent = sphere.Vertices[i].TangentU;
-		vertices.push_back(v);
+		vertices[i].p = sphere.Vertices[i].Position;
+		vertices[i].n = sphere.Vertices[i].Normal;
+		vertices[i].t = sphere.Vertices[i].TexC;
+		vertices[i].Tangent = sphere.Vertices[i].TangentU;
+		vertices[i].c = XMFLOAT4(0.35f, 0.35f, 0.35f, 1.0f);
 	}
 
 	std::vector<DWORD> indices;
+	indices.resize(sphere.Indices32.size());
 	for (UINT i = 0; i < (UINT)sphere.Indices32.size(); ++i)
 	{
-		indices.push_back(sphere.Indices32[i]);
+		indices[i] = sphere.Indices32[i];
 	}
 
 	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);

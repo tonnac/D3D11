@@ -6,7 +6,6 @@
 class ZXCSExporter
 {
 	friend class ObjectExporter;
-	friend class SkinExporter;
 public:
 	ZXCSExporter();
 	~ZXCSExporter() = default;

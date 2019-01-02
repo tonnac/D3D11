@@ -6,15 +6,6 @@
 #include "Mesh.h"
 #include "GeometryGenerator.h"
 
-/*	To do
-	{
-		Mesh Manager(?) 보류,
-		<Material>, Lights
-		Mesh Load 함수화(?)
-	}
-*/
-
-
 class Sample : public Core
 {
 public:
@@ -28,5 +19,4 @@ private:
 	GridShape grid;
 	Mesh mesh;
 	SphereShape spe;
-
 };

@@ -21,30 +21,20 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath)
 {
 	ZXCLoader loader;
-
-	std::tstring file(filename, 0, filename.find_last_of(L".") - 1);
+	
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
 
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
-	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
+	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
-	SkinnedData skininfo;
-	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes, skininfo))
+	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes))
 		return false;
-
-	if (skininfo.BoneCount() > 0)
-	{
-		mSkinnedInst = std::make_unique<SkinnedModelInstance>();
-		mSkinInfo = std::make_unique<SkinnedData>();
-		*(mSkinInfo.get()) = skininfo;
-		mSkinnedInst->SkinnedInfo = mSkinInfo.get();
-		mSkinnedInst->ClipName = "default";
-		mSkinnedInst->FinalTransforms.resize(nodes.size());
-	}
 	
-	std::string name = std::string(file.begin(), file.end());
+	BuildMaterials(texfilepath, materials);
 
+	std::string name = std::string(file.begin(), file.end());
 	if (S_Geometry[name] != nullptr)
 	{
 		mGeometry = S_Geometry[name];
@@ -82,7 +72,7 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 
 	std::vector<SkinnedVertex> vertices;
 	std::vector<DWORD> indices;
-	std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>> subsets;
+	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
@@ -136,57 +126,54 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 }
 
 void Mesh::BuildRenderItem(
-	const std::map<std::pair<UINT, int>, std::vector<std::pair<int, ZXCLoader::Subset>>>& subsets,
+	const std::vector<ZXCLoader::Subset>& subsets,
 	const std::vector<ZXCSMaterial>& materials)
 {
 	for (auto&x : subsets)
 	{
-		for (auto&k : x.second)
+		UINT nodeIndex = x.NodeIndex;
+		int mtrlRef = x.MtrlRef;
+		int mtlID = x.SubMtlID;
+
+		SubmeshGeometry submesh;
+
+		std::unique_ptr<RenderItem> ritem = std::make_unique<RenderItem>();
+		ritem->BaseVertexLocation = submesh.BaseVertexLocation = x.VertexStart;
+		ritem->IndexCount = submesh.IndexCount = x.FaceCount * 3;
+		ritem->StartIndexLocation = submesh.StartIndexLocation = x.FaceStart * 3;
+		ritem->Geo = mGeometry;
+
+		if (mtlID == -2 || mtlID > (int)materials[mtrlRef].SubMaterial.size())
 		{
-			UINT nodeIndex = x.first.first;
-			int mtrlRef = x.first.second;
-			int mtlID = k.first;
+			ritem->Mat = nullptr;
+		}
+		else if (mtlID == -1)
+		{
+			ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].Name);
+		}
+		else
+		{
+			ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].SubMaterial[mtlID].Name);
+		}
 
-			SubmeshGeometry submesh;
+		ritem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		ritem->TexTransform = MathHelper::Identity4x4();
+		ritem->World = MathHelper::Identity4x4();
 
-			std::unique_ptr<RenderItem> ritem = std::make_unique<RenderItem>();
-			ritem->BaseVertexLocation = submesh.BaseVertexLocation = k.second.VertexStart;
-			ritem->IndexCount = submesh.IndexCount = k.second.FaceCount * 3;
-			ritem->StartIndexLocation = submesh.StartIndexLocation = k.second.FaceStart * 3;
-			ritem->Geo = mGeometry;
+		d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
 
-			if (mtlID == -2 || mtlID > (int)materials[mtrlRef].SubMaterial.size())
-			{
-				ritem->Mat = nullptr;
-			}
-			else if (mtlID == -1)
-			{
-				ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].Name);
-			}
-			else
-			{
-				ritem->Mat = MaterialStorage::GetStorage()->GetMaterial(materials[mtrlRef].SubMaterial[mtlID].Name);
-			}
-			
-			ritem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-			ritem->TexTransform = MathHelper::Identity4x4();
-			ritem->World = MathHelper::Identity4x4();
-
-			d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
-
-			std::string name = mNodeList[nodeIndex]->NodeName;
-			mGeometry->DrawArgs[name] = submesh;
-			ritem->Name = mNodeList[nodeIndex]->NodeName;
-			if (mNodeList[nodeIndex]->Type == ObjectType::MESH && ritem->Mat != nullptr)
-			{
-				mDrawItem.push_back(ritem.get());
-				S_RItem.SaveOpaqueItem(ritem);
-			}
-			else
-			{
-				mDebugItem.push_back(ritem.get());
-				S_RItem.SaveMiscItem(ritem);
-			}
+		std::string name = mNodeList[nodeIndex]->NodeName;
+		mGeometry->DrawArgs[name] = submesh;
+		ritem->Name = mNodeList[nodeIndex]->NodeName;
+		if (mNodeList[nodeIndex]->Type == ObjectType::MESH && ritem->Mat != nullptr)
+		{
+			mDrawItem.push_back(ritem.get());
+			S_RItem.SaveOpaqueItem(ritem);
+		}
+		else
+		{
+			mDebugItem.push_back(ritem.get());
+			S_RItem.SaveMiscItem(ritem);
 		}
 	}
 }

@@ -115,9 +115,6 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 	std::vector<BipedVertex> bv;
 	LoadBipedInfo(node, bv, o->mNodeName.first);
 
-	o->mTangent.resize(mesh.getNumVerts(), Point3(0.0f, 0.0f, 0.0f));
-	o->mBiTangent.resize(mesh.getNumVerts(), Point3(0.0f, 0.0f, 0.0f));
-
 	for (int i = 0; i < (int)o->mTriangles.size(); ++i)
 	{
 		Matrix3 Inv = Inverse(node->GetNodeTM(t));
@@ -212,98 +209,6 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			 
 			o->mTriangles[i].v[2].t.x = mesh.tVerts[mesh.tvFace[i].t[i1]].x;
 			o->mTriangles[i].v[2].t.y = 1.0f - mesh.tVerts[mesh.tvFace[i].t[i1]].y;
-
-			// Compute Tangent v0
-
-			Point3 Tangent[3];
-			Point3 BiTangent[3];
-
-			auto& v0 = o->mTriangles[i].v[0];
-			auto& v1 = o->mTriangles[i].v[1];
-			auto& v2 = o->mTriangles[i].v[2];
-
-			Point3 e1 = v1.p - v0.p;
-			Point3 e2 = v2.p - v0.p;
-
-			Point2 deltaUV1 = v1.t - v0.t;
-			Point2 deltaUV2 = v2.t - v0.t;
-
-			float r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
-
-			if (fabsf(1.0f / r) < Epsilon)
-			{
-				Tangent[0] = { 1.0f, 0.0f, 0.0f };
-				BiTangent[0] = { 0.0f, 1.0f, 0.0f };
-
-			}
-			else
-			{
-				Tangent[0] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
-				BiTangent[0] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
-				Tangent[0] = Tangent[0].Normalize();
-			}
-
-			o->mTangent[v0.VertexWNum] += Tangent[0];
-			o->mBiTangent[v0.VertexWNum] += BiTangent[0];
-
-			// Compute Tangent v1
-
-			e1 = v0.p - v1.p;
-			e2 = v2.p - v1.p;
-
-			deltaUV1 = v0.t - v1.t;
-			deltaUV2 = v2.t - v1.t;
-
-			r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
-
-			if (fabsf(1.0f / r) < Epsilon)
-			{
-				Tangent[1] = { 1.0f, 0.0f, 0.0f };
-				BiTangent[1] = { 0.0f, 1.0f, 0.0f };
-			}
-			else
-			{
-				Tangent[1] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
-				BiTangent[1] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
-				Tangent[1] = Tangent[1].Normalize();
-			}
-
-			o->mTangent[v1.VertexWNum] += Tangent[1];
-			o->mBiTangent[v1.VertexWNum] += BiTangent[1];
-
-			// Compute Tangent v2
-
-			e1 = v0.p - v2.p;
-			e2 = v1.p - v2.p;
-
-			deltaUV1 = v0.t - v2.t;
-			deltaUV2 = v1.t - v2.t;
-
-			r = 1.0f / (deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x);
-
-			if (fabsf(1.0f / r) < Epsilon)
-			{
-				Tangent[2] = { 1.0f, 0.0f, 0.0f };
-				BiTangent[2] = { 0.0f, 1.0f, 0.0f };
-			}
-			else
-			{
-				Tangent[2] = r * (e1 * deltaUV2.y) - (e2 * deltaUV1.y);
-				BiTangent[2] = r * (e2 * deltaUV1.x) - (e1 * deltaUV2.x);
-				Tangent[2] = Tangent[2].Normalize();
-			}
-
-
-			o->mTangent[v2.VertexWNum] += Tangent[2];
-			o->mBiTangent[v2.VertexWNum] += BiTangent[2];
-			
-			Point3 geomTri[3] = { v0.p, v1.p, v2.p };
-			Point3 mapTri[3] = { v0.t, v1.t, v2.t };
-			Point3 basisVec[2];
-
-			ComputeTangentAndBinormal(mapTri, geomTri, basisVec);
-
-			int a = 5;
 		}
 		if (mesh.getNumVertCol() > 0)
 		{
@@ -343,6 +248,8 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 
 void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 {
+	static int Cnt = 0;
+
 	std::sort(mesh->mTriangles.begin(), mesh->mTriangles.end());
 	for (int i = 0; i < (int)mesh->mTriangles.size(); ++i)
 	{
@@ -366,27 +273,136 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 
 			if (vNumber == -1)
 			{
-				Point3 T = mesh->mTangent[mesh->mTriangles[i].v[j].VertexWNum].Normalize();
-				Point3 B = mesh->mBiTangent[mesh->mTriangles[i].v[j].VertexWNum].Normalize();
-				Point3 N = mesh->mTriangles[i].v[j].n;
-
-				T = (T - DotProd(T, N) * N).Normalize();
-
-				float d = DotProd(CrossProd(N, T), B);
-
-				if (d < 0.0f)
-				{
-					T *= -1.0f;
-				}
-
-				mesh->mTriangles[i].v[j].Tangent = T;
-
 				vertices.push_back(mesh->mTriangles[i].v[j]);
 				indices.push_back((UINT)(vertices.size() - 1));
 			}
 			else
 			{
 				indices.push_back(vNumber);
+			}
+		}
+	}
+
+	for (auto & x : mesh->mVertices)
+	{
+		auto & k = mesh->mIndices[x.first];
+
+		for (UINT i = 0; i < (UINT)k.size() / 3; ++i)
+		{
+			std::uint32_t i0 = k[i * 3 + 0];
+			std::uint32_t i1 = k[i * 3 + 1];
+			std::uint32_t i2 = k[i * 3 + 2];
+
+			auto& v0 = x.second[i0].p;
+			auto& v1 = x.second[i1].p;
+			auto& v2 = x.second[i2].p;
+
+			auto& t0 = x.second[i0].t;
+			auto& t1 = x.second[i1].t;
+			auto& t2 = x.second[i2].t;
+
+			Point3 e0 = v1 - v0;
+			Point3 e1 = v2 - v0;
+
+			Point2 UV0 = t1 - t0;
+			Point2 UV1 = t2 - t0;
+
+			float a = UV0.x;
+			float b = UV0.y;
+			float c = UV1.x;
+			float d = UV1.y;
+
+			float r = 1.0f / (a * d - b * c);
+
+			Point3 Tangent;
+			Point3 Bitangent;
+
+			if (fabsf(a * d - b * c) < Epsilon)
+			{
+				Tangent = Point3(1.0f, 0.0f, 0.0f);
+				Bitangent = Point3(0.0f, 1.0f, 0.0f);
+			}
+			else
+			{
+				Tangent = r * (d * e0 - b * e1);
+				Bitangent = r * (a * e1 - c * e0);
+			}
+
+			x.second[i0].Tangent += Tangent;
+			x.second[i0].Bitangent += Bitangent;
+
+			////////
+
+			e0 = v0 - v1;
+			e1 = v2 - v1;
+
+			UV0 = t0 - t1;
+			UV1 = t2 - t1;
+
+			a = UV0.x;
+			b = UV0.y;
+			c = UV1.x;
+			d = UV1.y;
+
+			r = 1.0f / (a * d - b * c);
+
+			if (fabsf(a * d - b * c) < Epsilon)
+			{
+				Tangent = Point3(1.0f, 0.0f, 0.0f);
+				Bitangent = Point3(0.0f, 1.0f, 0.0f);
+			}
+			else
+			{
+				Tangent = r * (d * e0 - b * e1);
+				Bitangent = r * (a * e1 - c * e0);
+			}
+
+			x.second[i1].Tangent += Tangent;
+			x.second[i1].Bitangent += Bitangent;
+
+			////////
+
+			e0 = v0 - v2;
+			e1 = v1 - v2;
+
+			UV0 = t0 - t2;
+			UV1 = t1 - t2;
+
+			a = UV0.x;
+			b = UV0.y;
+			c = UV1.x;
+			d = UV1.y;
+
+			r = 1.0f / (a * d - b * c);
+
+			if (fabsf(a * d - b * c) < Epsilon)
+			{
+				Tangent = Point3(1.0f, 0.0f, 0.0f);
+				Bitangent = Point3(0.0f, 1.0f, 0.0f);
+			}
+			else
+			{
+				Tangent = r * (d * e0 - b * e1);
+				Bitangent = r * (a * e1 - c * e0);
+			}
+
+			x.second[i2].Tangent += Tangent;
+			x.second[i2].Bitangent += Bitangent;
+		}
+	}
+
+	for (auto &x : mesh->mVertices)
+	{
+		for (auto & k : x.second)
+		{
+			k.Tangent = k.Tangent.Normalize();
+			k.Bitangent = k.Bitangent.Normalize();
+
+			k.Tangent = k.Tangent - DotProd(k.Tangent, k.n) * k.n;
+
+			if (DotProd(CrossProd(k.n, k.Tangent), k.Bitangent) < 0.0f)
+			{
+				k.Tangent *= -1;
 			}
 		}
 	}

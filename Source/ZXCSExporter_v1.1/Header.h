@@ -54,7 +54,8 @@ struct VertexW
 	Point3 n;
 	Point4 c = { 1.0f, 1.0f, 1.0f, 1.0f };
 	Point2 t;
-	Point3 Tangent;
+	Point3 Tangent = { 0.0f, 0.0f, 0.0f };
+	Point3 Bitangent = { 0.0f, 0.0f, 0.0f };
 	std::array<float, 4> w;
 	std::array<UINT, 4> i;
 	int VertexWNum = -1;
@@ -157,8 +158,6 @@ struct ZXCSObject
 	int MeshNum = -1;
 	std::map<int, std::vector<VertexW>> mVertices;
 	std::map<int, std::vector<std::uint32_t>> mIndices;
-	std::vector<Point3> mTangent;
-	std::vector<Point3> mBiTangent;
 	std::vector<VertexW> vertices;
 };
 

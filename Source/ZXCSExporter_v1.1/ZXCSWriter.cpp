@@ -23,14 +23,6 @@ ZXCSWriter::ZXCSWriter(
 
 bool ZXCSWriter::Savefile()
 {
-	struct Subset
-	{
-		UINT VertexWStart;
-		UINT VertexWCount;
-		UINT FaceStart;
-		UINT FaceCount;
-	};
-
 	std::wofstream os;
 	os.open(mFilename.c_str());
 
@@ -43,36 +35,14 @@ bool ZXCSWriter::Savefile()
 	UINT numTriangles = 0;
 	UINT numHelpers = 0;
 	UINT numMeshes = 0;
+	UINT numSubsets = 0;
 	UINT numAnimationClip = 0;
 	if (mAnimation != nullptr)
 		numAnimationClip = 1;
 
 	numMaterials = (UINT)mMaterial.size();
 
-	std::map<std::pair<int, int>, std::vector<std::pair<int, Subset>>> subsetID;
-	UINT subsetNum = 0;
-	for (auto& x : mObjects)
-	{
-		if (x->Type == ObjectType::MESH)
-			++numMeshes;
-		else
-			++numHelpers;
-		if (!x->mVertices.empty())
-		{
-			for (auto&k : x->mVertices)
-			{
-				Subset subset;
-				subset.VertexWCount = (UINT)k.second.size();
-				subset.VertexWStart = numVertices;
-				subset.FaceCount = (UINT)(x->mIndices[k.first].size()) / 3;
-				subset.FaceStart = numTriangles;
-				numVertices += subset.VertexWCount;
-				numTriangles += subset.FaceCount;
-				subsetID[std::pair<int, int>(x->mMaterialRef, k.first)].push_back(std::pair<int, Subset>((int)x->mNodeName.second, subset));
-				++subsetNum;
-			}
-		}
-	}
+	BuildSubset(numMeshes, numHelpers, numSubsets, numVertices, numTriangles);
 
 	std::wstring info =
 		L"#Materials " + std::to_wstring(numMaterials) +
@@ -81,7 +51,7 @@ bool ZXCSWriter::Savefile()
 		L"\n#Vertices " + std::to_wstring(numVertices) +
 		L"\n#Triangles " + std::to_wstring(numTriangles) +
 		L"\n#AnimationClips " + std::to_wstring(numAnimationClip) +
-		L"\n#Subset " + std::to_wstring(subsetNum);
+		L"\n#Subset " + std::to_wstring(numSubsets);
 
 	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + Savetime();
 	os << header << info;
@@ -90,24 +60,8 @@ bool ZXCSWriter::Savefile()
 	WriteMaterial(os);
 	WriteHelper(os);
 	WriteMesh(os);
-
-	std::wstring subsetHeader = L"\n**********SubsetTable**********";
-	os << subsetHeader;
-	for (auto & x : subsetID)
-	{
-		for (auto & k : x.second)
-		{
-			std::wstring subinfo = L"\nSubsetID: " + std::to_wstring(k.first) + L" " + std::to_wstring(x.first.first) + L" " + std::to_wstring(x.first.second) +
-				L" VertexWStart: " + std::to_wstring(k.second.VertexWStart) + L" VertexWCount: " + std::to_wstring(k.second.VertexWCount) +
-				L" FaceStart: " + std::to_wstring(k.second.FaceStart) + L" FaceCount: " + std::to_wstring(k.second.FaceCount);
-
-			os << subinfo;
-		}
-	}
-
-	os << std::endl;
-
 	WriteVertexW(os);
+	WriteSubset(os);
 	if(numAnimationClip > 0)
 		WriteAnimations(os);
 
@@ -257,6 +211,26 @@ void ZXCSWriter::WriteHelper(std::wofstream & os)
 	}
 }
 
+void ZXCSWriter::WriteSubset(std::wofstream & os)
+{
+	UINT i = 0;
+	std::wstring subsetHeader = L"\n**********SubsetTable**********";
+	os << subsetHeader;
+	for (auto & x : mSubset)
+	{
+		std::wstring subinfo = L"\nSubsetID" + std::to_wstring(i) +
+			L" NodeIndex: " + std::to_wstring(x.NodeIndex) +
+			L" MtrlRef: " + std::to_wstring(x.MtrlRef) +
+			L" SubMtlID: " + std::to_wstring(x.SubMtlID) +
+			L" VertexStart: " + std::to_wstring(x.VertexStart) + L" VertexCount: " + std::to_wstring(x.VertexCount) +
+			L" FaceStart: " + std::to_wstring(x.FaceStart) + L" FaceCount: " + std::to_wstring(x.FaceCount);
+
+		os << subinfo;
+		++i;
+	}
+	os << std::endl;
+}
+
 void ZXCSWriter::WriteVertexW(std::wofstream & os)
 {
 	std::wstring VertexWHeader = L"\n**********Vertices**********";
@@ -331,6 +305,35 @@ void ZXCSWriter::WriteAnimations(std::wofstream & os)
 			os << trackInfo;
 		}
 		os << std::endl;
+	}
+}
+
+void ZXCSWriter::BuildSubset(UINT & meshes, UINT & helpers, UINT & subsets, UINT & vertices, UINT & indices)
+{
+	for (auto& x : mObjects)
+	{
+		if (x->Type == ObjectType::MESH)
+			++meshes;
+		else
+			++helpers;
+		if (!x->mVertices.empty())
+		{
+			for (auto&k : x->mVertices)
+			{
+				Subset subset;
+				subset.MtrlRef = x->mMaterialRef;
+				subset.NodeIndex = (int)x->mNodeName.second;
+				subset.SubMtlID = k.first;
+				subset.VertexCount = (UINT)k.second.size();
+				subset.VertexStart = vertices;
+				subset.FaceCount = (UINT)(x->mIndices[k.first].size()) / 3;
+				subset.FaceStart = indices;
+				vertices += subset.VertexCount;
+				indices += subset.FaceCount;
+				mSubset.push_back(subset);
+				++subsets;
+			}
+		}
 	}
 }
 

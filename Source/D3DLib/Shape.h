@@ -44,6 +44,7 @@ public:
 
 protected:
 	virtual void BuildGeometry()override;
+	virtual void BuildRenderItem(const std::tstring & textureFile)override;
 	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
 private:
 	bool mIsDice = false;

@@ -57,7 +57,6 @@ bool Sample::Render()
 	spe.Render(m_pImmediateContext.Get());
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
-
 	return true;
 }
 
