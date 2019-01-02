@@ -13,7 +13,7 @@ struct SubmeshGeometry
 
 struct MeshGeometry
 {
-	std::string Name;
+	std::wstring Name;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer = nullptr;
@@ -26,7 +26,7 @@ struct MeshGeometry
 	DXGI_FORMAT IndexFormat = DXGI_FORMAT_R32_UINT;
 	UINT IndexBufferByteSize = 0;
 
-	std::unordered_map<std::string, SubmeshGeometry> DrawArgs;
+	std::unordered_map<std::wstring, SubmeshGeometry> DrawArgs;
 };
 
 class GeometryStroage : public Singleton<GeometryStroage>
@@ -38,9 +38,9 @@ private:
 public:
 	void SaveGeometry(std::unique_ptr<MeshGeometry>& geometry);
 
-	MeshGeometry* operator[] (const std::string& name);
+	MeshGeometry* operator[] (const std::wstring& name);
 private:
-	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometries;
+	std::unordered_map<std::wstring, std::unique_ptr<MeshGeometry>> mGeometries;
 };
 
 #define S_Geometry GeometryStroage::getInst()

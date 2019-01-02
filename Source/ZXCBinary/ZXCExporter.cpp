@@ -27,9 +27,13 @@ bool ZXCExporter::Run()
 	LoadMaterial();
 
 	mObjectExporter = std::make_unique<ObjectExporter>(this);	
-	mObjectExporter->LoadObject(mMaxObject, mOutputObjects, mNodeIndex);
+	mObjectExporter->LoadObject(mMaxObject, mObjects, mNodeIndex, mVertices, mIndices);
 
-	mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mSceneInfo, mOutputMaterial, mOutputObjects);
+	BuildOutObjects();
+	BuildSubset();
+
+	mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mSceneInfo, 
+		mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
 	if (!mWriter->Savefile()) return false;
 
 	return true;
@@ -113,6 +117,41 @@ void ZXCExporter::AddMaterial(INode * node)
 	mMaxMaterial.push_back(mtl);
 }
 
+void ZXCExporter::BuildOutObjects()
+{
+	for (const auto& p : mObjects)
+	{
+		OutputObject oO = *p;
+		mOutObjects.push_back(oO);
+	}
+}
+
+void ZXCExporter::BuildSubset()
+{
+	static UINT vertices = 0;
+	static UINT indices = 0;
+	for (auto& x : mObjects)
+	{
+		if (!x->mVertices.empty())
+		{
+			for (auto&k : x->mVertices)
+			{
+				Subset subset;
+				subset.MtrlRef = x->mMaterialRef;
+				subset.NodeIndex = (int)x->mNodeName.second;
+				subset.SubMtlID = k.first;
+				subset.VertexCount = (UINT)k.second.size();
+				subset.VertexStart = vertices;
+				subset.FaceCount = (UINT)(x->mIndices[k.first].size()) / 3;
+				subset.FaceStart = indices;
+				vertices += subset.VertexCount;
+				indices += subset.FaceCount;
+				mSubsets.push_back(subset);
+			}
+		}
+	}
+}
+
 void ZXCExporter::LoadMaterial()
 {
 	for (int i = 0; i < (int)mMaxMaterial.size(); ++i)
@@ -179,16 +218,16 @@ void ZXCExporter::LoadTexture(ZXCMaterial & zxcMtl, Mtl * srcMtl)
 			if (!std->MapEnabled(i)) continue;
 		}
 
-		ZXCTexmap texMap;
-		texMap.SubNo = i;
+		std::pair<int, std::wstring> texMap;
+		texMap.first = i;
 
 		if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0x00))
 		{
 			TSTR mapName = ((BitmapTex *)tex)->GetMapName();
 			TSTR fullName;
 			SplitPathFile(mapName, &fullName, &mapName);
-			texMap.Filename = mapName;
+			texMap.second = mapName;
 		}
-		zxcMtl.TexMap.push_back(texMap);
+		zxcMtl.TexMap.insert(texMap);
 	}
 }

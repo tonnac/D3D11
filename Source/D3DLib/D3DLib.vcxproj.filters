@@ -120,6 +120,9 @@
     <ClInclude Include="LightStorage.h">
       <Filter>헤더 파일\Storage</Filter>
     </ClInclude>
+    <ClInclude Include="ZXCBinLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="LightStorage.cpp">
       <Filter>소스 파일\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="ZXCBinLoader.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -16,8 +16,8 @@ enum class ObjectType : unsigned char
 
 struct MeshNode
 {
-	std::string NodeName;
-	std::string ParentName;
+	std::wstring NodeName;
+	std::wstring ParentName;
 	int ParentIndex = -1;
 	ObjectType Type = ObjectType::MESH;
 	DirectX::XMFLOAT4X4 World;
@@ -31,12 +31,13 @@ struct MeshNode
 
 struct ZXCSMaterial
 {
-	std::wstring Name;
+	std::wstring Name = std::wstring();
+	std::wstring ClassName = std::wstring();
 
-	DirectX::XMFLOAT3 Ambient;
-	DirectX::XMFLOAT3 Diffuse;
-	DirectX::XMFLOAT3 Specular;
-	float Shininess;
+	DirectX::XMFLOAT3 Ambient = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	DirectX::XMFLOAT3 Diffuse = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	DirectX::XMFLOAT3 Specular = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	float Shininess = 0.0f;
 
 	std::map<int, std::wstring> TexMap;
 	std::vector<ZXCSMaterial> SubMaterial;
@@ -68,7 +69,7 @@ public:
 		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes);
 
-	bool LoadZXCS(
+	bool LoadSkin(
 		const std::wstring & FileName,
 		std::vector<SkinnedVertex>& vertices,
 		std::vector<DWORD>& indices,

@@ -187,6 +187,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="SRVStorage.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="wClass.h" />
+    <ClInclude Include="ZXCBinLoader.h" />
     <ClInclude Include="ZXCLoader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +218,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="SRVStorage.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="wClass.cpp" />
+    <ClCompile Include="ZXCBinLoader.cpp" />
     <ClCompile Include="ZXCLoader.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

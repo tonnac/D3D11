@@ -17,13 +17,7 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 
 bool Sample::Init()
 {
-	std::vector<Vertex> vertices;
-	std::vector<DWORD> indices;
-	std::vector<ZXCLoader::Subset> subsets;
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-	ZXCBinLoader loader;
-	loader.LoadZXCBin(L"dd.BIN", vertices, indices, subsets, materials, nodes);
+	mesh.LoadFile(L"S.BIN", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	return true;
 }
 
@@ -34,6 +28,8 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
+	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	mesh.Render(m_pImmediateContext.Get());
 	return true;
 }
 

@@ -8,15 +8,18 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 	m_pDevice = device;
 
 	std::tstring Ext(filename, filename.find_last_of(L".") + 1, filename.length());
+
+	std::transform(Ext.begin(), Ext.end(), Ext.begin(), ::toupper);
+
 	if (Ext == L"ZXCS")
 	{
-		return LoadZXCS(filename, texfilepath);
+		return LoadSkin(filename, texfilepath);
 	}
 	else if(Ext == L"ZXC")
 	{
 		return LoadZXC(filename, texfilepath);
 	}
-	else
+	else if(Ext == L"BIN")
 	{
 		return LoadZXCBin(filename, texfilepath);
 	}
@@ -25,8 +28,6 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath)
 {
 	ZXCLoader loader;
-	
-	std::tstring file(filename, 0, filename.find_last_of(L"."));
 
 	std::vector<Vertex> vertices;
 	std::vector<DWORD> indices;
@@ -36,9 +37,74 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes))
 		return false;
 	
+	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	return true;
+}
+
+bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepath)
+{
+	ZXCLoader loader;
+
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
+
+	std::vector<SkinnedVertex> vertices;
+	std::vector<DWORD> indices;
+	std::vector<ZXCLoader::Subset> subsets;
+	std::vector<ZXCSMaterial> materials;
+	std::vector<MeshNode> nodes;
+	SkinnedData skininfo;
+
+	if (!loader.LoadSkin(filename, vertices, indices, subsets, materials, nodes, skininfo))
+		return false;
+
+	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
+	mSkinInfo = std::make_unique<SkinnedData>();
+
+	mSkinnedInst->FinalTransforms.resize(nodes.size());
+	*(mSkinInfo.get()) = skininfo;
+	mSkinnedInst->SkinnedInfo = mSkinInfo.get();
+	mSkinnedInst->ClipName = "default";
+
+	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
+
+	return true;
+}
+
+bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	ZXCBinLoader loader;
+
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
+
+	std::vector<Vertex> vertices;
+	std::vector<DWORD> indices;
+	std::vector<ZXCLoader::Subset> subsets;
+	std::vector<ZXCSMaterial> materials;
+	std::vector<MeshNode> nodes;
+	if (!loader.LoadZXCBin(filename, vertices, indices, subsets, materials, nodes))
+		return false;
+
+	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	return true;
+}
+
+void Mesh::Initialize(
+	std::vector<Vertex> vertices,
+	std::vector<DWORD> indices,
+	const std::vector<ZXCLoader::Subset> subsets, 
+	const std::vector<ZXCSMaterial> materials, 
+	const std::vector<MeshNode> nodes,
+	const std::wstring& texFile,
+	const std::wstring& texfilepath)
+{
 	BuildMaterials(texfilepath, materials);
 
-	std::string name = std::string(file.begin(), file.end());
+	std::wstring name(texFile, 0, texFile.find_last_of('.'));
+
 	if (S_Geometry[name] != nullptr)
 	{
 		mGeometry = S_Geometry[name];
@@ -64,40 +130,21 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 	}
 
 	BuildRenderItem(subsets, materials);
-
-	return true;
 }
 
-bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepath)
+void Mesh::Initialize(
+	std::vector<SkinnedVertex> vertices,
+	std::vector<DWORD> indices,
+	const std::vector<ZXCLoader::Subset> subsets,
+	const std::vector<ZXCSMaterial> materials,
+	const std::vector<MeshNode> nodes,
+	const std::wstring& texFile,
+	const std::wstring& texfilepath)
 {
-	ZXCLoader loader;
-
-	std::tstring file(filename, 0, filename.find_last_of(L"."));
-
-	std::vector<SkinnedVertex> vertices;
-	std::vector<DWORD> indices;
-	std::vector<ZXCLoader::Subset> subsets;
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-	SkinnedData skininfo;
-
-	if (!loader.LoadZXCS(filename, vertices, indices, subsets, materials, nodes, skininfo))
-		return false;
-
 	BuildMaterials(texfilepath, materials);
 
-	if (skininfo.BoneCount() > 0)
-	{
-		mSkinnedInst = std::make_unique<SkinnedModelInstance>();
-		mSkinInfo = std::make_unique<SkinnedData>();
+	std::wstring name(texFile, 0, texFile.find_last_of('.'));
 
-		mSkinnedInst->FinalTransforms.resize(nodes.size());
-		*(mSkinInfo.get()) = skininfo;
-		mSkinnedInst->SkinnedInfo = mSkinInfo.get();
-		mSkinnedInst->ClipName = "default";
-	}
-
-	std::string name = std::string(file.begin(), file.end());
 	if (S_Geometry[name] != nullptr)
 	{
 		mGeometry = S_Geometry[name];
@@ -123,27 +170,6 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 	}
 
 	BuildRenderItem(subsets, materials);
-
-	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
-
-	return true;
-}
-
-bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfilepath)
-{
-	ZXCLoader loader;
-
-	std::tstring file(filename, 0, filename.find_last_of(L"."));
-
-	std::vector<Vertex> vertices;
-	std::vector<DWORD> indices;
-	std::vector<ZXCLoader::Subset> subsets;
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes))
-		return false;
-
-	return false;
 }
 
 void Mesh::BuildRenderItem(
@@ -183,8 +209,7 @@ void Mesh::BuildRenderItem(
 
 		d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), ritem->ConstantBuffer.GetAddressOf());
 
-		std::string name = mNodeList[nodeIndex]->NodeName;
-		mGeometry->DrawArgs[name] = submesh;
+		mGeometry->DrawArgs[mNodeList[nodeIndex]->NodeName] = submesh;
 		ritem->Name = mNodeList[nodeIndex]->NodeName;
 		if (mNodeList[nodeIndex]->Type == ObjectType::MESH && ritem->Mat != nullptr)
 		{

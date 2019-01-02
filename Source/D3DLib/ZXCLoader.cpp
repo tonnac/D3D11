@@ -54,7 +54,7 @@ bool ZXCLoader::LoadZXC(
 	return true;
 }
 
-bool ZXCLoader::LoadZXCS(
+bool ZXCLoader::LoadSkin(
 	const std::wstring & FileName,
 	std::vector<SkinnedVertex>& vertices,
 	std::vector<DWORD>& indices,
@@ -187,9 +187,9 @@ void ZXCLoader::ReadMesh(std::wifstream& fp, UINT numMeshes, std::vector<MeshNod
 		UINT Index;
 		UINT ParentNum;
 		fp >> ignore >> ignore >> Index;
-		nodes[Index].NodeName = std::string(ignore.begin(), ignore.end());
+		nodes[Index].NodeName = ignore;
 		fp >> ignore >> ignore >> ParentNum;
-		nodes[Index].ParentName = std::string(ignore.begin(), ignore.end());
+		nodes[Index].ParentName = ignore;
 		nodes[Index].ParentIndex = ParentNum;
 
 		fp >> ignore;
@@ -217,9 +217,9 @@ void ZXCLoader::ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<Mesh
 		XMFLOAT3 Max;
 
 		fp >> ignore >> ignore >> Index;
-		nodes[Index].NodeName = std::string(ignore.begin(), ignore.end());
+		nodes[Index].NodeName = ignore;
 		fp >> ignore >> ignore >> ParentNum;
-		nodes[Index].ParentName = std::string(ignore.begin(), ignore.end());
+		nodes[Index].ParentName = ignore;
 		fp >> ignore >> ignore;
 		
 		if (ignore.find(L"Bone") != std::wstring::npos)
@@ -344,34 +344,11 @@ void ZXCLoader::ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAn
 {
 	std::wstring ignore;
 
-	//AnimationClip clip;
-	//clip.BoneAnimations.resize(numBones);
+	AnimationClip clip;
+	clip.BoneAnimations.resize(numBones);
 
-	//animations["default"] = clip;
-	//AdjustAnimations(animations["default"], meshNodes);
-
-	for (UINT clipIndex = 0; clipIndex < numAnimationClips; ++clipIndex)
-	{
-		UINT nodeIndex;
-		UINT frameNum;
-
-		AnimationClip clip;
-		clip.BoneAnimations.resize(numBones);
-
-		clip.SceneInf.FirstFrame = mFirstFrame;
-		clip.SceneInf.LastFrame = mLastFrame;
-		clip.SceneInf.FrameSpeed = mFrameSpeed;
-		clip.SceneInf.FrameTick = mFrameTick;
-
-		for (UINT boneIndex = 0; boneIndex < numBones; ++boneIndex)
-		{
-			fp >> ignore >> nodeIndex >> ignore >> frameNum;
-			ReadBoneKeyframes(fp, numBones, frameNum, clip.BoneAnimations[boneIndex]);
-		}
-
-		animations["default"] = clip;
-		AdjustAnimations(animations["default"], meshNodes);
-	}
+	animations["default"] = clip;
+	AdjustAnimations(animations["default"], meshNodes);
 }
 
 void ZXCLoader::ReadBoneKeyframes(std::wifstream & fp, UINT numBones, UINT numKeyframe, BoneAnimation & boneAnimation)

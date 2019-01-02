@@ -65,14 +65,14 @@ BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 
 void BoxShape::BuildGeometry()
 {
-	if (S_Geometry["Box"] != nullptr)
+	if (S_Geometry[L"Box"] != nullptr)
 	{
-		mGeometry = S_Geometry["Box"];
+		mGeometry = S_Geometry[L"Box"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Box";
+	geo->Name = L"Box";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -142,7 +142,7 @@ void BoxShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["box"] = sub;
+	mGeometry->DrawArgs[L"box"] = sub;
 }
 
 void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
@@ -174,9 +174,9 @@ void BoxShape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Box");
-	rItem->IndexCount = rItem->Geo->DrawArgs["box"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["box"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["box"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"box"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"box"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"box"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
@@ -186,14 +186,14 @@ void BoxShape::BuildRenderItem(const std::tstring & textureFile)
 
 void SkyBox::BuildGeometry()
 {
-	if (S_Geometry["Sphere"] != nullptr)
+	if (S_Geometry[L"Sphere"] != nullptr)
 	{
-		mGeometry = S_Geometry["Sphere"];
+		mGeometry = S_Geometry[L"Sphere"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Sphere";
+	geo->Name = L"Sphere";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -228,7 +228,7 @@ void SkyBox::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["sphere"] = sub;
+	mGeometry->DrawArgs[L"sphere"] = sub;
 }
 
 void SkyBox::BuildRenderItem(const std::tstring & textureFile)
@@ -239,9 +239,9 @@ void SkyBox::BuildRenderItem(const std::tstring & textureFile)
 	XMStoreFloat4x4(&rItem->World, S);
 	rItem->TexTransform = MathHelper::Identity4x4();
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"SkyBox");
-	rItem->IndexCount = rItem->Geo->DrawArgs["sphere"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["sphere"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["sphere"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"sphere"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"sphere"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"sphere"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
@@ -271,14 +271,14 @@ void SkyBox::BuildMaterials(const std::tstring& textureFile, const std::tstring&
 
 void GridShape::BuildGeometry()
 {
-	if (S_Geometry["Grid"] != nullptr)
+	if (S_Geometry[L"Grid"] != nullptr)
 	{
-		mGeometry = S_Geometry["Grid"];
+		mGeometry = S_Geometry[L"Grid"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Grid";
+	geo->Name = L"Grid";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -312,9 +312,9 @@ void GridShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["grid"] = sub;
+	mGeometry->DrawArgs[L"grid"] = sub;
 
-	mGeometry->Name = "Grid";
+	mGeometry->Name = L"Grid";
 }
 
 void GridShape::BuildRenderItem(const std::tstring & textureFile)
@@ -327,9 +327,9 @@ void GridShape::BuildRenderItem(const std::tstring & textureFile)
 	XMStoreFloat4x4(&rItem->World, S1);
 	XMStoreFloat4x4(&rItem->TexTransform, S);
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Grid");
-	rItem->IndexCount = rItem->Geo->DrawArgs["grid"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["grid"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"grid"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"grid"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"grid"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
@@ -359,14 +359,14 @@ void GridShape::BuildMaterials(const std::tstring& textureFile, const std::tstri
 
 void SphereShape::BuildGeometry()
 {
-	if (S_Geometry["SphereV3"] != nullptr)
+	if (S_Geometry[L"SphereV3"] != nullptr)
 	{
-		mGeometry = S_Geometry["SphereV3"];
+		mGeometry = S_Geometry[L"SphereV3"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "SphereV3";
+	geo->Name = L"SphereV3";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -400,7 +400,7 @@ void SphereShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["sphere"] = sub;
+	mGeometry->DrawArgs[L"sphere"] = sub;
 }
 
 void SphereShape::BuildRenderItem(const std::tstring & textureFile)
@@ -414,9 +414,9 @@ void SphereShape::BuildRenderItem(const std::tstring & textureFile)
 //	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Sphere");
-	rItem->IndexCount = rItem->Geo->DrawArgs["sphere"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["sphere"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["sphere"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"sphere"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"sphere"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"sphere"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();

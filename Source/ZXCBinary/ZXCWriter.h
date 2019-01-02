@@ -7,43 +7,34 @@ struct SkinMesh;
 
 class ZXCWriter
 {
-	struct Subset
-	{
-		int NodeIndex;
-		int MtrlRef;
-		int SubMtlID;
-
-		UINT VertexStart;
-		UINT VertexCount;
-		UINT FaceStart;
-		UINT FaceCount;
-	};
 public:
 	ZXCWriter(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
 		const SceneInfo& sceneinfo,
 		const std::vector<ZXCMaterial>& material,
-		std::vector<std::unique_ptr<ZXCObject>>& object);
+		const std::vector<OutputObject>& object, 
+		const std::vector<OutVertex>& vertices,
+		const std::vector<std::uint32_t>& indices,
+		const std::vector<Subset>& subsets);
 public:
 	bool Savefile();
 
 private:
-	void WriteScene(std::ofstream& os);
-	void WriteMaterial(std::ofstream& os);
-//	void WriteMesh(std::ofstream& os);
-//	void WriteHelper(std::ofstream& os);
-//	void WriteSubset(std::ofstream& os);
-//	void WriteVertex(std::ofstream& os);
-	void BuildSubset(UINT& meshes, UINT& helpers, UINT& subsets, UINT& vertices, UINT& indices);
-
-	std::wstring Savetime();
+	void SaveScene(std::ofstream& os);
+	void SaveMaterial(std::ofstream& os);
+	void SaveNodes(std::ofstream& os);
+	void SaveSubset(std::ofstream& os);
+	void SaveVertices(std::ofstream& os);
+	void SaveIndices(std::ofstream& os);
 
 	const std::wstring& mExporterVersion;
 	const std::wstring& mFilename;
 
 	const SceneInfo& mSceneInfo;
 	const std::vector<ZXCMaterial>& mMaterial;
-	std::vector<Subset> mSubset;
-	std::vector<std::unique_ptr<ZXCObject>> mObjects;
+	const std::vector<Subset> mSubsets;
+	const std::vector<OutputObject>& mObjects;
+	const std::vector<OutVertex>& mVertices;
+	const std::vector<std::uint32_t>& mIndices;
 };
 

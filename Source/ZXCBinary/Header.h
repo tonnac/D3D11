@@ -47,6 +47,18 @@ struct D3D_MATRIX
 	};
 };
 
+struct Subset
+{
+	int NodeIndex;
+	int MtrlRef;
+	int SubMtlID;
+
+	UINT VertexStart;
+	UINT VertexCount;
+	UINT FaceStart;
+	UINT FaceCount;
+};
+
 struct Vertex
 {
 	Point3 p;
@@ -63,6 +75,24 @@ struct Vertex
 			return true;
 		}
 		return false;
+	}
+};
+
+struct OutVertex
+{
+	Point3 p;
+	Point3 n;
+	Point4 c;
+	Point2 t;
+	Point3 Tangent;
+
+	inline OutVertex (const Vertex& rhs)
+	{
+		p = std::move(rhs.p);
+		n = std::move(rhs.n);
+		c = std::move(rhs.c);
+		t = std::move(rhs.t);
+		Tangent = std::move(rhs.Tangent);
 	}
 };
 
@@ -84,12 +114,6 @@ struct SceneInfo
 	int TickperFrame = -1;
 };
 
-struct ZXCTexmap
-{
-	int SubNo = -1;
-	std::wstring Filename;
-};
-
 struct ZXCMaterial
 {
 	std::wstring Name;
@@ -100,7 +124,7 @@ struct ZXCMaterial
 	Color Specular;
 	float Shininess;
 
-	std::vector<ZXCTexmap>	 TexMap;
+	std::map<int, std::wstring> TexMap;
 	std::vector<ZXCMaterial> SubMaterial;
 };
 
@@ -128,9 +152,43 @@ struct ZXCObject
 
 	std::vector<VertexTri> mTriangles;
 
-	int MeshNum = -1;
 	std::map<int, std::vector<Vertex>> mVertices;
 	std::map<int, std::vector<std::uint32_t>> mIndices;
+};
+
+struct BoundingBox
+{
+	Point3 Center;
+	Point3 Extents;
+};
+
+struct OutputObject
+{
+	OutputObject(const ZXCObject& rhs)
+	{
+		NodeName = std::move(rhs.mNodeName.first);
+		ParentName = std::move(rhs.mParentName.first);
+		ParentIndex = std::move((int)rhs.mParentName.second);
+		Type = std::move(rhs.Type);
+		World = std::move(rhs.mWorld);
+		Translations = std::move(rhs.InititalPos.t);
+		RotationQuat = std::move(rhs.InititalPos.q);
+		ScaleQuat = std::move(rhs.InititalPos.u);
+		Scale = std::move(rhs.InititalPos.k);
+		box.Center = (rhs.mBoundingBox.pmax + rhs.mBoundingBox.pmin) * 0.5f;
+		box.Extents = (rhs.mBoundingBox.pmax - rhs.mBoundingBox.pmin) * 0.5f;
+	}
+
+	std::wstring NodeName;
+	std::wstring ParentName;
+	int ParentIndex = -1;
+	ObjectType Type = ObjectType::MESH;
+	D3D_MATRIX World;
+	Point3 Translations;
+	Quat RotationQuat;
+	Quat ScaleQuat;
+	Point3 Scale;
+	BoundingBox box;
 };
 
 
@@ -179,48 +237,57 @@ public:
 class BinaryIO
 {
 public:
+	static void WriteString(std::ofstream& fout, const std::wstring& str)
+	{
+		int size = (int)str.length();
+		WriteBinary(fout, &size);
+		WriteBinary(fout, str.data(), sizeof(wchar_t) * size);
+	}
+
 	template<typename X>
-	static void InputBinary(std::ofstream& fout, const X& src, UINT size = sizeof(X))
+	static void WriteBinary(std::ofstream& fout, const X& src, UINT size = sizeof(X))
 	{
 		fout.write(reinterpret_cast<const char*>(&src), size);
 	}
 
 	template<typename X>
-	static void InputBinary(std::ofstream& fout, X* src, UINT size = sizeof(X))
+	static void WriteBinary(std::ofstream& fout, X* src, UINT size = sizeof(X))
 	{
 		fout.write(reinterpret_cast<const char*>(src), size);
 	}
 
-	static void InputString(std::ofstream& fout, const std::wstring& str)
+	static void WriteMaterial(std::ofstream& fout, const ZXCMaterial& material)
 	{
-		int size = (int)str.length();
-		InputBinary(fout, &size);
-		InputBinary(fout, str.data(), sizeof(wchar_t) * size);
-	}
-
-	static void InputMaterial(std::ofstream& fout, const ZXCMaterial& material)
-	{
-		BinaryIO::InputString(fout, material.Name);
-		BinaryIO::InputString(fout, material.ClassName);
-		BinaryIO::InputBinary(fout, &material.Ambient);
-		BinaryIO::InputBinary(fout, &material.Diffuse);
-		BinaryIO::InputBinary(fout, &material.Specular);
-		BinaryIO::InputBinary(fout, &material.Shininess);
+		BinaryIO::WriteString(fout, material.Name);
+		BinaryIO::WriteString(fout, material.ClassName);
+		BinaryIO::WriteBinary(fout, &material.Ambient);
+		BinaryIO::WriteBinary(fout, &material.Diffuse);
+		BinaryIO::WriteBinary(fout, &material.Specular);
+		BinaryIO::WriteBinary(fout, &material.Shininess);
 		int size = (int)material.TexMap.size();
-		BinaryIO::InputBinary(fout, &size);
-		for (int i = 0; i < size; ++i)
+		BinaryIO::WriteBinary(fout, &size);
+		auto& p = std::cbegin(material.TexMap);
+		for (;p != std::cend(material.TexMap); ++p)
 		{
-			InputBinary(fout, &material.TexMap[i].SubNo);
-			InputString(fout, material.TexMap[i].Filename);
+			BinaryIO::WriteBinary(fout, p->first);
+			BinaryIO::WriteString(fout, p->second);
 		}
 		size = (int)material.SubMaterial.size();
-		BinaryIO::InputBinary(fout, &size);
+		BinaryIO::WriteBinary(fout, &size);
 		for (int i = 0; i < size; ++i)
 		{
-			InputMaterial(fout, material.SubMaterial[i]);
+			BinaryIO::WriteMaterial(fout, material.SubMaterial[i]);
 		}
 	}
+
+	static void WriteNodes(std::ofstream& fout, const OutputObject& mesh)
+	{
+		BinaryIO::WriteString(fout, mesh.NodeName);
+		BinaryIO::WriteString(fout, mesh.ParentName);
+		BinaryIO::WriteBinary(fout, mesh.ParentIndex, sizeof(OutputObject) - (sizeof(OutputObject::NodeName) + sizeof(OutputObject::ParentName)));
+	}
 };
+
 
 static inline Quat operator-(Quat& lhs)
 {

@@ -19,38 +19,38 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 
 	ShaderStorage * storage = ShaderStorage::Storage();
 	std::unique_ptr<DxObj> dxobj = std::make_unique<DxObj>();
-	dxobj->m_pVertexShader = storage->getVertexShader("default");
-	dxobj->m_pPixelShader = storage->getPixelShader("default");
-	dxobj->m_pInputLayout = storage->getInputLayout("default");
+	dxobj->m_pVertexShader = storage->getVertexShader(L"default");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"default");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"default");
 
 	_DxObj[DxType::DEFAULT] = std::move(dxobj);
 
 	dxobj = std::make_unique<DxObj>();
-	dxobj->m_pVertexShader = storage->getVertexShader("line");
-	dxobj->m_pPixelShader = storage->getPixelShader("line");
-	dxobj->m_pInputLayout = storage->getInputLayout("line");
+	dxobj->m_pVertexShader = storage->getVertexShader(L"line");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"line");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"line");
 
 	_DxObj[DxType::LINE] = std::move(dxobj);
 
 	dxobj = std::make_unique<DxObj>();
-	dxobj->m_pVertexShader = storage->getVertexShader("skinned");
-	dxobj->m_pPixelShader = storage->getPixelShader("default");
-	dxobj->m_pInputLayout = storage->getInputLayout("skinned");
+	dxobj->m_pVertexShader = storage->getVertexShader(L"skinned");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"default");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"skinned");
 	dxobj->m_BlendState = E_BSS::No;
 
 	_DxObj[DxType::SKINNED] = std::move(dxobj);
 
 	dxobj = std::make_unique<DxObj>();
-	dxobj->m_pVertexShader = storage->getVertexShader("sky");
-	dxobj->m_pPixelShader = storage->getPixelShader("sky");
-	dxobj->m_pInputLayout = storage->getInputLayout("sky");
+	dxobj->m_pVertexShader = storage->getVertexShader(L"sky");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"sky");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"sky");
 	dxobj->m_RasterizerState = E_RSS::SolidBack;
 	_DxObj[DxType::SKY] = std::move(dxobj);
 
 	dxobj = std::make_unique<DxObj>();
-	dxobj->m_pVertexShader = storage->getVertexShader("default");
-	dxobj->m_pPixelShader = storage->getPixelShader("notex");
-	dxobj->m_pInputLayout = storage->getInputLayout("default");
+	dxobj->m_pVertexShader = storage->getVertexShader(L"default");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"notex");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"default");
 	dxobj->m_RasterizerState = E_RSS::Default;
 	_DxObj[DxType::NOTEX] = std::move(dxobj);
 

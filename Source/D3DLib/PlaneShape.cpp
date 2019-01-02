@@ -42,5 +42,5 @@ void PlaneShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["default"] = sub;
+	mGeometry->DrawArgs[L"default"] = sub;
 }

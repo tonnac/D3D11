@@ -10,14 +10,14 @@ LineShape::LineShape()
 
 void LineShape::BuildRenderItem(const std::tstring & textureFile)
 {
-	if (S_Geometry["Line"] != nullptr)
+	if (S_Geometry[L"Line"] != nullptr)
 	{
-		mGeometry = S_Geometry["Line"];
+		mGeometry = S_Geometry[L"Line"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Line";
+	geo->Name = L"Line";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -26,9 +26,9 @@ void LineShape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->Mat = nullptr;
 	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
-	rItem->IndexCount = rItem->Geo->DrawArgs["line"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["line"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["line"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"line"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"line"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"line"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
@@ -58,7 +58,7 @@ void LineShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["line"] = sub;
+	mGeometry->DrawArgs[L"line"] = sub;
 }
 
 bool LineShape::Render(ID3D11DeviceContext * pContext)
@@ -104,14 +104,14 @@ bool DirectionShape::Render(ID3D11DeviceContext * pContext)
 
 void DirectionShape::BuildGeometry()
 {
-	if (S_Geometry["Direction"] != nullptr)
+	if (S_Geometry[L"Direction"] != nullptr)
 	{
-		mGeometry = S_Geometry["Direction"];
+		mGeometry = S_Geometry[L"Direction"];
 		return;
 	}
 
 	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = "Direction";
+	geo->Name = L"Direction";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
@@ -140,7 +140,7 @@ void DirectionShape::BuildGeometry()
 	sub.IndexCount = (UINT)indices.size();
 	sub.BaseVertexLocation = 0;
 	sub.StartIndexLocation = 0;
-	mGeometry->DrawArgs["direction"] = sub;
+	mGeometry->DrawArgs[L"direction"] = sub;
 }
 
 void DirectionShape::BuildRenderItem(const std::tstring & textureFile)
@@ -150,9 +150,9 @@ void DirectionShape::BuildRenderItem(const std::tstring & textureFile)
 	rItem->World = MathHelper::Identity4x4();
 	rItem->Mat = nullptr;
 	rItem->TexTransform = MathHelper::Identity4x4();
-	rItem->IndexCount = rItem->Geo->DrawArgs["direction"].IndexCount;
-	rItem->StartIndexLocation = rItem->Geo->DrawArgs["direction"].StartIndexLocation;
-	rItem->BaseVertexLocation = rItem->Geo->DrawArgs["direction"].BaseVertexLocation;
+	rItem->IndexCount = rItem->Geo->DrawArgs[L"direction"].IndexCount;
+	rItem->StartIndexLocation = rItem->Geo->DrawArgs[L"direction"].StartIndexLocation;
+	rItem->BaseVertexLocation = rItem->Geo->DrawArgs[L"direction"].BaseVertexLocation;
 	rItem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();

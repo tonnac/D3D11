@@ -2,7 +2,9 @@
 
 void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	std::vector<std::unique_ptr<ZXCObject>>& ObjectList,
-	std::unordered_map<std::wstring, size_t>& nodeIndex)
+	std::unordered_map<std::wstring, size_t>& nodeIndex,
+	std::vector<OutVertex>& vertices,
+	std::vector<std::uint32_t>& indices)
 {
 	ObjectList.resize(nodeIndex.size());
 
@@ -73,7 +75,7 @@ void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	}
 
 	for (auto&x : ObjectList)
-		BuildVBIB(x.get());
+		BuildVBIB(x.get(), vertices, indices);
 }
 
 void ObjectExporter::LoadMesh(INode* node, ZXCObject* o)
@@ -181,7 +183,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCObject* o)
 		delete tri;
 }
 
-void ObjectExporter::BuildVBIB(ZXCObject* mesh)
+void ObjectExporter::BuildVBIB(ZXCObject* mesh, std::vector<OutVertex>& vertices, std::vector<std::uint32_t>& Indices)
 {
 	static int Cnt = 0;
 
@@ -339,6 +341,9 @@ void ObjectExporter::BuildVBIB(ZXCObject* mesh)
 			{
 				k.Tangent *= -1;
 			}
+
+			OutVertex oV = k;
+			vertices.push_back(oV);
 		}
 	}
 
@@ -384,6 +389,7 @@ void ObjectExporter::BuildVBIB(ZXCObject* mesh)
 				break;
 			}
 		}
+		Indices.insert(Indices.end(), indices.begin(), indices.end());
 	}
 }
 
