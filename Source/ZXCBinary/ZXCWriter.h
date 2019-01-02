@@ -30,10 +30,10 @@ public:
 private:
 	void WriteScene(std::ofstream& os);
 	void WriteMaterial(std::ofstream& os);
-	void WriteMesh(std::ofstream& os);
-	void WriteHelper(std::ofstream& os);
-	void WriteSubset(std::ofstream& os);
-	void WriteVertex(std::ofstream& os);
+//	void WriteMesh(std::ofstream& os);
+//	void WriteHelper(std::ofstream& os);
+//	void WriteSubset(std::ofstream& os);
+//	void WriteVertex(std::ofstream& os);
 	void BuildSubset(UINT& meshes, UINT& helpers, UINT& subsets, UINT& vertices, UINT& indices);
 
 	std::wstring Savetime();

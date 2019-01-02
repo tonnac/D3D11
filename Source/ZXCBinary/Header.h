@@ -87,7 +87,6 @@ struct SceneInfo
 struct ZXCTexmap
 {
 	int SubNo = -1;
-
 	std::wstring Filename;
 };
 
@@ -181,22 +180,45 @@ class BinaryIO
 {
 public:
 	template<typename X>
-	static void InputBinary(std::ofstream& fout, X& src, UINT size = sizeof(X))
+	static void InputBinary(std::ofstream& fout, const X& src, UINT size = sizeof(X))
 	{
-		fout.write(reinterpret_cast<char*>(&src), size);
+		fout.write(reinterpret_cast<const char*>(&src), size);
 	}
 
 	template<typename X>
 	static void InputBinary(std::ofstream& fout, X* src, UINT size = sizeof(X))
 	{
-		fout.write(reinterpret_cast<char*>(src), size);
+		fout.write(reinterpret_cast<const char*>(src), size);
 	}
 
 	static void InputString(std::ofstream& fout, const std::wstring& str)
 	{
 		int size = (int)str.length();
-		InputBinary(fout, size);
+		InputBinary(fout, &size);
 		InputBinary(fout, str.data(), sizeof(wchar_t) * size);
+	}
+
+	static void InputMaterial(std::ofstream& fout, const ZXCMaterial& material)
+	{
+		BinaryIO::InputString(fout, material.Name);
+		BinaryIO::InputString(fout, material.ClassName);
+		BinaryIO::InputBinary(fout, &material.Ambient);
+		BinaryIO::InputBinary(fout, &material.Diffuse);
+		BinaryIO::InputBinary(fout, &material.Specular);
+		BinaryIO::InputBinary(fout, &material.Shininess);
+		int size = (int)material.TexMap.size();
+		BinaryIO::InputBinary(fout, &size);
+		for (int i = 0; i < size; ++i)
+		{
+			InputBinary(fout, &material.TexMap[i].SubNo);
+			InputString(fout, material.TexMap[i].Filename);
+		}
+		size = (int)material.SubMaterial.size();
+		BinaryIO::InputBinary(fout, &size);
+		for (int i = 0; i < size; ++i)
+		{
+			InputMaterial(fout, material.SubMaterial[i]);
+		}
 	}
 };
 
