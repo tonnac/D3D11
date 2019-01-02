@@ -30,8 +30,6 @@ bool ZXCWriter::Savefile()
 	system_clock::time_point now = system_clock::now();
 	time_t nowTime = system_clock::to_time_t(now);
 
-	std::array<UINT, 6> CompositeNum;
-
 	UINT numMaterials;
 	UINT numVertices = 0;
 	UINT numTriangles = 0;
@@ -40,10 +38,20 @@ bool ZXCWriter::Savefile()
 	UINT numSubsets = 0;
 	numMaterials = (UINT)mMaterial.size();
 
+	std::array<UINT, 6> CompositeNum =
+	{
+		numMaterials,
+		numVertices,
+		numTriangles,
+		numHelpers,
+		numMeshes,
+		numSubsets
+	};
+
 	BuildSubset(numMeshes, numHelpers, numSubsets, numVertices, numTriangles);
 
 	BinaryIO::InputBinary(os, nowTime);
-	BinaryIO::InputBinary(os, mExporterVersion);
+	BinaryIO::InputString(os, mExporterVersion);
 	BinaryIO::InputBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
 

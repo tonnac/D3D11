@@ -36,10 +36,10 @@ bool Sample::Init()
 	light->AddDirectional(l0);
 	light->AddDirectional(l1);
 	light->AddDirectional(l2);
-	
+
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 	spe.Create(m_pd3dDevice.Get());
-	mesh.LoadFile(L"hhh.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"t.ZXCS", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	return true;
 }
 

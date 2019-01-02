@@ -175,6 +175,7 @@ public:
 	static void CreateShaderResourceView(ID3D11Device* pDevice, const std::tstring& filepath, ID3D11ShaderResourceView** pShaderResource);
 };
 
+
 #ifndef ThrowifFailed
 #define ThrowifFailed(x)											\
 {																	\

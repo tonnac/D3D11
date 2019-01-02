@@ -12,9 +12,13 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 	{
 		return LoadZXCS(filename, texfilepath);
 	}
-	else
+	else if(Ext == L"ZXC")
 	{
 		return LoadZXC(filename, texfilepath);
+	}
+	else
+	{
+		return LoadZXCBin(filename, texfilepath);
 	}
 }
 
@@ -123,6 +127,23 @@ bool Mesh::LoadZXCS(const std::tstring& filename, const std::tstring& texfilepat
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
 
 	return true;
+}
+
+bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	ZXCLoader loader;
+
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
+
+	std::vector<Vertex> vertices;
+	std::vector<DWORD> indices;
+	std::vector<ZXCLoader::Subset> subsets;
+	std::vector<ZXCSMaterial> materials;
+	std::vector<MeshNode> nodes;
+	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes))
+		return false;
+
+	return false;
 }
 
 void Mesh::BuildRenderItem(
