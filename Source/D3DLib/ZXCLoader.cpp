@@ -71,7 +71,6 @@ bool ZXCLoader::LoadSkin(
 	UINT numMeshes;
 	UINT numVertices;
 	UINT numTriangles;
-	UINT numAnimationClips;
 	UINT numSubSet;
 
 	if (!fp.is_open())
@@ -90,7 +89,6 @@ bool ZXCLoader::LoadSkin(
 	fp >> ignore >> numMeshes;
 	fp >> ignore >> numVertices;
 	fp >> ignore >> numTriangles;
-	fp >> ignore >> numAnimationClips;
 	fp >> ignore >> numSubSet;
 
 	materials.resize(numMaterials);
@@ -108,7 +106,12 @@ bool ZXCLoader::LoadSkin(
 	ReadIndex(fp, numTriangles, indices);
 	ReadSubsetTable(fp, numSubSet, subsets);
 
-	ReadAnimationClips(fp, numMeshes + numHelpers, numAnimationClips, animations, nodes);
+	AnimationClip clip;
+	clip.BoneAnimations.resize(numMeshes + numHelpers);
+
+	animations["default"] = clip;
+	AdjustAnimations(animations["default"], nodes);
+
 	SetBoneOffsets(boneOffsets, nodes);
 	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
 	{

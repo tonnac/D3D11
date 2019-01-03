@@ -47,7 +47,6 @@ bool ZXCWriter::Savefile()
 	BinaryIO::WriteString(os, mExporterVersion);
 	BinaryIO::WriteBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
-
 	SaveScene(os);
 	SaveMaterial(os);
 	SaveNodes(os);
