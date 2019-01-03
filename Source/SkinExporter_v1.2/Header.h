@@ -11,7 +11,6 @@
 #include <CS\\bipexp.h>
 #include <CS\\phyexp.h>
 #include <iskin.h>
-#include <MeshNormalSpec.h>
 
 #include <vector>
 #include <unordered_map>
@@ -33,9 +32,9 @@ struct D3D_MATRIX
 	D3D_MATRIX()
 	{
 		m[0][0] = 1.0f, m[0][1] = 0.0f, m[0][2] = 0.0f, m[0][3] = 0.0f,
-		m[1][0] = 0.0f, m[1][1] = 1.0f, m[1][2] = 0.0f, m[1][3] = 0.0f,
-		m[2][0] = 0.0f, m[2][1] = 0.0f, m[2][2] = 1.0f, m[2][3] = 0.0f,
-		m[3][0] = 0.0f, m[3][1] = 0.0f, m[3][2] = 0.0f, m[3][3] = 1.0f;
+			m[1][0] = 0.0f, m[1][1] = 1.0f, m[1][2] = 0.0f, m[1][3] = 0.0f,
+			m[2][0] = 0.0f, m[2][1] = 0.0f, m[2][2] = 1.0f, m[2][3] = 0.0f,
+			m[3][0] = 0.0f, m[3][1] = 0.0f, m[3][2] = 0.0f, m[3][3] = 1.0f;
 	};
 	union {
 		struct {
@@ -48,7 +47,19 @@ struct D3D_MATRIX
 	};
 };
 
-struct VertexW
+struct Subset
+{
+	int NodeIndex;
+	int MtrlRef;
+	int SubMtlID;
+
+	UINT VertexStart;
+	UINT VertexCount;
+	UINT FaceStart;
+	UINT FaceCount;
+};
+
+struct Vertex
 {
 	Point3 p;
 	Point3 n;
@@ -56,10 +67,8 @@ struct VertexW
 	Point2 t;
 	Point3 Tangent = { 0.0f, 0.0f, 0.0f };
 	Point3 Bitangent = { 0.0f, 0.0f, 0.0f };
-	std::array<float, 4> w;
-	std::array<UINT, 4> i;
-	int VertexWNum = -1;
-	inline bool operator == (const VertexW& rhs)
+	int VertexNum = -1;
+	inline bool operator == (const Vertex& rhs)
 	{
 		if (p.Equals(rhs.p, Epsilon) && n.Equals(rhs.n, Epsilon) && c.Equals(rhs.c, Epsilon) && t.Equals(rhs.t, Epsilon))
 		{
@@ -69,11 +78,29 @@ struct VertexW
 	}
 };
 
-struct VertexWTri
+struct OutVertex
+{
+	Point3 p;
+	Point3 n;
+	Point4 c;
+	Point2 t;
+	Point3 Tangent;
+
+	inline OutVertex(const Vertex& rhs)
+	{
+		p = std::move(rhs.p);
+		n = std::move(rhs.n);
+		c = std::move(rhs.c);
+		t = std::move(rhs.t);
+		Tangent = std::move(rhs.Tangent);
+	}
+};
+
+struct VertexTri
 {
 	int mSubMtrl = -1;
-	VertexW v[3];
-	inline bool operator< (const VertexWTri& rhs) const
+	Vertex v[3];
+	inline bool operator< (const VertexTri& rhs) const
 	{
 		return mSubMtrl < rhs.mSubMtrl;
 	}
@@ -87,14 +114,7 @@ struct SceneInfo
 	int TickperFrame = -1;
 };
 
-struct ZXCSTexmap
-{
-	int SubNo = -1;
-
-	std::wstring Filename;
-};
-
-struct ZXCSMaterial
+struct ZXCMaterial
 {
 	std::wstring Name;
 	std::wstring ClassName;
@@ -104,30 +124,8 @@ struct ZXCSMaterial
 	Color Specular;
 	float Shininess;
 
-	std::vector<ZXCSTexmap>	 TexMap;
-	std::vector<ZXCSMaterial> SubMaterial;
-};
-
-struct KeyFrame
-{
-	KeyFrame() {}
-	~KeyFrame() {}
-
-	int Tick;
-	Point3 Translations;
-	Point3 Scale;
-	Quat ScaleQuat;
-	Quat RotationQuat;
-};
-
-struct BoneAnimation
-{
-	std::vector<KeyFrame> Keyframes;
-};
-
-struct AnimationClip
-{
-	std::vector<BoneAnimation> BoneAnimations;
+	std::map<int, std::wstring> TexMap;
+	std::vector<ZXCMaterial> SubMaterial;
 };
 
 enum class ObjectType
@@ -138,7 +136,7 @@ enum class ObjectType
 	BIPED,
 };
 
-struct ZXCSObject
+struct ZXCObject
 {
 	int mMaterialRef = -1;
 
@@ -151,14 +149,46 @@ struct ZXCSObject
 	AffineParts InititalPos;
 
 	D3D_MATRIX mWorld;
-	std::unordered_map<std::string, AnimationClip> mAnimations;
 
-	std::vector<VertexWTri> mTriangles;
+	std::vector<VertexTri> mTriangles;
 
-	int MeshNum = -1;
-	std::map<int, std::vector<VertexW>> mVertices;
+	std::map<int, std::vector<Vertex>> mVertices;
 	std::map<int, std::vector<std::uint32_t>> mIndices;
-	std::vector<VertexW> vertices;
+};
+
+struct BoundingBox
+{
+	Point3 Center;
+	Point3 Extents;
+};
+
+struct OutputObject
+{
+	OutputObject(const ZXCObject& rhs)
+	{
+		NodeName = std::move(rhs.mNodeName.first);
+		ParentName = std::move(rhs.mParentName.first);
+		ParentIndex = std::move((int)rhs.mParentName.second);
+		Type = std::move(rhs.Type);
+		World = std::move(rhs.mWorld);
+		Translations = std::move(rhs.InititalPos.t);
+		RotationQuat = std::move(rhs.InititalPos.q);
+		ScaleQuat = std::move(rhs.InititalPos.u);
+		Scale = std::move(rhs.InititalPos.k);
+		box.Center = (rhs.mBoundingBox.pmax + rhs.mBoundingBox.pmin) * 0.5f;
+		box.Extents = (rhs.mBoundingBox.pmax - rhs.mBoundingBox.pmin) * 0.5f;
+	}
+
+	std::wstring NodeName;
+	std::wstring ParentName;
+	int ParentIndex = -1;
+	ObjectType Type = ObjectType::MESH;
+	D3D_MATRIX World;
+	Point3 Translations;
+	Quat RotationQuat;
+	Quat ScaleQuat;
+	Point3 Scale;
+	BoundingBox box;
 };
 
 
@@ -202,45 +232,62 @@ public:
 	{
 		return (DotProd(CrossProd(m.GetRow(0), m.GetRow(1)), m.GetRow(2)) < 0.0f) ? true : false;
 	}
+};
 
-	static bool isBipedObject(INode* node)
+class BinaryIO
+{
+public:
+	static void WriteString(std::ofstream& fout, const std::wstring& str)
 	{
-		Modifier * phyMod = FindModifer(node, Class_ID(PHYSIQUE_CLASS_ID_A, PHYSIQUE_CLASS_ID_B));
-		Modifier * skinMod = FindModifer(node, SKIN_CLASSID);
-
-		if (phyMod != nullptr || skinMod != nullptr)
-		{
-			return true;
-		}
-
-		return false;
+		int size = (int)str.length();
+		WriteBinary(fout, &size);
+		WriteBinary(fout, str.data(), sizeof(wchar_t) * size);
 	}
 
-	static Modifier* FindModifer(INode * node, Class_ID classID)
+	template<typename X>
+	static void WriteBinary(std::ofstream& fout, const X& src, UINT size = sizeof(X))
 	{
-		Object * object = node->GetObjectRef();
-		if (object == nullptr) return nullptr;
+		fout.write(reinterpret_cast<const char*>(&src), size);
+	}
 
-		while (object->SuperClassID() == GEN_DERIVOB_CLASS_ID && object)
+	template<typename X>
+	static void WriteBinary(std::ofstream& fout, X* src, UINT size = sizeof(X))
+	{
+		fout.write(reinterpret_cast<const char*>(src), size);
+	}
+
+	static void WriteMaterial(std::ofstream& fout, const ZXCMaterial& material)
+	{
+		BinaryIO::WriteString(fout, material.Name);
+		BinaryIO::WriteString(fout, material.ClassName);
+		BinaryIO::WriteBinary(fout, &material.Ambient);
+		BinaryIO::WriteBinary(fout, &material.Diffuse);
+		BinaryIO::WriteBinary(fout, &material.Specular);
+		BinaryIO::WriteBinary(fout, &material.Shininess);
+		int size = (int)material.TexMap.size();
+		BinaryIO::WriteBinary(fout, &size);
+		auto& p = std::cbegin(material.TexMap);
+		for (; p != std::cend(material.TexMap); ++p)
 		{
-			IDerivedObject* DerivedObject = static_cast<IDerivedObject*>(object);
-
-			int modStackIndex = 0;
-
-			while (modStackIndex < DerivedObject->NumModifiers())
-			{
-				Modifier * modifier = DerivedObject->GetModifier(modStackIndex);
-
-				if (modifier->ClassID() == classID)
-					return modifier;
-
-				++modStackIndex;
-			}
-			object = DerivedObject->GetObjRef();
+			BinaryIO::WriteBinary(fout, p->first);
+			BinaryIO::WriteString(fout, p->second);
 		}
-		return nullptr;
+		size = (int)material.SubMaterial.size();
+		BinaryIO::WriteBinary(fout, &size);
+		for (int i = 0; i < size; ++i)
+		{
+			BinaryIO::WriteMaterial(fout, material.SubMaterial[i]);
+		}
+	}
+
+	static void WriteNodes(std::ofstream& fout, const OutputObject& mesh)
+	{
+		BinaryIO::WriteString(fout, mesh.NodeName);
+		BinaryIO::WriteString(fout, mesh.ParentName);
+		BinaryIO::WriteBinary(fout, mesh.ParentIndex, sizeof(OutputObject) - (sizeof(OutputObject::NodeName) + sizeof(OutputObject::ParentName)));
 	}
 };
+
 
 static inline Quat operator-(Quat& lhs)
 {

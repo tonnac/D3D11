@@ -5,14 +5,25 @@
 
 struct SkinMesh;
 
-class SkinWriter
+class ClipWriter
 {
+	struct Subset
+	{
+		int NodeIndex;
+		int MtrlRef;
+		int SubMtlID;
+
+		UINT VertexStart;
+		UINT VertexCount;
+		UINT FaceStart;
+		UINT FaceCount;
+	};
 public:
-	SkinWriter(const std::wstring& ExporterVersion,
+	ClipWriter(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
 		const SceneInfo& sceneinfo,
-		const std::vector<ZXCMaterial>& material,
-		std::vector<std::unique_ptr<ZXCObject>>& object);
+		const std::vector<ZXCSMaterial>& material,
+		std::vector<std::unique_ptr<ZXCSObject>>& object);
 public:
 	bool Savefile();
 
@@ -31,8 +42,8 @@ private:
 	const std::wstring& mFilename;
 
 	const SceneInfo& mSceneInfo;
-	const std::vector<ZXCMaterial>& mMaterial;
-	std::vector<std::unique_ptr<ZXCObject>> mObjects;
+	const std::vector<ZXCSMaterial>& mMaterial;
+	std::vector<std::unique_ptr<ZXCSObject>> mObjects;
 	std::vector<Subset> mSubset;
 };
 
