@@ -9,8 +9,8 @@ SkinWriter::SkinWriter(
 	const std::wstring & ExporterVersion,
 	const std::wstring & Filename,
 	const SceneInfo & sceneInfo,
-	const std::vector<ZXCSMaterial>& material,
-	std::vector<std::unique_ptr<ZXCSObject>>& object)
+	const std::vector<ZXCMaterial>& material,
+	std::vector<std::unique_ptr<ZXCObject>>& object)
 	: mExporterVersion(ExporterVersion),
 	mFilename(Filename),
 	mSceneInfo(sceneInfo),
@@ -54,7 +54,7 @@ bool SkinWriter::Savefile()
 	WriteMaterial(os);
 	WriteHelper(os);
 	WriteMesh(os);
-	WriteVertexW(os);
+	WriteVertex(os);
 	WriteSubset(os);
 
 	return true;
@@ -223,11 +223,11 @@ void SkinWriter::WriteSubset(std::wofstream & os)
 	os << std::endl;
 }
 
-void SkinWriter::WriteVertexW(std::wofstream & os)
+void SkinWriter::WriteVertex(std::wofstream & os)
 {
-	std::wstring VertexWHeader = L"\n**********Vertices**********";
+	std::wstring VertexHeader = L"\n**********Vertices**********";
 
-	os << VertexWHeader;
+	os << VertexHeader;
 
 	for (auto&x : mObjects)
 	{
@@ -244,14 +244,14 @@ void SkinWriter::WriteVertexW(std::wofstream & os)
 
 				weightInfo += weight;
 
-				std::wstring VertexWInfo = L"\nPosition: " + std::to_wstring(m.p.x) + L" " + std::to_wstring(m.p.y) + L" " + std::to_wstring(m.p.z) +
+				std::wstring VertexInfo = L"\nPosition: " + std::to_wstring(m.p.x) + L" " + std::to_wstring(m.p.y) + L" " + std::to_wstring(m.p.z) +
 					L"\nNormal: " + std::to_wstring(m.n.x) + L" " + std::to_wstring(m.n.y) + L" " + std::to_wstring(m.n.z) +
 					L"\nColor: " + std::to_wstring(m.c.x) + L" " + std::to_wstring(m.c.y) + L" " + std::to_wstring(m.c.z) + L" " + std::to_wstring(m.c.w) +
 					L"\nTex-Coords: " + std::to_wstring(m.t.x) + L" " + std::to_wstring(m.t.y) +
 					L"\nTangent: " + std::to_wstring(m.Tangent.x) + L" " + std::to_wstring(m.Tangent.y) + L" " + std::to_wstring(m.Tangent.z) +
 					weightInfo;
 
-				os << VertexWInfo << std::endl;
+				os << VertexInfo << std::endl;
 			}
 		}
 	}

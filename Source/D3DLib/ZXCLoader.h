@@ -80,13 +80,12 @@ public:
 private:
 	void ReadScene(std::wifstream& fp);
 	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials);
-	void ReadMesh(std::wifstream& fp, UINT numMeshes, std::vector<MeshNode>& nodes);
-	void ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
+	void ReadNodes(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
 
 	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Vertex>& vertices);
 	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<SkinnedVertex>& vertices);
 
-	void ReadIndex(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
+	void ReadIndices(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::vector<Subset>& subsets);
 	void ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes);
 	void ReadBoneKeyframes(std::wifstream& fp, UINT numBones, UINT numKeyframe ,BoneAnimation& boneAnimation);

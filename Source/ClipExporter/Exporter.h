@@ -2,7 +2,7 @@
 
 #include "ClipExporter.h"
 
-#define Export_Class_ID Class_ID(0x6ffa6af5, 0x5ee57920)
+#define Export_Class_ID Class_ID(0x69db34d2, 0x4dd72d76)
 
 class Exporter : public SceneExport
 {

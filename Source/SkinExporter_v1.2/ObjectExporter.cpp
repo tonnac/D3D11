@@ -1,14 +1,16 @@
 #include "SkinExporter.h"
 
 void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
-	std::vector<std::unique_ptr<ZXCSObject>>& ObjectList,
-	std::unordered_map<std::wstring, size_t>& nodeIndex)
+	std::vector<std::unique_ptr<ZXCObject>>& ObjectList,
+	std::unordered_map<std::wstring, size_t>& nodeIndex,
+	std::vector<OutVertex>& vertices,
+	std::vector<std::uint32_t>& indices)
 {
 	ObjectList.resize(nodeIndex.size());
 
 	for (auto& x : nodes)
 	{
-		std::unique_ptr<ZXCSObject> maxObj = std::make_unique<ZXCSObject>();
+		std::unique_ptr<ZXCObject> maxObj = std::make_unique<ZXCObject>();
 		size_t objIndex = nodeIndex[x.first];
 		maxObj->mNodeName = std::make_pair(x.first, objIndex);
 		INode* parent = x.second->GetParentNode();
@@ -73,13 +75,13 @@ void ObjectExporter::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	}
 
 	for (auto&x : ObjectList)
-		BuildVBIB(x.get());
+		BuildVBIB(x.get(), vertices, indices);
 }
 
-void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
+void ObjectExporter::LoadMesh(INode* node, ZXCObject* o)
 {
 	TimeValue t = mExporter->mInterval.Start();
-	
+
 	Matrix3 tm = node->GetObjTMAfterWSM(t);
 
 	ObjectState os = node->EvalWorldState(t);
@@ -117,25 +119,23 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 
 	for (int i = 0; i < (int)o->mTriangles.size(); ++i)
 	{
-		Matrix3 Inv = Inverse(node->GetNodeTM(t));
-		
 		Point3 v;
-
-		int vertt = mesh.getNumVerts();
 
 		if (mesh.getNumVerts() > 0)
 		{
+			
+
 			v = mesh.verts[mesh.faces[i].v[i0]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[0].p);
-			o->mTriangles[i].v[0].VertexWNum = mesh.faces[i].v[i0];
+			o->mTriangles[i].v[0].VertexNum = mesh.faces[i].v[i0];
 
 			v = mesh.verts[mesh.faces[i].v[i2]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[1].p);
-			o->mTriangles[i].v[1].VertexWNum = mesh.faces[i].v[i2];
+			o->mTriangles[i].v[1].VertexNum = mesh.faces[i].v[i2];
 
 			v = mesh.verts[mesh.faces[i].v[i1]] * tm;
 			MaxUtil::ConvertVector(v, o->mTriangles[i].v[2].p);
-			o->mTriangles[i].v[2].VertexWNum = mesh.faces[i].v[i1];
+			o->mTriangles[i].v[2].VertexNum = mesh.faces[i].v[i1];
 
 			if (bv.empty())
 			{
@@ -153,11 +153,11 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			}
 			else
 			{
-				if (o->mTriangles[i].v[0].VertexWNum >= (int)bv.size() || 
-					o->mTriangles[i].v[1].VertexWNum >= (int)bv.size() ||
-					o->mTriangles[i].v[2].VertexWNum >= (int)bv.size())
+				if (o->mTriangles[i].v[0].VertexNum >= (int)bv.size() ||
+					o->mTriangles[i].v[1].VertexNum >= (int)bv.size() ||
+					o->mTriangles[i].v[2].VertexNum >= (int)bv.size())
 				{
-					if (o->mTriangles[i].v[0].VertexWNum >= (int)bv.size())
+					if (o->mTriangles[i].v[0].VertexNum >= (int)bv.size())
 					{
 						o->mTriangles[i].v[0].w[0] = 1.0f;
 						o->mTriangles[i].v[0].i[0] = (int)o->mNodeName.second;
@@ -165,10 +165,10 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 					}
 					else
 					{
-						InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexWNum]);
+						InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexNum]);
 					}
 
-					if (o->mTriangles[i].v[1].VertexWNum >= (int)bv.size())
+					if (o->mTriangles[i].v[1].VertexNum >= (int)bv.size())
 					{
 						o->mTriangles[i].v[1].w[0] = 1.0f;
 						o->mTriangles[i].v[1].i[0] = (int)o->mNodeName.second;
@@ -176,25 +176,25 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 					}
 					else
 					{
-						InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexWNum]);
+						InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexNum]);
 					}
 
-					if (o->mTriangles[i].v[2].VertexWNum >= (int)bv.size())
+					if (o->mTriangles[i].v[2].VertexNum >= (int)bv.size())
 					{
 						o->mTriangles[i].v[2].w[0] = 1.0f;
- 						o->mTriangles[i].v[2].i[0] = (int)o->mNodeName.second;
+						o->mTriangles[i].v[2].i[0] = (int)o->mNodeName.second;
 						o->mTriangles[i].v[2].w[3] = 1.0f;
 					}
 					else
 					{
-						InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexWNum]);
+						InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexNum]);
 					}
 				}
 				else
 				{
-					InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexWNum]);
-					InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexWNum]);
-					InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexWNum]);
+					InputBipedes(o->mTriangles[i].v[0], bv[o->mTriangles[i].v[0].VertexNum]);
+					InputBipedes(o->mTriangles[i].v[1], bv[o->mTriangles[i].v[1].VertexNum]);
+					InputBipedes(o->mTriangles[i].v[2], bv[o->mTriangles[i].v[2].VertexNum]);
 				}
 			}
 
@@ -206,7 +206,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 
 			o->mTriangles[i].v[1].t.x = mesh.tVerts[mesh.tvFace[i].t[i2]].x;
 			o->mTriangles[i].v[1].t.y = 1.0f - mesh.tVerts[mesh.tvFace[i].t[i2]].y;
-			 
+
 			o->mTriangles[i].v[2].t.x = mesh.tVerts[mesh.tvFace[i].t[i1]].x;
 			o->mTriangles[i].v[2].t.y = 1.0f - mesh.tVerts[mesh.tvFace[i].t[i1]].y;
 		}
@@ -216,19 +216,19 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 			CopyMemory(&o->mTriangles[i].v[1].c, &mesh.vertCol[mesh.vcFace[i].t[i2]], sizeof(VertColor));
 			CopyMemory(&o->mTriangles[i].v[2].c, &mesh.vertCol[mesh.vcFace[i].t[i1]], sizeof(VertColor));
 		}
-		
+
 		mesh.buildNormals();
-		
+
 		int vert = mesh.faces[i].getVert(i0);
-		Point3 vn = GetVertexWNormal(mesh, i, mesh.getRVert(vert));
+		Point3 vn = GetVertexNormal(mesh, i, mesh.getRVert(vert));
 		MaxUtil::ConvertVector(vn, o->mTriangles[i].v[0].n);
 
 		vert = mesh.faces[i].getVert(i2);
-		vn = GetVertexWNormal(mesh, i, mesh.getRVert(vert));
+		vn = GetVertexNormal(mesh, i, mesh.getRVert(vert));
 		MaxUtil::ConvertVector(vn, o->mTriangles[i].v[1].n);
 
 		vert = mesh.faces[i].getVert(i1);
-		vn = GetVertexWNormal(mesh, i, mesh.getRVert(vert));
+		vn = GetVertexNormal(mesh, i, mesh.getRVert(vert));
 		MaxUtil::ConvertVector(vn, o->mTriangles[i].v[2].n);
 
 		o->mTriangles[i].mSubMtrl = mesh.faces[i].getMatID();
@@ -246,7 +246,7 @@ void ObjectExporter::LoadMesh(INode* node, ZXCSObject* o)
 		delete tri;
 }
 
-void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
+void ObjectExporter::BuildVBIB(ZXCObject* mesh, std::vector<OutVertex>& vertices, std::vector<std::uint32_t>& Indices)
 {
 	static int Cnt = 0;
 
@@ -258,7 +258,7 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 			int mTlid = mesh->mTriangles[i].mSubMtrl;
 			auto& vertices = mesh->mVertices[mTlid];
 			auto& indices = mesh->mIndices[mTlid];
-			int vNumber = [&](VertexW& rhs) -> int
+			int vNumber = [&](Vertex& rhs) -> int
 			{
 				for (int k = 0; k < (int)vertices.size(); ++k)
 				{
@@ -404,6 +404,9 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 			{
 				k.Tangent *= -1;
 			}
+
+			OutVertex oV = k;
+			vertices.push_back(oV);
 		}
 	}
 
@@ -449,6 +452,7 @@ void ObjectExporter::BuildVBIB(ZXCSObject* mesh)
 				break;
 			}
 		}
+		Indices.insert(Indices.end(), indices.begin(), indices.end());
 	}
 }
 
@@ -468,7 +472,7 @@ TriObject * ObjectExporter::GetTriObject(Object* obj, TimeValue t, bool & isDele
 	}
 }
 
-Point3 ObjectExporter::GetVertexWNormal(Mesh & mesh, int faceNo, const RVertex & rv)
+Point3 ObjectExporter::GetVertexNormal(Mesh & mesh, int faceNo, const RVertex & rv)
 {
 	Face* f = &mesh.faces[faceNo];
 	DWORD smGroup = f->smGroup;
@@ -528,7 +532,7 @@ void ObjectExporter::LoadBipedInfo(INode * node, std::vector<BipedVertex>& biped
 	}
 }
 
-void ObjectExporter::InputBipedes(VertexW & vertex, const BipedVertex & bipedes)
+void ObjectExporter::InputBipedes(Vertex & vertex, const BipedVertex & bipedes)
 {
 	int i = 0;
 	for (auto & x : bipedes.mWeightList)
@@ -633,7 +637,7 @@ void ObjectExporter::ExportPhysiqueData(INode * node, std::vector<BipedVertex>& 
 				nodeName = node->GetName();
 
 			bipedes[i].mWeightList.insert(std::make_pair(1.0f, (int)nodeindex[nodeName]));
-			
+
 			bipedes[i].mNodeIndex = (int)mExporter->mNodeIndex[name];
 			bipedes[i].mNodename = name;
 		}break;
@@ -653,7 +657,7 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 
 	ISkin * skin = (ISkin*)skinMod->GetInterface(I_SKIN);
 	ISkinContextData * skinData = skin->GetContextInterface(node);
-	
+
 	auto& nodeindex = mExporter->mNodeIndex;
 
 	std::wstring nodeName;
@@ -661,7 +665,7 @@ void ObjectExporter::ExportSkinData(INode * node, std::vector<BipedVertex>& bipe
 	if (skin != nullptr && skinData != nullptr)
 	{
 		int numOfPoints = skinData->GetNumPoints();
-		
+
 		bipedes.resize(numOfPoints);
 
 		for (int i = 0; i < numOfPoints; ++i)

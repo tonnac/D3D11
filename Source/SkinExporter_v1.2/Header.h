@@ -67,6 +67,8 @@ struct Vertex
 	Point2 t;
 	Point3 Tangent = { 0.0f, 0.0f, 0.0f };
 	Point3 Bitangent = { 0.0f, 0.0f, 0.0f };
+	std::array<float, 4> w;
+	std::array<UINT, 4> i;
 	int VertexNum = -1;
 	inline bool operator == (const Vertex& rhs)
 	{
@@ -86,6 +88,9 @@ struct OutVertex
 	Point2 t;
 	Point3 Tangent;
 
+	std::array<float, 4> w;
+	std::array<UINT, 4> i;
+
 	inline OutVertex(const Vertex& rhs)
 	{
 		p = std::move(rhs.p);
@@ -93,6 +98,8 @@ struct OutVertex
 		c = std::move(rhs.c);
 		t = std::move(rhs.t);
 		Tangent = std::move(rhs.Tangent);
+		CopyMemory(w.data(), rhs.w.data(), sizeof(float) * w.size());
+		CopyMemory(i.data(), rhs.i.data(), sizeof(float) * i.size());
 	}
 };
 
@@ -232,6 +239,31 @@ public:
 	{
 		return (DotProd(CrossProd(m.GetRow(0), m.GetRow(1)), m.GetRow(2)) < 0.0f) ? true : false;
 	}
+
+	static Modifier* FindModifer(INode * node, Class_ID classID)
+	{
+		Object * object = node->GetObjectRef();
+		if (object == nullptr) return nullptr;
+
+		while (object->SuperClassID() == GEN_DERIVOB_CLASS_ID && object)
+		{
+			IDerivedObject* DerivedObject = static_cast<IDerivedObject*>(object);
+
+			int modStackIndex = 0;
+
+			while (modStackIndex < DerivedObject->NumModifiers())
+			{
+				Modifier * modifier = DerivedObject->GetModifier(modStackIndex);
+
+				if (modifier->ClassID() == classID)
+					return modifier;
+
+				++modStackIndex;
+			}
+			object = DerivedObject->GetObjRef();
+		}
+		return nullptr;
+	}
 };
 
 class BinaryIO
@@ -267,7 +299,7 @@ public:
 		int size = (int)material.TexMap.size();
 		BinaryIO::WriteBinary(fout, &size);
 		auto& p = std::cbegin(material.TexMap);
-		for (; p != std::cend(material.TexMap); ++p)
+		for (;p != std::cend(material.TexMap); ++p)
 		{
 			BinaryIO::WriteBinary(fout, p->first);
 			BinaryIO::WriteString(fout, p->second);
@@ -287,7 +319,6 @@ public:
 		BinaryIO::WriteBinary(fout, mesh.ParentIndex, sizeof(OutputObject) - (sizeof(OutputObject::NodeName) + sizeof(OutputObject::ParentName)));
 	}
 };
-
 
 static inline Quat operator-(Quat& lhs)
 {

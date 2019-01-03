@@ -18,7 +18,7 @@ private:
 	void LoadScene();
 	void LoadNode(INode* node);
 	void LoadMaterial();
-	void LoadTexture(ZXCSMaterial& ZXCSMtl, Mtl* srcMtl);
+	void LoadTexture(ZXCMaterial& ZXCSMtl, Mtl* srcMtl);
 
 	void AddObject(INode* node);
 	void AddMaterial(INode* node);
@@ -34,8 +34,8 @@ private:
 	std::unordered_map<std::wstring, INode*> mMaxObject;
 	std::queue<INode*> mQueue;
 
-	std::vector<ZXCSMaterial> mOutputMaterial;
-	std::vector<std::unique_ptr<ZXCSObject>> mOutputObjects;
+	std::vector<ZXCMaterial> mOutputMaterial;
+	std::vector<std::unique_ptr<ZXCObject>> mOutputObjects;
 	std::unordered_map<std::wstring, size_t> mNodeIndex;
 
 	std::wstring mVersion;

@@ -21,13 +21,13 @@
     <ClCompile Include="Exporter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectExporter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="SkinExporter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SkinWriter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectExporter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,13 +38,16 @@
     <ClInclude Include="Header.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectExporter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="SkinExporter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SkinWriter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectExporter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Header0.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

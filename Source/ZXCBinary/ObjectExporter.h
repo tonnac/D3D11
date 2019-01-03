@@ -16,7 +16,7 @@ public:
 		std::vector<OutVertex>& vertices,
 		std::vector<std::uint32_t>& indices);
 
-private:
+protected:
 	void LoadMesh(INode* node, ZXCObject* o);
 	void BuildVBIB(ZXCObject* mesh, std::vector<OutVertex>& vertices, std::vector<std::uint32_t>& indices);
 
@@ -24,6 +24,6 @@ private:
 	Point3 GetVertexNormal(Mesh& mesh, int faceNo, const RVertex& rv);
 	int GetMaterialRef(Mtl* mtl);
 
-private:
+protected:
 	ZXCExporter* mExporter = nullptr;
 };

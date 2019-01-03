@@ -121,7 +121,7 @@ void SkinExporter::LoadMaterial()
 	{
 		Mtl* mtl = mMaxMaterial[i];
 
-		ZXCSMaterial outMtl;
+		ZXCMaterial outMtl;
 		TSTR className;
 
 		mtl->GetClassName(className);
@@ -140,7 +140,7 @@ void SkinExporter::LoadMaterial()
 			{
 				Mtl* subMtl = mtl->GetSubMtl(k);
 				
-				ZXCSMaterial outSubMtl;
+				ZXCMaterial outSubMtl;
 
 				TSTR subClassname;
 				outSubMtl.Name = subMtl->GetName();
@@ -168,7 +168,7 @@ void SkinExporter::LoadMaterial()
 	}
 }
 
-void SkinExporter::LoadTexture(ZXCSMaterial & ZXCSMtl, Mtl * srcMtl)
+void SkinExporter::LoadTexture(ZXCMaterial & zxcMtl, Mtl * srcMtl)
 {
 	for (int i = 0; i < srcMtl->NumSubTexmaps(); ++i)
 	{
@@ -181,16 +181,16 @@ void SkinExporter::LoadTexture(ZXCSMaterial & ZXCSMtl, Mtl * srcMtl)
 			if (!std->MapEnabled(i)) continue;
 		}
 
-		ZXCSTexmap texMap;
-		texMap.SubNo = i;
+		std::pair<int, std::wstring> texMap;
+		texMap.first = i;
 
 		if (tex->ClassID() == Class_ID(BMTEX_CLASS_ID, 0x00))
 		{
 			TSTR mapName = ((BitmapTex *)tex)->GetMapName();
 			TSTR fullName;
 			SplitPathFile(mapName, &fullName, &mapName);
-			texMap.Filename = mapName;
+			texMap.second = mapName;
 		}
-		ZXCSMtl.TexMap.push_back(texMap);
+		zxcMtl.TexMap.insert(texMap);
 	}
 }

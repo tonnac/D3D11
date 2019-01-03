@@ -69,7 +69,7 @@ BOOL Exporter::SupportsOptions(int, DWORD )
 int	Exporter::DoExport(const MCHAR *name, ExpInterface *ei, Interface *i,
 	BOOL suppressPrompts, DWORD options)
 {
-	ZXCExporter exporter;
+	BaseExporter exporter;
 	
 	if (!exporter.Initialize(i, name, LongDesc()))
 	{

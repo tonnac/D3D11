@@ -23,6 +23,7 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 	{
 		return LoadZXCBin(filename, texfilepath);
 	}
+	return false;
 }
 
 bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath)

@@ -16,8 +16,7 @@ bool ZXCLoader::LoadZXC(
 	std::wstring ignore;
 
 	UINT numMaterials;
-	UINT numHelpers;
-	UINT numMeshes;
+	UINT numNodes;
 	UINT numVertices;
 	UINT numTriangles;
 	UINT numSubSet;
@@ -34,22 +33,20 @@ bool ZXCLoader::LoadZXC(
 	std::getline(fp, ignore);
 
 	fp >> ignore >> numMaterials;
-	fp >> ignore >> numHelpers;
-	fp >> ignore >> numMeshes;
+	fp >> ignore >> numNodes;
 	fp >> ignore >> numVertices;
 	fp >> ignore >> numTriangles;
 	fp >> ignore >> numSubSet;
 
 	materials.resize(numMaterials);
-	nodes.resize(numMeshes + numHelpers);
+	nodes.resize(numNodes);
 
 	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
-	ReadHelper(fp, numHelpers, nodes);
-	ReadMesh(fp, numMeshes, nodes);
-	ReadVertex(fp, numVertices, vertices);
-	ReadIndex(fp, numTriangles, indices);
+	ReadNodes(fp, numNodes, nodes);
 	ReadSubsetTable(fp, numSubSet, subsets);
+	ReadVertex(fp, numVertices, vertices);
+	ReadIndices(fp, numTriangles, indices);
 
 	return true;
 }
@@ -67,8 +64,7 @@ bool ZXCLoader::LoadSkin(
 	std::wstring ignore;
 
 	UINT numMaterials;
-	UINT numHelpers;
-	UINT numMeshes;
+	UINT numNodes;
 	UINT numVertices;
 	UINT numTriangles;
 	UINT numSubSet;
@@ -85,29 +81,27 @@ bool ZXCLoader::LoadSkin(
 	std::getline(fp, ignore);
 
 	fp >> ignore >> numMaterials;
-	fp >> ignore >> numHelpers;
-	fp >> ignore >> numMeshes;
+	fp >> ignore >> numNodes;
 	fp >> ignore >> numVertices;
 	fp >> ignore >> numTriangles;
 	fp >> ignore >> numSubSet;
 
 	materials.resize(numMaterials);
-	nodes.resize(numMeshes + numHelpers);
+	nodes.resize(numNodes);
 	std::vector<int> boneHierarchy;
-	boneHierarchy.resize(numMeshes + numHelpers);
+	boneHierarchy.resize(numNodes);
 	std::vector<XMFLOAT4X4> boneOffsets;
 	std::unordered_map<std::string, AnimationClip> animations;
 
 	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
-	ReadHelper(fp, numHelpers, nodes);
-	ReadMesh(fp, numMeshes, nodes);
+	ReadNodes(fp, numNodes, nodes);
 	ReadVertex(fp, numVertices, vertices);    
-	ReadIndex(fp, numTriangles, indices);
+	ReadIndices(fp, numTriangles, indices);
 	ReadSubsetTable(fp, numSubSet, subsets);
 
 	AnimationClip clip;
-	clip.BoneAnimations.resize(numMeshes + numHelpers);
+	clip.BoneAnimations.resize(numNodes);
 
 	animations["default"] = clip;
 	AdjustAnimations(animations["default"], nodes);
@@ -180,34 +174,7 @@ void ZXCLoader::ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<
 	}
 }
 
-void ZXCLoader::ReadMesh(std::wifstream& fp, UINT numMeshes, std::vector<MeshNode>& nodes)
-{
-	std::wstring ignore;
-
-	fp >> ignore;
-	for (UINT i = 0; i < numMeshes; ++i)
-	{
-		UINT Index;
-		UINT ParentNum;
-		fp >> ignore >> ignore >> Index;
-		nodes[Index].NodeName = ignore;
-		fp >> ignore >> ignore >> ParentNum;
-		nodes[Index].ParentName = ignore;
-		nodes[Index].ParentIndex = ParentNum;
-
-		fp >> ignore;
-		fp >> ignore >> nodes[Index].World._11 >> nodes[Index].World._12 >> nodes[Index].World._13 >> nodes[Index].World._14;
-		fp >> ignore >> nodes[Index].World._21 >> nodes[Index].World._22 >> nodes[Index].World._23 >> nodes[Index].World._24;
-		fp >> ignore >> nodes[Index].World._31 >> nodes[Index].World._32 >> nodes[Index].World._33 >> nodes[Index].World._34;
-		fp >> ignore >> nodes[Index].World._41 >> nodes[Index].World._42 >> nodes[Index].World._43 >> nodes[Index].World._44;
-		fp >> ignore >> nodes[Index].Translations.x >> nodes[Index].Translations.y >> nodes[Index].Translations.z;
-		fp >> ignore >> nodes[Index].RotationQuat.x >> nodes[Index].RotationQuat.y >> nodes[Index].RotationQuat.z >> nodes[Index].RotationQuat.w;
-		fp >> ignore >> nodes[Index].ScaleQuat.x >> nodes[Index].ScaleQuat.y >> nodes[Index].ScaleQuat.z >> nodes[Index].ScaleQuat.w;
-		fp >> ignore >> nodes[Index].Scale.x >> nodes[Index].Scale.y >> nodes[Index].Scale.z;
-	}
-}
-
-void ZXCLoader::ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes)
+void ZXCLoader::ReadNodes(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes)
 {
 	std::wstring ignore;
 
@@ -216,8 +183,6 @@ void ZXCLoader::ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<Mesh
 	{
 		UINT Index;
 		UINT ParentNum;
-		XMFLOAT3 Min;
-		XMFLOAT3 Max;
 
 		fp >> ignore >> ignore >> Index;
 		nodes[Index].NodeName = ignore;
@@ -237,6 +202,10 @@ void ZXCLoader::ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<Mesh
 		{
 			nodes[Index].Type = ObjectType::BIPED;
 		}
+		else
+		{
+			nodes[Index].Type = ObjectType::MESH;
+		}
 
 		nodes[Index].ParentIndex = ParentNum;
 
@@ -249,14 +218,8 @@ void ZXCLoader::ReadHelper(std::wifstream& fp, UINT numHelpers, std::vector<Mesh
 		fp >> ignore >> nodes[Index].RotationQuat.x >> nodes[Index].RotationQuat.y >> nodes[Index].RotationQuat.z >> nodes[Index].RotationQuat.w;
 		fp >> ignore >> nodes[Index].ScaleQuat.x >> nodes[Index].ScaleQuat.y >> nodes[Index].ScaleQuat.z >> nodes[Index].ScaleQuat.w;
 		fp >> ignore >> nodes[Index].Scale.x >> nodes[Index].Scale.y >> nodes[Index].Scale.z;
-		fp >> ignore >> Min.x >> Min.y >> Min.z;
-		fp >> ignore >> Max.x >> Max.y >> Max.z;
-
-		XMVECTOR min = XMLoadFloat3(&Min);
-		XMVECTOR max = XMLoadFloat3(&Max);
-
-		XMStoreFloat3(&nodes[Index].box.Center, (min + max) * 0.5f);
-		XMStoreFloat3(&nodes[Index].box.Extents, (max - min) * 0.5f);
+		fp >> ignore >> nodes[Index].box.Center.x >> nodes[Index].box.Center.y >> nodes[Index].box.Center.z;
+		fp >> ignore >> nodes[Index].box.Extents.x >> nodes[Index].box.Extents.y >> nodes[Index].box.Extents.z;
 	}
 }
 
@@ -312,7 +275,7 @@ void ZXCLoader::ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Ski
 	}
 }
 
-void ZXCLoader::ReadIndex(std::wifstream & fp, UINT numIndices, std::vector<DWORD>& indices)
+void ZXCLoader::ReadIndices(std::wifstream & fp, UINT numIndices, std::vector<DWORD>& indices)
 {
 	std::wstring ignore;
 	fp >> ignore;

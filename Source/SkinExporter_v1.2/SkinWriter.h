@@ -22,7 +22,7 @@ private:
 	void WriteMesh(std::wofstream& os);
 	void WriteHelper(std::wofstream& os);
 	void WriteSubset(std::wofstream& os);
-	void WriteVertexW(std::wofstream& os);
+	void WriteVertex(std::wofstream& os);
 	void BuildSubset(UINT& meshes, UINT& helpers, UINT& subsets, UINT& vertices, UINT& indices);
 
 	std::wstring Savetime();

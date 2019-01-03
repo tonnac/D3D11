@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="Header.h" />
+    <ClInclude Include="Header0.h" />
     <ClInclude Include="ObjectExporter.h" />
     <ClInclude Include="SkinExporter.h" />
     <ClInclude Include="SkinWriter.h" />

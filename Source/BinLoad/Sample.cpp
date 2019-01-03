@@ -36,8 +36,12 @@ bool Sample::Init()
 	light->AddDirectional(l0);
 	light->AddDirectional(l1);
 	light->AddDirectional(l2);
+	steady_clock::time_point bef = steady_clock::now();
+	mesh.LoadFile(L"S.bin", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	steady_clock::time_point aft = steady_clock::now();
 
-	mesh.LoadFile(L"t.zxcs", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	seconds u = duration_cast<seconds>(aft - bef);
+
 	return true;
 }
 
@@ -49,7 +53,7 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
 	return true;
 }
