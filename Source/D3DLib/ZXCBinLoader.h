@@ -4,20 +4,60 @@
 class ZXCBinLoader : public ZXCLoader
 {
 public:
-	bool LoadZXCBin(
+	template<class T = Vertex>
+	bool LoadBinary(
 		const std::wstring & FileName,
-		std::vector<Vertex>& vertices,
+		std::vector<T>& vertices,
 		std::vector<DWORD>& indices,
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
-		std::vector<MeshNode>& nodes);
+		std::vector<MeshNode>& nodes)
+	{
+		std::ifstream fin(FileName.c_str(), std::ios::binary);
+
+		if (!fin.is_open()) return false;
+
+		SceneInfo scene;
+		time_t saveTime;
+		std::wstring ExporterVersion;
+		std::array<UINT, 5> CompositeNum;
+
+		ReadBinary(fin, saveTime);
+		ReadString(fin, ExporterVersion);
+		ReadBinary(fin, CompositeNum[0], (UINT)(CompositeNum.size() * sizeof(UINT)));
+
+		UINT numMaterials = CompositeNum[0];
+		UINT numVertices = CompositeNum[1];
+		UINT numTriangles = CompositeNum[2];
+		UINT numNodes = CompositeNum[3];
+		UINT numSubsets = CompositeNum[4];
+
+		materials.resize(numMaterials);
+		nodes.resize(numNodes);
+		subsets.resize(numSubsets);
+		vertices.resize(numVertices);
+		indices.resize(numTriangles * 3);
+
+		LoadScene(fin, scene);
+		LoadMaterials(fin, materials);
+		LoadNodes(fin, nodes);
+		LoadSubsets(fin, subsets);
+		LoadVertices(fin, vertices);
+		LoadIndices(fin, indices);
+
+		return true;
+	}
 
 private:
 	void LoadScene(std::ifstream& fin, SceneInfo& scene);
 	void LoadMaterials(std::ifstream& fin, std::vector<ZXCSMaterial>& materials);
 	void LoadNodes(std::ifstream&fin, std::vector<MeshNode>& nodes);
 	void LoadSubsets(std::ifstream&fin, std::vector<Subset>& subsets);
-	void LoadVertices(std::ifstream&fin, std::vector<Vertex>& vertices);
+	template<class T>
+	void LoadVertices(std::ifstream&fin, std::vector<T>& vertices)
+	{
+		ReadBinary(fin, vertices.data(), (UINT)(sizeof(T) * vertices.size()));
+	}
 	void LoadIndices(std::ifstream&fin, std::vector<DWORD>& indices);
 
 private:

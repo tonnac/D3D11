@@ -96,9 +96,9 @@ bool ZXCLoader::LoadSkin(
 	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
 	ReadNodes(fp, numNodes, nodes);
-	ReadVertex(fp, numVertices, vertices);    
-	ReadIndices(fp, numTriangles, indices);
 	ReadSubsetTable(fp, numSubSet, subsets);
+	ReadVertex(fp, numVertices, vertices);
+	ReadIndices(fp, numTriangles, indices);
 
 	AnimationClip clip;
 	clip.BoneAnimations.resize(numNodes);

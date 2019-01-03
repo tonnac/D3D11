@@ -22,6 +22,9 @@
     <Filter Include="Common\Source">
       <UniqueIdentifier>{4750ca85-3e0e-4218-b1eb-6e3bd2463066}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Don%27t Use">
+      <UniqueIdentifier>{d9e7dfc3-fdd4-4c76-91fd-b0df83767318}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -43,7 +46,7 @@
       <Filter>Common\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\MaxSDK\Common\ZXCWriter.cpp">
-      <Filter>Common\Source</Filter>
+      <Filter>Common\Don%27t Use</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -66,7 +69,7 @@
       <Filter>Common\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
-      <Filter>Common\Header</Filter>
+      <Filter>Common\Don%27t Use</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

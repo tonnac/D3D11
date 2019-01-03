@@ -23,7 +23,7 @@ const MCHAR *Exporter::Ext(int )
 
 const MCHAR *Exporter::LongDesc()
 {
-	return L"SkinExporter V1.1";
+	return L"SkinExporter V1.2";
 }
 
 const MCHAR *Exporter::ShortDesc()

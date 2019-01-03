@@ -37,9 +37,9 @@ bool Sample::Init()
 	light->AddDirectional(l1);
 	light->AddDirectional(l2);
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"S.bin", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"ss.SBI", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
-
+	mesh.SetWorld(XMMatrixScaling(0.05f, 0.05f, 0.05f));
 	seconds u = duration_cast<seconds>(aft - bef);
 
 	return true;

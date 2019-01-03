@@ -26,8 +26,5 @@ private:
 	void SaveIndices(std::wofstream& os);
 
 private:
-	std::wstring Savetime();
-
-private:
 	const std::vector<OutVertex>& mVertices;
 };

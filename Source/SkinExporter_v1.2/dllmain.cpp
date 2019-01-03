@@ -1,5 +1,5 @@
 ﻿
-#include "Header.h"
+#include "..\..\MaxSDK\Common\Header.h"
 
 extern ClassDesc2* GetExportDesc();
 

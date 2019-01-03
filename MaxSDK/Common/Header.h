@@ -82,7 +82,7 @@ struct SkinnedVertex : public Vertex
 {
 	std::array<float, 4> w;
 	std::array<UINT, 4> i;
-	inline bool operator == (const Vertex& rhs)
+	inline bool operator == (const SkinnedVertex& rhs)
 	{
 		return Vertex::operator==(rhs);
 	}
@@ -111,7 +111,7 @@ struct OutVertex
 struct OutSkinned : public OutVertex
 {
 	std::array<float, 4> w;
-	std::array<UINT, 4> i;
+	std::array<BYTE, 4> i;
 
 	inline OutSkinned(SkinnedVertex& rhs)
 	{
@@ -120,8 +120,8 @@ struct OutSkinned : public OutVertex
 		c = std::move(rhs.c);
 		t = std::move(rhs.t);
 		Tangent = std::move(rhs.Tangent);
-		std::copy(w.begin(), rhs.w.begin(), rhs.w.end());
-		std::copy(i.begin(), rhs.i.begin(), rhs.i.end());
+		std::copy(rhs.w.begin(), rhs.w.end(), w.data());
+		std::copy(rhs.i.begin(), rhs.i.end(), i.data());
 	}
 };
 

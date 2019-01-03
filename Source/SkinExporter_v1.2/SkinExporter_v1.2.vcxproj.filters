@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{e7727861-8563-4d5e-b109-bbc92f557c76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Don%27t Use">
+      <UniqueIdentifier>{3d446dba-b051-4743-8544-f263ed083b5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Source">
+      <UniqueIdentifier>{cf9a3ab8-36ba-40f6-abf2-61ea5e287c13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Header">
+      <UniqueIdentifier>{d3c70f7a-3d9a-44df-9946-45bdf6a05d04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -21,34 +33,52 @@
     <ClCompile Include="Exporter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="SkinExporter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\Writer.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="SkinWriter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\SkinExporter.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectExporter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\SkinWriter.cpp">
+      <Filter>Common\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MaxSDK\Common\ZXCWriter.cpp">
+      <Filter>Common\Don%27t Use</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MaxSDK\Common\BaseExporter.cpp">
+      <Filter>Common\Don%27t Use</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MaxSDK\Common\NodesLoader.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Exporter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\MaxSDK\Common\Writer.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="SkinExporter.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\MaxSDK\Common\SkinExporter.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="SkinWriter.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\MaxSDK\Common\SkinWriter.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectExporter.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\MaxSDK\Common\Header.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Header0.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
+      <Filter>Common\Don%27t Use</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
+      <Filter>Common\Don%27t Use</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\BaseExporter.h">
+      <Filter>Common\Don%27t Use</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\NodesLoader.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

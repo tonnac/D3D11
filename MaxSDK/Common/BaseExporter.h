@@ -1,8 +1,8 @@
 #pragma once
 
-#include "NodesLoader.h"
 #include "ZXCWriter.h"
 #include "BinWriter.h"
+#include "NodesLoader.h"
 
 class BaseExporter
 {
@@ -25,9 +25,13 @@ private:
 	void AddMaterial(INode* node);
 
 	void BuildOutObjects();
-	virtual void BuildSubset();
 
-private:
+	virtual void LoadObjects();
+	virtual void CreateWriter();
+	virtual void BuildSubset();
+	virtual void BuildVBIB();
+
+protected:
 	Interface*	mMaxInterface = nullptr;
 	INode*		mRootNode = nullptr;
 	Interval	mInterval;
@@ -45,7 +49,7 @@ private:
 	std::wstring mFilename;
 
 	std::vector<OutVertex> mVertices;
-	std::vector<SkinnedVertex> mSkinnedVertices;
+	std::vector<OutSkinned> mSkinnedVertices;
 
 	std::vector<ZXCMaterial> mOutputMaterial;
 	std::vector<std::uint32_t> mIndices;

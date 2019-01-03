@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SkinExporter.h"
+#include "..\..\MaxSDK\Common\SkinExporter.h"
 
 #define Export_Class_ID Class_ID(0x6ffa6af5, 0x5ee57920)
 

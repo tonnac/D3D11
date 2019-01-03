@@ -11,7 +11,7 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 
 	std::transform(Ext.begin(), Ext.end(), Ext.begin(), ::toupper);
 
-	if (Ext == L"ZXCS")
+	if (Ext == L"SKN")
 	{
 		return LoadSkin(filename, texfilepath);
 	}
@@ -22,6 +22,10 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 	else if(Ext == L"BIN")
 	{
 		return LoadZXCBin(filename, texfilepath);
+	}
+	else
+	{
+		return LoadSkinBin(filename, texfilepath);
 	}
 	return false;
 }
@@ -85,7 +89,26 @@ bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfil
 	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
-	if (!loader.LoadZXCBin(filename, vertices, indices, subsets, materials, nodes))
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes))
+		return false;
+
+	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	return true;
+}
+
+bool Mesh::LoadSkinBin(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	ZXCBinLoader loader;
+
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
+
+	std::vector<SkinnedVertex> vertices;
+	std::vector<DWORD> indices;
+	std::vector<ZXCLoader::Subset> subsets;
+	std::vector<ZXCSMaterial> materials;
+	std::vector<MeshNode> nodes;
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes))
 		return false;
 
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
