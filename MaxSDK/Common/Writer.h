@@ -19,9 +19,6 @@ public:
 	virtual bool Savefile() = 0;
 
 protected:
-	std::wstring Savetime();
-
-protected:
 
 	const std::wstring& mExporterVersion;
 	const std::wstring& mFilename;

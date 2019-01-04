@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ClipExporter.h"
+#include "..\..\MaxSDK\Common\ClipExporter.h"
 
-#define Export_Class_ID Class_ID(0x69db34d2, 0x4dd72d76)
+#define Export_Class_ID Class_ID(0x34de325e, 0x26376b0e)
 
 class Exporter : public SceneExport
 {

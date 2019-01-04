@@ -13,26 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ObjectExporter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Exporter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationExporter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ClipExporter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ClipWriter.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
+    <Filter Include="Common">
+      <UniqueIdentifier>{4af1d725-a7a1-4763-80e3-062d0ef1a6c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Source">
+      <UniqueIdentifier>{6fc90eb7-072b-447a-a847-d02f94d313cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Header">
+      <UniqueIdentifier>{08fde805-68e3-4e29-a05a-577a16d7ab51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Don%27t Use">
+      <UniqueIdentifier>{bc495a1f-c447-468a-9f88-f99b8e0c294c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -41,18 +33,32 @@
     <ClCompile Include="Exporter.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectExporter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\AnimationExporter.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationExporter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\ClipExporter.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="ClipExporter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="..\..\MaxSDK\Common\ClipWriter.cpp">
+      <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="ClipWriter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Exporter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\AnimationExporter.h">
+      <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\ClipExporter.h">
+      <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\Header.h">
+      <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\ClipWriter.h">
+      <Filter>Common\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source.def">

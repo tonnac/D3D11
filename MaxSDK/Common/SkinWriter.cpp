@@ -22,7 +22,7 @@ bool SkinWriter::Savefile()
 
 	if (!os.is_open()) return false;
 
-	std::wstring nowTime = Savetime();
+	std::wstring nowTime = MaxUtil::nowtime();
 
 	UINT numMaterials = (UINT)mMaterial.size();
 	UINT numVertices = (UINT)mVertices.size();

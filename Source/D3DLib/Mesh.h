@@ -19,6 +19,7 @@ private:
 	bool LoadSkin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadZXCBin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadSkinBin(const std::tstring& filename, const std::tstring& texfilepath);
+	bool LoadClip(const std::tstring& filename, const std::tstring& texfilepath);
 
 	void Initialize(
 		std::vector<Vertex> vertices,

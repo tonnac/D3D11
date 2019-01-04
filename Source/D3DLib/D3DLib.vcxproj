@@ -162,6 +162,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ClipLoader.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="d3dUtil.h" />
@@ -192,6 +193,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ClipLoader.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="d3dUtil.cpp" />

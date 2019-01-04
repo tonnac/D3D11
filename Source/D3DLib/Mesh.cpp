@@ -116,6 +116,11 @@ bool Mesh::LoadSkinBin(const std::tstring & filename, const std::tstring & texfi
 	return true;
 }
 
+bool Mesh::LoadClip(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	return false;
+}
+
 void Mesh::Initialize(
 	std::vector<Vertex> vertices,
 	std::vector<DWORD> indices,

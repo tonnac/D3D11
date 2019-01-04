@@ -25,17 +25,3 @@ Writer::Writer(const std::wstring& ExporterVersion,
 	mNumNodes = (UINT)mObjects.size();
 	mNumSubsets = (UINT)mSubsets.size();
 }
-
-std::wstring Writer::Savetime()
-{
-	system_clock::time_point now = system_clock::now();
-	time_t nowTime = system_clock::to_time_t(now);
-
-	char buf[256] = { 0, };
-	wchar_t wbuf[256] = { 0, };
-	ctime_s(buf, sizeof(buf), &nowTime);
-
-	MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuf, 256);
-
-	return std::wstring(wbuf);
-}

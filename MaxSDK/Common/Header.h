@@ -23,6 +23,7 @@
 #include <functional>
 #include <array>
 #include <queue>
+#include <chrono>
 
 constexpr float Epsilon = 1.0e-3f;
 constexpr int MAXWEIGHTNUM = 4;
@@ -232,6 +233,27 @@ struct OutputObject
 	BoundingBox box;
 };
 
+struct KeyFrame
+{
+	KeyFrame() {}
+	~KeyFrame() {}
+
+	int Tick;
+	Point3 Translations;
+	Point3 Scale;
+	Quat ScaleQuat;
+	Quat RotationQuat;
+};
+
+struct BoneAnimation
+{
+	std::vector<KeyFrame> Keyframes;
+};
+
+struct AnimationClip
+{
+	std::vector<BoneAnimation> BoneAnimations;
+};
 
 namespace std
 {
@@ -306,6 +328,20 @@ public:
 			object = DerivedObject->GetObjRef();
 		}
 		return nullptr;
+	}
+
+	static std::wstring nowtime()
+	{
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		time_t nowTime = std::chrono::system_clock::to_time_t(now);
+
+		char buf[256] = { 0, };
+		wchar_t wbuf[256] = { 0, };
+		ctime_s(buf, sizeof(buf), &nowTime);
+
+		MultiByteToWideChar(CP_ACP, 0, buf, -1, wbuf, 256);
+
+		return std::wstring(wbuf);
 	}
 };
 

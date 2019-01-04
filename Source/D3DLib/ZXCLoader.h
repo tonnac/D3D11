@@ -1,6 +1,5 @@
 #pragma once
 #include <DirectXMath.h>
-#include "SkinnedData.h"
 #include "RenderItemStorage.h"
 #include "MaterialStorage.h"
 

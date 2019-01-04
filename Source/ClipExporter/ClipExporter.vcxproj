@@ -18,6 +18,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\MaxSDK\Common\AnimationExporter.cpp" />
+    <ClCompile Include="..\..\MaxSDK\Common\ClipExporter.cpp" />
+    <ClCompile Include="..\..\MaxSDK\Common\ClipWriter.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Exporter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\MaxSDK\Common\AnimationExporter.h" />
+    <ClInclude Include="..\..\MaxSDK\Common\ClipExporter.h" />
+    <ClInclude Include="..\..\MaxSDK\Common\ClipWriter.h" />
+    <ClInclude Include="..\..\MaxSDK\Common\Header.h" />
+    <ClInclude Include="Exporter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source.def" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{7BA26E45-0703-48B9-AF59-AF42115A765C}</ProjectGuid>
@@ -72,6 +89,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)/../../output/$(SolutionName)/</OutDir>
+    <IntDir>$(SolutionDir)/../../output/$(SolutionName)/$(ProjectName)/</IntDir>
+    <TargetExt>.dle</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -99,6 +119,9 @@
       <AdditionalDependencies>bmm.lib;core.lib;geom.lib;gfx.lib;mesh.lib;maxutil.lib;maxscrpt.lib;gup.lib;paramblk2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "C:\Program Files\Autodesk\3ds Max 2017\Plugins\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,25 +170,6 @@
       <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="AnimationExporter.h" />
-    <ClInclude Include="Exporter.h" />
-    <ClInclude Include="Header.h" />
-    <ClInclude Include="ObjectExporter.h" />
-    <ClInclude Include="ClipExporter.h" />
-    <ClInclude Include="ClipWriter.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AnimationExporter.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Exporter.cpp" />
-    <ClCompile Include="ObjectExporter.cpp" />
-    <ClCompile Include="ClipExporter.cpp" />
-    <ClCompile Include="ClipWriter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Source.def" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

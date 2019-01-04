@@ -37,6 +37,12 @@
     <Filter Include="소스 파일\Storage">
       <UniqueIdentifier>{54597136-83fc-4cb7-bf8f-0de18d21d001}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Exporter">
+      <UniqueIdentifier>{d55eb886-113a-4875-9bb8-10189ca27ed3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Exporter">
+      <UniqueIdentifier>{5249b886-7a47-4601-854e-93ee51443c67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="wClass.h">
@@ -87,9 +93,6 @@
     <ClInclude Include="Frustum.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ZXCLoader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>헤더 파일\Object\Mesh</Filter>
     </ClInclude>
@@ -120,8 +123,14 @@
     <ClInclude Include="LightStorage.h">
       <Filter>헤더 파일\Storage</Filter>
     </ClInclude>
+    <ClInclude Include="ZXCLoader.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
     <ClInclude Include="ZXCBinLoader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipLoader.h">
+      <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +185,6 @@
     <ClCompile Include="Frustum.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="ZXCLoader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>소스 파일\Object\Mesh</Filter>
     </ClCompile>
@@ -209,8 +215,14 @@
     <ClCompile Include="LightStorage.cpp">
       <Filter>소스 파일\Storage</Filter>
     </ClCompile>
+    <ClCompile Include="ClipLoader.cpp">
+      <Filter>소스 파일\Exporter</Filter>
+    </ClCompile>
     <ClCompile Include="ZXCBinLoader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="ZXCLoader.cpp">
+      <Filter>소스 파일\Exporter</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

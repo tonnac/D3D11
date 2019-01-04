@@ -71,7 +71,7 @@ int	Exporter::DoExport(const MCHAR *name, ExpInterface *ei, Interface *i,
 {
 	ClipExporter exporter;
 	
-	if (!exporter.Initialize(i, name, LongDesc()))
+	if (!exporter.Initialize(i, name, LongDesc(), true))
 	{
 		return FALSE;
 	}
