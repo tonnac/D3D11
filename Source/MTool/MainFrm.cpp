@@ -6,6 +6,8 @@
 #include "MTool.h"
 
 #include "MainFrm.h"
+#include "CreateDialog.h"
+#include "CreateDD.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,6 +27,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
+	ON_COMMAND(ID_TOOL_MTOOL, &CMainFrame::OnToolMtool)
+	ON_COMMAND(ID_TOOL_MTOOL1, &CMainFrame::SavaMap)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -146,6 +150,22 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
+
+	mToolpane.CreateEx(NULL, _T("Toolpane"), this, CRect(0, 0, 100, 100),
+		TRUE, 1234,
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
+		WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI);
+
+	mToolpane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&mToolpane);
+
+	mEffectpane.CreateEx(NULL, _T("Effectpane"), this, CRect(0, 0, 100, 100),
+		TRUE, 1235,
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
+		WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI);
+
+	mEffectpane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&mEffectpane);
 
 	return 0;
 }
@@ -308,3 +328,23 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
+
+
+void CMainFrame::OnToolMtool()
+{
+	CreateDialog_ dialog;
+	dialog.DoModal();
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::SavaMap()
+{
+	if (mSaveMap.GetSafeHwnd() == nullptr)
+	{
+		mSaveMap.Create(IDD_DIALOG2);
+	}
+	mSaveMap.ShowWindow(SW_SHOW);
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}

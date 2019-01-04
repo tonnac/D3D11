@@ -134,7 +134,8 @@ void CMToolView::OnSize(UINT nType, int cx, int cy)
 	CMToolApp* app = (CMToolApp*)AfxGetApp();
 	g_ClientWidth = cx;
 	g_ClientHeight = cy;
-	app->mTool->Resize();
+	if(app->mTool != nullptr)
+		app->mTool->OnResize();
 	
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 }

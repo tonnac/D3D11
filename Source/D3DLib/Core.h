@@ -17,6 +17,7 @@ public:
 	bool			Initialize();
 	bool			ToolInitialize();
 	bool			ToolRun();
+	virtual void	OnResize()override;
 protected:
 	virtual bool	GameInit()override;
 	virtual bool	GameRun()override;
@@ -28,7 +29,6 @@ protected:
 
 	void			CalculateFrame();
 	void			FramePassCB();
-	virtual void	OnResize()override;
 
 private:
 	bool			GameFrame();

@@ -92,7 +92,6 @@ bool ZXCLoader::LoadSkin(
 	std::vector<XMFLOAT4X4> boneOffsets;
 	std::unordered_map<std::wstring, AnimationClip> animations;
 
-	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
 	ReadNodes(fp, numNodes, nodes);
 	ReadSubsetTable(fp, numSubSet, subsets);

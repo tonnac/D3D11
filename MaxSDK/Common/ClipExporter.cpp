@@ -77,7 +77,6 @@ void ClipExporter::AddObject(INode * node)
 	std::wstring nodeName = node->GetName();
 	switch (os.obj->SuperClassID())
 	{
-		
 		case GEOMOBJECT_CLASS_ID:
 		case HELPER_CLASS_ID:
 		{
