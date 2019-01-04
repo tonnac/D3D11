@@ -12,9 +12,11 @@ class Core : public wClass
 {
 protected:
 	Core(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName);
+	Core(HINSTANCE hInstance, HWND hWnd, RECT rt);
 public:
 	bool			Initialize();
-
+	bool			ToolInitialize();
+	bool			ToolRun();
 protected:
 	virtual bool	GameInit()override;
 	virtual bool	GameRun()override;

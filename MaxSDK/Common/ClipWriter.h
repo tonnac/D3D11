@@ -15,6 +15,7 @@ public:
 	bool Savefile();
 
 private:
+	void SaveScene(std::wofstream& os);
 	void SaveAnimations(std::wofstream& os);
 
 private:

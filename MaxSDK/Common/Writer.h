@@ -10,7 +10,6 @@ class Writer
 public:
 	Writer(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
-		const SceneInfo& sceneinfo,
 		const std::vector<ZXCMaterial>& material,
 		const std::vector<OutputObject>& object, 
 		const std::vector<std::uint32_t>& indices,
@@ -23,7 +22,6 @@ protected:
 	const std::wstring& mExporterVersion;
 	const std::wstring& mFilename;
 
-	const SceneInfo& mSceneInfo;
 	const std::vector<ZXCMaterial>& mMaterial;
 	const std::vector<Subset> mSubsets;
 	const std::vector<OutputObject>& mObjects;

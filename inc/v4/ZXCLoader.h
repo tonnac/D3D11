@@ -1,8 +1,8 @@
 #pragma once
 #include <DirectXMath.h>
-#include "SkinnedData.h"
 #include "RenderItemStorage.h"
 #include "MaterialStorage.h"
+#include "SkinnedData.h"
 
 class Mesh;
 

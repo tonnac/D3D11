@@ -69,7 +69,7 @@ bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepat
 	mSkinnedInst->FinalTransforms.resize(nodes.size());
 	*(mSkinInfo.get()) = skininfo;
 	mSkinnedInst->SkinnedInfo = mSkinInfo.get();
-	mSkinnedInst->ClipName = "default";
+	mSkinnedInst->ClipName = L"default";
 
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
 

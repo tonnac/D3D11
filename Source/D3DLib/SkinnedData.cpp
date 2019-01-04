@@ -2,22 +2,6 @@
 
 using namespace DirectX;
 
-int BoneAnimation::GetStartTime()const
-{
-	if (!Keyframes.empty())
-		return Keyframes.front().Tick;
-	else
-		return 0;
-}
-
-int BoneAnimation::GetEndTime()const
-{
-	if (!Keyframes.empty())
-		return Keyframes.back().Tick;
-	else
-		return 0;
-}
-
 void BoneAnimation::Interpoloate(int t, XMFLOAT4X4& M)const
 {
 	XMVECTOR S;
@@ -83,24 +67,12 @@ void BoneAnimation::Interpoloate(int t, XMFLOAT4X4& M)const
 
 int AnimationClip::GetClipStartTime()const
 {
-	int t = INT_MAX;
-	SceneInf.FirstFrame;
-	for (UINT i = 0; i < (UINT)BoneAnimations.size(); ++i)
-	{
-		t = MathHelper::Min(t, BoneAnimations[i].GetStartTime());
-	}
-	return t;
+	return SceneInf.FirstFrame * SceneInf.FrameSpeed * SceneInf.FrameTick;
 }
 
 int AnimationClip::GetClipEndTime()const
 {
-	int t = 0;
-	SceneInf.LastFrame;
-	for (UINT i = 0; i < (UINT)BoneAnimations.size(); ++i)
-	{
-		t = MathHelper::Max(t, BoneAnimations[i].GetEndTime());
-	}
-	return t;
+	return SceneInf.LastFrame * SceneInf.FrameSpeed * SceneInf.FrameTick;
 }
 
 void AnimationClip::Interpoloate(int t, std::vector<XMFLOAT4X4>& boneTransforms)const
@@ -121,27 +93,27 @@ UINT SkinnedData::BoneCount()const
 	return (UINT)mBoneHierarchy.size();
 }
 
-int SkinnedData::GetClipStartTime(const std::string& clipName)const
+int SkinnedData::GetClipStartTime(const std::wstring& clipName)const
 {
 	auto clip = mAnimations.find(clipName);
 	return clip->second.GetClipStartTime();
 }
 
-int SkinnedData::GetClipEndTime(const std::string& clipName)const
+int SkinnedData::GetClipEndTime(const std::wstring& clipName)const
 {
 	auto clip = mAnimations.find(clipName);
 	return clip->second.GetClipEndTime();
 }
 
 void SkinnedData::Set(std::vector<int>& boneHierarchy, std::vector<XMFLOAT4X4>& boneOffsets,
-	std::unordered_map<std::string, AnimationClip>& animations)
+	std::unordered_map<std::wstring, AnimationClip>& animations)
 {
 	mBoneHierarchy = boneHierarchy;
 	mBoneOffsets = boneOffsets;
 	mAnimations = animations;
 }
 
-void SkinnedData::GetFinalTransforms(const std::string& clipName, int timePos,
+void SkinnedData::GetFinalTransforms(const std::wstring& clipName, int timePos,
 	std::vector<XMFLOAT4X4>& finalTransforms)const
 {
 	UINT numBones = (UINT)mBoneHierarchy.size();

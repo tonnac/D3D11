@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "RenderItemStorage.h"
 #include "MaterialStorage.h"
+#include "SkinnedData.h"
 
 class Mesh;
 

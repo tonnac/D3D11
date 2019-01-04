@@ -25,9 +25,6 @@ struct KeyFrame
 
 struct BoneAnimation
 {
-	int GetStartTime()const;
-	int GetEndTime()const;
-
 	void Interpoloate(int t, DirectX::XMFLOAT4X4& M)const;
 
 	DirectX::XMFLOAT4X4 InitialPos;
@@ -51,15 +48,15 @@ public:
 
 	UINT BoneCount()const;
 
-	int GetClipStartTime(const std::string& clipName)const;
-	int GetClipEndTime(const std::string& clipName)const;
+	int GetClipStartTime(const std::wstring& clipName)const;
+	int GetClipEndTime(const std::wstring& clipName)const;
 
 	void Set(
 		std::vector<int>& boneHierarchy,
 		std::vector<DirectX::XMFLOAT4X4>& boneOffsets,
-		std::unordered_map<std::string, AnimationClip>& animations);
+		std::unordered_map<std::wstring, AnimationClip>& animations);
 
-	void GetFinalTransforms(const std::string& clipName, int timePos,
+	void GetFinalTransforms(const std::wstring& clipName, int timePos,
 		std::vector<DirectX::XMFLOAT4X4>& finalTransforms)const;
 
 private:
@@ -67,25 +64,25 @@ private:
 
 	std::vector<DirectX::XMFLOAT4X4> mBoneOffsets;
 
-	std::unordered_map<std::string, AnimationClip> mAnimations;
+	std::unordered_map<std::wstring, AnimationClip> mAnimations;
 };
 
 struct SkinnedModelInstance
 {
 	SkinnedData* SkinnedInfo = nullptr;
+	UINT FrameSpeed = 0;
+	UINT FrameTick = 0;
+
 	std::vector<DirectX::XMFLOAT4X4> FinalTransforms;
-	std::string ClipName;
+	std::wstring ClipName;
 	int TimePos = 0;
 
 	void UpdateSkinnedAnimation(float dt)
 	{
-		TimePos += (int)(dt * 30.0f * 160.0f);
+		TimePos += (int)(dt * FrameSpeed * FrameTick);
 
-		if (ClipName == "default")
-		{
-			if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
-				TimePos = 0;
-		}
+		if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
+			TimePos = 0;
 
 		SkinnedInfo->GetFinalTransforms(ClipName, TimePos, FinalTransforms);
 	}

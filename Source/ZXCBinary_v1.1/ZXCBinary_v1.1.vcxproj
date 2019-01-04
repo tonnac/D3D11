@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\MaxSDK\Common\BaseExporter.cpp" />
-    <ClCompile Include="..\..\MaxSDK\Common\BinWriter.cpp" />
     <ClCompile Include="..\..\MaxSDK\Common\NodesLoader.cpp" />
     <ClCompile Include="..\..\MaxSDK\Common\Writer.cpp" />
     <ClCompile Include="..\..\MaxSDK\Common\ZXCWriter.cpp" />

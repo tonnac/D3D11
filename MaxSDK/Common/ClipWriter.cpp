@@ -25,6 +25,17 @@ bool ClipWriter::Savefile()
 	return true;
 }
 
+void ClipWriter::SaveScene(std::wofstream & os)
+{
+	std::wstring sceneStart = L"\n\n**********Scene_Info**********";
+	std::wstring firstFrame = L"\nFirstFrmae: " + std::to_wstring(mSceneInfo.FirstFrame);
+	std::wstring lastFrame = L"\nLastFrame: " + std::to_wstring(mSceneInfo.LastFrame);
+	std::wstring frameSpeed = L"\nFrameSpeed: " + std::to_wstring(mSceneInfo.FrameSpeed);
+	std::wstring tickPerFrame = L"\nTickPerFrame: " + std::to_wstring(mSceneInfo.TickperFrame);
+
+	os << sceneStart << firstFrame << lastFrame << frameSpeed << tickPerFrame;
+}
+
 void ClipWriter::SaveAnimations(std::wofstream & os)
 {
 	std::wstring Name(mFilename, 0, mFilename.find_last_of('.'));

@@ -41,7 +41,6 @@ bool ZXCLoader::LoadZXC(
 	materials.resize(numMaterials);
 	nodes.resize(numNodes);
 
-	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
 	ReadNodes(fp, numNodes, nodes);
 	ReadSubsetTable(fp, numSubSet, subsets);
@@ -91,7 +90,7 @@ bool ZXCLoader::LoadSkin(
 	std::vector<int> boneHierarchy;
 	boneHierarchy.resize(numNodes);
 	std::vector<XMFLOAT4X4> boneOffsets;
-	std::unordered_map<std::string, AnimationClip> animations;
+	std::unordered_map<std::wstring, AnimationClip> animations;
 
 	ReadScene(fp);
 	ReadMaterial(fp, numMaterials, materials);
@@ -103,8 +102,8 @@ bool ZXCLoader::LoadSkin(
 	AnimationClip clip;
 	clip.BoneAnimations.resize(numNodes);
 
-	animations["default"] = clip;
-	AdjustAnimations(animations["default"], nodes);
+	animations[L"default"] = clip;
+	AdjustAnimations(animations[L"default"], nodes);
 
 	SetBoneOffsets(boneOffsets, nodes);
 	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)

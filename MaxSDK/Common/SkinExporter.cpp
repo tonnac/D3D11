@@ -12,11 +12,9 @@ void SkinExporter::LoadObjects()
 void SkinExporter::CreateWriter()
 {
 	if(mIsBinary)
-		mWriter = std::make_unique<BinWriter<OutSkinned>>(mVersion, mFilename, mSceneInfo,
-			mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<BinWriter<OutSkinned>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
 	else
-		mWriter = std::make_unique<SkinWriter>(mVersion, mFilename, mSceneInfo,
-			mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<SkinWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
 }
        
 void SkinExporter::BuildSubset()

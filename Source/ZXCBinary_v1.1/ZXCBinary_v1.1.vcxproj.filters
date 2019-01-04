@@ -36,9 +36,6 @@
     <ClCompile Include="..\..\MaxSDK\Common\BaseExporter.cpp">
       <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MaxSDK\Common\BinWriter.cpp">
-      <Filter>Common\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\MaxSDK\Common\NodesLoader.cpp">
       <Filter>Common\Source</Filter>
     </ClCompile>
@@ -56,20 +53,20 @@
     <ClInclude Include="..\..\MaxSDK\Common\BaseExporter.h">
       <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\Header.h">
       <Filter>Common\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\NodesLoader.h">
       <Filter>Common\Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MaxSDK\Common\Writer.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
       <Filter>Common\Don%27t Use</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
+      <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\Writer.h">
+      <Filter>Common\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -38,7 +38,6 @@ public:
 		vertices.resize(numVertices);
 		indices.resize(numTriangles * 3);
 
-		LoadScene(fin, scene);
 		LoadMaterials(fin, materials);
 		LoadNodes(fin, nodes);
 		LoadSubsets(fin, subsets);

@@ -9,7 +9,6 @@ class SkinWriter : public Writer
 public:
 	SkinWriter(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
-		const SceneInfo& sceneinfo,
 		const std::vector<ZXCMaterial>& material,
 		const std::vector<OutputObject>& object,
 		const std::vector<OutSkinned>& vertices,
@@ -19,7 +18,6 @@ public:
 	bool Savefile();
 
 private:
-	void SaveScene(std::wofstream& os);
 	void SaveMaterial(std::wofstream& os);
 	void SaveNodes(std::wofstream& os);
 	void SaveSubset(std::wofstream& os);

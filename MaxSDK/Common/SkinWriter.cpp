@@ -4,13 +4,12 @@
 SkinWriter::SkinWriter(
 	const std::wstring & ExporterVersion,
 	const std::wstring & Filename,
-	const SceneInfo & sceneinfo,
 	const std::vector<ZXCMaterial>& material,
 	const std::vector<OutputObject>& object,
 	const std::vector<OutSkinned>& vertices,
 	const std::vector<std::uint32_t>& indices,
 	const std::vector<Subset>& subsets)
-	: Writer(ExporterVersion, Filename, sceneinfo, material, object, indices, subsets), mVertices(vertices)
+	: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
 {
 	mNumVertices = (UINT)vertices.size();
 }
@@ -40,7 +39,6 @@ bool SkinWriter::Savefile()
 	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + Savetime();
 	os << header << info;
 
-	SaveScene(os);
 	SaveMaterial(os);
 	SaveNodes(os);
 	SaveSubset(os);
@@ -48,17 +46,6 @@ bool SkinWriter::Savefile()
 	SaveIndices(os);
 
 	return true;
-}
-
-void SkinWriter::SaveScene(std::wofstream & os)
-{
-	std::wstring sceneStart = L"\n\n**********Scene_Info**********";
-	std::wstring firstFrame = L"\nFirstFrmae: " + std::to_wstring(mSceneInfo.FirstFrame);
-	std::wstring lastFrame = L"\nLastFrame: " + std::to_wstring(mSceneInfo.LastFrame);
-	std::wstring frameSpeed = L"\nFrameSpeed: " + std::to_wstring(mSceneInfo.FrameSpeed);
-	std::wstring tickPerFrame = L"\nTickPerFrame: " + std::to_wstring(mSceneInfo.TickperFrame);
-
-	os << sceneStart << firstFrame << lastFrame << frameSpeed << tickPerFrame;
 }
 
 void SkinWriter::SaveMaterial(std::wofstream & os)

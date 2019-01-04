@@ -7,13 +7,12 @@ class BinWriter : public Writer
 public:
 	BinWriter(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
-		const SceneInfo& sceneinfo,
 		const std::vector<ZXCMaterial>& material,
 		const std::vector<OutputObject>& object,
 		const std::vector<X>& vertices,
 		const std::vector<std::uint32_t>& indices,
 		const std::vector<Subset>& subsets)
-		: Writer(ExporterVersion, Filename, sceneinfo, material, object, indices, subsets), mVertices(vertices)
+		: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
 	{
 		mNumVertices = (UINT)vertices.size();
 	}
@@ -43,7 +42,6 @@ public:
 		BinaryIO::WriteString(os, mExporterVersion);
 		BinaryIO::WriteBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
-		SaveScene(os);
 		SaveMaterial(os);
 		SaveNodes(os);
 		SaveSubset(os);

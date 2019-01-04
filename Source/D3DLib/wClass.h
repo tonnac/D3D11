@@ -7,6 +7,7 @@ class wClass : public Device
 	friend LRESULT CALLBACK	MainWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 protected:
 	wClass(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName);
+	wClass() = default;
 
 public:
 	int				Run();

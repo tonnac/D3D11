@@ -16,6 +16,14 @@ Core::Core(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& Win
 {
 }
 
+Core::Core(HINSTANCE hInstance, HWND hWnd, RECT rt)
+{
+	g_hWnd = hWnd;
+	g_hInstance = hInstance;
+	g_ClientWidth = (rt.right - rt.left);
+	g_ClientHeight = (rt.bottom - rt.top);
+}
+
 bool Core::Initialize()
 {
 	if (!InitMainWindow())
@@ -27,6 +35,24 @@ bool Core::Initialize()
 	
 	OnResize();
 	return true;
+}
+
+bool Core::ToolInitialize()
+{
+	if (!InitDirect3D())
+		return false;
+	if (!S_Write.Initialize())
+		return false;
+	GameInit();
+	OnResize();
+	return true;
+}
+
+bool Core::ToolRun()
+{
+	GameFrame();
+	GameRender();
+	return false;
 }
 
 bool Core::GameInit()
