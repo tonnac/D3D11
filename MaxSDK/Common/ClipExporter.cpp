@@ -10,6 +10,7 @@ bool ClipExporter::Initialize(Interface* maxinterface, const MCHAR* Filename, co
 	mMaxInterface = maxinterface;
 	mRootNode = mMaxInterface->GetRootNode();
 	mVersion = Longdesc;
+	mIsBinary = isBinary;
 
 	if (mRootNode == nullptr && maxinterface == nullptr) return false;
 
@@ -27,7 +28,10 @@ bool ClipExporter::Run()
 
 	mAnimation = AnimationExporter::LoadAnimation(mMaxObject, mNodeIndex, mInterval.Start(), mInterval.End());
 
-	mWriter = std::make_unique<ClipWriter>(mVersion, mFilename, mSceneInfo, mAnimation.get());
+	if(mIsBinary)
+		mWriter = std::make_unique<ClipBinary>(mVersion, mFilename, mSceneInfo, mAnimation.get());
+	else
+		mWriter = std::make_unique<ClipWriter>(mVersion, mFilename, mSceneInfo, mAnimation.get());
 	if (!mWriter->Savefile()) return false;
 
 	return true;

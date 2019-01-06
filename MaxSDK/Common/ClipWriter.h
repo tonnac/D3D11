@@ -12,14 +12,13 @@ public:
 		AnimationClip * clip);
 
 public:
-	bool Savefile();
+	virtual bool Savefile();
 
 private:
 	void SaveScene(std::wofstream& os);
 	void SaveAnimations(std::wofstream& os);
 
-private:
-
+protected:
 	const std::wstring& mExporterVersion;
 	const std::wstring& mFilename;
 

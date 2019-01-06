@@ -43,10 +43,7 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="..\..\MaxSDK\Common\ZXCWriter.cpp">
-      <Filter>Common\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\MaxSDK\Common\BinWriter.cpp">
-      <Filter>Common\Don%27t Use</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,11 +62,11 @@
     <ClInclude Include="Exporter.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
       <Filter>Common\Don%27t Use</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

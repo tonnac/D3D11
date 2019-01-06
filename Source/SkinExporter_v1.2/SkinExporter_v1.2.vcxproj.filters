@@ -39,9 +39,6 @@
     <ClCompile Include="..\..\MaxSDK\Common\SkinExporter.cpp">
       <Filter>Common\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\MaxSDK\Common\SkinWriter.cpp">
-      <Filter>Common\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\MaxSDK\Common\ZXCWriter.cpp">
       <Filter>Common\Don%27t Use</Filter>
     </ClCompile>
@@ -50,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="..\..\MaxSDK\Common\NodesLoader.cpp">
       <Filter>Common\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MaxSDK\Common\SkinWriter.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,9 +60,6 @@
       <Filter>Common\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\SkinExporter.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\MaxSDK\Common\SkinWriter.h">
       <Filter>Common\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\Header.h">
@@ -79,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\NodesLoader.h">
       <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\SkinWriter.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

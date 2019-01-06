@@ -60,8 +60,8 @@ VertexOut VS(VertexIn vIn)
 	vOut.PosW = vPosW.xyz;
 	vOut.p = mul(vPosW, gViewProj);
 	vOut.c = vIn.c;
-	vOut.n = mul(vIn.n, (float3x3)gWoridInv);
-	vOut.TangentW = mul(vIn.TangentL, (float3x3)gWoridInv);
+	vOut.n = mul(-vIn.n, (float3x3)gWorldInvT);
+	vOut.TangentW = mul(vIn.TangentL, (float3x3)gWorldInvT);
 
 	float4 texC = mul(float4(vIn.t, 0.0f, 1.0f), gTexTransform);
 	texC = mul(texC, gMatTransform);
@@ -71,6 +71,7 @@ VertexOut VS(VertexIn vIn)
 
 float4 PS(VertexOut vOut) : SV_Target
 {
+	const float3 ambientLight = float3(0.35f, 0.35f, 0.35f);
 	float4 texColor = vOut.c;
 
 	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
@@ -85,12 +86,16 @@ float4 PS(VertexOut vOut) : SV_Target
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
 	const float shininess = 1.0f - gRoughness;
-	Material mat = {gDiffuse, gSpecular, gAmbient, gFresnelR0, shininess };
-	float3 shadowFactor = 1.0f;
+	Material mat = { texColor, gFresnelR0, shininess };
+	float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
+	float3 ambient = ambientLight * texColor.rgb;
+
+	//float3 r = reflect(-toEyeW, bumpedNormalW);
+	//float3 fresnelFactor = SchlickFresnel(gFresnelR0, bumpedNormalW, r);
 
 	float3 litColor = ComputeLighting(gLights, mat, vOut.PosW, bumpedNormalW, toEyeW, shadowFactor, gDirctionNum, gPointNum, gSpotNum);
 
-	float3 finalColor = litColor * texColor.rgb;
+	litColor += ambient;
 
-	return float4(finalColor, 1.0f);
+	return float4(litColor, 1.0f);
 }

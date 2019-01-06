@@ -132,6 +132,9 @@
     <ClInclude Include="ClipLoader.h">
       <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
+    <ClInclude Include="ClipBinLoader.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">
@@ -222,6 +225,9 @@
       <Filter>소스 파일\Exporter</Filter>
     </ClCompile>
     <ClCompile Include="ZXCLoader.cpp">
+      <Filter>소스 파일\Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipBinLoader.cpp">
       <Filter>소스 파일\Exporter</Filter>
     </ClCompile>
   </ItemGroup>

@@ -27,7 +27,6 @@ struct BoneAnimation
 {
 	void Interpoloate(int t, DirectX::XMFLOAT4X4& M)const;
 
-	DirectX::XMFLOAT4X4 InitialPos;
 	std::vector<KeyFrame> Keyframes;
 };
 
@@ -36,7 +35,7 @@ struct AnimationClip
 	int GetClipStartTime()const;
 	int GetClipEndTime()const;
 
-	void Interpoloate(int t, std::vector<DirectX::XMFLOAT4X4>& boneTransforms)const;
+	void Interpoloate(int t, std::vector<DirectX::XMFLOAT4X4>& boneTransforms, const std::vector<DirectX::XMFLOAT4X4>& initPos)const;
 
 	SceneInfo SceneInf;
 	std::vector<BoneAnimation> BoneAnimations;
@@ -45,7 +44,6 @@ struct AnimationClip
 class SkinnedData
 {
 public:
-
 	UINT BoneCount()const;
 
 	int GetClipStartTime(const std::wstring& clipName)const;
@@ -54,14 +52,21 @@ public:
 	void Set(
 		std::vector<int>& boneHierarchy,
 		std::vector<DirectX::XMFLOAT4X4>& boneOffsets,
+		std::vector<DirectX::XMFLOAT4X4>& initpos,
 		std::unordered_map<std::wstring, AnimationClip>& animations);
+
+	void AddAnimation(
+		std::pair<std::wstring, AnimationClip>& animations);
 
 	void GetFinalTransforms(const std::wstring& clipName, int timePos,
 		std::vector<DirectX::XMFLOAT4X4>& finalTransforms)const;
 
+	void GetFrameTick(const std::wstring& name, UINT& speed, UINT& tick);
+
 private:
 	std::vector<int> mBoneHierarchy;
 
+	std::vector<DirectX::XMFLOAT4X4> mInitPos;
 	std::vector<DirectX::XMFLOAT4X4> mBoneOffsets;
 
 	std::unordered_map<std::wstring, AnimationClip> mAnimations;
@@ -72,14 +77,20 @@ struct SkinnedModelInstance
 	SkinnedData* SkinnedInfo = nullptr;
 	UINT FrameSpeed = 0;
 	UINT FrameTick = 0;
+	float AnimationSpeed = 1.0f;
 
 	std::vector<DirectX::XMFLOAT4X4> FinalTransforms;
 	std::wstring ClipName;
 	int TimePos = 0;
+	void setClipName(const std::wstring& name)
+	{
+		ClipName = name;
+		SkinnedInfo->GetFrameTick(ClipName, FrameSpeed, FrameTick);
+	}
 
 	void UpdateSkinnedAnimation(float dt)
 	{
-		TimePos += (int)(dt * FrameSpeed * FrameTick);
+		TimePos += (int)(dt * AnimationSpeed * FrameSpeed * FrameTick);
 
 		if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
 			TimePos = 0;

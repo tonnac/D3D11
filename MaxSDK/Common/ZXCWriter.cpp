@@ -4,13 +4,12 @@
 ZXCWriter::ZXCWriter(
 	const std::wstring & ExporterVersion,
 	const std::wstring & Filename,
-	const SceneInfo & sceneinfo,
 	const std::vector<ZXCMaterial>& material,
 	const std::vector<OutputObject>& object,
 	const std::vector<OutVertex>& vertices,
 	const std::vector<std::uint32_t>& indices,
 	const std::vector<Subset>& subsets)
-	: Writer(ExporterVersion, Filename, sceneinfo, material, object, indices, subsets), mVertices(vertices)
+	: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
 {
 	mNumVertices = (UINT)vertices.size();
 }
@@ -21,8 +20,6 @@ bool ZXCWriter::Savefile()
 	os.open(mFilename.c_str());
 
 	if (!os.is_open()) return false;
-
-	std::wstring nowTime = MaxUtil::nowtime();
 
 	UINT numMaterials = (UINT)mMaterial.size();
 	UINT numVertices = (UINT)mVertices.size();
@@ -37,10 +34,9 @@ bool ZXCWriter::Savefile()
 		L"\n#Triangles " + std::to_wstring(numTriangles) +
 		L"\n#Subset " + std::to_wstring(numSubsets);
 
-	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + Savetime();
+	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + MaxUtil::nowtime();
 	os << header << info;
 
-	SaveScene(os);
 	SaveMaterial(os);
 	SaveNodes(os);
 	SaveSubset(os);
@@ -48,17 +44,6 @@ bool ZXCWriter::Savefile()
 	SaveIndices(os);
 
 	return true;
-}
-
-void ZXCWriter::SaveScene(std::wofstream & os)
-{
-	std::wstring sceneStart = L"\n\n**********Scene_Info**********";
-	std::wstring firstFrame = L"\nFirstFrmae: " + std::to_wstring(mSceneInfo.FirstFrame);
-	std::wstring lastFrame = L"\nLastFrame: " + std::to_wstring(mSceneInfo.LastFrame);
-	std::wstring frameSpeed = L"\nFrameSpeed: " + std::to_wstring(mSceneInfo.FrameSpeed);
-	std::wstring tickPerFrame = L"\nTickPerFrame: " + std::to_wstring(mSceneInfo.TickperFrame);
-
-	os << sceneStart << firstFrame << lastFrame << frameSpeed << tickPerFrame;
 }
 
 void ZXCWriter::SaveMaterial(std::wofstream & os)

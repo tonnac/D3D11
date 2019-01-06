@@ -12,12 +12,9 @@ class Core : public wClass
 {
 protected:
 	Core(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName);
-	Core(HINSTANCE hInstance, HWND hWnd, RECT rt);
 public:
 	bool			Initialize();
-	bool			ToolInitialize();
-	bool			ToolRun();
-	virtual void	OnResize()override;
+
 protected:
 	virtual bool	GameInit()override;
 	virtual bool	GameRun()override;
@@ -30,6 +27,7 @@ protected:
 	void			CalculateFrame();
 	void			FramePassCB();
 
+	virtual void	OnResize()override;
 private:
 	bool			GameFrame();
 	bool			PreRender();

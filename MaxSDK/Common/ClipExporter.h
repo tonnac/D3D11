@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AnimationExporter.h"
-#include "ClipWriter.h"
+#include "ClipBinary.h"
 
 class ClipExporter
 {
@@ -39,4 +39,6 @@ private:
 	std::unique_ptr<AnimationClip> mAnimation = nullptr;
 		
 	std::unique_ptr<ClipWriter> mWriter = nullptr;
+
+	bool mIsBinary = false;
 };

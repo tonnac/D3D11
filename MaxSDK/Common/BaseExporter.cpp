@@ -136,11 +136,9 @@ void BaseExporter::LoadObjects()
 void BaseExporter::CreateWriter()
 {
 	if (mIsBinary)
-		mWriter = std::make_unique<BinWriter<>>(mVersion, mFilename, mSceneInfo,
-			mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<BinWriter<>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
 	else
-		mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mSceneInfo,
-			mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
 }
 
 void BaseExporter::BuildSubset()

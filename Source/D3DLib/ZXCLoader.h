@@ -76,9 +76,8 @@ public:
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
-		SkinnedData& skinInfo);
-private:
-	void ReadScene(std::wifstream& fp);
+		SkinnedData* skinInfo);
+protected:
 	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials);
 	void ReadNodes(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
 
@@ -87,12 +86,10 @@ private:
 
 	void ReadIndices(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::vector<Subset>& subsets);
-	void ReadAnimationClips(std::wifstream& fp, UINT numBones, UINT numAnimationClips, std::unordered_map<std::string, AnimationClip>& animations, const std::vector<MeshNode>& meshNodes);
-	void ReadBoneKeyframes(std::wifstream& fp, UINT numBones, UINT numKeyframe ,BoneAnimation& boneAnimation);
 
-	void AdjustAnimations(AnimationClip& animations, const std::vector<MeshNode>& meshNodes);
-
+	void BuildDefaultAnimaions(SkinnedData * skininfo, std::vector<MeshNode>& nodes);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes);
+	void BuildInitPos(std::vector<DirectX::XMFLOAT4X4>& initPos, const std::vector<MeshNode>& meshNodes);
 
 	UINT mFirstFrame = 0;
 	UINT mLastFrame = 0;

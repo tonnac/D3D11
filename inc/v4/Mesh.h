@@ -1,13 +1,14 @@
 #pragma once
 
 #include "ZXCBinLoader.h"
+#include "ClipBinLoader.h"
 #include "Shape.h"
 #include "FrameResource.h"
 
 class Mesh : public Shape
 {
 public:
-	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath, ID3D11Device * device);
+	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath = std::tstring(), ID3D11Device * device = nullptr);
 
 	bool Frame();
 	bool Render(ID3D11DeviceContext* context);
@@ -20,6 +21,7 @@ private:
 	bool LoadZXCBin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadSkinBin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadClip(const std::tstring& filename, const std::tstring& texfilepath);
+	bool LoadClipBin(const std::tstring& filename, const std::tstring& texfilepath);
 
 	void Initialize(
 		std::vector<Vertex> vertices,

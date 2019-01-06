@@ -12,21 +12,16 @@ DirectInput::DirectInput()
 
 bool DirectInput::Init()
 {
-	if (m_hWnd == nullptr)
-	{
-		m_hWnd = g_hWnd;
-	}
-
 	ThrowifFailed(DirectInput8Create(g_hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (LPVOID*)m_pDi.GetAddressOf(), nullptr));
 
 	ThrowifFailed(m_pDi->CreateDevice(GUID_SysKeyboard, m_pKey.GetAddressOf(), nullptr));
 	ThrowifFailed(m_pKey->SetDataFormat(&c_dfDIKeyboard));
-	ThrowifFailed(m_pKey->SetCooperativeLevel(m_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY));
+	ThrowifFailed(m_pKey->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND | DISCL_NOWINKEY));
 	while (m_pKey->Acquire() == DIERR_INPUTLOST);
 
 	ThrowifFailed(m_pDi->CreateDevice(GUID_SysMouse, m_pMouse.GetAddressOf(), nullptr));
 	ThrowifFailed(m_pMouse->SetDataFormat(&c_dfDIMouse));
-	ThrowifFailed(m_pMouse->SetCooperativeLevel(m_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
+	ThrowifFailed(m_pMouse->SetCooperativeLevel(g_hWnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND));
 	while (m_pMouse->Acquire() == DIERR_INPUTLOST);
 	return true;
 }

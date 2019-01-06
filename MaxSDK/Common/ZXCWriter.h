@@ -7,7 +7,6 @@ class ZXCWriter : public Writer
 public:
 	ZXCWriter(const std::wstring& ExporterVersion,
 		const std::wstring& Filename,
-		const SceneInfo& sceneinfo,
 		const std::vector<ZXCMaterial>& material,
 		const std::vector<OutputObject>& object,
 		const std::vector<OutVertex>& vertices,
@@ -18,7 +17,6 @@ public:
 	virtual bool Savefile()override;
 
 private:
-	void SaveScene(std::wofstream& os);
 	void SaveMaterial(std::wofstream& os);
 	void SaveNodes(std::wofstream& os);
 	void SaveSubset(std::wofstream& os);

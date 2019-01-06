@@ -10,19 +10,18 @@ public:
 	ClipLoader() = default;
 
 public:
-	bool LoadClip(
+	virtual bool LoadClip(
 		const std::wstring & FileName,
-		const std::vector<MeshNode>& nodes,
-		SkinnedData& skinInfo);
+		UINT numBones,
+		std::unordered_map<std::wstring, AnimationClip>& clips);
 private:
-	void ReadAnimationClips(
+	virtual void ReadScene(std::wifstream& fp);
+	virtual void ReadAnimationClips(
 		std::wifstream& fp,
-		UINT numBones, 
-		UINT numAnimationClips, 
-		std::unordered_map<std::wstring, AnimationClip>& animations, 
-		const std::vector<MeshNode>& meshNodes,
-		const std::wstring& clipName);
-	void ReadBoneKeyframes(std::wifstream& fp, UINT numBones, UINT numKeyframe, BoneAnimation& boneAnimation);
+		UINT numBones,
+		UINT numAnimationClips,
+		std::unordered_map<std::wstring, AnimationClip>& animations);
+	virtual void ReadBoneKeyframes(std::wifstream& fp, UINT numBones, UINT numKeyframe, BoneAnimation& boneAnimation);
 
 	UINT mFirstFrame = 0;
 	UINT mLastFrame = 0;

@@ -62,11 +62,11 @@
     <ClInclude Include="..\..\MaxSDK\Common\ZXCWriter.h">
       <Filter>Common\Don%27t Use</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
-      <Filter>Common\Header</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\MaxSDK\Common\Writer.h">
       <Filter>Common\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MaxSDK\Common\BinWriter.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

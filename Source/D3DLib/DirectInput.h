@@ -39,7 +39,6 @@ public:
 	DIMOUSESTATE			getMousePos()const;
 	Input::KEYSTATE			getKeyState(DWORD dwKey)const;
 
-	HWND					m_hWnd = nullptr;
 private:
 	void					SetAcquire(const bool& flag);
 

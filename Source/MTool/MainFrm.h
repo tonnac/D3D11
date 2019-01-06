@@ -54,6 +54,16 @@ protected:
 public:
 	afx_msg void OnToolMtool();
 	afx_msg void SavaMap();
+	afx_msg void OnSkyBox();
+	afx_msg void OnUpdateSkyBox(CCmdUI *pCmdUI);
+
+private:
+	bool isSkyBox = true;
+public:
+	afx_msg void OnBackColor();
+	afx_msg void OnUpdateBackColor(CCmdUI *pCmdUI);
+	afx_msg void OnWireframe();
+	afx_msg void OnUpdateWireframe(CCmdUI *pCmdUI);
 };
 
 

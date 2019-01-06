@@ -21,8 +21,6 @@ bool SkinWriter::Savefile()
 
 	if (!os.is_open()) return false;
 
-	std::wstring nowTime = MaxUtil::nowtime();
-
 	UINT numMaterials = (UINT)mMaterial.size();
 	UINT numVertices = (UINT)mVertices.size();
 	UINT numTriangles = (UINT)((mIndices.size() / 3));
@@ -36,7 +34,7 @@ bool SkinWriter::Savefile()
 		L"\n#Triangles " + std::to_wstring(numTriangles) +
 		L"\n#Subset " + std::to_wstring(numSubsets);
 
-	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + Savetime();
+	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + MaxUtil::nowtime();
 	os << header << info;
 
 	SaveMaterial(os);
@@ -65,7 +63,7 @@ void SkinWriter::SaveMaterial(std::wofstream & os)
 			L"\n#MapNum " + std::to_wstring(mMaterial[i].TexMap.size()) +
 			L"\n#SubMtlNum " + std::to_wstring(mMaterial[i].SubMaterial.size());
 
-		os << mtlInfo;
+		os << mtlInfo; 
 
 		if (!mMaterial[i].SubMaterial.empty())
 		{

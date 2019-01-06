@@ -20,6 +20,7 @@ bool ClipWriter::Savefile()
 	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + nowTime;
 	os << header << info;
 
+	SaveScene(os);
 	SaveAnimations(os);
 
 	return true;

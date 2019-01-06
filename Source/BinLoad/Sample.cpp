@@ -37,10 +37,17 @@ bool Sample::Init()
 	light->AddDirectional(l1);
 	light->AddDirectional(l2);
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"ss.SBI", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"death.sbi", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
-	mesh.SetWorld(XMMatrixScaling(0.05f, 0.05f, 0.05f));
 	seconds u = duration_cast<seconds>(aft - bef);
+
+	XMMATRIX T = XMMatrixTranslation(0.0f, 55.0f, 0.0f);
+	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
+	mesh.SetWorld(S * T);
+	mesh.LoadFile(L"death.clb");
+	steady_clock::time_point aft0 = steady_clock::now();
+
+	seconds v = duration_cast<seconds>(aft0 - aft);
 
 	return true;
 }
@@ -53,7 +60,7 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
 	return true;
 }

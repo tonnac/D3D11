@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "Sample.h"
 #include "DirectInput.h"
-
-#include <chrono>
+#include "Converter.h"
 
 using namespace std::chrono;
 
@@ -19,65 +18,96 @@ Sample::Sample(HINSTANCE hInstance, HWND hWnd, RECT rt)
 {
 }
 
+void Sample::setWireFrame()
+{
+	static bool isWire = false;
+	isWire = !isWire;
+	if (isWire)
+	{
+		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Wireframe;
+	}
+	else
+	{
+		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Default;
+	}
+}
+
+void Sample::setBackColor(float color[4])
+{
+	mBackColor = XMFLOAT4(color);
+}
+
+void Sample::setSkyBox()
+{
+	misSkybox = !misSkybox;
+}
+
 bool Sample::Init()
 {
 	LightStorage * light = LightStorage::getLight();
 
-	Light l0;
+	std::unique_ptr<LightProperty> l0 = std::make_unique<LightProperty>();
 
-	XMStoreFloat3(&l0.Direction, XMVector3Normalize(-XMVectorSplatOne()));
-	l0.Strength = XMFLOAT3(0.9f, 0.9f, 0.9f);
+	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSplatOne()));
+	l0->light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+	l0->light.Strength = XMFLOAT3(0.9f, 0.9f, 0.9f);
 
-	Light l1;
-
-	XMStoreFloat3(&l1.Direction, XMVector3Normalize(-XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f)));
-	l1.Strength = XMFLOAT3(0.4f, 0.4f, 0.4f);
-
-	Light l2;
-
-	XMStoreFloat3(&l2.Direction, XMVector3Normalize(-XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f)));
-	l2.Strength = XMFLOAT3(0.25f, 0.25f, 0.25f);
+	l0->Axis = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+	l0->isRotate = true;
+	l0->isClockwise = true;
 
 	light->AddDirectional(l0);
-	light->AddDirectional(l1);
-	light->AddDirectional(l2);
+
+	//l0 = std::make_unique<LightProperty>();
+	//XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f)));
+	//l0->light.Strength = XMFLOAT3(3.9f, 3.9f, 3.9f);
+
+//	light->AddDirectional(l0);
+
+	//l0 = std::make_unique<LightProperty>();
+	//XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f)));
+	//l0->light.Strength = XMFLOAT3(0.7f, 0.7f, 0.7f);
+
+//	light->AddDirectional(l0);
+
+	//Converter con;
+	//con.ConverttoSBI(L"sw.skn");
+
+	grid.SetProperties(150.0f, 150.0f, 50, 50);
+	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
+
 	steady_clock::time_point bef = steady_clock::now();
-//	mesh.LoadFile(L"ss.SBI", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"sw.sbi", L"..\\..\\data\\tex\\swat\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
-//	mesh.SetWorld(XMMatrixScaling(0.05f, 0.05f, 0.05f));
-	seconds u = duration_cast<seconds>(aft - bef);
+	milliseconds u = duration_cast<milliseconds>(aft - bef);
+	
+	//XMMATRIX T = XMMatrixTranslation(0.0f, 55.0f, 0.0f);
+	//XMMATRIX S = XMMatrixScaling(0.055f, 0.055f, 0.055f);
+	//mesh.SetWorld(S * T);
+
+	mesh.LoadFile(L"sw.clp");
+	//steady_clock::time_point aft0 = steady_clock::now();
+
+	//milliseconds v = duration_cast<milliseconds>(aft0 - aft);
 
 	return true;
 }
 
 bool Sample::Frame()
 {
-//	mesh.Frame();
+	mesh.Frame();
 	return true;
 }
 
 bool Sample::Render()
 {
-//	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
-//	mesh.Render(m_pImmediateContext.Get());
+	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	grid.Render(m_pImmediateContext.Get());
+
+	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	mesh.Render(m_pImmediateContext.Get());
+
+//	mDxObj[DxType::NORMAL]->SetResource(m_pImmediateContext.Get());
+	//mesh.Render(m_pImmediateContext.Get());
 	return true;
-}
-
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR szCmdLine, int nCmdShow)
-{
-	try
-	{
-		Sample sd(hInstance, 800, 600, L"FirstWindow");
-
-		if (!sd.Initialize())
-			return 0;
-
-		return sd.Run();
-	}
-	catch (DxException& e)
-	{
-		MessageBox(nullptr, e.ToString().c_str(), L"HR Failed", MB_OK);
-		return 0;
-	}
 }

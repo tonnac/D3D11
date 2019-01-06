@@ -64,13 +64,20 @@ BOOL CreateDialog_::OnInitDialog()
 
 void CreateDialog_::OnBnClickedButton1()
 {
-	CString colorInfo;
 	CColorDialog dlg;
 	if (dlg.DoModal() == IDOK)
 	{
+		CMToolApp* app = (CMToolApp*)AfxGetApp();
+
 		COLORREF color = dlg.GetColor();
-		colorInfo.Format(L"%u, %u, %u", GetRValue(color), GetGValue(color), GetBValue(color));
-		AfxMessageBox(colorInfo);
+
+		float r = (float)GetRValue(color) / 255;
+		float g = (float)GetGValue(color) / 255;
+		float b = (float)GetBValue(color) / 255;
+
+		DirectX::XMFLOAT4 Color = DirectX::XMFLOAT4(r, g, b, 1.0f);
+
+		app->mTool->setBackColor(&Color.x);
 	}
 
 

@@ -29,6 +29,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
 	ON_COMMAND(ID_TOOL_MTOOL, &CMainFrame::OnToolMtool)
 	ON_COMMAND(ID_TOOL_MTOOL1, &CMainFrame::SavaMap)
+	ON_COMMAND(ID_SKY_BOX, &CMainFrame::OnSkyBox)
+	ON_UPDATE_COMMAND_UI(ID_SKY_BOX, &CMainFrame::OnUpdateSkyBox)
+	ON_COMMAND(ID_BACK_COLOR, &CMainFrame::OnBackColor)
+	ON_UPDATE_COMMAND_UI(ID_BACK_COLOR, &CMainFrame::OnUpdateBackColor)
+	ON_COMMAND(ID_WIREFRAME, &CMainFrame::OnWireframe)
+	ON_UPDATE_COMMAND_UI(ID_WIREFRAME, &CMainFrame::OnUpdateWireframe)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -148,6 +154,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLACK);
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
 	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
+	lstBasicCommands.AddTail(ID_TOOL_MTOOL);
+	lstBasicCommands.AddTail(ID_TOOL_MTOOL1);
+	lstBasicCommands.AddTail(ID_WIREFRAME);
+	lstBasicCommands.AddTail(ID_SKY_BOX);
+	lstBasicCommands.AddTail(ID_BACK_COLOR);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
@@ -347,4 +358,67 @@ void CMainFrame::SavaMap()
 	}
 	mSaveMap.ShowWindow(SW_SHOW);
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnSkyBox()
+{
+	CMToolApp* app = (CMToolApp*)AfxGetApp();
+	app->mTool->setSkyBox();
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnUpdateSkyBox(CCmdUI *pCmdUI)
+{
+	isSkyBox = !isSkyBox;
+	pCmdUI->SetCheck(isSkyBox);
+	// TODO: 여기에 명령 업데이트 UI 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnBackColor()
+{
+	CColorDialog dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		CMToolApp* app = (CMToolApp*)AfxGetApp();
+
+		COLORREF color = dlg.GetColor();
+
+		float r = (float)GetRValue(color) / 255;
+		float g = (float)GetGValue(color) / 255;
+		float b = (float)GetBValue(color) / 255;
+
+		DirectX::XMFLOAT4 Color = DirectX::XMFLOAT4(r, g, b, 1.0f);
+
+		app->mTool->setBackColor(&Color.x);
+	}
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnUpdateBackColor(CCmdUI *pCmdUI)
+{
+	pCmdUI->Enable(!isSkyBox);
+	// TODO: 여기에 명령 업데이트 UI 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnWireframe()
+{
+	CMToolApp* app = (CMToolApp*)AfxGetApp();
+	app->mTool->setWireFrame();
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+}
+
+
+void CMainFrame::OnUpdateWireframe(CCmdUI *pCmdUI)
+{
+	static bool isWire = false;
+	isWire = !isWire;
+
+	pCmdUI->SetCheck(isWire);
+
+	// TODO: 여기에 명령 업데이트 UI 처리기 코드를 추가합니다.
 }

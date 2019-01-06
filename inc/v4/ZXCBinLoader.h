@@ -11,13 +11,13 @@ public:
 		std::vector<DWORD>& indices,
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
-		std::vector<MeshNode>& nodes)
+		std::vector<MeshNode>& nodes,
+		SkinnedData * skinInfo = nullptr)
 	{
 		std::ifstream fin(FileName.c_str(), std::ios::binary);
 
 		if (!fin.is_open()) return false;
 
-		SceneInfo scene;
 		time_t saveTime;
 		std::wstring ExporterVersion;
 		std::array<UINT, 5> CompositeNum;
@@ -43,12 +43,36 @@ public:
 		LoadSubsets(fin, subsets);
 		LoadVertices(fin, vertices);
 		LoadIndices(fin, indices);
+		if (skinInfo != nullptr)
+			BuildDefaultAnimaions(skinInfo, nodes);
 
 		return true;
 	}
 
+
+public:
+	template<typename X>
+	static void ReadBinary(std::ifstream& fin, X& dest, UINT size = sizeof(X))
+	{
+		fin.read(reinterpret_cast<char*>(&dest), size);
+	}
+
+	template<typename X>
+	static void ReadBinary(std::ifstream& fin, X* dest, UINT size = sizeof(X))
+	{
+		LPVOID ptr = (LPVOID)dest;
+		fin.read(reinterpret_cast<char*>(ptr), size);
+	}
+
+	static void ReadString(std::ifstream& fin, std::wstring& str)
+	{
+		int size;
+		ReadBinary(fin, size);
+		str.resize(size);
+		ReadBinary(fin, str.data(), sizeof(wchar_t) * size);
+	}
+
 private:
-	void LoadScene(std::ifstream& fin, SceneInfo& scene);
 	void LoadMaterials(std::ifstream& fin, std::vector<ZXCSMaterial>& materials);
 	void LoadNodes(std::ifstream&fin, std::vector<MeshNode>& nodes);
 	void LoadSubsets(std::ifstream&fin, std::vector<Subset>& subsets);
@@ -60,27 +84,6 @@ private:
 	void LoadIndices(std::ifstream&fin, std::vector<DWORD>& indices);
 
 private:
-	template<typename X>
-	void ReadBinary(std::ifstream& fin, X& dest, UINT size = sizeof(X))
-	{
-		fin.read(reinterpret_cast<char*>(&dest), size);
-	}
-
-	template<typename X>
-	void ReadBinary(std::ifstream& fin, X* dest, UINT size = sizeof(X))
-	{
-		LPVOID ptr = (LPVOID)dest;
-		fin.read(reinterpret_cast<char*>(ptr), size);
-	}
-
-	void ReadString(std::ifstream& fin, std::wstring& str)
-	{
-		int size;
-		ReadBinary(fin, size);
-		str.resize(size);
-		ReadBinary(fin, str.data(), sizeof(wchar_t) * size);
-	}
-
 	void ReadPair(std::ifstream& fin, std::pair<int, std::wstring> pair)
 	{
 		ReadBinary(fin, pair.first);

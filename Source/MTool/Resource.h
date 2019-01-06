@@ -47,13 +47,17 @@
 #define ID_CREATE_CH                    32776
 #define ID_LOAD_CH                      32777
 #define ID_SAVE_CH                      32778
+#define ID_SKY_BOX                      32782
+#define ID_BACK_COLOR                   32783
+#define ID_32784                        32784
+#define ID_WIREFRAME                    32785
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32782
+#define _APS_NEXT_COMMAND_VALUE         32790
 #define _APS_NEXT_CONTROL_VALUE         1007
 #define _APS_NEXT_SYMED_VALUE           314
 #endif

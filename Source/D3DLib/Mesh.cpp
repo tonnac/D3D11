@@ -23,11 +23,18 @@ bool Mesh::LoadFile(const std::tstring & filename, const std::tstring& texfilepa
 	{
 		return LoadZXCBin(filename, texfilepath);
 	}
-	else
+	else if(Ext == L"SBI")
 	{
 		return LoadSkinBin(filename, texfilepath);
 	}
-	return false;
+	else if (Ext == L"CLP")
+	{
+		return LoadClip(filename, texfilepath);
+	}
+	else
+	{
+		return LoadClipBin(filename, texfilepath);
+	}
 }
 
 bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath)
@@ -60,7 +67,7 @@ bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepat
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 
-	if (!loader.LoadSkin(filename, vertices, indices, subsets, materials, nodes, skininfo))
+	if (!loader.LoadSkin(filename, vertices, indices, subsets, materials, nodes, &skininfo))
 		return false;
 
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
@@ -89,6 +96,7 @@ bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfil
 	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
+
 	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes))
 		return false;
 
@@ -108,17 +116,66 @@ bool Mesh::LoadSkinBin(const std::tstring & filename, const std::tstring & texfi
 	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
-	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes))
+	SkinnedData skininfo;
+
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, &skininfo))
 		return false;
 
+	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
+	mSkinInfo = std::make_unique<SkinnedData>();
+
+	mSkinnedInst->FinalTransforms.resize(nodes.size());
+	*(mSkinInfo.get()) = skininfo;
+	mSkinnedInst->SkinnedInfo = mSkinInfo.get();
+	mSkinnedInst->ClipName = L"default";
+
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
 
 	return true;
 }
 
 bool Mesh::LoadClip(const std::tstring & filename, const std::tstring & texfilepath)
 {
-	return false;
+	std::unordered_map<std::wstring, AnimationClip> clips;
+
+	ClipLoader loader;
+	loader.LoadClip(filename, (UINT)mNodeList.size(), clips);
+
+	std::wstring name;
+	for (auto& x : clips)
+	{
+		name = x.first;
+		
+		auto& p = std::make_pair(x.first, x.second);
+		mSkinInfo->AddAnimation(p);
+	}
+
+	mSkinnedInst->setClipName(name);
+
+	return true;
+}
+
+bool Mesh::LoadClipBin(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	std::unordered_map<std::wstring, AnimationClip> clips;
+
+	ClipBinLoader loader;
+	loader.LoadClip(filename, (UINT)mNodeList.size(), clips);
+
+	std::wstring name;
+	for (auto& x : clips)
+	{
+		name = x.first;
+
+		auto& p = std::make_pair(x.first, x.second);
+		mSkinInfo->AddAnimation(p);
+	}
+
+	mSkinnedInst->setClipName(name);
+
+	return true;
 }
 
 void Mesh::Initialize(

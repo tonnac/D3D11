@@ -115,10 +115,19 @@ public:
 	GridShape() = default;
 	~GridShape() = default;
 
+public:
+	void SetProperties(float width, float height, std::uint32_t rowNum, std::uint32_t colNum);
+
 protected:
 	virtual void BuildGeometry()override;
 	virtual void BuildRenderItem(const std::tstring& textureFile)override;
 	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)override;
+
+private:
+	float mWidth = 0.0f;
+	float mHeight = 0.0f;
+	std::uint32_t mRowNum = 0;
+	std::uint32_t mColNum = 0;
 };
 
 class SphereShape : public Shape

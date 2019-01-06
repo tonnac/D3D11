@@ -26,7 +26,7 @@ cbuffer cbPass : register(b0)
 cbuffer cbPerObj : register(b1)
 {
 	float4x4 gWorld;
-	float4x4 gWoridInv;
+	float4x4 gWorldInvT;
 	float4x4 gTexTransform;
 }
 

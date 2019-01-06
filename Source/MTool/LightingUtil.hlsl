@@ -13,8 +13,6 @@ struct Light
 struct Material
 {
 	float4 Diffuse;
-	float4 Specular;
-	float4 Ambient;
 	float3 FresnelR0;
 	float Shininess;
 };
@@ -42,7 +40,7 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
 	float3 fresnelFactor = SchlickFresnel(mat.FresnelR0, halfVec, lightVec);
 
-	float3 specAlbedo = fresnelFactor * roughnessFactor * mat.Specular.rgb;
+	float3 specAlbedo = fresnelFactor * roughnessFactor;
 
 	specAlbedo = specAlbedo / (specAlbedo + 1.0f);
 
@@ -113,20 +111,17 @@ float3 ComputeLighting(Light gLights[MaxLights], Material mat,
 
 	for (i = 0; i < DirectNum; ++i)
 	{
-		ambient = mat.Ambient.rgb * gLights[i].Strength;
-		result += shadowFactor[i] * ComputeDirectionalLight(gLights[i], mat, normal, toEye) + ambient;
+		result += shadowFactor[i] * ComputeDirectionalLight(gLights[i], mat, normal, toEye);
 	}
 
 	for (i = DirectNum; i < DirectNum + PointNum; ++i)
 	{
-		ambient = mat.Ambient.rgb * gLights[i].Strength;
-		result += ComputePointLight(gLights[i], mat, pos, normal, toEye) + ambient;
+		result += ComputePointLight(gLights[i], mat, pos, normal, toEye);
 	}
 
 	for (i = DirectNum + PointNum; i < DirectNum + PointNum + SpotNum; ++i)
 	{
-		ambient = mat.Ambient.rgb * gLights[i].Strength;
-		result += ComputeSpotLight(gLights[i], mat, pos, normal, toEye) + ambient;
+		result += ComputeSpotLight(gLights[i], mat, pos, normal, toEye);
 	}
 
 	return result;

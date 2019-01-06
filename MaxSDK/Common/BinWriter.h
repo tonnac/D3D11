@@ -52,10 +52,6 @@ public:
 	}
 
 protected:
-	void SaveScene(std::ofstream& os)
-	{
-		BinaryIO::WriteBinary(os, mSceneInfo);
-	}
 	void SaveMaterial(std::ofstream& os)
 	{
 		for (UINT i = 0; i < (UINT)mMaterial.size(); ++i)
