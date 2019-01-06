@@ -58,17 +58,17 @@ bool Sample::Init()
 
 	light->AddDirectional(l0);
 
-	//l0 = std::make_unique<LightProperty>();
-	//XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f)));
-	//l0->light.Strength = XMFLOAT3(3.9f, 3.9f, 3.9f);
+	l0 = std::make_unique<LightProperty>();
+	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f)));
+	l0->light.Strength = XMFLOAT3(0.65f, 0.65f, 0.65f);
 
-//	light->AddDirectional(l0);
+	light->AddDirectional(l0);
 
-	//l0 = std::make_unique<LightProperty>();
-	//XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f)));
-	//l0->light.Strength = XMFLOAT3(0.7f, 0.7f, 0.7f);
+	l0 = std::make_unique<LightProperty>();
+	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f)));
+	l0->light.Strength = XMFLOAT3(0.4f, 0.4f, 0.4f);
 
-//	light->AddDirectional(l0);
+	light->AddDirectional(l0);
 
 	//Converter con;
 	//con.ConverttoSBI(L"sw.skn");
@@ -77,15 +77,15 @@ bool Sample::Init()
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"sw.sbi", L"..\\..\\data\\tex\\swat\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"death.sbi", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
 	milliseconds u = duration_cast<milliseconds>(aft - bef);
 	
-	//XMMATRIX T = XMMatrixTranslation(0.0f, 55.0f, 0.0f);
-	//XMMATRIX S = XMMatrixScaling(0.055f, 0.055f, 0.055f);
-	//mesh.SetWorld(S * T);
+	XMMATRIX T = XMMatrixTranslation(0.0f, 55.0f, 0.0f);
+	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
+	mesh.SetWorld(S * T);
 
-	mesh.LoadFile(L"sw.clp");
+//	mesh.LoadFile(L"death.clb");
 	//steady_clock::time_point aft0 = steady_clock::now();
 
 	//milliseconds v = duration_cast<milliseconds>(aft0 - aft);
@@ -107,7 +107,7 @@ bool Sample::Render()
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
 
-//	mDxObj[DxType::NORMAL]->SetResource(m_pImmediateContext.Get());
+	//mDxObj[DxType::NORMAL]->SetResource(m_pImmediateContext.Get());
 	//mesh.Render(m_pImmediateContext.Get());
 	return true;
 }

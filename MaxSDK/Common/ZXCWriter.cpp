@@ -195,6 +195,7 @@ void ZXCWriter::SaveIndices(std::wofstream & os)
 }
 
 
+
 void ZXCWriter::SaveVertices(std::wofstream & os)
 {
 	std::wstring vertexHeader = L"\n**********Vertices**********";

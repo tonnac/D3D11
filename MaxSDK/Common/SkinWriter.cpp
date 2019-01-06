@@ -8,8 +8,9 @@ SkinWriter::SkinWriter(
 	const std::vector<OutputObject>& object,
 	const std::vector<OutSkinned>& vertices,
 	const std::vector<std::uint32_t>& indices,
-	const std::vector<Subset>& subsets)
-	: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
+	const std::vector<Subset>& subsets,
+	const std::vector<D3D_MATRIX>& offsets)
+	: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices), mOffsets(offsets)
 {
 	mNumVertices = (UINT)vertices.size();
 }
@@ -42,6 +43,7 @@ bool SkinWriter::Savefile()
 	SaveSubset(os);
 	SaveVertices(os);
 	SaveIndices(os);
+//	SaveOffsets(os);
 
 	return true;
 }
@@ -191,6 +193,28 @@ void SkinWriter::SaveIndices(std::wofstream & os)
 
 		std::wstring indexInfo = std::to_wstring(i0) + L" " + std::to_wstring(i1) + L" " + std::to_wstring(i2);
 		os << indexInfo << std::endl;
+	}
+}
+
+
+void SkinWriter::SaveOffsets(std::wofstream & os)
+{
+	std::wstring helperHead = L"\n**********Offsets**********";
+
+	os << helperHead;
+
+	UINT i = 0;
+
+	for (const D3D_MATRIX&x : mOffsets)
+	{
+		std::wstring Nodesinfo =
+			L"\n#Node_TM" + std::to_wstring(i) + L"\n\t#TM_ROW0 " + std::to_wstring(x.m[0][0]) + L"  " + std::to_wstring(x.m[0][1]) + L"  " + std::to_wstring(x.m[0][2]) + L"  " + std::to_wstring(x.m[0][3]) +
+			L"\n\t#TM_ROW1 " + std::to_wstring(x.m[1][0]) + L"  " + std::to_wstring(x.m[1][1]) + L"  " + std::to_wstring(x.m[1][2]) + L"  " + std::to_wstring(x.m[1][3]) +
+			L"\n\t#TM_ROW2 " + std::to_wstring(x.m[2][0]) + L"  " + std::to_wstring(x.m[2][1]) + L"  " + std::to_wstring(x.m[2][2]) + L"  " + std::to_wstring(x.m[2][3]) +
+			L"\n\t#TM_ROW3 " + std::to_wstring(x.m[3][0]) + L"  " + std::to_wstring(x.m[3][1]) + L"  " + std::to_wstring(x.m[3][2]) + L"  " + std::to_wstring(x.m[3][3]);
+
+		os << Nodesinfo << std::endl;
+		++i;
 	}
 }
 

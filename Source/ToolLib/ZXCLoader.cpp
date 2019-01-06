@@ -277,6 +277,22 @@ void ZXCLoader::ReadSubsetTable(std::wifstream & fp, UINT numSubsets, std::vecto
 	}
 }
 
+void ZXCLoader::ReadOffsets(std::wifstream & fp, std::vector<DirectX::XMFLOAT4X4>& boneOffsets)
+{
+	std::wstring ignore;
+
+	fp >> ignore;
+
+	for (UINT i = 0; i < (UINT)boneOffsets.size(); ++i)
+	{
+		fp >> ignore;
+		fp >> ignore >> boneOffsets[i]._11 >> boneOffsets[i]._12 >> boneOffsets[i]._13 >> boneOffsets[i]._14;
+		fp >> ignore >> boneOffsets[i]._21 >> boneOffsets[i]._22 >> boneOffsets[i]._23 >> boneOffsets[i]._24;
+		fp >> ignore >> boneOffsets[i]._31 >> boneOffsets[i]._32 >> boneOffsets[i]._33 >> boneOffsets[i]._34;
+		fp >> ignore >> boneOffsets[i]._41 >> boneOffsets[i]._42 >> boneOffsets[i]._43 >> boneOffsets[i]._44;
+	}
+}
+
 void ZXCLoader::BuildInitPos(std::vector<DirectX::XMFLOAT4X4>& initPos, const std::vector<MeshNode>& meshNodes)
 {
 	for (UINT i = 0; i < (UINT)meshNodes.size(); ++i)
@@ -308,10 +324,12 @@ void ZXCLoader::BuildDefaultAnimaions(SkinnedData* skinInfo, std::vector<MeshNod
 
 	boneHierarchy.resize((UINT)nodes.size());
 	initPos.resize((UINT)nodes.size());
+	boneOffsets.resize((UINT)nodes.size());
 	
 	animations[L"default"] = clip;
 	BuildInitPos(initPos, nodes);
 
+//	ReadOffsets(fp, boneOffsets);
 	SetBoneOffsets(boneOffsets, nodes);
 	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
 	{

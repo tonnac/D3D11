@@ -130,13 +130,13 @@ void BaseExporter::BuildOutObjects()
 void BaseExporter::LoadObjects()
 {
 	mNodesLoader = std::make_unique<NodesLoader>(this);
-	mNodesLoader->LoadObject(mMaxObject, mObjects, mNodeIndex);
+	mNodesLoader->LoadObject(mMaxObject, mObjects, mOffsets, mNodeIndex);
 }
 
 void BaseExporter::CreateWriter()
 {
 	if (mIsBinary)
-		mWriter = std::make_unique<BinWriter<>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<BinWriter<>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets, mOffsets);
 	else
 		mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
 }

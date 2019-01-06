@@ -55,6 +55,8 @@ public:
 		std::vector<DirectX::XMFLOAT4X4>& initpos,
 		std::unordered_map<std::wstring, AnimationClip>& animations);
 
+	void SetOffsets(std::vector<DirectX::XMFLOAT4X4>& offsets);
+
 	void AddAnimation(
 		std::pair<std::wstring, AnimationClip>& animations);
 

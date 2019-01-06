@@ -88,6 +88,8 @@ protected:
 	void ReadIndices(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::vector<Subset>& subsets);
 
+	void ReadOffsets(std::wifstream& fp, std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
+
 	void BuildDefaultAnimaions(SkinnedData * skininfo, std::vector<MeshNode>& nodes);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes);
 	void BuildInitPos(std::vector<DirectX::XMFLOAT4X4>& initPos, const std::vector<MeshNode>& meshNodes);

@@ -44,6 +44,7 @@ protected:
 
 	std::vector<std::unique_ptr<ZXCObject>> mObjects;
 	std::unordered_map<std::wstring, size_t> mNodeIndex;
+	std::vector<D3D_MATRIX> mOffsets;
 
 	std::wstring mVersion;
 	std::wstring mFilename;

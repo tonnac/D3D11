@@ -11,8 +11,9 @@ public:
 		const std::vector<OutputObject>& object,
 		const std::vector<X>& vertices,
 		const std::vector<std::uint32_t>& indices,
-		const std::vector<Subset>& subsets)
-		: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
+		const std::vector<Subset>& subsets,
+		const std::vector<D3D_MATRIX>& offsets)
+		: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices), mOffsets(offsets)
 	{
 		mNumVertices = (UINT)vertices.size();
 	}
@@ -82,4 +83,5 @@ protected:
 
 private:
 	const std::vector<X>& mVertices;
+	const std::vector<D3D_MATRIX>& mOffsets;
 };

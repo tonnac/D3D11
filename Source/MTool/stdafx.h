@@ -42,12 +42,10 @@
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
 #include <afxcontrolbars.h>
-
-
-
-
-
-
+#include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
+#include <afxcontrolbars.h>
 
 
 
@@ -63,3 +61,52 @@
 #endif
 
 
+class MFCUtil
+{
+public:
+	static void AllowOnlyRealNum(CEdit *cedit, bool minus = true)
+	{
+		//// [ 1. initialize value ]
+		CString cstrText;
+		cedit->GetWindowText(cstrText);
+		TCHAR chText[100] = { 0, };
+		_tcscpy_s(chText, 100, cstrText);
+		int count = (int)_tcslen(chText);
+
+		//// [ 2. remove second point ]
+		bool pointChecker = false;
+		for (int i = 0; i < count; i++) {
+			if (!pointChecker && chText[i] == '.') pointChecker = true;
+			else if (pointChecker && chText[i] == '.') chText[i] = NULL;
+		}
+
+		//// [ 3. remove middle of minuse ]
+		int startIdx = (minus) ? 1 : 0;
+		for (int i = startIdx; i < count; i++) {
+			if (chText[i] == '-') chText[i] = NULL;
+		}
+
+		//// [ 4. remove character ]
+		for (int i = 0; i < count; i++) {
+			if (!(chText[i] >= 48 && chText[i] <= 57)) {
+				if (chText[i] != '.' && chText[i] != '-') chText[i] = NULL;
+			}
+		}
+
+		//// [ 5. Set text ]
+		cedit->SetWindowText(chText);
+
+		//// [ 6. Move cursor to end ]
+		cedit->SetSel(0, -1);
+		cedit->SetSel(-1, -1);
+	}
+
+	static float getFloat(HWND hWnd, int nID)
+	{
+		float retV;
+		TCHAR buf[256] = { 0, };
+		GetDlgItemText(hWnd, nID, buf, 256);
+		retV = (float)_ttof(buf);
+		return retV;
+	}
+};

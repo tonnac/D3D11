@@ -6,15 +6,15 @@
 void SkinExporter::LoadObjects()
 {
 	mNodesLoader = std::make_unique<NodesLoader>(this, true);
-	mNodesLoader->LoadObject(mMaxObject, mObjects, mNodeIndex);
+	mNodesLoader->LoadObject(mMaxObject, mObjects, mOffsets, mNodeIndex);
 }
 
 void SkinExporter::CreateWriter()
 {
 	if(mIsBinary)
-		mWriter = std::make_unique<BinWriter<OutSkinned>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<BinWriter<OutSkinned>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets, mOffsets);
 	else
-		mWriter = std::make_unique<SkinWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<SkinWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets, mOffsets);
 }
        
 void SkinExporter::BuildSubset()

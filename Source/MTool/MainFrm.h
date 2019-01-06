@@ -7,6 +7,7 @@
 #include "CreateDD.h"
 #include "ToolPane.h"
 #include "EffectPant.h"
+#include "LightPane.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -23,6 +24,7 @@ public:
 	CreateDD mSaveMap;
 	ToolPane mToolpane;
 	EffectPant mEffectpane;
+	LightPane mLightpane;
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

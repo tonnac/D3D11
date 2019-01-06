@@ -2,9 +2,11 @@
 
 void NodesLoader::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	std::vector<std::unique_ptr<ZXCObject>>& ObjectList,
+	std::vector<D3D_MATRIX>& offsets,
 	std::unordered_map<std::wstring, size_t>& nodeIndex)
 {
 	ObjectList.resize(nodeIndex.size());
+	offsets.resize(nodeIndex.size());
 
 	for (auto& x : nodes)
 	{
@@ -12,6 +14,9 @@ void NodesLoader::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 		size_t objIndex = nodeIndex[x.first];
 		maxObj->mNodeName = std::make_pair(x.first, objIndex);
 		INode* parent = x.second->GetParentNode();
+
+		// InputOffsets
+		InputOffsets(x.second, offsets[objIndex]);
 
 		maxObj->mParentName = std::make_pair(L"NONE", -1);
 		if (parent != nullptr && (!parent->IsRootNode()))
@@ -268,6 +273,8 @@ void NodesLoader::LoadNormal(Mesh & mesh, const Matrix3 & tm, X* t, int i, std::
 {
 	mesh.buildNormals();
 
+	auto p = mesh.faces[i].v[i0];
+
 	int vert = mesh.faces[i].getVert(i0);
 	Point3 vn = GetVertexNormal(mesh, i, mesh.getRVert(vert));
 	MaxUtil::ConvertVector(vn, t->v[0].n);
@@ -342,6 +349,13 @@ int NodesLoader::GetMaterialRef(Mtl * mtl)
 	}
 	return -1;
 }
+
+void NodesLoader::InputOffsets(INode * node, D3D_MATRIX & matrix)
+{
+	Matrix3 oM = Inverse(node->GetNodeTM(mExporter->mInterval.Start()));
+	MaxUtil::ConvertMatrix(oM, matrix);
+}
+
 
 void NodesLoader::LoadBipedInfo(INode * node, std::vector<BipedVertex>& bipedes, const std::wstring& name)
 {

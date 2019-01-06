@@ -178,6 +178,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	mEffectpane.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&mEffectpane);
 
+	mLightpane.CreateEx(NULL, _T("Lightpane"), this, CRect(0, 0, 100, 100),
+		TRUE, 1236,
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
+		WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI);
+
+	mLightpane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&mLightpane);
+
 	return 0;
 }
 

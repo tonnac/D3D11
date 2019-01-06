@@ -23,6 +23,7 @@ public:
 public:
 	void LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 		std::vector<std::unique_ptr<ZXCObject>>& objectlist,
+		std::vector<D3D_MATRIX>& offsets,
 		std::unordered_map<std::wstring, size_t>& nodeIndex);
 private:
 	void LoadMesh(INode* node, ZXCObject* o);
@@ -38,6 +39,8 @@ private:
 	TriObject* GetTriObject(Object* obj, TimeValue t, bool & isDelete);
 	Point3 GetVertexNormal(Mesh& mesh, int faceNo, const RVertex& rv);
 	int GetMaterialRef(Mtl* mtl);
+
+	void InputOffsets(INode* node, D3D_MATRIX& matrix);
 
 private:
 	void LoadBipedInfo(INode* node, std::vector<BipedVertex>& bipedes, const std::wstring& name);

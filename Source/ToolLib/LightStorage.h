@@ -3,8 +3,16 @@
 #include "FrameResource.h"
 #include "Timer.h"
 
+enum class LightType : unsigned char
+{
+	Directional,
+	Point,
+	Spot
+};
+
 struct LightProperty
 {
+	LightType Type = LightType::Directional;
 	bool isClockwise = true;
 	bool isRotate = false;
 	bool isPrimary = false;

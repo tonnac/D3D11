@@ -33,12 +33,51 @@
 #define IDD_DeDlg                       311
 #define IDD_DIALOG2                     312
 #define IDD_EffectForm                  313
+#define IDD_LightForm                   314
+#define IDD_ADD_LIGHT                   319
 #define IDC_RADIO1                      1000
 #define IDC_RADIO2                      1001
 #define IDC_RADIO3                      1002
 #define IDC_EDIT1                       1004
 #define IDC_EDIT2                       1005
 #define IDC_BUTTON1                     1006
+#define IDC_POSCLOCKWISE                1006
+#define IDC_POSRCLOCKWISE               1007
+#define IDC_YPOS                        1008
+#define IDC_ZPOS                        1009
+#define IDC_YPOS2                       1010
+#define IDC_ZPOS2                       1011
+#define IDC_YPOS3                       1012
+#define IDC_ZPOS3                       1013
+#define IDC_YPOS4                       1014
+#define IDC_ZPOS4                       1015
+#define IDC_ZPOS5                       1016
+#define IDC_DIRROTSPEED                 1016
+#define IDC_ZPOS6                       1017
+#define IDC_POSROTSPEED                 1017
+#define IDC_FALL_END                    1018
+#define IDC_SPOTFACTOR                  1019
+#define IDC_COMBO2                      1026
+#define IDC_BUTTON3                     1028
+#define IDC_BUTTON4                     1029
+#define IDC_BUTTON5                     1030
+#define IDC_COMBO1                      1034
+#define IDC_LIGHT_TYPE                  1035
+#define IDC_LIGHT_POS                   1036
+#define IDC_XPOS                        1037
+#define IDC_LIGHT_DIR                   1038
+#define IDC_XPOS2                       1039
+#define IDC_XPOS3                       1040
+#define IDC_DIRROT                      1041
+#define IDC_CHECK2                      1042
+#define IDC_CHECK3                      1043
+#define IDC_XPOS4                       1044
+#define IDC_STATIC11                    1045
+#define IDC_STATIC12                    1046
+#define IDC_LIGHT_FALL                  1047
+#define IDC_FALL_START                  1048
+#define IDC_DIRCLOCKWISE                2000
+#define IDC_DIRRCLOCKWISE               2001
 #define ID_TOOL_MTOOL                   32771
 #define ID_TOOL_MTOOL1                  32772
 #define ID_TOOL_MTOOL2                  32773
@@ -56,9 +95,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        316
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32790
-#define _APS_NEXT_CONTROL_VALUE         1007
-#define _APS_NEXT_SYMED_VALUE           314
+#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_SYMED_VALUE           315
 #endif
 #endif

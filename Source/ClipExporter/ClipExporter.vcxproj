@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\MaxSDK\Common\AnimationExporter.cpp" />
+    <ClCompile Include="..\..\MaxSDK\Common\ClipBinary.cpp" />
     <ClCompile Include="..\..\MaxSDK\Common\ClipExporter.cpp" />
     <ClCompile Include="..\..\MaxSDK\Common\ClipWriter.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -27,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\MaxSDK\Common\AnimationExporter.h" />
+    <ClInclude Include="..\..\MaxSDK\Common\ClipBinary.h" />
     <ClInclude Include="..\..\MaxSDK\Common\ClipExporter.h" />
     <ClInclude Include="..\..\MaxSDK\Common\ClipWriter.h" />
     <ClInclude Include="..\..\MaxSDK\Common\Header.h" />
