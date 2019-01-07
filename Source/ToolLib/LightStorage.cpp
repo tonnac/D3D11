@@ -7,18 +7,18 @@ void LightStorage::UpdateLight(const Timer & gt)
 {
 	for (auto& light : mLights)
 	{
-		if (light->isRotate)
+		if (light->DirRot.isRotate)
 		{
 			float deltaTime;
-			if (light->isClockwise)
+			if (light->DirRot.isClockwise)
 				deltaTime = gt.DeltaTime();
 			else
 				deltaTime = -gt.DeltaTime();
 
-			float Theta = deltaTime * light->RotSpeed;
+			float Theta = deltaTime * light->DirRot.RotSpeed;
 
 			XMVECTOR D = XMLoadFloat3(&light->light.Direction);
-			XMVECTOR Axis = XMLoadFloat3(&light->Axis);
+			XMVECTOR Axis = XMLoadFloat3(&light->DirRot.Axis);
 
 			XMMATRIX R = XMMatrixRotationAxis(Axis, Theta);
 
@@ -26,6 +26,44 @@ void LightStorage::UpdateLight(const Timer & gt)
 
 			XMStoreFloat3(&light->light.Direction, D);
 		}
+
+		if (light->PosRot.isRotate)
+		{
+			float deltaTime;
+			if (light->PosRot.isClockwise)
+				deltaTime = gt.DeltaTime();
+			else
+				deltaTime = -gt.DeltaTime();
+
+			float Theta = deltaTime * light->PosRot.RotSpeed;
+
+			XMVECTOR P = XMLoadFloat3(&light->light.Position);
+			XMVECTOR Axis = XMLoadFloat3(&light->PosRot.Axis);
+
+			XMMATRIX R = XMMatrixRotationAxis(Axis, Theta);
+
+			P = XMVector3Transform(P, R);
+
+			XMStoreFloat3(&light->light.Position, P);
+		}
+	}
+}
+
+void LightStorage::AddLight(std::unique_ptr<LightProperty>& light)
+{
+	switch (light->Type)
+	{
+	case LightType::Directional:
+		AddDirectional(light);
+		break;
+	case LightType::Point:
+		AddPoint(light);
+		break;
+	case LightType::Spot:
+		AddSpot(light);
+		break;
+	default:
+		break;
 	}
 }
 
@@ -108,4 +146,9 @@ void LightStorage::CopySpot(Light* lights)
 		const Light& light = *(*p);
 		CopyMemory(&lights[i++], &light, sizeof(Light));
 	}
+}
+
+LightVec * LightStorage::GetLightVec()
+{
+	return &mLights;
 }

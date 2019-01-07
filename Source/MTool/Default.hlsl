@@ -60,8 +60,8 @@ VertexOut VS(VertexIn vIn)
 	vOut.PosW = vPosW.xyz;
 	vOut.p = mul(vPosW, gViewProj);
 	vOut.c = vIn.c;
-	vOut.n = mul(vIn.n, (float3x3)gWorld);
-	vOut.TangentW = mul(vIn.TangentL, (float3x3)gWorld);
+	vOut.n = mul(vIn.n, (float3x3)gWorldInvT);
+	vOut.TangentW = mul(vIn.TangentL, (float3x3)gWorldInvT);
 
 	float4 texC = mul(float4(vIn.t, 0.0f, 1.0f), gTexTransform);
 	texC = mul(texC, gMatTransform);
@@ -75,20 +75,19 @@ float4 PS(VertexOut vOut) : SV_Target
 	float4 texColor = vOut.c;
 
 	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
-
 	vOut.n = normalize(vOut.n);
 
 	float4 normalMapSample = gNormalMap.Sample(g_samAnisotropicWrap, vOut.t);
 	float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample.rgb, vOut.n, vOut.TangentW);
 
-	bumpedNormalW = vOut.n;
+	//bumpedNormalW = vOut.n;
 
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
 	const float shininess = 1.0f - gRoughness;
-	Material mat = { texColor, gFresnelR0, shininess };
+	Material mat = { texColor, gDiffuse, gSpecular, gFresnelR0, shininess };
 	float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
-	float3 ambient = ambientLight * texColor.rgb;
+	float3 ambient = gAmbient.rgb * ambientLight * texColor.rgb;
 
 	float3 litColor = ComputeLighting(gLights, mat, vOut.PosW, bumpedNormalW, toEyeW, shadowFactor, gDirctionNum, gPointNum, gSpotNum);
 

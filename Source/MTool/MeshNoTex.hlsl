@@ -29,7 +29,7 @@ float4 PS(VertexOut vOut) : SV_Target
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
 	const float shininess = 1.0f - gRoughness;
-	Material mat = { texColor, gFresnelR0, shininess };
+	Material mat = { texColor, gDiffuse, gSpecular, gFresnelR0, shininess };
 	float3 shadowFactor = 1.0f;
 
 	float3 litColor = ComputeLighting(gLights, mat, vOut.PosW, vOut.n, toEyeW, shadowFactor, gDirctionNum, gPointNum, gSpotNum);

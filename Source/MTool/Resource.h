@@ -57,7 +57,10 @@
 #define IDC_POSROTSPEED                 1017
 #define IDC_FALL_END                    1018
 #define IDC_SPOTFACTOR                  1019
+#define IDC_GSTRENGTH                   1020
+#define IDC_BSTRENGTH                   1021
 #define IDC_COMBO2                      1026
+#define IDC_LightList                   1026
 #define IDC_BUTTON3                     1028
 #define IDC_BUTTON4                     1029
 #define IDC_BUTTON5                     1030
@@ -74,7 +77,7 @@
 #define IDC_XPOS4                       1044
 #define IDC_STATIC11                    1045
 #define IDC_STATIC12                    1046
-#define IDC_LIGHT_FALL                  1047
+#define IDC_RSTRENGTH                   1047
 #define IDC_FALL_START                  1048
 #define IDC_DIRCLOCKWISE                2000
 #define IDC_DIRRCLOCKWISE               2001

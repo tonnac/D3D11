@@ -11,6 +11,7 @@ public:
 	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath = std::tstring(), ID3D11Device * device = nullptr);
 
 	bool Frame();
+	bool DebugRender(ID3D11DeviceContext* context);
 	bool Render(ID3D11DeviceContext* context);
 	void SetWorld(DirectX::FXMMATRIX world);
 	void SetWorld(const DirectX::XMFLOAT4X4& world);

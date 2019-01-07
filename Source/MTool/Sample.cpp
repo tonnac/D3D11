@@ -44,46 +44,27 @@ void Sample::setSkyBox()
 
 bool Sample::Init()
 {
-	LightStorage * light = LightStorage::getLight();
-
-	std::unique_ptr<LightProperty> l0 = std::make_unique<LightProperty>();
-
-	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSplatOne()));
-	l0->light.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
-	l0->light.Strength = XMFLOAT3(0.9f, 0.9f, 0.9f);
-
-	l0->Axis = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
-	l0->isRotate = true;
-	l0->isClockwise = true;
-
-	light->AddDirectional(l0);
-
-	l0 = std::make_unique<LightProperty>();
-	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(1.0f, 1.0f, -1.0f, 0.0f)));
-	l0->light.Strength = XMFLOAT3(0.65f, 0.65f, 0.65f);
-
-	light->AddDirectional(l0);
-
-	l0 = std::make_unique<LightProperty>();
-	XMStoreFloat3(&l0->light.Direction, XMVector3Normalize(-XMVectorSet(-1.0f, 1.0f, -1.0f, 0.0f)));
-	l0->light.Strength = XMFLOAT3(0.4f, 0.4f, 0.4f);
-
-	light->AddDirectional(l0);
-
-	//Converter con;
-	//con.ConverttoSBI(L"sw.skn");
+//	Converter con;
+//	con.ConverttoSBI(L"sylbanas.skn");
 
 	grid.SetProperties(150.0f, 150.0f, 50, 50);
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"death.sbi", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"sylbanas.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
+	mesh0.LoadFile(L"sphere.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
-	milliseconds u = duration_cast<milliseconds>(aft - bef);
+	seconds u = duration_cast<seconds>(aft - bef);
 	
-	XMMATRIX T = XMMatrixTranslation(0.0f, 55.0f, 0.0f);
-	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
+	//XMMATRIX T = XMMatrixTranslation(0.0f, 50.0f, 0.0f);
+	//XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
+
+	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	XMMATRIX S = XMMatrixScaling(0.35f, 0.35f, 0.35f);
 	mesh.SetWorld(S * T);
+
+	T = XMMatrixTranslation(50.0f, 0.0f, 0.0f);
+	mesh0.SetWorld(T);
 
 //	mesh.LoadFile(L"death.clb");
 	//steady_clock::time_point aft0 = steady_clock::now();
@@ -96,6 +77,7 @@ bool Sample::Init()
 bool Sample::Frame()
 {
 	mesh.Frame();
+	mesh0.Frame();
 	return true;
 }
 
@@ -106,6 +88,10 @@ bool Sample::Render()
 
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
+	mesh0.Render(m_pImmediateContext.Get());
+
+	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	//mesh.DebugRender(m_pImmediateContext.Get());
 
 	//mDxObj[DxType::NORMAL]->SetResource(m_pImmediateContext.Get());
 	//mesh.Render(m_pImmediateContext.Get());

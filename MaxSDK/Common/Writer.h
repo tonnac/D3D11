@@ -23,7 +23,7 @@ protected:
 	const std::wstring& mFilename;
 
 	const std::vector<ZXCMaterial>& mMaterial;
-	const std::vector<Subset> mSubsets;
+	const std::vector<Subset>& mSubsets;
 	const std::vector<OutputObject>& mObjects;
 	const std::vector<std::uint32_t>& mIndices;
 
