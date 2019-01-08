@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="glowmapshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="glowshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="graphicsclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="horizontalblurshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="inputclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="orthowindowclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="rendertextureclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="systemclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="textureclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="textureshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="verticalblurshaderclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="bitmapclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="cameraclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="d3dclass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="glowmapshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="glowshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="graphicsclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="horizontalblurshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="inputclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="orthowindowclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="rendertextureclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="systemclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="textureclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="textureshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="verticalblurshaderclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="bitmapclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cameraclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dclass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="engine\glow.ps" />
+    <None Include="engine\glow.vs" />
+    <None Include="engine\glowmap.ps" />
+    <None Include="engine\glowmap.vs" />
+    <None Include="engine\horizontalblur.ps" />
+    <None Include="engine\horizontalblur.vs" />
+    <None Include="engine\texture.ps" />
+    <None Include="engine\texture.vs" />
+    <None Include="engine\verticalblur.ps" />
+    <None Include="engine\verticalblur.vs" />
+  </ItemGroup>
+</Project>

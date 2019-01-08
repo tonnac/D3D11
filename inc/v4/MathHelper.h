@@ -59,6 +59,8 @@ public:
 		return I;
 	}
 
+	static DirectX::XMMATRIX InverseTranspose(DirectX::CXMMATRIX M);
+
 	static constexpr float Infinity = FLT_MAX;
 	static constexpr float PI = 3.1415926535f;
 };

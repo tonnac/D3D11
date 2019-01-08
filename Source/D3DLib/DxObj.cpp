@@ -33,10 +33,16 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	_DxObj[DxType::LINE] = std::move(dxobj);
 
 	dxobj = std::make_unique<DxObj>();
+	dxobj->m_pVertexShader = storage->getVertexShader(L"composite");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"composite");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"composite");
+
+	_DxObj[DxType::COMPOSITE] = std::move(dxobj);
+
+	dxobj = std::make_unique<DxObj>();
 	dxobj->m_pVertexShader = storage->getVertexShader(L"skinned");
 	dxobj->m_pPixelShader = storage->getPixelShader(L"default");
 	dxobj->m_pInputLayout = storage->getInputLayout(L"skinned");
-	dxobj->m_BlendState = E_BSS::No;
 
 	_DxObj[DxType::SKINNED] = std::move(dxobj);
 
@@ -53,6 +59,13 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pInputLayout = storage->getInputLayout(L"default");
 	dxobj->m_RasterizerState = E_RSS::Default;
 	_DxObj[DxType::NOTEX] = std::move(dxobj);
+
+	dxobj = std::make_unique<DxObj>();
+	dxobj->m_pVertexShader = storage->getVertexShader(L"normal");
+	dxobj->m_pGeometryShader = storage->getGeometryShader(L"normal");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"normal");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"skinned");
+	_DxObj[DxType::NORMAL] = std::move(dxobj);
 
 	return _DxObj;
 }

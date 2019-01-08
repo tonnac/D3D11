@@ -116,6 +116,11 @@ void SkinnedData::Set(std::vector<int>& boneHierarchy,
 	mInitPos = initpos;
 }
 
+void SkinnedData::SetOffsets(std::vector<DirectX::XMFLOAT4X4>& offsets)
+{
+	mBoneOffsets = std::move(offsets);
+}
+
 void SkinnedData::AddAnimation(std::pair<std::wstring, AnimationClip>& animations)
 {
 	mAnimations.insert(animations);
@@ -134,7 +139,7 @@ void SkinnedData::GetFinalTransforms(const std::wstring& clipName, int timePos,
 	std::vector<XMFLOAT4X4> toRootTransforms(numBones);
 
 	UINT p = 0;
-	for (;mBoneHierarchy[p] == -1; ++p)
+	for (;p < numBones && mBoneHierarchy[p] == -1; ++p)
 	{
 		toRootTransforms[p] = toParentTransforms[p];
 	}

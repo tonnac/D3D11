@@ -6,12 +6,13 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 {
 	ComPtr<ID3D11VertexShader> vertexShader = nullptr;
 	ComPtr<ID3D11PixelShader> pixelShader = nullptr;
+	ComPtr<ID3D11GeometryShader> geometryShader = nullptr;
 	ComPtr<ID3D11InputLayout> inputLayout = nullptr;
 	ComPtr<ID3DBlob> vBlob = nullptr;
 
 	{
-		d3dUtil::LoadVertexShaderFile(Device, L"line.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
-		d3dUtil::LoadPixelShaderFile(Device, L"line.hlsl", nullptr, pixelShader.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\line.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\line.hlsl", nullptr, pixelShader.GetAddressOf());
 		CreateInputLayout(Device, LINE, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader[L"line"] = std::move(vertexShader);
@@ -22,8 +23,32 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 	}
 
 	{
-		d3dUtil::LoadVertexShaderFile(Device, L"Default.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
-		d3dUtil::LoadPixelShaderFile(Device, L"Default.hlsl", nullptr, pixelShader.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\composite.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\composite.hlsl", nullptr, pixelShader.GetAddressOf());
+		CreateInputLayout(Device, COMPOSITE, inputLayout.GetAddressOf(), vBlob.Get());
+
+		mVertexShader[L"composite"] = std::move(vertexShader);
+		mPixelShader[L"composite"] = std::move(pixelShader);
+		mInputlayout[L"composite"] = std::move(inputLayout);
+
+		vBlob.Reset();
+	}
+
+	{
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\normal.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadGeometryShaderFile(Device, L"shaders\\normal.hlsl", nullptr, geometryShader.GetAddressOf(), "GS");
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\normal.hlsl", nullptr, pixelShader.GetAddressOf());
+
+		mVertexShader[L"normal"] = std::move(vertexShader);
+		mGeometryShader[L"normal"] = std::move(geometryShader);
+		mPixelShader[L"normal"] = std::move(pixelShader);
+
+		vBlob.Reset();
+	}
+
+	{
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\Default.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\Default.hlsl", nullptr, pixelShader.GetAddressOf());
 		CreateInputLayout(Device, DEFAULT, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader[L"default"] = std::move(vertexShader);
@@ -34,8 +59,8 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 	}
 
 	{
-		d3dUtil::LoadVertexShaderFile(Device, L"sky.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
-		d3dUtil::LoadPixelShaderFile(Device, L"sky.hlsl", nullptr, pixelShader.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\sky.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\sky.hlsl", nullptr, pixelShader.GetAddressOf());
 		CreateInputLayout(Device, SKY, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader[L"sky"] = std::move(vertexShader);
@@ -46,7 +71,7 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 	}
 
 	{
-		d3dUtil::LoadPixelShaderFile(Device, L"MeshNoTex.hlsl", nullptr, pixelShader.GetAddressOf());
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\MeshNoTex.hlsl", nullptr, pixelShader.GetAddressOf());
 		mPixelShader[L"notex"] = std::move(pixelShader);
 	}
 
@@ -57,7 +82,7 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 			NULL, NULL
 		};
 
-		d3dUtil::LoadVertexShaderFile(Device, L"Default.hlsl", defines, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
+		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\Default.hlsl", defines, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
 		CreateInputLayout(Device, SKINNED, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader[L"skinned"] = std::move(vertexShader);
@@ -142,6 +167,12 @@ ID3D11HullShader * ShaderStorage::getHullShader(const std::wstring & name)
 	return mHullShader[name].Get();
 }
 
+ID3D11ComputeShader* ShaderStorage::AddComputeShader(Microsoft::WRL::ComPtr<ID3D11ComputeShader> computeshader, const std::wstring& name)
+{
+	mComputeShader[name] = computeshader;
+	return mComputeShader[name].Get();
+}
+
 void ShaderStorage::CreateInputLayout(ID3D11Device * Device, Inputlayout type, ID3D11InputLayout ** inputLayout, ID3DBlob * blob)
 {
 	switch (type)
@@ -204,6 +235,21 @@ void ShaderStorage::CreateInputLayout(ID3D11Device * Device, Inputlayout type, I
 		D3D11_INPUT_ELEMENT_DESC layout[] =
 		{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		};
+
+		d3dUtil::CreateInputLayout(Device,
+			(DWORD)blob->GetBufferSize(),
+			blob->GetBufferPointer(),
+			layout,
+			(UINT)std::size(layout),
+			inputLayout);
+	}break;
+	case COMPOSITE:
+	{
+		D3D11_INPUT_ELEMENT_DESC layout[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 
 		d3dUtil::CreateInputLayout(Device,

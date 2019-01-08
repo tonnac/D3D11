@@ -77,6 +77,7 @@ public:
 		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
 		SkinnedData* skinInfo);
+
 protected:
 	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials);
 	void ReadNodes(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
@@ -86,6 +87,8 @@ protected:
 
 	void ReadIndices(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
 	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::vector<Subset>& subsets);
+
+	void ReadOffsets(std::wifstream& fp, std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
 
 	void BuildDefaultAnimaions(SkinnedData * skininfo, std::vector<MeshNode>& nodes);
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes);

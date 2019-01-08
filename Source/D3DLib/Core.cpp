@@ -16,6 +16,14 @@ Core::Core(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& Win
 {
 }
 
+Core::Core(HINSTANCE hInstance, HWND hWnd, RECT rt)
+{
+	g_hWnd = hWnd;
+	g_hInstance = hInstance;
+	g_ClientWidth = (rt.right - rt.left);
+	g_ClientHeight = (rt.bottom - rt.top);
+}
+
 bool Core::Initialize()
 {
 	if (!InitMainWindow())
@@ -29,6 +37,24 @@ bool Core::Initialize()
 	return true;
 }
 
+bool Core::ToolInitialize()
+{
+	if (!InitDirect3D())
+		return false;
+	if (!S_Write.Initialize())
+		return false;
+	GameInit();
+	OnResize();
+	return true;
+}
+
+bool Core::ToolRun()
+{
+	GameFrame();
+	GameRender();
+	return false;
+}
+
 bool Core::GameInit()
 {
 	m_Timer.Reset();
@@ -39,7 +65,7 @@ bool Core::GameInit()
 	SrvStorage::GetStorage()->SetDevice(m_pd3dDevice.Get());
 	mDxObj = std::move(DxObjStorage::Dxobj()->GetDxobjList());
 	 
-	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,0,-150));
+	m_DefaultCamera.SetViewMatrix(XMFLOAT3(0,45,-120));
 	m_DefaultCamera.SetProjMatrix(XM_PIDIV4, AspectRatio());
 	m_pMainCamera = &m_DefaultCamera;
 
@@ -243,6 +269,7 @@ bool Core::GameFrame()
 	XMFLOAT4 retInput = OnKeyboardInput();
 	m_pMainCamera->Update(retInput);
 	m_pMainCamera->Frame();
+	LightStorage::getLight()->UpdateLight(m_Timer);
 	Frame();
 	FramePassCB();
 	MatStorage->UpdateMaterialCBs(m_pImmediateContext.Get());
@@ -253,7 +280,7 @@ bool Core::GameFrame()
 
 bool Core::PreRender()
 {
-	m_pImmediateContext->ClearRenderTargetView(*m_DxRT.RenderTargetView(), Colors::PaleGreen);
+	m_pImmediateContext->ClearRenderTargetView(*m_DxRT.RenderTargetView(), &mBackColor.x);
 	m_pImmediateContext->ClearDepthStencilView(m_DxRT.DepthStencilView(), 
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pImmediateContext->OMSetRenderTargets(1, m_DxRT.RenderTargetView(), m_DxRT.DepthStencilView());
@@ -262,6 +289,7 @@ bool Core::PreRender()
 	auto SamplerStates = DxState::GetSamArray();
 
 	m_pImmediateContext->VSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
+	m_pImmediateContext->GSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 	m_pImmediateContext->PSSetConstantBuffers(0, 1, mPassCB.GetAddressOf());
 	m_pImmediateContext->PSSetSamplers(0, Casting(UINT, SamplerStates.size()), SamplerStates.data());
 
@@ -278,8 +306,11 @@ bool Core::GameRender()
 		mDxObj[DxType::LINE]->SetResource(m_pImmediateContext.Get());
 		m_Dir.Render(m_pImmediateContext.Get());
 		Render();
-		mDxObj[DxType::SKY]->SetResource(m_pImmediateContext.Get());
-		mSkybox.Render(m_pImmediateContext.Get());
+		if (misSkybox)
+		{
+			mDxObj[DxType::SKY]->SetResource(m_pImmediateContext.Get());
+			mSkybox.Render(m_pImmediateContext.Get());
+		}
 	}
 	PostRender();
 	return true;
@@ -303,17 +334,17 @@ XMFLOAT4 Core::OnKeyboardInput()
 		m_bFrameinfo = !m_bFrameinfo;
 	}
 
-	if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
-	{
-		if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Wireframe)
-		{
-			mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Default;
-		}
-		else if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Default)
-		{
-			mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Wireframe;
-		}	
-	}
+	//if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
+	//{
+	//	if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Wireframe)
+	//	{
+	//		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Default;
+	//	}
+	//	else if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Default)
+	//	{
+	//		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Wireframe;
+	//	}	
+	//}
 
 	if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
 	{

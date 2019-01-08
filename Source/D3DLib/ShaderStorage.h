@@ -7,7 +7,8 @@ enum Inputlayout
 	DEFAULT,
 	SKINNED,
 	LINE,
-	SKY
+	SKY,
+	COMPOSITE
 };
 
 class ShaderStorage
@@ -37,6 +38,7 @@ public:
 	ID3D11ComputeShader* getComputeShader(const std::wstring& name);
 	ID3D11HullShader * getHullShader(const std::wstring& name);
 
+	ID3D11ComputeShader* AddComputeShader(Microsoft::WRL::ComPtr<ID3D11ComputeShader> computeshader, const std::wstring& name);
 private:
 	void CreateInputLayout(ID3D11Device * Device, Inputlayout type, ID3D11InputLayout ** inputLayout, ID3DBlob* blob);
 	template<class X>

@@ -16,6 +16,7 @@
 #include <cassert>
 #include <iomanip>
 #include <memory>
+#include <chrono>
 #include <array>
 #include <cstdint>
 #include <functional>
@@ -195,3 +196,4 @@ struct CacheData_
 	std::tstring Name;
 	K			 Data;
 };
+

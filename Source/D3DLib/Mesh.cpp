@@ -331,7 +331,7 @@ void Mesh::BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXC
 				mat->MatTransform = MathHelper::Identity4x4();
 				mat->Ambient = m.Ambient;
 				mat->Diffuse = m.Diffuse;
-				mat->Specular = m.Specular;
+				mat->Specular = XMFLOAT3(1.0f, 1.0f, 1.0f);
 				mat->Roughness = 1.0f - m.Shininess;
 				
 				auto iter = m.TexMap.find(8);
@@ -361,7 +361,7 @@ void Mesh::BuildMaterials(const std::tstring& texfilepath, const std::vector<ZXC
 			mat->MatTransform = MathHelper::Identity4x4();
 			mat->Ambient = m.Ambient;
 			mat->Diffuse = m.Diffuse;
-			mat->Specular = m.Specular;
+			mat->Specular = XMFLOAT3(1.0f, 1.0f, 1.0f);
 			mat->Roughness = 1.0f - m.Shininess;
 
 			auto iter = m.TexMap.find(8);
@@ -401,6 +401,27 @@ bool Mesh::Frame()
 	return true;
 }
 
+bool Mesh::DebugRender(ID3D11DeviceContext * context)
+{
+	if (mConstantbuffer != nullptr)
+	{
+		context->UpdateSubresource(mConstantbuffer.Get(), 0, nullptr, &mSkinnedConstants, 0, 0);
+		context->VSSetConstantBuffers(3, 1, mConstantbuffer.GetAddressOf());
+	}
+	UINT Offset = 0;
+	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
+	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
+
+	for (auto&x : mDebugItem)
+	{
+		context->IASetPrimitiveTopology(x->PrimitiveType);
+		context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
+		context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
+	}
+
+	return true;
+}
+
 bool Mesh::Render(ID3D11DeviceContext * context)
 {
 	if (mConstantbuffer != nullptr)
@@ -414,8 +435,6 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 
 	for (auto&x : mDrawItem)
 	{
-		//if (x->ShaderResourceView == nullptr)
-		//	continue;
 		context->IASetPrimitiveTopology(x->PrimitiveType);
 		x->Mat->SetResource(context);
 		context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());

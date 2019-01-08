@@ -1,18 +1,88 @@
 #include "LightStorage.h"
 
-void LightStorage::AddDirectional(const Light & light)
+using namespace DirectX;
+using namespace std::chrono;
+
+void LightStorage::UpdateLight(const Timer & gt)
 {
-	mDirectionalLight.push_back(light);
+	for (auto& light : mLights)
+	{
+		if (light->DirRot.isRotate)
+		{
+			float deltaTime;
+			if (light->DirRot.isClockwise)
+				deltaTime = gt.DeltaTime();
+			else
+				deltaTime = -gt.DeltaTime();
+
+			float Theta = deltaTime * light->DirRot.RotSpeed;
+
+			XMVECTOR D = XMLoadFloat3(&light->light.Direction);
+			XMVECTOR Axis = XMLoadFloat3(&light->DirRot.Axis);
+
+			XMMATRIX R = XMMatrixRotationAxis(Axis, Theta);
+
+			D = XMVector3Normalize(XMVector3Transform(D, R));
+
+			XMStoreFloat3(&light->light.Direction, D);
+		}
+
+		if (light->PosRot.isRotate)
+		{
+			float deltaTime;
+			if (light->PosRot.isClockwise)
+				deltaTime = gt.DeltaTime();
+			else
+				deltaTime = -gt.DeltaTime();
+
+			float Theta = deltaTime * light->PosRot.RotSpeed;
+
+			XMVECTOR P = XMLoadFloat3(&light->light.Position);
+			XMVECTOR Axis = XMLoadFloat3(&light->PosRot.Axis);
+
+			XMMATRIX R = XMMatrixRotationAxis(Axis, Theta);
+
+			P = XMVector3Transform(P, R);
+
+			XMStoreFloat3(&light->light.Position, P);
+		}
+	}
 }
 
-void LightStorage::AddPoint(const Light & light)
+void LightStorage::AddLight(std::unique_ptr<LightProperty>& light)
 {
-	mPointLight.push_back(light);
+	switch (light->Type)
+	{
+	case LightType::Directional:
+		AddDirectional(light);
+		break;
+	case LightType::Point:
+		AddPoint(light);
+		break;
+	case LightType::Spot:
+		AddSpot(light);
+		break;
+	default:
+		break;
+	}
 }
 
-void LightStorage::AddSpot(const Light & light)
+void LightStorage::AddDirectional(std::unique_ptr<LightProperty>& light)
 {
-	mSpotLight.push_back(light);
+	mDirectionalLight.push_back(&light->light);
+	mLights.push_back(std::move(light));
+}
+
+void LightStorage::AddPoint(std::unique_ptr<LightProperty>& light)
+{
+	mPointLight.push_back(&light->light);
+	mLights.push_back(std::move(light));
+}
+
+void LightStorage::AddSpot(std::unique_ptr<LightProperty>& light)
+{
+	mSpotLight.push_back(&light->light);
+	mLights.push_back(std::move(light));
 }
 
 UINT LightStorage::NumDirectional() const
@@ -47,15 +117,38 @@ void LightStorage::DelSpot(int index)
 
 void LightStorage::CopyDirectional(Light* lights)
 {
-	std::copy(mDirectionalLight.begin(), mDirectionalLight.end(), &lights[0]);
+	UINT i = 0;
+
+	for (auto& p = mDirectionalLight.begin(); p != mDirectionalLight.end(); ++p)
+	{
+		const Light& light = *(*p);
+		CopyMemory(&lights[i++], &light, sizeof(Light));
+	}
 }
 
 void LightStorage::CopyPoint(Light* lights)
 {
-	std::copy(mPointLight.begin(), mPointLight.end(), &lights[(UINT)mDirectionalLight.size()]);
+	UINT i = (UINT)mDirectionalLight.size();
+
+	for (auto& p = mPointLight.begin(); p != mPointLight.end(); ++p)
+	{
+		const Light& light = *(*p);
+		CopyMemory(&lights[i++], &light, sizeof(Light));
+	}
 }
 
 void LightStorage::CopySpot(Light* lights)
 {
-	std::copy(mSpotLight.begin(), mSpotLight.end(), &lights[(UINT)(mDirectionalLight.size() + mPointLight.size())]);
+	UINT i = (UINT)(mDirectionalLight.size() + mPointLight.size());
+
+	for (auto& p = mSpotLight.begin(); p != mSpotLight.end(); ++p)
+	{
+		const Light& light = *(*p);
+		CopyMemory(&lights[i++], &light, sizeof(Light));
+	}
+}
+
+LightVec * LightStorage::GetLightVec()
+{
+	return &mLights;
 }

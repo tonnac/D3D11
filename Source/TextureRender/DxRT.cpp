@@ -3,7 +3,7 @@
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
-void DxRT::Initialize(ID3D11Device * pd3Device, float width, float height, ID3D11Texture2D * pTexture)
+void DxRT::Initialize(ID3D11Device * pd3Device, float width, float height, ID3D11Texture2D * pTexture, int e)
 {
 	m_pRenderTargetView.Reset();
 
@@ -23,7 +23,8 @@ void DxRT::Initialize(ID3D11Device * pd3Device, float width, float height, ID3D1
 	{
 		m_TexDesc = CD3D11_TEXTURE2D_DESC(DXGI_FORMAT_R8G8B8A8_UNORM, Casting(UINT, width), Casting(UINT, height));
 
-		m_TexDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+		if(e == 0)
+			m_TexDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 		m_TexDesc.MipLevels = 1;
 
 		ThrowifFailed(pd3Device->CreateTexture2D(&m_TexDesc, nullptr, m_pTexture.GetAddressOf()));

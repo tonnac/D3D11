@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="소스 파일\Basicstructure">
       <UniqueIdentifier>{63585af2-5ce5-425b-ae37-22f1cab49c67}</UniqueIdentifier>
     </Filter>
@@ -42,6 +38,10 @@
     </Filter>
     <Filter Include="헤더 파일\Exporter">
       <UniqueIdentifier>{5249b886-7a47-4601-854e-93ee51443c67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +133,9 @@
       <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
     <ClInclude Include="ClipBinLoader.h">
+      <Filter>헤더 파일\Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="Converter.h">
       <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
   </ItemGroup>
@@ -228,6 +231,9 @@
       <Filter>소스 파일\Exporter</Filter>
     </ClCompile>
     <ClCompile Include="ClipBinLoader.cpp">
+      <Filter>소스 파일\Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="Converter.cpp">
       <Filter>소스 파일\Exporter</Filter>
     </ClCompile>
   </ItemGroup>

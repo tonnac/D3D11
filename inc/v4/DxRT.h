@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ObjectStd.h"
 #include "DxState.h"
+#include "Mesh.h"
+
 
 class DxRT
 {
@@ -15,6 +16,9 @@ public:
 	void OnResize(ID3D11Device* pd3Device, float width, float height, ID3D11Texture2D* pTexture = nullptr);
 	void Reset();
 
+	bool Render(ID3D11DeviceContext* context, Mesh* mesh, DxObj* dxobj);
+
+	ID3D11ShaderResourceView** GetSRV();
 	ID3D11ShaderResourceView* ShaderResourceView();
 	ID3D11RenderTargetView** RenderTargetView();
 	ID3D11DepthStencilView* DepthStencilView();

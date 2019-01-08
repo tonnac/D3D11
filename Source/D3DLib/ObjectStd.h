@@ -24,6 +24,14 @@ struct Vertex
 	DirectX::XMFLOAT3 Tangent;
 	Vertex()
 	{}
+	Vertex(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT3 np, DirectX::XMFLOAT4 vc, DirectX::XMFLOAT2 vt, DirectX::XMFLOAT3 vtan)
+	{
+		p = vp;
+		n = np;
+		c = vc;
+		t = vt;
+		Tangent = vtan;
+	}
 	Vertex(DirectX::XMFLOAT3 vp, DirectX::XMFLOAT3 np, DirectX::XMFLOAT4 vc, DirectX::XMFLOAT2 vt)
 	{
 		p = vp;
@@ -37,6 +45,7 @@ struct Vertex
 		n = rhs.n;
 		c = rhs.c;
 		t = rhs.t;
+		Tangent = rhs.Tangent;
 	}
 };
 
