@@ -8,6 +8,9 @@ public:
 	bool ConverttoSBI(
 		const std::wstring & FileName);
 
+	bool ConverttoSKN(
+		const std::wstring& FileName);
+
 private:
 	void SaveMaterial(std::ofstream& os, const std::vector<ZXCSMaterial>& materials)
 	{
@@ -36,4 +39,11 @@ private:
 	{
 		BinaryIO::WriteBinary(os, indices.data(), (UINT)(sizeof(DWORD) * indices.size()));
 	}
+
+private:
+	void SaveMaterial(std::wofstream& os, const std::vector<ZXCSMaterial>& materials);
+	void SaveNodes(std::wofstream& os, const std::vector<MeshNode>& nodes);
+	void SaveSubset(std::wofstream& os, const std::vector<Subset>& subsets);
+	void SaveVertices(std::wofstream& os, const std::vector<SkinnedVertex>& vertices);
+	void SaveIndices(std::wofstream& os, const std::vector<DWORD>& indices);
 };
