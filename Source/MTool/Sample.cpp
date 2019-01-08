@@ -44,14 +44,14 @@ void Sample::setSkyBox()
 
 bool Sample::Init()
 {
-//	Converter con;
-//	con.ConverttoSBI(L"sylbanas.skn");
+	Converter con;
+	con.ConverttoSBI(L"sss.skn");
 
 	grid.SetProperties(150.0f, 150.0f, 50, 50);
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"sylbanas.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"sss.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
 	mesh0.LoadFile(L"sphere.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
 	seconds u = duration_cast<seconds>(aft - bef);
