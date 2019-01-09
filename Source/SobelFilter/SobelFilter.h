@@ -12,6 +12,10 @@ public:
 	void Execute(ID3D11DeviceContext* context, ID3D11ShaderResourceView** texture);
 
 	ID3D11ShaderResourceView** ShaderResrouceView();
+	ID3D11Texture2D* Texture()
+	{
+		return mTexture.Get();
+	}
 
 private:
 	void BuildShader(const std::wstring& shaderFile);

@@ -55,6 +55,8 @@ void DxRT::End(ID3D11DeviceContext * pContext, DxRT * pDxrt)
 		pContext->OMSetRenderTargets(1, &pRender, nullptr);
 		pContext->OMSetRenderTargets(1, pDxrt->m_pRenderTargetView.GetAddressOf(), pDxrt->m_pDepthStencilView.Get());
 	}
+	ID3D11RenderTargetView* pRender = nullptr;
+	pContext->OMSetRenderTargets(1, &pRender, nullptr);
 	ID3D11ShaderResourceView * sview[] = { nullptr, nullptr , nullptr, nullptr, nullptr, nullptr };
 	pContext->PSSetShaderResources(0, std::size(sview), sview);
 }
@@ -102,6 +104,11 @@ ID3D11RenderTargetView ** DxRT::RenderTargetView()
 ID3D11DepthStencilView * DxRT::DepthStencilView()
 {
 	return m_pDepthStencilView.Get();
+}
+
+ID3D11Texture2D * DxRT::Texture()
+{
+	return m_pTexture.Get();
 }
 
 void DxRT::CreateDepthStencilView(ID3D11Device * pd3Device, UINT width, UINT height)

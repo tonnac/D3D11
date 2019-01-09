@@ -19,6 +19,12 @@ void SobelFilter::Execute(ID3D11DeviceContext * context, ID3D11ShaderResourceVie
 	context->CSSetShaderResources(0, 1, texture);
 	context->CSSetUnorderedAccessViews(0, 1, mUav.GetAddressOf(), nullptr);
 	context->Dispatch(numGroupsX, numGroupsY, 1);
+
+	ID3D11UnorderedAccessView * uav[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+	ID3D11ShaderResourceView * srv[] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
+
+	context->CSSetShaderResources(0, (UINT)std::size(srv), srv);
+	context->CSSetUnorderedAccessViews(0, (UINT)std::size(uav), uav, nullptr);
 }
 
 ID3D11ShaderResourceView ** SobelFilter::ShaderResrouceView()

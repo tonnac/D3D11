@@ -45,6 +45,13 @@ bool Sample::Init()
 bool Sample::Frame()
 {
 	mesh.Frame();
+
+	if (S_Input.getKeyState(DIK_G) == Input::KEYSTATE::KEY_PUSH)
+	{
+		ID3D11Texture2D* tex = mSobelFilter->Texture();
+		D3DX11SaveTextureToFile(m_pImmediateContext.Get(), tex, D3DX11_IFF_DDS, L"texFile.dds");
+	}
+
 	return true;
 }
 
@@ -60,11 +67,13 @@ bool Sample::Render()
 
 	mDxObj[DxType::COMPOSITE]->SetResource(m_pImmediateContext.Get());
 	m_pImmediateContext->PSSetShaderResources(0, 1, srv);
-	m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
+//	m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
 	m_pImmediateContext->DrawIndexed(6, 1, 0);
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.Render(m_pImmediateContext.Get());
+
+	
 
 	return true;
 }

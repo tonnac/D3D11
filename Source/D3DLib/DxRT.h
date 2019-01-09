@@ -22,6 +22,7 @@ public:
 	ID3D11ShaderResourceView* ShaderResourceView();
 	ID3D11RenderTargetView** RenderTargetView();
 	ID3D11DepthStencilView* DepthStencilView();
+	ID3D11Texture2D* Texture();
 
 	D3D11_VIEWPORT Viewport()const;
 
