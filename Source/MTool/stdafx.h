@@ -110,3 +110,10 @@ public:
 		return retV;
 	}
 };
+
+class CPaneDlg : public CPaneDialog
+{
+	virtual void OnUpdateCmdUI(CFrameWnd* pTarget, BOOL bDisableIfNoHndler) {
+		CPaneDialog::OnUpdateCmdUI(pTarget, FALSE);
+	}
+};

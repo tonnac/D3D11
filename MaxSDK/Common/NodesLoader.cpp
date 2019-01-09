@@ -122,6 +122,7 @@ void NodesLoader::LoadMesh(INode* node, ZXCObject* o)
 			LoadTexCoord(mesh, tm, &o->mTriangles[i], i, i0, i1, i2);
 			LoadColor(mesh, tm, &o->mTriangles[i], i, i0, i1, i2);
 			LoadNormal(mesh, tm, &o->mTriangles[i], i, i0, i1, i2);
+			LoadBiNormal(mesh, &o->mTriangles[i], i, i0, i1, i2);
 			o->mTriangles[i].mSubMtrl = mesh.faces[i].getMatID();
 			if (o->mMaterialRef == -1)
 			{
@@ -206,6 +207,7 @@ void NodesLoader::LoadMesh(INode* node, ZXCObject* o)
 			LoadTexCoord(mesh, tm, &o->mSkinTri[i], i, i0, i1, i2);
 			LoadColor(mesh, tm, &o->mSkinTri[i], i, i0, i1, i2);
 			LoadNormal(mesh, tm, &o->mSkinTri[i], i, i0, i1, i2);
+			LoadBiNormal(mesh, &o->mSkinTri[i], i, i0, i1, i2);
 			o->mSkinTri[i].mSubMtrl = mesh.faces[i].getMatID();
 			if (o->mMaterialRef == -1)
 			{
@@ -273,8 +275,6 @@ void NodesLoader::LoadNormal(Mesh & mesh, const Matrix3 & tm, X* t, int i, std::
 {
 	mesh.buildNormals();
 
-	auto p = mesh.faces[i].v[i0];
-
 	int vert = mesh.faces[i].getVert(i0);
 	Point3 vn = GetVertexNormal(mesh, i, mesh.getRVert(vert));
 	MaxUtil::ConvertVector(vn, t->v[0].n);
@@ -288,6 +288,38 @@ void NodesLoader::LoadNormal(Mesh & mesh, const Matrix3 & tm, X* t, int i, std::
 	MaxUtil::ConvertVector(vn, t->v[2].n);
 }
 
+template<typename X>
+void NodesLoader::LoadBiNormal(Mesh & mesh, X * t, int i, std::uint32_t i0, std::uint32_t i1, std::uint32_t i2)
+{
+	auto& v0 = mesh.verts[mesh.faces[i].v[i0]];
+	auto& v1 = mesh.verts[mesh.faces[i].v[i2]];
+	auto& v2 = mesh.verts[mesh.faces[i].v[i1]];
+
+	auto& t0 = mesh.tVerts[mesh.tvFace[i].t[i0]];
+	auto& t1 = mesh.tVerts[mesh.tvFace[i].t[i2]];
+	auto& t2 = mesh.tVerts[mesh.tvFace[i].t[i1]];
+
+	std::array<Point3, 3> vArr = { v0, v1, v2 };
+	std::array<Point3, 3> tArr = { t0, t1, t2 };
+
+	std::array<Point3, 2> Tangent;
+
+	ComputeTangentAndBinormal(tArr.data(), vArr.data(), Tangent.data());
+
+	Point3 Tan0;
+	Point3 BiTan0;
+
+	MaxUtil::ConvertVector(Tangent[0], Tan0);
+	MaxUtil::ConvertVector(Tangent[1], BiTan0);
+
+	t->v[0].Tangent += Tan0;
+	t->v[1].Tangent += Tan0;
+	t->v[2].Tangent += Tan0;
+
+	t->v[0].Bitangent += BiTan0;
+	t->v[1].Bitangent += BiTan0;
+	t->v[2].Bitangent += BiTan0;
+}
 
 TriObject * NodesLoader::GetTriObject(Object* obj, TimeValue t, bool & isDelete)
 {

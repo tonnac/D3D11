@@ -44,14 +44,14 @@ void Sample::setSkyBox()
 
 bool Sample::Init()
 {
-	Converter con;
-	con.ConverttoSBI(L"gg.skn");
+//	Converter con;
+//	con.ConverttoSBI(L"death.skn");
 
 	grid.SetProperties(150.0f, 150.0f, 50, 50);
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"gg.sbi", L"..\\..\\data\\tex\\gun\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"sylbanas0.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
 	mesh0.LoadFile(L"sphere.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
 	seconds u = duration_cast<seconds>(aft - bef);
@@ -59,9 +59,9 @@ bool Sample::Init()
 	//XMMATRIX T = XMMatrixTranslation(0.0f, 50.0f, 0.0f);
 	//XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
 
-	XMMATRIX T = XMMatrixTranslation(0.0f, 30.0f, 0.0f);
-	XMMATRIX S = XMMatrixScaling(13.0f, 13.0f, 13.0f);
-	mesh.SetWorld(T);
+	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+	XMMATRIX S = XMMatrixScaling(15.0f, 15.0f, 15.0f);
+	mesh.SetWorld(S);
 
 	T = XMMatrixTranslation(50.0f, 0.0f, 0.0f);
 	mesh0.SetWorld(T);
@@ -83,12 +83,12 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-//	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
-//	grid.Render(m_pImmediateContext.Get());
+	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	grid.Render(m_pImmediateContext.Get());
 
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	mesh0.Render(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
-//	mesh0.Render(m_pImmediateContext.Get());
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.DebugRender(m_pImmediateContext.Get());

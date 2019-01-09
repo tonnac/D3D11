@@ -49,6 +49,8 @@ protected:
 	std::wstring mVersion;
 	std::wstring mFilename;
 
+	std::vector<Tangent> mBinormals;
+
 	std::vector<OutVertex> mVertices;
 	std::vector<OutSkinned> mSkinnedVertices;
 
@@ -60,5 +62,7 @@ protected:
 	std::unique_ptr<Writer> mWriter = nullptr;
 	std::unique_ptr<NodesLoader> mNodesLoader = nullptr;
 
+	UINT mNumVertices = 0;
+	UINT mNumIndices = 0;
 	bool mIsBinary = false;
 };

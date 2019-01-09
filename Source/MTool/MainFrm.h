@@ -8,6 +8,7 @@
 #include "ToolPane.h"
 #include "EffectPant.h"
 #include "LightPane.h"
+#include "LightForm.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -24,7 +25,7 @@ public:
 	CreateDD mSaveMap;
 	ToolPane mToolpane;
 	EffectPant mEffectpane;
-	LightPane mLightpane;
+	LightForm mLightForm;
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -66,6 +67,7 @@ public:
 	afx_msg void OnUpdateBackColor(CCmdUI *pCmdUI);
 	afx_msg void OnWireframe();
 	afx_msg void OnUpdateWireframe(CCmdUI *pCmdUI);
+	afx_msg void OnLightdockingView();
 };
 
 

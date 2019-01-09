@@ -32,7 +32,6 @@ bool BaseExporter::Run()
 	BuildVBIB();
 	BuildSubset();
 
-
 	CreateWriter();
 
 	if (!mWriter->Savefile()) return false;
@@ -143,8 +142,6 @@ void BaseExporter::CreateWriter()
 
 void BaseExporter::BuildSubset()
 {
-	static UINT vertices = 0;
-	static UINT indices = 0;
 	for (auto& x : mObjects)
 	{
 		if (!x->mVertices.empty())
@@ -156,11 +153,11 @@ void BaseExporter::BuildSubset()
 				subset.NodeIndex = (int)x->mNodeName.second;
 				subset.SubMtlID = k.first;
 				subset.VertexCount = (UINT)k.second.size();
-				subset.VertexStart = vertices;
+				subset.VertexStart = mNumVertices;
 				subset.FaceCount = (UINT)(x->mIndices[k.first].size()) / 3;
-				subset.FaceStart = indices;
-				vertices += subset.VertexCount;
-				indices += subset.FaceCount;
+				subset.FaceStart = mNumIndices;
+				mNumVertices += subset.VertexCount;
+				mNumIndices += subset.FaceCount;
 				mSubsets.push_back(subset);
 			}
 		}
@@ -199,116 +196,10 @@ void BaseExporter::BuildVBIB()
 				}
 				else
 				{
+					vertices[vNumber].Tangent += mesh->mTriangles[i].v[j].Tangent;
+					vertices[vNumber].Bitangent += mesh->mTriangles[i].v[j].Bitangent;
 					indices.push_back(vNumber);
 				}
-			}
-		}
-
-		for (auto & x : mesh->mVertices)
-		{
-			auto & k = mesh->mIndices[x.first];
-
-			for (UINT i = 0; i < (UINT)k.size() / 3; ++i)
-			{
-				std::uint32_t i0 = k[i * 3 + 0];
-				std::uint32_t i1 = k[i * 3 + 1];
-				std::uint32_t i2 = k[i * 3 + 2];
-
-				auto& v0 = x.second[i0].p;
-				auto& v1 = x.second[i1].p;
-				auto& v2 = x.second[i2].p;
-
-				auto& t0 = x.second[i0].t;
-				auto& t1 = x.second[i1].t;
-				auto& t2 = x.second[i2].t;
-
-				Point3 e0 = v1 - v0;
-				Point3 e1 = v2 - v0;
-
-				Point2 UV0 = t1 - t0;
-				Point2 UV1 = t2 - t0;
-
-				float a = UV0.x;
-				float b = UV0.y;
-				float c = UV1.x;
-				float d = UV1.y;
-
-				float r = 1.0f / (a * d - b * c);
-
-				Point3 Tangent;
-				Point3 Bitangent;
-
-				if (fabsf(a * d - b * c) < Epsilon)
-				{
-					Tangent = Point3(1.0f, 0.0f, 0.0f);
-					Bitangent = Point3(0.0f, 1.0f, 0.0f);
-				}
-				else
-				{
-					Tangent = r * (d * e0 - b * e1);
-					Bitangent = r * (a * e1 - c * e0);
-				}
-
-				x.second[i0].Tangent += Tangent;
-				x.second[i0].Bitangent += Bitangent;
-
-				////////
-
-				e0 = v0 - v1;
-				e1 = v2 - v1;
-
-				UV0 = t0 - t1;
-				UV1 = t2 - t1;
-
-				a = UV0.x;
-				b = UV0.y;
-				c = UV1.x;
-				d = UV1.y;
-
-				r = 1.0f / (a * d - b * c);
-
-				if (fabsf(a * d - b * c) < Epsilon)
-				{
-					Tangent = Point3(1.0f, 0.0f, 0.0f);
-					Bitangent = Point3(0.0f, 1.0f, 0.0f);
-				}
-				else
-				{
-					Tangent = r * (d * e0 - b * e1);
-					Bitangent = r * (a * e1 - c * e0);
-				}
-
-				x.second[i1].Tangent += Tangent;
-				x.second[i1].Bitangent += Bitangent;
-
-				////////
-
-				e0 = v0 - v2;
-				e1 = v1 - v2;
-
-				UV0 = t0 - t2;
-				UV1 = t1 - t2;
-
-				a = UV0.x;
-				b = UV0.y;
-				c = UV1.x;
-				d = UV1.y;
-
-				r = 1.0f / (a * d - b * c);
-
-				if (fabsf(a * d - b * c) < Epsilon)
-				{
-					Tangent = Point3(1.0f, 0.0f, 0.0f);
-					Bitangent = Point3(0.0f, 1.0f, 0.0f);
-				}
-				else
-				{
-					Tangent = r * (d * e0 - b * e1);
-					Bitangent = r * (a * e1 - c * e0);
-				}
-
-				x.second[i2].Tangent += Tangent;
-				x.second[i2].Bitangent += Bitangent;
 			}
 		}
 
@@ -319,10 +210,7 @@ void BaseExporter::BuildVBIB()
 		{
 			for (auto & k : x.second)
 			{
-				k.Tangent = k.Tangent.Normalize();
-				k.Bitangent = k.Bitangent.Normalize();
-
-				k.Tangent = k.Tangent - DotProd(k.Tangent, k.n) * k.n;
+				k.Tangent = (k.Tangent - DotProd(k.Tangent, k.n) * k.n).FNormalize();
 
 				if (DotProd(CrossProd(k.n, k.Tangent), k.Bitangent) < 0.0f)
 				{

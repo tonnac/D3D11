@@ -93,5 +93,5 @@ float4 PS(VertexOut vOut) : SV_Target
 
 	litColor += ambient; 
 
-	return float4(bumpedNormalW, 1.0f);
+	return float4(litColor, 1.0f);
 }

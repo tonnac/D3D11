@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_BACK_COLOR, &CMainFrame::OnUpdateBackColor)
 	ON_COMMAND(ID_WIREFRAME, &CMainFrame::OnWireframe)
 	ON_UPDATE_COMMAND_UI(ID_WIREFRAME, &CMainFrame::OnUpdateWireframe)
+	ON_COMMAND(IDS_LIGHTDOCKING_VIEW, &CMainFrame::OnLightdockingView)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -178,13 +179,19 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	mEffectpane.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&mEffectpane);
 
-	mLightpane.CreateEx(NULL, _T("Lightpane"), this, CRect(0, 0, 100, 100),
-		TRUE, 1236,
-		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS |
-		WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI);
+	if (!mLightForm.Create(_T("Light"), this, TRUE,
+		MAKEINTRESOURCE(IDD_LightForm),
+		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI,
+		IDS_LIGHTDOCKING_VIEW))
+	{
+		TRACE0("Failed to create Dialog Bar\n");
+		return FALSE;      // fail to create
+	}
 
-	mLightpane.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&mLightpane);
+	EnableDocking(CBRS_ALIGN_LEFT);
+	EnableAutoHidePanes(CBRS_ALIGN_RIGHT);
+	mLightForm.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&mLightForm);
 
 	return 0;
 }
@@ -429,4 +436,11 @@ void CMainFrame::OnUpdateWireframe(CCmdUI *pCmdUI)
 	pCmdUI->SetCheck(isWire);
 
 	// TODO: 여기에 명령 업데이트 UI 처리기 코드를 추가합니다.
+}
+
+void CMainFrame::OnLightdockingView()
+{
+	ShowPane(&mLightForm, !(mLightForm.IsVisible()), FALSE, TRUE);
+	RecalcLayout();
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 }

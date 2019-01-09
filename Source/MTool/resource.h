@@ -81,6 +81,7 @@
 #define IDC_FALL_START                  1048
 #define IDC_DIRCLOCKWISE                2000
 #define IDC_DIRRCLOCKWISE               2001
+#define IDS_OUTPUT_WND                  9999
 #define ID_TOOL_MTOOL                   32771
 #define ID_TOOL_MTOOL1                  32772
 #define ID_TOOL_MTOOL2                  32773
@@ -93,13 +94,16 @@
 #define ID_BACK_COLOR                   32783
 #define ID_32784                        32784
 #define ID_WIREFRAME                    32785
+#define ID_32790                        32790
+#define ID_LIGHTSETTING                 32791
+#define IDS_LIGHTDOCKING_VIEW           32794
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        321
-#define _APS_NEXT_COMMAND_VALUE         32790
+#define _APS_NEXT_RESOURCE_VALUE        322
+#define _APS_NEXT_COMMAND_VALUE         32795
 #define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           315
 #endif

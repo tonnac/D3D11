@@ -11,6 +11,7 @@
 #include <CS\\bipexp.h>
 #include <CS\\phyexp.h>
 #include <iskin.h>
+#include <gutil.h>
 
 #include <vector>
 #include <unordered_map>
@@ -77,6 +78,11 @@ struct Vertex
 		}
 		return false;
 	}
+};
+
+struct Tangent
+{
+	std::array<Point3, 2> Binormals;
 };
 
 struct SkinnedVertex : public Vertex

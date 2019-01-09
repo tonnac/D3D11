@@ -35,6 +35,8 @@ private:
 	void LoadColor(const Mesh& mesh, const Matrix3& tm, X* t, int index, std::uint32_t i0, std::uint32_t i1, std::uint32_t i2);
 	template<typename X>
 	void LoadNormal(Mesh& mesh, const Matrix3& tm, X* t, int index, std::uint32_t i0, std::uint32_t i1, std::uint32_t i2);
+	template<typename X>
+	void LoadBiNormal(Mesh& mesh, X* t, int index, std::uint32_t i0, std::uint32_t i1, std::uint32_t i2);
 
 	TriObject* GetTriObject(Object* obj, TimeValue t, bool & isDelete);
 	Point3 GetVertexNormal(Mesh& mesh, int faceNo, const RVertex& rv);
