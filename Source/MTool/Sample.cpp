@@ -44,8 +44,8 @@ void Sample::setSkyBox()
 
 bool Sample::Init()
 {
-//	Converter con;
-//	con.ConverttoSBI(L"sss.skn");
+	Converter con;
+	con.ConverttoSBI(L"sss.skn");
 
 	grid.SetProperties(150.0f, 150.0f, 50, 50);
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
@@ -89,8 +89,6 @@ bool Sample::Render()
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh.Render(m_pImmediateContext.Get());
 	mesh0.Render(m_pImmediateContext.Get());
-
-	
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.DebugRender(m_pImmediateContext.Get());
