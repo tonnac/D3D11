@@ -195,10 +195,10 @@ void SkinExporter::BuildVBIB()
 		{
 			for (auto & k : x.second)
 			{
-				k.Tangent = k.Tangent.Normalize();
-				k.Bitangent = k.Bitangent.Normalize();
+//				k.Tangent = k.Tangent.Normalize();
+//				k.Bitangent = k.Bitangent.Normalize();
 
-				k.Tangent = k.Tangent - DotProd(k.Tangent, k.n) * k.n;
+				k.Tangent = (k.Tangent - DotProd(k.Tangent, k.n) * k.n).Normalize();
 
 				if (DotProd(CrossProd(k.n, k.Tangent), k.Bitangent) < 0.0f)
 				{
