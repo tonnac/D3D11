@@ -7,7 +7,6 @@
 #include "CreateDD.h"
 #include "ToolPane.h"
 #include "EffectPant.h"
-#include "LightPane.h"
 #include "LightForm.h"
 
 class CMainFrame : public CFrameWndEx

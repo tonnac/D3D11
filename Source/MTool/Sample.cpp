@@ -51,7 +51,7 @@ bool Sample::Init()
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-	mesh.LoadFile(L"sylbanas0.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
+//	mesh.LoadFile(L"sylbanas0.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
 	mesh0.LoadFile(L"sphere.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
 	steady_clock::time_point aft = steady_clock::now();
 	seconds u = duration_cast<seconds>(aft - bef);
@@ -76,7 +76,7 @@ bool Sample::Init()
 
 bool Sample::Frame()
 {
-	mesh.Frame();
+//	mesh.Frame();
 	mesh0.Frame();
 	return true;
 }
@@ -88,7 +88,7 @@ bool Sample::Render()
 
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	mesh0.Render(m_pImmediateContext.Get());
-	mesh.Render(m_pImmediateContext.Get());
+//	mesh.Render(m_pImmediateContext.Get());
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.DebugRender(m_pImmediateContext.Get());

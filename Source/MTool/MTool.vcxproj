@@ -195,7 +195,6 @@
     <ClInclude Include="EffectPant.h" />
     <ClInclude Include="LightAdd.h" />
     <ClInclude Include="LightForm.h" />
-    <ClInclude Include="LightPane.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MTool.h" />
     <ClInclude Include="MToolDoc.h" />
@@ -214,7 +213,6 @@
     <ClCompile Include="EffectPant.cpp" />
     <ClCompile Include="LightAdd.cpp" />
     <ClCompile Include="LightForm.cpp" />
-    <ClCompile Include="LightPane.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MTool.cpp" />
     <ClCompile Include="MToolDoc.cpp" />

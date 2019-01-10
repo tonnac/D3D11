@@ -57,9 +57,6 @@
     <ClInclude Include="EffectForm.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="LightPane.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="LightForm.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -102,9 +99,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="EffectForm.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="LightPane.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LightForm.cpp">

@@ -54,8 +54,8 @@ bool Sample::Frame()
 
 	if (S_Input.getKeyState(DIK_G) == Input::KEYSTATE::KEY_PUSH)
 	{
-		ID3D11Texture2D* tex = mSobelFilter->Texture();
-	//	ID3D11Texture2D* tex = mOffRT.Texture();
+	//	ID3D11Texture2D* tex = mSobelFilter->Texture();
+		ID3D11Texture2D* tex = mOffRT.Texture();
 		D3DX11SaveTextureToFile(m_pImmediateContext.Get(), tex, D3DX11_IFF_DDS, L"texFile.dds");
 	}
 
