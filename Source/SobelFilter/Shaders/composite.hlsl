@@ -1,5 +1,5 @@
 Texture2D gBaseMap : register(t0);
-//Texture2D gEdgeMap : register(t1);
+Texture2D gEdgeMap : register(t1);
 
 
 SamplerState g_samPointWrap        : register(s0);
@@ -39,7 +39,7 @@ VertexOut VS(uint vid : SV_VertexID)
 float4 PS(VertexOut pIn) : SV_Target
 {
 	float4 c = gBaseMap.SampleLevel(g_samPointClamp, pIn.TexC, 0.0f);
-	//float4 e = gEdgeMap.SampleLevel(g_samPointClamp, pIn.TexC, 0.0f);
+	float4 e = gEdgeMap.SampleLevel(g_samPointClamp, pIn.TexC, 0.0f);
 
-	return c;// *e;
+	return c + e;
 }

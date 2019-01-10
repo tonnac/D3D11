@@ -16,6 +16,7 @@ void SobelFilter::Execute(ID3D11DeviceContext * context, ID3D11ShaderResourceVie
 	UINT numGroupsX = (UINT)ceilf(mWidth / 16.0f);
 	UINT numGroupsY = (UINT)ceilf(mHeight / 16.0f);
 
+	context->CSSetShader(mComputeShader, nullptr, 0);
 	context->CSSetShaderResources(0, 1, texture);
 	context->CSSetUnorderedAccessViews(0, 1, mUav.GetAddressOf(), nullptr);
 	context->Dispatch(numGroupsX, numGroupsY, 1);

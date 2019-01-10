@@ -25,11 +25,9 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 	{
 		d3dUtil::LoadVertexShaderFile(Device, L"shaders\\composite.hlsl", nullptr, vertexShader.GetAddressOf(), "VS", vBlob.GetAddressOf());
 		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\composite.hlsl", nullptr, pixelShader.GetAddressOf());
-		CreateInputLayout(Device, COMPOSITE, inputLayout.GetAddressOf(), vBlob.Get());
 
 		mVertexShader[L"composite"] = std::move(vertexShader);
 		mPixelShader[L"composite"] = std::move(pixelShader);
-		mInputlayout[L"composite"] = std::move(inputLayout);
 
 		vBlob.Reset();
 	}
@@ -244,20 +242,5 @@ void ShaderStorage::CreateInputLayout(ID3D11Device * Device, Inputlayout type, I
 			(UINT)std::size(layout),
 			inputLayout);
 	}break;
-	case COMPOSITE:
-	{
-		D3D11_INPUT_ELEMENT_DESC layout[] =
-		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
-		};
-
-		d3dUtil::CreateInputLayout(Device,
-			(DWORD)blob->GetBufferSize(),
-			blob->GetBufferPointer(),
-			layout,
-			(UINT)std::size(layout),
-			inputLayout);
-	}
 	}
 }

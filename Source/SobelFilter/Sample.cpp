@@ -25,14 +25,20 @@ bool Sample::Init()
 {
 	auto* l = LightStorage::getLight();
 	std::unique_ptr<LightProperty> l0 = std::make_unique<LightProperty>();
-	l0->light.Direction = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	l0->Type = LightType::Directional;
+	l0->light.Direction = XMFLOAT3(-1.0f, -1.0f, -1.0f);
 	l0->light.Strength = XMFLOAT3(1.0f, 1.0f, 1.0f);
+
+	l0->DirRot.isRotate = true;
+	l0->DirRot.Axis = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	l0->DirRot.RotSpeed = 1.0f;
 
 	l->AddLight(l0);
 
 	mSobelFilter = std::make_unique<SobelFilter>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, L"shaders\\SobelFilter.hlsl");
 
-	mesh.LoadFile(L"Sphere0.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"sphere0.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
+	//mesh.LoadFile(L"sylbanas.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
 
 	XMMATRIX S = XMMatrixScaling(3.0f, 3.0f, 3.0f);
 	mesh.SetWorld(S);
@@ -49,6 +55,7 @@ bool Sample::Frame()
 	if (S_Input.getKeyState(DIK_G) == Input::KEYSTATE::KEY_PUSH)
 	{
 		ID3D11Texture2D* tex = mSobelFilter->Texture();
+	//	ID3D11Texture2D* tex = mOffRT.Texture();
 		D3DX11SaveTextureToFile(m_pImmediateContext.Get(), tex, D3DX11_IFF_DDS, L"texFile.dds");
 	}
 
@@ -67,8 +74,8 @@ bool Sample::Render()
 
 	mDxObj[DxType::COMPOSITE]->SetResource(m_pImmediateContext.Get());
 	m_pImmediateContext->PSSetShaderResources(0, 1, srv);
-//	m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
-	m_pImmediateContext->DrawIndexed(6, 1, 0);
+	m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
+	m_pImmediateContext->DrawInstanced(6, 1, 0, 0);
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.Render(m_pImmediateContext.Get());

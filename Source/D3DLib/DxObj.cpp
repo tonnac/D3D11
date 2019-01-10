@@ -35,7 +35,7 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj = std::make_unique<DxObj>();
 	dxobj->m_pVertexShader = storage->getVertexShader(L"composite");
 	dxobj->m_pPixelShader = storage->getPixelShader(L"composite");
-	dxobj->m_pInputLayout = storage->getInputLayout(L"composite");
+	dxobj->m_pInputLayout = nullptr;
 
 	_DxObj[DxType::COMPOSITE] = std::move(dxobj);
 
