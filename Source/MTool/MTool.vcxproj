@@ -188,12 +188,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CreateDD.h" />
-    <ClInclude Include="CreateDialog.h" />
-    <ClInclude Include="DeDlg.h" />
-    <ClInclude Include="EffectForm.h" />
-    <ClInclude Include="EffectPant.h" />
-    <ClInclude Include="LightAdd.h" />
     <ClInclude Include="LightForm.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MTool.h" />
@@ -203,15 +197,8 @@
     <ClInclude Include="Sample.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="ToolPane.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CreateDD.cpp" />
-    <ClCompile Include="CreateDialog.cpp" />
-    <ClCompile Include="DeDlg.cpp" />
-    <ClCompile Include="EffectForm.cpp" />
-    <ClCompile Include="EffectPant.cpp" />
-    <ClCompile Include="LightAdd.cpp" />
     <ClCompile Include="LightForm.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MTool.cpp" />
@@ -224,7 +211,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ToolPane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MTool.rc" />

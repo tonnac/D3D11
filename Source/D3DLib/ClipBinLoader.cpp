@@ -8,8 +8,6 @@ bool ClipBinLoader::LoadClip(const std::wstring & FileName, UINT numBones, std::
 	std::string File = std::string(FileName.begin(), FileName.end());
 	std::ifstream fp(File.c_str(), std::ios::binary);
 	std::wstring ignore;
-	std::wstring Name(FileName, 0, FileName.find_last_of('.'));
-	
 
 	if (!fp.is_open())
 	{
@@ -21,7 +19,7 @@ bool ClipBinLoader::LoadClip(const std::wstring & FileName, UINT numBones, std::
 	ZXCBinLoader::ReadString(fp, mExporterVersion);
 
 	ReadScene(fp);
-	ReadAnimationClips(fp, Name, numBones, 0, clips);
+	ReadAnimationClips(fp, numBones, 0, clips);
 
 	return true;
 }
@@ -33,13 +31,14 @@ void ClipBinLoader::ReadScene(std::ifstream& fp)
 
 void ClipBinLoader::ReadAnimationClips(
 	std::ifstream& fp,
-	const std::wstring& name,
 	UINT numBones,
 	UINT numAnimationClips,
 	std::unordered_map<std::wstring, AnimationClip>& animations)
 {
+	std::wstring Name;
 	AnimationClip clip;
 	int bonesize;
+	ZXCBinLoader::ReadString(fp, Name);
 	ZXCBinLoader::ReadBinary(fp, bonesize);
 	clip.BoneAnimations.resize(bonesize);
 	clip.SceneInf = mSceneinfo;
@@ -51,5 +50,5 @@ void ClipBinLoader::ReadAnimationClips(
 		ZXCBinLoader::ReadBinary(fp, clip.BoneAnimations[i].Keyframes.data(), (UINT)(sizeof(KeyFrame) * size));
 	}
 
-	animations[name] = clip;
+	animations[Name] = clip;
 }

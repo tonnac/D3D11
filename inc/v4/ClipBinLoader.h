@@ -16,7 +16,6 @@ private:
 	void ReadScene(std::ifstream& fp);
 	void ReadAnimationClips(
 		std::ifstream& fp,
-		const std::wstring& name,
 		UINT numBones,
 		UINT numAnimationClips,
 		std::unordered_map<std::wstring, AnimationClip>& animations);

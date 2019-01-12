@@ -42,11 +42,11 @@ float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 t
 	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
 	float3 fresnelFactor = SchlickFresnel(mat.FresnelR0, halfVec, lightVec);
 	
-	float3 specAlbedo = fresnelFactor * roughnessFactor * mat.gSpecular.rgb;
+	float3 specAlbedo = fresnelFactor * roughnessFactor *mat.gSpecular.rgb;
 
 	specAlbedo = specAlbedo / (specAlbedo + 1.0f);
 
-	return (mat.Diffuse.rgb * mat.TexColor.rgb + specAlbedo) * lightStrength;
+	return (mat.TexColor.rgb + specAlbedo) * lightStrength;
 }
 
 float3 ComputeDirectionalLight(Light L, Material mat, float3 normal, float3 toEye)

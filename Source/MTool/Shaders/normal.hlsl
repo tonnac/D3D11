@@ -102,11 +102,11 @@ void GS(triangle VertexOut gin[3],
 	GeoOut gout[2];
 	gout[0].PosW = PosW;
 	gout[0].p = mul(float4(gout[0].PosW, 1.0f), gViewProj);
-	gout[0].c = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	gout[0].c = float4(0.0f, 0.0f, 1.0f, 1.0f);
 
-	gout[1].PosW = PosW + NormalW * 15.0f;
+	gout[1].PosW = PosW + NormalW * 3.0f;
 	gout[1].p = mul(float4(gout[1].PosW, 1.0f), gViewProj);
-	gout[1].c = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	gout[1].c = float4(1.0f, 0.0f, 1.0f, 1.0f);
 
 	lineStream.Append(gout[0]);
 	lineStream.Append(gout[1]);

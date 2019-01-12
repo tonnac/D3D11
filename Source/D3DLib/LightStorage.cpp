@@ -152,3 +152,8 @@ LightVec * LightStorage::GetLightVec()
 {
 	return &mLights;
 }
+
+LightProperty * LightStorage::GetProperty(int nIndex)
+{
+	return mLights[nIndex].get();
+}

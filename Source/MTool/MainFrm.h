@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include "CreateDD.h"
-#include "ToolPane.h"
-#include "EffectPant.h"
 #include "LightForm.h"
 
 class CMainFrame : public CFrameWndEx
@@ -21,9 +18,6 @@ public:
 
 // 작업입니다.
 public:
-	CreateDD mSaveMap;
-	ToolPane mToolpane;
-	EffectPant mEffectpane;
 	LightForm mLightForm;
 // 재정의입니다.
 public:
@@ -54,8 +48,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	afx_msg void OnToolMtool();
-	afx_msg void SavaMap();
 	afx_msg void OnSkyBox();
 	afx_msg void OnUpdateSkyBox(CCmdUI *pCmdUI);
 

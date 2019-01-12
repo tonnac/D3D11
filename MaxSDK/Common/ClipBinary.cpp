@@ -34,6 +34,8 @@ void ClipBinary::SaveAnimations(std::ofstream & os)
 {
 	int boneSize = (int)mAnimation->BoneAnimations.size();
 
+	std::wstring Name(mFilename, 0, mFilename.find_last_of('.'));
+	BinaryIO::WriteString(os, Name);
 	BinaryIO::WriteBinary(os, boneSize);
 	for (int i = 0; i < boneSize; ++i)
 	{

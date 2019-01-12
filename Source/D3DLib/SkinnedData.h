@@ -81,6 +81,9 @@ struct SkinnedModelInstance
 	UINT FrameTick = 0;
 	float AnimationSpeed = 1.0f;
 
+	UINT CurClipindex = 0;
+
+	std::vector<std::wstring> Animations;
 	std::vector<DirectX::XMFLOAT4X4> FinalTransforms;
 	std::wstring ClipName;
 	int TimePos = 0;
@@ -95,7 +98,11 @@ struct SkinnedModelInstance
 		TimePos += (int)(dt * AnimationSpeed * FrameSpeed * FrameTick);
 
 		if (TimePos > SkinnedInfo->GetClipEndTime(ClipName))
+		{
+			CurClipindex = (CurClipindex + 1) % (UINT)Animations.size();
+			ClipName = Animations[CurClipindex];
 			TimePos = 0;
+		}
 
 		SkinnedInfo->GetFinalTransforms(ClipName, TimePos, FinalTransforms);
 	}

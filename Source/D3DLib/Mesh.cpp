@@ -150,6 +150,7 @@ bool Mesh::LoadClip(const std::tstring & filename, const std::tstring & texfilep
 		
 		auto& p = std::make_pair(x.first, x.second);
 		mSkinInfo->AddAnimation(p);
+		mSkinnedInst->Animations.push_back(name);
 	}
 
 	mSkinnedInst->setClipName(name);
@@ -169,8 +170,9 @@ bool Mesh::LoadClipBin(const std::tstring & filename, const std::tstring & texfi
 	{
 		name = x.first;
 
-		auto& p = std::make_pair(x.first, x.second);
+		auto& p = std::make_pair(name, x.second);
 		mSkinInfo->AddAnimation(p);
+		mSkinnedInst->Animations.push_back(name);
 	}
 
 	mSkinnedInst->setClipName(name);
@@ -398,6 +400,11 @@ bool Mesh::Frame()
 
 	mSkinnedConstants.BoneTransforms[0] = MathHelper::Identity4x4();
 
+	if (S_Input.getKeyState(DIK_K) == Input::KEYSTATE::KEY_PUSH)
+	{
+		numDrawItem = (numDrawItem + 1) % (UINT)mDrawItem.size();
+	}
+
 	return true;
 }
 
@@ -433,12 +440,20 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
+	UINT i = 0;
+
 	for (auto&x : mDrawItem)
 	{
+		//if (i != numDrawItem)
+		//{
+		//	++i;
+		//	continue;
+		//}
 		context->IASetPrimitiveTopology(x->PrimitiveType);
 		x->Mat->SetResource(context);
 		context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
 		context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
+		++i;
 	}
 	
 	return true;

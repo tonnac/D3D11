@@ -4,6 +4,7 @@
 #include "ClipBinLoader.h"
 #include "Shape.h"
 #include "FrameResource.h"
+#include <cstdarg>
 
 class Mesh : public Shape
 {
@@ -55,4 +56,6 @@ private:
 	std::unique_ptr<SkinnedData> mSkinInfo = nullptr;
 	std::unique_ptr<SkinnedModelInstance> mSkinnedInst = nullptr;
 	SkinnedConstants mSkinnedConstants;
+
+	UINT numDrawItem = 0;
 };

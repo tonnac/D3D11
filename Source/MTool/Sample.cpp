@@ -45,39 +45,38 @@ void Sample::setSkyBox()
 bool Sample::Init()
 {
 //	Converter con;
-//	con.ConverttoSBI(L"death.skn");
+	//con.ConverttoSBI(L"Model\\shinbi\\shinbi.skn");
 
 	grid.SetProperties(150.0f, 150.0f, 50, 50);
 	grid.Create(m_pd3dDevice.Get(), L"..\\..\\data\\tile\\tile.dds", L"..\\..\\data\\tile\\tile_nmap.dds");
 
 	steady_clock::time_point bef = steady_clock::now();
-//	mesh.LoadFile(L"sylbanas0.sbi", L"..\\..\\data\\tex\\sylbanas\\", m_pd3dDevice.Get());
-	mesh0.LoadFile(L"sphere.skn", L"..\\..\\data\\tile\\", m_pd3dDevice.Get());
-	steady_clock::time_point aft = steady_clock::now();
-	seconds u = duration_cast<seconds>(aft - bef);
-	
-	//XMMATRIX T = XMMatrixTranslation(0.0f, 50.0f, 0.0f);
-	//XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
+	mesh.LoadFile(L"Model\\shinbi\\shinbi.sbi", L"..\\..\\data\\tex\\shinbi\\", m_pd3dDevice.Get());
 
-	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-	XMMATRIX S = XMMatrixScaling(15.0f, 15.0f, 15.0f);
-	mesh.SetWorld(S);
+	XMMATRIX T = XMMatrixTranslation(0.0f, 50.0f, 0.0f);
+	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
 
-	T = XMMatrixTranslation(50.0f, 0.0f, 0.0f);
-	mesh0.SetWorld(T);
+//	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+//	XMMATRIX S = XMMatrixScaling(15.0f, 15.0f, 15.0f);
+//	mesh.SetWorld(S);
 
-//	mesh.LoadFile(L"death.clb");
+	mesh.LoadFile(L"clip\\shinbi\\LevelStart.clb");
+	mesh.LoadFile(L"clip\\shinbi\\AttackB.clb");
+	mesh.LoadFile(L"clip\\shinbi\\AttackC.clb");
+	mesh.LoadFile(L"clip\\shinbi\\AttackD.clb");
+
+
 	//steady_clock::time_point aft0 = steady_clock::now();
 
 	//milliseconds v = duration_cast<milliseconds>(aft0 - aft);
-
+	steady_clock::time_point aft = steady_clock::now();
+	seconds u = duration_cast<seconds>(aft - bef);
 	return true;
 }
 
 bool Sample::Frame()
 {
-//	mesh.Frame();
-	mesh0.Frame();
+	mesh.Frame();
 	return true;
 }
 
@@ -87,8 +86,7 @@ bool Sample::Render()
 	grid.Render(m_pImmediateContext.Get());
 
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
-	mesh0.Render(m_pImmediateContext.Get());
-//	mesh.Render(m_pImmediateContext.Get());
+	mesh.Render(m_pImmediateContext.Get());
 
 	//mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 	//mesh.DebugRender(m_pImmediateContext.Get());

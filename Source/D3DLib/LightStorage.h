@@ -62,6 +62,7 @@ public:
 	void CopySpot(Light* lights);
 
 	LightVec* GetLightVec();
+	LightProperty* GetProperty(int nIndex);
 
 private:
 	void AddDirectional(std::unique_ptr<LightProperty>& light);
