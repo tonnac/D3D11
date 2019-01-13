@@ -14,7 +14,7 @@ public:
 public:
 	virtual bool Savefile()
 	{
-		std::string fileName = std::string(mFilename.begin(), mFilename.end());
+		std::string fileName = std::string(mOutData.Filename.begin(), mOutData.Filename.end());
 
 		std::ofstream os(fileName.c_str(), std::ios::binary);
 
@@ -33,7 +33,7 @@ public:
 		};
 
 		BinaryIO::WriteBinary(os, nowTime);
-		BinaryIO::WriteString(os, mExporterVersion);
+		BinaryIO::WriteString(os, mOutData.Version);
 		BinaryIO::WriteBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
 		SaveMaterial(os);
@@ -48,21 +48,21 @@ public:
 protected:
 	void SaveMaterial(std::ofstream& os)
 	{
-		for (UINT i = 0; i < (UINT)mMaterial.size(); ++i)
+		for (UINT i = 0; i < (UINT)mOutData.Materials.size(); ++i)
 		{
-			BinaryIO::WriteMaterial(os, mMaterial[i]);
+			BinaryIO::WriteMaterial(os, mOutData.Materials[i]);
 		}
 	}
 	void SaveNodes(std::ofstream& os)
 	{
-		for (const auto& p : mObjects)
+		for (const auto& p : mOutData.OutObjects)
 		{
 			BinaryIO::WriteNodes(os, p);
 		}
 	}
 	void SaveSubset(std::ofstream& os)
 	{
-		BinaryIO::WriteBinary(os, mSubsets.data(), (UINT)(sizeof(Subset) * mSubsets.size()));
+		BinaryIO::WriteBinary(os, mOutData.Subsets.data(), (UINT)(sizeof(Subset) * mOutData.Subsets.size()));
 	}
 	template<typename X>
 	void SaveVertices(std::ofstream & os)
@@ -71,7 +71,7 @@ protected:
 	}
 	void SaveIndices(std::ofstream& os)
 	{
-		BinaryIO::WriteBinary(os, mIndices.data(), (UINT)(sizeof(std::uint32_t) * mIndices.size()));
+		BinaryIO::WriteBinary(os, mOutData.Indices.data(), (UINT)(sizeof(std::uint32_t) * mOutData.Indices.size()));
 	}
 
 private:

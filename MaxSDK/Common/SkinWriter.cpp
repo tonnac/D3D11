@@ -2,32 +2,28 @@
 #include "NodesLoader.h"
 
 SkinWriter::SkinWriter(const OutputData& outData)
-	: Writer(outData), mVertices(outData.SkinnedVertices)
+	: Writer(outData)
 {
-	mNumVertices = (UINT)mVertices.size();
+	mNumVertices = (UINT)mOutData.SkinnedVertices.size();
 }
 
 bool SkinWriter::Savefile()
 {
+	const auto& p = mOutData;
+
 	std::wofstream os;
-	os.open(mFilename.c_str());
+	os.open(p.Filename.c_str());
 
 	if (!os.is_open()) return false;
 
-	UINT numMaterials = (UINT)mMaterial.size();
-	UINT numVertices = (UINT)mVertices.size();
-	UINT numTriangles = (UINT)((mIndices.size() / 3));
-	UINT numNodes = (UINT)mObjects.size();
-	UINT numSubsets = (UINT)mSubsets.size();
-
 	std::wstring info =
-		L"#Materials " + std::to_wstring(numMaterials) +
-		L"\n#Nodes " + std::to_wstring(numNodes) +
-		L"\n#Vertices " + std::to_wstring(numVertices) +
-		L"\n#Triangles " + std::to_wstring(numTriangles) +
-		L"\n#Subset " + std::to_wstring(numSubsets);
+		L"#Materials " + std::to_wstring(mNumMaterials) +
+		L"\n#Nodes " + std::to_wstring(mNumNodes) +
+		L"\n#Vertices " + std::to_wstring(mNumVertices) +
+		L"\n#Triangles " + std::to_wstring(mNumTriangles) +
+		L"\n#Subset " + std::to_wstring(mNumSubsets);
 
-	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + MaxUtil::nowtime();
+	std::wstring header = L"**********ZXCS_Header**********\n#" + p.Version + L"\n#" + MaxUtil::nowtime();
 	os << header << info;
 
 	SaveMaterial(os);
@@ -42,40 +38,42 @@ bool SkinWriter::Savefile()
 
 void SkinWriter::SaveMaterial(std::wofstream & os)
 {
+	const auto&p = mOutData;
+
 	std::wstring rootMtlInfo = L"\n\n**********Materials**********";
 
 	os << rootMtlInfo;
 
-	for (UINT i = 0; i < (UINT)mMaterial.size(); ++i)
+	for (UINT i = 0; i < (UINT)p.Materials.size(); ++i)
 	{
 		std::wstring mtlInfo =
-			L"\n#Name " + mMaterial[i].Name +
-			L"\n#Diffuse: " + std::to_wstring(mMaterial[i].Diffuse.r) + L" " + std::to_wstring(mMaterial[i].Diffuse.g) + L" " + std::to_wstring(mMaterial[i].Diffuse.b) +
-			L"\n#Specular: " + std::to_wstring(mMaterial[i].Specular.r) + L" " + std::to_wstring(mMaterial[i].Specular.g) + L" " + std::to_wstring(mMaterial[i].Specular.b) +
-			L"\n#Ambient: " + std::to_wstring(mMaterial[i].Ambient.r) + L" " + std::to_wstring(mMaterial[i].Ambient.g) + L" " + std::to_wstring(mMaterial[i].Ambient.b) +
-			L"\n#Shininess: " + std::to_wstring(mMaterial[i].Shininess) +
-			L"\n#MapNum " + std::to_wstring(mMaterial[i].TexMap.size()) +
-			L"\n#SubMtlNum " + std::to_wstring(mMaterial[i].SubMaterial.size());
+			L"\n#Name " + p.Materials[i].Name +
+			L"\n#Diffuse: " + std::to_wstring(p.Materials[i].Diffuse.r) + L" " + std::to_wstring(p.Materials[i].Diffuse.g) + L" " + std::to_wstring(p.Materials[i].Diffuse.b) +
+			L"\n#Specular: " + std::to_wstring(p.Materials[i].Specular.r) + L" " + std::to_wstring(p.Materials[i].Specular.g) + L" " + std::to_wstring(p.Materials[i].Specular.b) +
+			L"\n#Ambient: " + std::to_wstring(p.Materials[i].Ambient.r) + L" " + std::to_wstring(p.Materials[i].Ambient.g) + L" " + std::to_wstring(p.Materials[i].Ambient.b) +
+			L"\n#Shininess: " + std::to_wstring(p.Materials[i].Shininess) +
+			L"\n#MapNum " + std::to_wstring(p.Materials[i].TexMap.size()) +
+			L"\n#SubMtlNum " + std::to_wstring(p.Materials[i].SubMaterial.size());
 
 		os << mtlInfo; 
 
-		if (!mMaterial[i].SubMaterial.empty())
+		if (!p.Materials[i].SubMaterial.empty())
 		{
-			for (int k = 0; k < mMaterial[i].SubMaterial.size(); ++k)
+			for (int k = 0; k < p.Materials[i].SubMaterial.size(); ++k)
 			{
 				std::wstring subMtlInfo =
-					L"\n\t#SubMtlName " + mMaterial[i].SubMaterial[k].Name +
-					L"\n\t#Diffuse: " + std::to_wstring(mMaterial[i].SubMaterial[k].Diffuse.r) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Diffuse.g) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Diffuse.b) +
-					L"\n\t#Specular: " + std::to_wstring(mMaterial[i].SubMaterial[k].Specular.r) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Specular.g) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Specular.b) +
-					L"\n\t#Ambient: " + std::to_wstring(mMaterial[i].SubMaterial[k].Ambient.r) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Ambient.g) + L" " + std::to_wstring(mMaterial[i].SubMaterial[k].Ambient.b) +
-					L"\n\t#Shininess: " + std::to_wstring(mMaterial[i].SubMaterial[k].Shininess) +
-					L"\n\t#MapNum " + std::to_wstring(mMaterial[i].SubMaterial[k].TexMap.size());
+					L"\n\t#SubMtlName " + p.Materials[i].SubMaterial[k].Name +
+					L"\n\t#Diffuse: " + std::to_wstring(p.Materials[i].SubMaterial[k].Diffuse.r) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Diffuse.g) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Diffuse.b) +
+					L"\n\t#Specular: " + std::to_wstring(p.Materials[i].SubMaterial[k].Specular.r) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Specular.g) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Specular.b) +
+					L"\n\t#Ambient: " + std::to_wstring(p.Materials[i].SubMaterial[k].Ambient.r) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Ambient.g) + L" " + std::to_wstring(p.Materials[i].SubMaterial[k].Ambient.b) +
+					L"\n\t#Shininess: " + std::to_wstring(p.Materials[i].SubMaterial[k].Shininess) +
+					L"\n\t#MapNum " + std::to_wstring(p.Materials[i].SubMaterial[k].TexMap.size());
 
 				os << subMtlInfo;
 
-				if (!mMaterial[i].SubMaterial[k].TexMap.empty())
+				if (!p.Materials[i].SubMaterial[k].TexMap.empty())
 				{
-					for (auto &x : mMaterial[i].SubMaterial[k].TexMap)
+					for (auto &x : p.Materials[i].SubMaterial[k].TexMap)
 					{
 						std::wstring TexInfo =
 							L"\n\t#MapSubNO " + std::to_wstring(x.first) +
@@ -88,9 +86,9 @@ void SkinWriter::SaveMaterial(std::wofstream & os)
 		}
 		else
 		{
-			if (!mMaterial[i].TexMap.empty())
+			if (!p.Materials[i].TexMap.empty())
 			{
-				for (auto &x : mMaterial[i].TexMap)
+				for (auto &x : p.Materials[i].TexMap)
 				{
 					std::wstring TexInfo =
 						L"\n\t\t#MapSubNO " + std::to_wstring(x.first) +
@@ -111,7 +109,7 @@ void SkinWriter::SaveNodes(std::wofstream & os)
 
 	UINT i = 0;
 
-	for (auto&x : mObjects)
+	for (auto&x : mOutData.OutObjects)
 	{
 		std::wstring hclass;
 
@@ -156,7 +154,7 @@ void SkinWriter::SaveSubset(std::wofstream & os)
 	UINT i = 0;
 	std::wstring subsetHeader = L"\n**********SubsetTable**********";
 	os << subsetHeader;
-	for (auto & x : mSubsets)
+	for (auto & x : mOutData.Subsets)
 	{
 		std::wstring subinfo = L"\nSubsetID" + std::to_wstring(i) +
 			L" NodeIndex: " + std::to_wstring(x.NodeIndex) +
@@ -177,11 +175,11 @@ void SkinWriter::SaveIndices(std::wofstream & os)
 
 	os << indexHeader;
 
-	for (UINT i = 0; i < (UINT)(mIndices.size() / 3); ++i)
+	for (UINT i = 0; i < (UINT)(mOutData.Indices.size() / 3); ++i)
 	{
-		std::uint32_t i0 = mIndices[i * 3 + 0];
-		std::uint32_t i1 = mIndices[i * 3 + 1];
-		std::uint32_t i2 = mIndices[i * 3 + 2];
+		std::uint32_t i0 = mOutData.Indices[i * 3 + 0];
+		std::uint32_t i1 = mOutData.Indices[i * 3 + 1];
+		std::uint32_t i2 = mOutData.Indices[i * 3 + 2];
 
 		std::wstring indexInfo = std::to_wstring(i0) + L" " + std::to_wstring(i1) + L" " + std::to_wstring(i2);
 		os << indexInfo << std::endl;
@@ -194,7 +192,7 @@ void SkinWriter::SaveVertices(std::wofstream & os)
 
 	os << vertexHeader;
 
-	for (auto&m : mVertices)
+	for (auto&m : mOutData.SkinnedVertices)
 	{
 		std::wstring weightInfo = L"\nWeightNum: " + std::to_wstring((int)m.w[3]);
 		std::wstring weight;

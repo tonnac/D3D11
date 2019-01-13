@@ -31,6 +31,7 @@ bool BaseExporter::Run()
 	BuildOutObjects();
 	BuildVBIB();
 	BuildSubset();
+	BuildBoundingBox();
 
 	CreateWriter();
 
@@ -267,6 +268,37 @@ void BaseExporter::BuildVBIB()
 			}
 			Indices.insert(Indices.end(), indices.begin(), indices.end());
 		}
+	}
+}
+
+void BaseExporter::BuildBoundingBox()
+{
+	Point3 vMax = Point3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	Point3 vMin = Point3(FLT_MAX, FLT_MAX, FLT_MAX);
+
+	for (const auto& x : mOutData.Vertices)
+	{
+		ComparePoint3(vMax, x.p);
+		ComparePoint3(vMin, x.p, false);
+	}
+
+	mOutData.Box.Center = (vMax + vMin) * 0.5f;
+	mOutData.Box.Extents = (vMax - vMin) * 0.5f;
+}
+
+void BaseExporter::ComparePoint3(Point3 & dest, const Point3 & src, bool isGreater)
+{
+	if (isGreater)
+	{
+		dest.x = max(dest.x, src.x);
+		dest.y = max(dest.y, src.y);
+		dest.z = max(dest.z, src.z);
+	}
+	else
+	{
+		dest.x = min(dest.x, src.x);
+		dest.y = min(dest.y, src.y);
+		dest.z = min(dest.z, src.z);
 	}
 }
 

@@ -358,6 +358,8 @@ struct OutputData
 	std::wstring Version;
 	std::wstring Filename;
 
+	BoundingBox Box;
+
 	std::vector<Tangent> Binormals;
 
 	std::vector<OutVertex> Vertices;

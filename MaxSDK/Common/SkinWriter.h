@@ -18,7 +18,5 @@ private:
 	void SaveVertices(std::wofstream& os);
 	void SaveIndices(std::wofstream& os);
 
-private:
-	const std::vector<OutSkinned>& mVertices;
 };
 

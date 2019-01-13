@@ -157,3 +157,18 @@ void SkinExporter::BuildVBIB()
 		}
 	}
 }
+
+void SkinExporter::BuildBoundingBox()
+{
+	Point3 vMax = Point3(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	Point3 vMin = Point3(FLT_MAX, FLT_MAX, FLT_MAX);
+
+	for (const auto& x : mOutData.SkinnedVertices)
+	{
+		ComparePoint3(vMax, x.p);
+		ComparePoint3(vMin, x.p, false);
+	}
+
+	mOutData.Box.Center = (vMax + vMin) * 0.5f;
+	mOutData.Box.Extents = (vMax - vMin) * 0.5f;
+}

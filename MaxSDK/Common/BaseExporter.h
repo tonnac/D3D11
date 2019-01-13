@@ -30,6 +30,10 @@ private:
 	virtual void CreateWriter();
 	virtual void BuildSubset();
 	virtual void BuildVBIB();
+	virtual void BuildBoundingBox();
+
+protected:
+	void ComparePoint3(Point3& dest, const Point3& src, bool isGreater = true);
 
 protected:
 	Interface*	mMaxInterface = nullptr;
