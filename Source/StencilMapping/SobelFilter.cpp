@@ -11,6 +11,10 @@ SobelFilter::SobelFilter(ID3D11Device * pd3Device, UINT width, UINT height, DXGI
 	BuildShader(shaderFile);
 }
 
+void SobelFilter::OnResize(UINT width, UINT height)
+{
+}
+
 void SobelFilter::Execute(ID3D11DeviceContext * context, ID3D11ShaderResourceView** texture)
 {
 	UINT numGroupsX = (UINT)ceilf(mWidth / 16.0f);
@@ -40,7 +44,7 @@ void SobelFilter::BuildShader(const std::wstring& shaderFile)
 	ComPtr<ID3DBlob> blob;
 
 	blob = d3dUtil::CompileShaderFromFile(shaderFile.c_str(), nullptr, "SobelCS", "cs_5_0");
-	md3Device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, compute.GetAddressOf());
+	ThrowifFailed(md3Device->CreateComputeShader(blob->GetBufferPointer(), blob->GetBufferSize(), nullptr, compute.GetAddressOf()));
 
 	mComputeShader = ShaderStorage::Storage()->AddComputeShader(compute, name);
 }
@@ -61,7 +65,7 @@ void SobelFilter::BuildResource()
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
-	md3Device->CreateTexture2D(&texDesc, nullptr, mTexture.GetAddressOf());
+	ThrowifFailed(md3Device->CreateTexture2D(&texDesc, nullptr, mTexture.GetAddressOf()));
 }
 
 void SobelFilter::BuildView()
@@ -80,6 +84,6 @@ void SobelFilter::BuildView()
 	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 	uavDesc.Texture2D.MipSlice = 0;
 
-	md3Device->CreateShaderResourceView(mTexture.Get(), &srvDesc, mSrv.GetAddressOf());
-	md3Device->CreateUnorderedAccessView(mTexture.Get(), &uavDesc, mUav.GetAddressOf());
+	ThrowifFailed(md3Device->CreateShaderResourceView(mTexture.Get(), &srvDesc, mSrv.GetAddressOf()));
+	ThrowifFailed(md3Device->CreateUnorderedAccessView(mTexture.Get(), &uavDesc, mUav.GetAddressOf()));
 }

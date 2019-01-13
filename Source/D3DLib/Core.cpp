@@ -3,6 +3,7 @@
 #include "DirectWrite.h"
 #include "DirectInput.h"
 #include "SRVStorage.h"
+#include <windowsx.h>
 
 
 using namespace DirectX;
@@ -176,7 +177,14 @@ LRESULT Core::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 		}
 		return 0;
+
+	case WM_LBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		return 0;
 	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -280,11 +288,11 @@ bool Core::GameFrame()
 
 bool Core::PreRender()
 {
-	m_pImmediateContext->ClearRenderTargetView(*m_DxRT.RenderTargetView(), &mBackColor.x);
-	m_pImmediateContext->ClearDepthStencilView(m_DxRT.DepthStencilView(), 
+	m_pImmediateContext->ClearRenderTargetView(m_pRenderTargetView.Get(), &mBackColor.x);
+	m_pImmediateContext->ClearDepthStencilView(m_pDepthStencilView.Get(), 
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pImmediateContext->OMSetRenderTargets(1, m_DxRT.RenderTargetView(), m_DxRT.DepthStencilView());
-	m_pImmediateContext->RSSetViewports(1, &m_DxRT.Viewport());
+	m_pImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
 
 	auto SamplerStates = DxState::GetSamArray();
 

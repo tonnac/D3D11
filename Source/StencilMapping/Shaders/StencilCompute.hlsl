@@ -24,7 +24,7 @@ void SobelCS(uint3 DTid : SV_DispatchThreadID)
 		}
 	}
 
-	if (abs(ret.x) > 0)
+	if (ret.x > 0)
 	{
 		gOutput[DTid.xy] = float4(1.0f, 1.0f, 0.0f, 1.0f);
 	}

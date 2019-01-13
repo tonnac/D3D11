@@ -1,7 +1,6 @@
 #pragma once
 
 #include "d3dUtil.h"
-#include "DxRT.h"
 
 class Device
 {
@@ -14,11 +13,12 @@ protected:
 	virtual void OnResize();
 
 	void CreateSwapChain();
-	void SetRenderTargetView();
 
 	void LogAdapters();
 	void LogAdapterOutput(IDXGIAdapter* pAdapter);
 	void LogOutputDisplayModes(IDXGIOutput* pOutput, DXGI_FORMAT format);
+
+	void CreateDepthStencilView();
 
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pd3dDevice;
@@ -27,7 +27,9 @@ protected:
 	Microsoft::WRL::ComPtr<IDXGIFactory> m_pdxgiFactory;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapchain;
 
-	DxRT m_DxRT;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetView = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView = nullptr;
+	D3D11_VIEWPORT m_Viewport;
 
 	DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;
 	D3D_FEATURE_LEVEL m_Featurelevel;

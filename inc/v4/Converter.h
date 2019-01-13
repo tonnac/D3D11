@@ -40,10 +40,16 @@ private:
 		BinaryIO::WriteBinary(os, indices.data(), (UINT)(sizeof(DWORD) * indices.size()));
 	}
 
+	void SaveBoundingBox(std::ofstream& os, const DirectX::BoundingBox& box)
+	{
+		BinaryIO::WriteBinary(os, box);
+	}
+
 private:
 	void SaveMaterial(std::wofstream& os, const std::vector<ZXCSMaterial>& materials);
 	void SaveNodes(std::wofstream& os, const std::vector<MeshNode>& nodes);
 	void SaveSubset(std::wofstream& os, const std::vector<Subset>& subsets);
+	void SaveBoundingBox(std::wofstream& os, const DirectX::BoundingBox& box);
 	void SaveVertices(std::wofstream& os, const std::vector<SkinnedVertex>& vertices);
 	void SaveIndices(std::wofstream& os, const std::vector<DWORD>& indices);
 };

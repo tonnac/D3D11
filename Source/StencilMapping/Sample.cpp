@@ -37,7 +37,7 @@ bool Sample::Init()
 
 	mSobelFilter = std::make_unique<SobelFilter>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, L"shaders\\StencilCompute.hlsl");
 
-	mesh.LoadFile(L"ship.sbi", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"ship.bin", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
 
 	//XMMATRIX S = XMMatrixScaling(3.0f, 3.0f, 3.0f);
 	//mesh.SetWorld(S);
@@ -63,7 +63,7 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	mOffRT.Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::SKINNED].get());
+	mOffRT.Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::DEFAULT].get());
 	ID3D11ShaderResourceView** srv = mOffRT.GetDSSrv();
 	ID3D11ShaderResourceView** srv0 = mOffRT.GetSRV();
 	mSobelFilter->Execute(m_pImmediateContext.Get(), srv);

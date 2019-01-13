@@ -30,3 +30,8 @@ void ZXCBinLoader::LoadIndices(std::ifstream & fin, std::vector<DWORD>& indices)
 {
 	ReadBinary(fin, indices.data(), (UINT)(sizeof(std::uint32_t) * indices.size()));
 }
+
+void ZXCBinLoader::LoadBoundingBox(std::ifstream & fin, DirectX::BoundingBox & box)
+{
+	ReadBinary(fin, box);
+}

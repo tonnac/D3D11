@@ -34,7 +34,7 @@ public:
 		BinaryIO::WriteBinary(fout, &material.Shininess);
 		int size = (int)material.TexMap.size();
 		BinaryIO::WriteBinary(fout, &size);
-		auto& p = std::cbegin(material.TexMap);
+		auto p = std::cbegin(material.TexMap);
 		for (;p != std::cend(material.TexMap); ++p)
 		{
 			BinaryIO::WriteBinary(fout, p->first);

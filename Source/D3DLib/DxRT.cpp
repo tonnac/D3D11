@@ -3,35 +3,11 @@
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
-void DxRT::Initialize(ID3D11Device * pd3Device, float width, float height, ID3D11Texture2D * pTexture)
+DxRT::DxRT(ID3D11Device * pd3Device, UINT width, UINT height)
+	: md3Device(pd3Device), mWidth(width), mHeight(height)
 {
-	m_pRenderTargetView.Reset();
-
-	m_Viewport.TopLeftX = 0;
-	m_Viewport.TopLeftY = 0;
-	m_Viewport.Width = width;
-	m_Viewport.Height = height;
-	m_Viewport.MinDepth = 0.0f;
-	m_Viewport.MaxDepth = 1.0f;
-
-	if (pTexture != nullptr)
-	{
-		ThrowifFailed(pd3Device->CreateRenderTargetView(
-			pTexture, nullptr, m_pRenderTargetView.GetAddressOf()));
-	}
-	else
-	{
-		m_TexDesc = CD3D11_TEXTURE2D_DESC(DXGI_FORMAT_R8G8B8A8_UNORM, Casting(UINT, width), Casting(UINT, height));
-
-		m_TexDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-		m_TexDesc.MipLevels = 1;
-
-		ThrowifFailed(pd3Device->CreateTexture2D(&m_TexDesc, nullptr, m_pTexture.GetAddressOf()));
-		ThrowifFailed(pd3Device->CreateShaderResourceView(m_pTexture.Get(), nullptr, m_pShaderResourceView.GetAddressOf()));
-		ThrowifFailed(pd3Device->CreateRenderTargetView(m_pTexture.Get(), nullptr, m_pRenderTargetView.GetAddressOf()));
-	}
-
-	CreateDepthStencilView(pd3Device, Casting(UINT, width), Casting(UINT, height));
+	CreateResource();
+	CreateDepthStencilView();
 }
 
 void DxRT::Begin(ID3D11DeviceContext * pContext, DirectX::FXMVECTOR vColor)
@@ -46,30 +22,23 @@ void DxRT::Begin(ID3D11DeviceContext * pContext, DirectX::FXMVECTOR vColor)
 	pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-void DxRT::End(ID3D11DeviceContext * pContext, DxRT * pDxrt)
+void DxRT::End(ID3D11DeviceContext * pContext)
 {
-	if (pDxrt != nullptr)
-	{
-		pContext->RSSetViewports(1, &pDxrt->m_Viewport);
-		ID3D11RenderTargetView* pRender = nullptr;
-		pContext->OMSetRenderTargets(1, &pRender, nullptr);
-		pContext->OMSetRenderTargets(1, pDxrt->m_pRenderTargetView.GetAddressOf(), pDxrt->m_pDepthStencilView.Get());
-	}
 	ID3D11RenderTargetView* pRender = nullptr;
 	pContext->OMSetRenderTargets(1, &pRender, nullptr);
 	ID3D11ShaderResourceView * sview[] = { nullptr, nullptr , nullptr, nullptr, nullptr, nullptr };
 	pContext->PSSetShaderResources(0, (UINT)std::size(sview), sview);
 }
 
-void DxRT::OnResize(ID3D11Device* pd3Device, float width, float height, ID3D11Texture2D* pTexture)
+void DxRT::OnResize(UINT width, UINT height)
 {
-	Initialize(pd3Device, width, height, pTexture);
-}
-
-void DxRT::Reset()
-{
-	m_pRenderTargetView.Reset();
-	m_pDepthStencilView.Reset();
+	if (width != mWidth || height != mHeight)
+	{
+		mWidth = width;
+		mHeight = height;
+		CreateResource();
+		CreateDepthStencilView();
+	}
 }
 
 bool DxRT::Render(ID3D11DeviceContext * context, Mesh* mesh, DxObj* dxobj)
@@ -95,24 +64,9 @@ ID3D11ShaderResourceView ** DxRT::GetDSSrv()
 	return m_pDSSrv.GetAddressOf();
 }
 
-ID3D11ShaderResourceView * DxRT::ShaderResourceView()
-{
-	return m_pShaderResourceView.Get();
-}
-
 D3D11_VIEWPORT DxRT::Viewport() const
 {
 	return m_Viewport;
-}
-
-ID3D11RenderTargetView ** DxRT::RenderTargetView()
-{
-	return m_pRenderTargetView.GetAddressOf();
-}
-
-ID3D11DepthStencilView * DxRT::DepthStencilView()
-{
-	return m_pDepthStencilView.Get();
 }
 
 ID3D11Texture2D * DxRT::Texture()
@@ -120,14 +74,39 @@ ID3D11Texture2D * DxRT::Texture()
 	return m_pTexture.Get();
 }
 
-void DxRT::CreateDepthStencilView(ID3D11Device * pd3Device, UINT width, UINT height)
+void DxRT::CreateResource()
 {
+	m_pTexture.Reset();
+	m_pRenderTargetView.Reset();
+	m_pShaderResourceView.Reset();
+
+	m_Viewport.TopLeftX = 0;
+	m_Viewport.TopLeftY = 0;
+	m_Viewport.Width = (float)mWidth;
+	m_Viewport.Height = (float)mHeight;
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+
+	m_TexDesc = CD3D11_TEXTURE2D_DESC(DXGI_FORMAT_R8G8B8A8_UNORM, mWidth, mHeight);
+
+	m_TexDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+	m_TexDesc.MipLevels = 1;
+
+	ThrowifFailed(md3Device->CreateTexture2D(&m_TexDesc, nullptr, m_pTexture.GetAddressOf()));
+	ThrowifFailed(md3Device->CreateShaderResourceView(m_pTexture.Get(), nullptr, m_pShaderResourceView.GetAddressOf()));
+	ThrowifFailed(md3Device->CreateRenderTargetView(m_pTexture.Get(), nullptr, m_pRenderTargetView.GetAddressOf()));
+}
+
+void DxRT::CreateDepthStencilView()
+{
+	m_pDSSrv.Reset();
+	m_DepthStencil.Reset();
 	m_pDepthStencilView.Reset();
 
 	D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(D3D11_TEXTURE2D_DESC));
-	descDepth.Width = width;
-	descDepth.Height = height;
+	descDepth.Width = mWidth;
+	descDepth.Height = mHeight;
 	descDepth.ArraySize = 1;
 	descDepth.MipLevels = 1;
 	descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS;
@@ -138,16 +117,14 @@ void DxRT::CreateDepthStencilView(ID3D11Device * pd3Device, UINT width, UINT hei
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
 
-	ThrowifFailed(pd3Device->CreateTexture2D(&descDepth, nullptr, m_DepthStencil.GetAddressOf()));
-
-
+	ThrowifFailed(md3Device->CreateTexture2D(&descDepth, nullptr, m_DepthStencil.GetAddressOf()));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC(
 		m_DepthStencil.Get(),
 		D3D11_DSV_DIMENSION_TEXTURE2D,
 		DXGI_FORMAT_D24_UNORM_S8_UINT);
 
-	ThrowifFailed(pd3Device->CreateDepthStencilView(m_DepthStencil.Get(), &dsvDesc,
+	ThrowifFailed(md3Device->CreateDepthStencilView(m_DepthStencil.Get(), &dsvDesc,
 		m_pDepthStencilView.GetAddressOf()));
 
 
@@ -158,7 +135,7 @@ void DxRT::CreateDepthStencilView(ID3D11Device * pd3Device, UINT width, UINT hei
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 
-	ThrowifFailed(pd3Device->CreateShaderResourceView(m_DepthStencil.Get(), &srvDesc, m_pDSSrv.GetAddressOf()));
+	ThrowifFailed(md3Device->CreateShaderResourceView(m_DepthStencil.Get(), &srvDesc, m_pDSSrv.GetAddressOf()));
 
 	m_pDepthStencilView->GetDesc(&m_DepthStencilDesc);
 }

@@ -50,7 +50,8 @@ void Device::OnResize()
 
 	m_pImmediateContext->OMSetRenderTargets(0, nullptr, nullptr);
 
-	m_DxRT.Reset();
+	m_pRenderTargetView.Reset();
+	m_pDepthStencilView.Reset();
 
 	m_SwapChainDesc.BufferDesc.Width = g_ClientWidth;
 	m_SwapChainDesc.BufferDesc.Height = g_ClientHeight;
@@ -65,10 +66,16 @@ void Device::OnResize()
 	ComPtr<ID3D11Texture2D> pTexture = nullptr;
 	ThrowifFailed(m_pSwapchain->GetBuffer(0, IID_PPV_ARGS(pTexture.GetAddressOf())));
 
-	m_DxRT.Initialize(m_pd3dDevice.Get(),
-		Casting(float, m_SwapChainDesc.BufferDesc.Width),
-		Casting(float, m_SwapChainDesc.BufferDesc.Height),
-		pTexture.Get());
+	ThrowifFailed(m_pd3dDevice->CreateRenderTargetView(pTexture.Get(), nullptr, m_pRenderTargetView.GetAddressOf()));
+	CreateDepthStencilView();
+
+	m_Viewport.TopLeftX = 0;
+	m_Viewport.TopLeftY = 0;
+	m_Viewport.Width = Casting(float, g_ClientWidth);
+	m_Viewport.Height = Casting(float, g_ClientHeight);
+	m_Viewport.MinDepth = 0.0f;
+	m_Viewport.MaxDepth = 1.0f;
+
 }
 
 void Device::CreateSwapChain()
@@ -162,4 +169,25 @@ void Device::LogOutputDisplayModes(IDXGIOutput* pOutput, DXGI_FORMAT format)
 
 		::OutputDebugString(text.c_str());
 	}
+}
+
+void Device::CreateDepthStencilView()
+{
+	m_pDepthStencilView.Reset();
+
+	ComPtr<ID3D11Texture2D> pDepthStencilTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC descDepth = CD3D11_TEXTURE2D_DESC(DXGI_FORMAT_D24_UNORM_S8_UINT, g_ClientWidth, g_ClientHeight);
+	descDepth.MipLevels = 1;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	ThrowifFailed(m_pd3dDevice->CreateTexture2D(&descDepth, nullptr, pDepthStencilTexture.GetAddressOf()));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = CD3D11_DEPTH_STENCIL_VIEW_DESC(
+		pDepthStencilTexture.Get(),
+		D3D11_DSV_DIMENSION_TEXTURE2D,
+		descDepth.Format);
+
+	ThrowifFailed(m_pd3dDevice->CreateDepthStencilView(pDepthStencilTexture.Get(), &dsvDesc,
+		m_pDepthStencilView.GetAddressOf()));
 }

@@ -12,7 +12,7 @@ public:
 	}
 
 public:
-	virtual bool Savefile()
+	virtual bool Savefile()override
 	{
 		std::string fileName = std::string(mOutData.Filename.begin(), mOutData.Filename.end());
 
@@ -39,6 +39,7 @@ public:
 		SaveMaterial(os);
 		SaveNodes(os);
 		SaveSubset(os);
+		SaveBoundingBox(os);
 		SaveVertices<X>(os);
 		SaveIndices(os);
 
@@ -72,6 +73,11 @@ protected:
 	void SaveIndices(std::ofstream& os)
 	{
 		BinaryIO::WriteBinary(os, mOutData.Indices.data(), (UINT)(sizeof(std::uint32_t) * mOutData.Indices.size()));
+	}
+
+	void SaveBoundingBox(std::ofstream& os)
+	{
+		BinaryIO::WriteBinary(os, mOutData.Box);
 	}
 
 private:

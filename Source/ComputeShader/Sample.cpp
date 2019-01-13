@@ -1,3 +1,5 @@
+#include "..\Picking\Sample.h"
+#include "..\Picking\Sample.h"
 
 #include "Sample.h"
 #include "DirectInput.h"
@@ -141,6 +143,14 @@ void Sample::BuildView()
 	uavDesc.Buffer.NumElements = bufDesc.ByteWidth / bufDesc.StructureByteStride;
 
 	m_pd3dDevice->CreateUnorderedAccessView(mOutput.Get(), &uavDesc, mUav.GetAddressOf());
+}
+
+void Sample::Pick(int sx, int sy)
+{
+}
+
+void Sample::OnResize()
+{
 }
 
 

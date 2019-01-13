@@ -10,7 +10,7 @@ class Writer
 public:
 	Writer(const OutputData& outData);
 public:
-	virtual bool Savefile() = 0;
+	virtual bool Savefile();
 
 protected:
 	void SaveMaterial(std::wofstream& os);

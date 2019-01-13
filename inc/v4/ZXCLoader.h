@@ -67,7 +67,8 @@ public:
 		std::vector<DWORD>& indices,
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
-		std::vector<MeshNode>& nodes);
+		std::vector<MeshNode>& nodes,
+		DirectX::BoundingBox& box);
 
 	bool LoadSkin(
 		const std::wstring & FileName,
@@ -76,17 +77,26 @@ public:
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
+		DirectX::BoundingBox& box,
 		SkinnedData* skinInfo);
 
 protected:
-	void ReadMaterial(std::wifstream& fp, UINT numMaterials, std::vector<ZXCSMaterial>& materials);
-	void ReadNodes(std::wifstream& fp, UINT numHelpers, std::vector<MeshNode>& nodes);
+	void ReadCommon(std::wifstream& fp,
+		std::vector<Subset>& subsets,
+		std::vector<ZXCSMaterial>& materials,
+		std::vector<MeshNode>& nodes,
+		DirectX::BoundingBox& box);
 
-	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<Vertex>& vertices);
-	void ReadVertex(std::wifstream& fp, UINT numVertices, std::vector<SkinnedVertex>& vertices);
+	void ReadMaterial(std::wifstream& fp, std::vector<ZXCSMaterial>& materials);
+	void ReadNodes(std::wifstream& fp, std::vector<MeshNode>& nodes);
 
-	void ReadIndices(std::wifstream& fp, UINT numIndices, std::vector<DWORD>& indices);
-	void ReadSubsetTable(std::wifstream& fp, UINT numSubsets, std::vector<Subset>& subsets);
+	void ReadVertex(std::wifstream& fp, std::vector<Vertex>& vertices);
+	void ReadVertex(std::wifstream& fp, std::vector<SkinnedVertex>& vertices);
+
+	void ReadIndices(std::wifstream& fp, std::vector<DWORD>& indices);
+	void ReadSubsetTable(std::wifstream& fp, std::vector<Subset>& subsets);
+
+	void ReadBoundingBox(std::wifstream& fp, DirectX::BoundingBox& box);
 
 	void ReadOffsets(std::wifstream& fp, std::vector<DirectX::XMFLOAT4X4>& boneOffsets);
 
@@ -94,8 +104,16 @@ protected:
 	void SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes);
 	void BuildInitPos(std::vector<DirectX::XMFLOAT4X4>& initPos, const std::vector<MeshNode>& meshNodes);
 
+protected:
+
 	UINT mFirstFrame = 0;
 	UINT mLastFrame = 0;
 	UINT mFrameSpeed = 0;
 	UINT mFrameTick = 0;
+
+	UINT mNumMaterials = 0;
+	UINT mNumNodes = 0;
+	UINT mNumVertices = 0;
+	UINT mNumTriangles = 0;
+	UINT mNumSubSet = 0;
 };

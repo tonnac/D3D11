@@ -138,6 +138,9 @@
     <ClInclude Include="Converter.h">
       <Filter>헤더 파일\Exporter</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryIO.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wClass.cpp">

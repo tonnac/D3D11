@@ -12,6 +12,7 @@ public:
 		std::vector<Subset>& subsets,
 		std::vector<ZXCSMaterial>& materials,
 		std::vector<MeshNode>& nodes,
+		DirectX::BoundingBox& box,
 		SkinnedData * skinInfo = nullptr)
 	{
 		std::ifstream fin(FileName.c_str(), std::ios::binary);
@@ -41,6 +42,7 @@ public:
 		LoadMaterials(fin, materials);
 		LoadNodes(fin, nodes);
 		LoadSubsets(fin, subsets);
+		LoadBoundingBox(fin, box);
 		LoadVertices(fin, vertices);
 		LoadIndices(fin, indices);
 		if (skinInfo != nullptr)
@@ -82,6 +84,7 @@ private:
 		ReadBinary(fin, vertices.data(), (UINT)(sizeof(T) * vertices.size()));
 	}
 	void LoadIndices(std::ifstream&fin, std::vector<DWORD>& indices);
+	void LoadBoundingBox(std::ifstream&fin, DirectX::BoundingBox& box);
 
 private:
 	void ReadPair(std::ifstream& fin, std::pair<int, std::wstring> pair)

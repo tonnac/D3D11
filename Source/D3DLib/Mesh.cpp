@@ -46,7 +46,7 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
-	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes))
+	if (!loader.LoadZXC(filename, vertices, indices, subsets, materials, nodes, mBoundingBox))
 		return false;
 	
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
@@ -67,7 +67,7 @@ bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepat
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 
-	if (!loader.LoadSkin(filename, vertices, indices, subsets, materials, nodes, &skininfo))
+	if (!loader.LoadSkin(filename, vertices, indices, subsets, materials, nodes, mBoundingBox, &skininfo))
 		return false;
 
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
@@ -97,7 +97,7 @@ bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfil
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
 
-	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes))
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, mBoundingBox))
 		return false;
 
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
@@ -118,7 +118,7 @@ bool Mesh::LoadSkinBin(const std::tstring & filename, const std::tstring & texfi
 	std::vector<MeshNode> nodes;
 	SkinnedData skininfo;
 
-	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, &skininfo))
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, mBoundingBox, &skininfo))
 		return false;
 
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
@@ -178,86 +178,6 @@ bool Mesh::LoadClipBin(const std::tstring & filename, const std::tstring & texfi
 	mSkinnedInst->setClipName(name);
 
 	return true;
-}
-
-void Mesh::Initialize(
-	std::vector<Vertex> vertices,
-	std::vector<DWORD> indices,
-	const std::vector<ZXCLoader::Subset> subsets, 
-	const std::vector<ZXCSMaterial> materials, 
-	const std::vector<MeshNode> nodes,
-	const std::wstring& texFile,
-	const std::wstring& texfilepath)
-{
-	BuildMaterials(texfilepath, materials);
-
-	std::wstring name(texFile, 0, texFile.find_last_of('.'));
-
-	if (S_Geometry[name] != nullptr)
-	{
-		mGeometry = S_Geometry[name];
-	}
-	else
-	{
-		std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-		geo->Name = name;
-		mGeometry = geo.get();
-		S_Geometry.SaveGeometry(geo);
-
-		const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-		const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
-
-		BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize);
-	}
-
-	mNodeList.resize(nodes.size());
-	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
-	{
-		mNodeList[i] = std::make_unique<MeshNode>();
-		*(mNodeList[i].get()) = nodes[i];
-	}
-
-	BuildRenderItem(subsets, materials);
-}
-
-void Mesh::Initialize(
-	std::vector<SkinnedVertex> vertices,
-	std::vector<DWORD> indices,
-	const std::vector<ZXCLoader::Subset> subsets,
-	const std::vector<ZXCSMaterial> materials,
-	const std::vector<MeshNode> nodes,
-	const std::wstring& texFile,
-	const std::wstring& texfilepath)
-{
-	BuildMaterials(texfilepath, materials);
-
-	std::wstring name(texFile, 0, texFile.find_last_of('.'));
-
-	if (S_Geometry[name] != nullptr)
-	{
-		mGeometry = S_Geometry[name];
-	}
-	else
-	{
-		std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-		geo->Name = name;
-		mGeometry = geo.get();
-		S_Geometry.SaveGeometry(geo);
-
-		const UINT vbByteSize = (UINT)vertices.size() * sizeof(SkinnedVertex);
-		const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
-
-		BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(SkinnedVertex));
-	}
-
-	mNodeList.resize(nodes.size());
-	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
-	{
-		mNodeList[i] = std::make_unique<MeshNode>();
-		*(mNodeList[i].get()) = nodes[i];
-	}
-
-	BuildRenderItem(subsets, materials);
 }
 
 void Mesh::BuildRenderItem(
@@ -437,6 +357,7 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 		context->VSSetConstantBuffers(3, 1, mConstantbuffer.GetAddressOf());
 	}
 	UINT Offset = 0;
+	context->UpdateSubresource(mGeometry->VertexBuffer.Get(), 0, nullptr, mGeometry->VertexBufferCPU->GetBufferPointer(), 0, 0);
 	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
@@ -459,8 +380,9 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	return true;
 }
 
-void Mesh::SetWorld(DirectX::FXMMATRIX world)
+void Mesh::SetWorld(FXMMATRIX world)
 {
+	XMStoreFloat4x4(&mWorld, world);
 	if (!mDrawItem.empty())
 	{
 		for (auto&x : mDrawItem)
@@ -470,8 +392,9 @@ void Mesh::SetWorld(DirectX::FXMMATRIX world)
 	}
 }
 
-void Mesh::SetWorld(const DirectX::XMFLOAT4X4 & world)
+void Mesh::SetWorld(const XMFLOAT4X4 & world)
 {
+	mWorld = world;
 	if (!mDrawItem.empty())
 	{
 		for (auto&x : mDrawItem)
@@ -479,4 +402,72 @@ void Mesh::SetWorld(const DirectX::XMFLOAT4X4 & world)
 			x->World = world;
 		}
 	}
+}
+
+bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)
+{
+	struct Vew
+	{
+		Vertex* v0 = nullptr;
+		Vertex* v1 = nullptr;
+		Vertex* v2 = nullptr;
+	};
+
+	Vew vd;
+
+	XMMATRIX W = XMLoadFloat4x4(&mWorld);
+	XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
+
+	XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
+
+	XMVECTOR rayOrigin = XMVector3TransformCoord(origin, toLocal);
+	XMVECTOR rayDir = XMVector3TransformNormal(dir, toLocal);
+
+	rayDir = XMVector3Normalize(rayDir);
+
+	auto vertices = (Vertex*)mGeometry->VertexBufferCPU->GetBufferPointer();
+	const auto& indices = (DWORD*)mGeometry->IndexBufferCPU->GetBufferPointer();
+	UINT triCount = mGeometry->IndexBufferByteSize / sizeof(DWORD) / 3;
+
+	tmin = MathHelper::Infinity;
+
+	UINT k = 0;
+
+	for (UINT i = 0; i < triCount; ++i)
+	{
+		if (k < (UINT)(mDrawItem.size() - 1) && mDrawItem[k + 1]->StartIndexLocation / 3 < i)
+		{
+			++k;
+		}
+
+		UINT i0 = indices[i * 3 + 0] + mDrawItem[k]->BaseVertexLocation;
+		UINT i1 = indices[i * 3 + 1] + mDrawItem[k]->BaseVertexLocation;
+		UINT i2 = indices[i * 3 + 2] + mDrawItem[k]->BaseVertexLocation;
+
+		XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
+		XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
+		XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
+
+		float t = 0.0f;
+		if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
+		{
+			if (t < tmin)
+			{
+				tmin = t;
+				vd.v0 = &vertices[i0];
+				vd.v1 = &vertices[i1];
+				vd.v2 = &vertices[i2];
+			}
+	//		return true;
+		}
+	}
+
+	if (vd.v0 != nullptr)
+	{
+		vd.v0->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		vd.v1->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		vd.v2->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
+		return true;
+	}
+	return false;
 }

@@ -14,6 +14,34 @@ Writer::Writer(const OutputData& outData)
 	mNumSubsets = (UINT)mOutData.Subsets.size();
 }
 
+bool Writer::Savefile()
+{
+	const auto& p = mOutData;
+
+	std::wofstream os;
+	os.open(p.Filename.c_str());
+
+	if (!os.is_open()) return false;
+
+	std::wstring info =
+		L"#Materials " + std::to_wstring(mNumMaterials) +
+		L"\n#Nodes " + std::to_wstring(mNumNodes) +
+		L"\n#Vertices " + std::to_wstring(mNumVertices) +
+		L"\n#Triangles " + std::to_wstring(mNumTriangles) +
+		L"\n#Subset " + std::to_wstring(mNumSubsets);
+
+	std::wstring header = L"**********ZXCS_Header**********\n#" + p.Version + L"\n#" + MaxUtil::nowtime();
+	os << header << info;
+
+	SaveMaterial(os);
+	SaveNodes(os);
+	SaveSubset(os);
+	SaveBoundingBox(os);
+	SaveVertices(os);
+	SaveIndices(os);
+	return true;
+}
+
 void Writer::SaveMaterial(std::wofstream & os)
 {
 	const auto& p = mOutData;
@@ -155,8 +183,8 @@ void Writer::SaveBoundingBox(std::wofstream & os)
 	const auto& center = mOutData.Box.Center;
 	const auto& extents = mOutData.Box.Extents;
 
-	std::wstring subinfo = L"\nCenter: " + std::to_wstring(center.x) + L" " + std::to_wstring(center.y) + L" " + std::to_wstring(center.x) +
-		L"\nExtents: " + std::to_wstring(extents.x) + L" " + std::to_wstring(extents.y) + L" " + std::to_wstring(extents.x);
+	std::wstring subinfo = L"\nCenter: " + std::to_wstring(center.x) + L" " + std::to_wstring(center.y) + L" " + std::to_wstring(center.z) +
+		L"\nExtents: " + std::to_wstring(extents.x) + L" " + std::to_wstring(extents.y) + L" " + std::to_wstring(extents.z);
 
 	os << subinfo;
 

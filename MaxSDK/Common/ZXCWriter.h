@@ -6,8 +6,4 @@ class ZXCWriter : public Writer
 {
 public:
 	ZXCWriter(const OutputData& outData);
-
-public:
-	virtual bool Savefile()override;
-
 };

@@ -161,6 +161,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BinaryIO.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ClipBinLoader.h" />
     <ClInclude Include="ClipLoader.h" />

@@ -7,7 +7,7 @@ using Microsoft::WRL::ComPtr;
 void Minimap::BuildMinimap(ID3D11Device* pd3Device, float width, float height,
 						   const std::tstring& szShaderFile)
 {
-	DxRT::Initialize(pd3Device, width, height);
+	//DxRT::Initialize(pd3Device, width, height);
 
 	ComPtr<ID3DBlob> vertexBlob = nullptr;
 	

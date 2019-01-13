@@ -8,6 +8,7 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 	std::vector<Subset> subsets;
 	std::vector<SkinnedVertex> vertices;
 	std::vector<DWORD> indices;
+	DirectX::BoundingBox box;
 
 	std::wifstream fp(FileName.c_str());
 	std::wstring ignore;
@@ -15,12 +16,6 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 
 	auto time = std::chrono::system_clock::now();
 	time_t nowTime = std::chrono::system_clock::to_time_t(time);
-
-	UINT numaterialss;
-	UINT numNodes;
-	UINT numVertices;
-	UINT numTriangles;
-	UINT numSubSet;
 
 	if (!fp.is_open())
 	{
@@ -33,20 +28,21 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 	std::getline(fp, ExporterVersion);
 	std::getline(fp, ignore);
 
-	fp >> ignore >> numaterialss;
-	fp >> ignore >> numNodes;
-	fp >> ignore >> numVertices;
-	fp >> ignore >> numTriangles;
-	fp >> ignore >> numSubSet;
+	fp >> ignore >> mNumMaterials;
+	fp >> ignore >> mNumNodes;
+	fp >> ignore >> mNumVertices;
+	fp >> ignore >> mNumTriangles;
+	fp >> ignore >> mNumSubSet;
 
-	materials.resize(numaterialss);
-	nodes.resize(numNodes);
+	materials.resize(mNumMaterials);
+	nodes.resize(mNumNodes);
 
-	ReadMaterial(fp, numaterialss, materials);
-	ReadNodes(fp, numNodes, nodes);
-	ReadSubsetTable(fp, numSubSet, subsets);
-	ReadVertex(fp, numVertices, vertices);
-	ReadIndices(fp, numTriangles, indices);
+	ReadMaterial(fp, materials);
+	ReadNodes(fp, nodes);
+	ReadSubsetTable(fp, subsets);
+	ReadBoundingBox(fp, box);
+	ReadVertex(fp, vertices);
+	ReadIndices(fp, indices);
 
 	fp.close();
 	
@@ -59,11 +55,11 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 
 	std::array<UINT, 5> CompositeNum =
 	{
-		numaterialss,
-		numVertices,
-		numTriangles,
-		numNodes,
-		numSubSet
+		mNumMaterials,
+		mNumVertices,
+		mNumTriangles,
+		mNumNodes,
+		mNumSubSet
 	};
 
 	BinaryIO::WriteBinary(fin, nowTime);
@@ -73,6 +69,7 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 	SaveMaterial(fin, materials);
 	SaveNodes(fin, nodes);
 	SaveSubset(fin, subsets);
+	SaveBoundingBox(fin, box);
 	SaveVertices(fin, vertices);
 	SaveIndices(fin, indices);
 
@@ -88,8 +85,9 @@ bool Converter::ConverttoSKN(const std::wstring & FileName)
 	std::vector<ZXCLoader::Subset> subsets;
 	std::vector<ZXCSMaterial> materials;
 	std::vector<MeshNode> nodes;
+	DirectX::BoundingBox box;
 
-	if (!loader.LoadBinary(FileName, vertices, indices, subsets, materials, nodes))
+	if (!loader.LoadBinary(FileName, vertices, indices, subsets, materials, nodes, box))
 		return false;
 
 	std::wstring file = FileName;
@@ -124,6 +122,7 @@ bool Converter::ConverttoSKN(const std::wstring & FileName)
 	SaveMaterial(os, materials);
 	SaveNodes(os, nodes);
 	SaveSubset(os, subsets);
+	SaveBoundingBox(os, box);
 	SaveVertices(os, vertices);
 	SaveIndices(os, indices);
 
@@ -259,6 +258,22 @@ void Converter::SaveSubset(std::wofstream & os, const std::vector<Subset>& subse
 		os << subinfo;
 		++i;
 	}
+	os << std::endl;
+}
+
+void Converter::SaveBoundingBox(std::wofstream & os, const DirectX::BoundingBox & box)
+{
+	std::wstring BoxHeader = L"\n**********BoundingBox**********";
+	os << BoxHeader;
+
+	const auto& center = box.Center;
+	const auto& extents = box.Extents;
+
+	std::wstring subinfo = L"\nCenter: " + std::to_wstring(center.x) + L" " + std::to_wstring(center.y) + L" " + std::to_wstring(center.x) +
+		L"\nExtents: " + std::to_wstring(extents.x) + L" " + std::to_wstring(extents.y) + L" " + std::to_wstring(extents.x);
+
+	os << subinfo;
+
 	os << std::endl;
 }
 
