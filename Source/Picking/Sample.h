@@ -23,7 +23,7 @@ protected:
 	void Pick(int sx, int sy);
 
 	virtual void OnResize()override;
-	virtual void OnMouseDown(WPARAM btnState, int x, int y)override;
+	virtual void OnMouseDblClk(WPARAM btnState, int x, int y)override;
 
 private:
 	std::unique_ptr<Computeshader> mSobelFilter = nullptr;

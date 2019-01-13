@@ -181,7 +181,7 @@ LRESULT Core::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		OnMouseDblClk(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	}
 
@@ -391,7 +391,7 @@ XMFLOAT4 Core::OnKeyboardInput()
 		m_pMainCamera->MoveLook(-deltaTime * 150.0f);
 	}
 
-	if (S_Input.getKeyState(DIK_LBUTTON) == KEYSTATE::KEY_HOLD)
+	if (S_Input.getKeyState(DIK_RBUTTON) == KEYSTATE::KEY_HOLD)
 	{
 		YawPitchRoll.x += 0.2f * XMConvertToRadians(Casting(float, mousePos.lY));
 		YawPitchRoll.y += 0.2f * XMConvertToRadians(Casting(float, mousePos.lX));

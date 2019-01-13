@@ -357,7 +357,6 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 		context->VSSetConstantBuffers(3, 1, mConstantbuffer.GetAddressOf());
 	}
 	UINT Offset = 0;
-	context->UpdateSubresource(mGeometry->VertexBuffer.Get(), 0, nullptr, mGeometry->VertexBufferCPU->GetBufferPointer(), 0, 0);
 	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
@@ -406,15 +405,6 @@ void Mesh::SetWorld(const XMFLOAT4X4 & world)
 
 bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)
 {
-	struct Vew
-	{
-		Vertex* v0 = nullptr;
-		Vertex* v1 = nullptr;
-		Vertex* v2 = nullptr;
-	};
-
-	Vew vd;
-
 	XMMATRIX W = XMLoadFloat4x4(&mWorld);
 	XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
 
@@ -431,18 +421,11 @@ bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& inv
 
 	tmin = MathHelper::Infinity;
 
-	UINT k = 0;
-
 	for (UINT i = 0; i < triCount; ++i)
 	{
-		if (k < (UINT)(mDrawItem.size() - 1) && mDrawItem[k + 1]->StartIndexLocation / 3 < i)
-		{
-			++k;
-		}
-
-		UINT i0 = indices[i * 3 + 0] + mDrawItem[k]->BaseVertexLocation;
-		UINT i1 = indices[i * 3 + 1] + mDrawItem[k]->BaseVertexLocation;
-		UINT i2 = indices[i * 3 + 2] + mDrawItem[k]->BaseVertexLocation;
+		UINT i0 = indices[i * 3 + 0];
+		UINT i1 = indices[i * 3 + 1];
+		UINT i2 = indices[i * 3 + 2];
 
 		XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
 		XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
@@ -451,23 +434,10 @@ bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& inv
 		float t = 0.0f;
 		if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
 		{
-			if (t < tmin)
-			{
-				tmin = t;
-				vd.v0 = &vertices[i0];
-				vd.v1 = &vertices[i1];
-				vd.v2 = &vertices[i2];
-			}
-	//		return true;
+			tmin = t;
+			return true;
 		}
 	}
-
-	if (vd.v0 != nullptr)
-	{
-		vd.v0->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-		vd.v1->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-		vd.v2->c = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-		return true;
-	}
+	tmin = 0.0f;
 	return false;
 }

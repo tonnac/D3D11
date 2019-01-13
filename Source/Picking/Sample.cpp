@@ -37,8 +37,10 @@ bool Sample::Init()
 	mSobelFilter = std::make_unique<Computeshader>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, L"shaders\\StencilCompute.hlsl");
 	mOffRT = std::make_unique<DxRT>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight);
 
-	mesh.LoadFile(L"ship.bin", L"..\\..\\data\\tex\\", m_pd3dDevice.Get());
+	mesh.LoadFile(L"shinbi.sbi", L"..\\..\\data\\tex\\shinbi\\", m_pd3dDevice.Get());
+	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
 
+	mesh.SetWorld(S);
 
 	return true;
 }
@@ -61,7 +63,7 @@ bool Sample::Render()
 {
 	if (isPicking)
 	{
-		mOffRT->Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::DEFAULT].get());
+		mOffRT->Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::SKINNED].get());
 		ID3D11ShaderResourceView** srv = mOffRT->GetDSSrv();
 		ID3D11ShaderResourceView** srv0 = mOffRT->GetSRV();
 		mSobelFilter->Execute(m_pImmediateContext.Get(), srv);
@@ -77,7 +79,7 @@ bool Sample::Render()
 	}
 	else
 	{
-		mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+		mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
 		mesh.Render(m_pImmediateContext.Get());
 	}
 
@@ -111,13 +113,14 @@ void Sample::OnResize()
 		mSobelFilter->OnResize(g_ClientWidth, g_ClientHeight);
 }
 
-void Sample::OnMouseDown(WPARAM btnState, int x, int y)
+void Sample::OnMouseDblClk(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{
 		Pick(x, y);
 	}
 }
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR szCmdLine, int nCmdShow)
 {

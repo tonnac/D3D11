@@ -72,9 +72,8 @@ VertexOut VS(VertexIn vIn)
 float4 PS(VertexOut vOut) : SV_Target
 {
 	const float3 ambientLight = float3(0.25f, 0.25f, 0.35f);
-	float4 texColor = vOut.c;
+	float4 texColor = gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 
-	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 	vOut.n = normalize(vOut.n);
 
 	float4 normalMapSample = gNormalMap.Sample(g_samAnisotropicWrap, vOut.t);
@@ -84,14 +83,14 @@ float4 PS(VertexOut vOut) : SV_Target
 
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
-	const float shininess = 1.0f - gRoughness;
+	const float shininess = 1.0f - 0.4f;
 	Material mat = { texColor, gDiffuse, gSpecular, gFresnelR0, shininess };
 	float3 shadowFactor = float3(1.0f, 1.0f, 1.0f);
-	float3 ambient = gAmbient.rgb * ambientLight * texColor.rgb;
+	float3 ambient = ambientLight * texColor.rgb;
 
 	float3 litColor = ComputeLighting(gLights, mat, vOut.PosW, bumpedNormalW, toEyeW, shadowFactor, gDirctionNum, gPointNum, gSpotNum);
 
 	litColor += ambient; 
 
-	return float4(litColor, 1.0f);
+	return float4(litColor, texColor.a);
 }

@@ -31,6 +31,7 @@ bool BaseExporter::Run()
 	BuildOutObjects();
 	BuildVBIB();
 	BuildSubset();
+	IBReorder();
 	BuildBoundingBox();
 
 	CreateWriter();
@@ -229,15 +230,26 @@ void BaseExporter::BuildVBIB()
 			auto& indices = x.second;
 			for (int i = 0; i < (int)indices.size() / 3; ++i)
 			{
-				std::uint32_t i0 = indices[i * 3 + 0];
-				std::uint32_t i1 = indices[i * 3 + 1];
-				std::uint32_t i2 = indices[i * 3 + 2];
-
 				for (int k = i; k >= 1; --k)
 				{
 					std::uint32_t n0 = indices[k * 3 + 0];
 					std::uint32_t n1 = indices[k * 3 + 1];
 					std::uint32_t n2 = indices[k * 3 + 2];
+
+					if (n2 < n1 && n2 < n0)
+					{
+						std::swap(indices[k * 3 + 0], indices[k * 3 + 2]);
+						std::swap(indices[k * 3 + 1], indices[k * 3 + 2]);
+					}
+					else if (n1 < n0 && n1 < n2)
+					{
+						std::swap(indices[k * 3 + 0], indices[k * 3 + 1]);
+						std::swap(indices[k * 3 + 1], indices[k * 3 + 2]);
+					}
+
+					n0 = indices[k * 3 + 0];
+					n1 = indices[k * 3 + 1];
+					n2 = indices[k * 3 + 2];
 
 					std::uint32_t p0 = indices[(k - 1) * 3 + 0];
 					std::uint32_t p1 = indices[(k - 1) * 3 + 1];
@@ -284,6 +296,22 @@ void BaseExporter::BuildBoundingBox()
 
 	mOutData.Box.Center = (vMax + vMin) * 0.5f;
 	mOutData.Box.Extents = (vMax - vMin) * 0.5f;
+}
+
+void BaseExporter::IBReorder()
+{
+	for (auto&x : mOutData.Subsets)
+	{
+		UINT start = x.VertexStart;
+		UINT countstart = x.FaceStart;
+		UINT count = x.FaceCount;
+		for (UINT i = countstart * 3; i < (count + countstart) * 3; ++i)
+		{
+			mOutData.Indices[i] += start;
+		}
+		x.VertexStart = 0;
+	}
+
 }
 
 void BaseExporter::ComparePoint3(Point3 & dest, const Point3 & src, bool isGreater)

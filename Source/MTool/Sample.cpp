@@ -58,7 +58,7 @@ bool Sample::Init()
 
 //	XMMATRIX T = XMMatrixTranslation(0.0f, 0.0f, 0.0f);
 //	XMMATRIX S = XMMatrixScaling(15.0f, 15.0f, 15.0f);
-//	mesh.SetWorld(S);
+	mesh.SetWorld(S);
 
 	mesh.LoadFile(L"clip\\shinbi\\LevelStart.clb");
 	mesh.LoadFile(L"clip\\shinbi\\AttackB.clb");

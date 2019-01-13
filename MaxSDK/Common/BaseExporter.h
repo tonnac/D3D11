@@ -32,6 +32,8 @@ private:
 	virtual void BuildVBIB();
 	virtual void BuildBoundingBox();
 
+	void IBReorder();
+
 protected:
 	void ComparePoint3(Point3& dest, const Point3& src, bool isGreater = true);
 
