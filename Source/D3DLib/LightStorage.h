@@ -30,7 +30,7 @@ struct LightProperty
 	Light light;
 };
 
-using LightVec = std::vector<std::unique_ptr<LightProperty>>;
+using LightVec = std::vector<std::shared_ptr<LightProperty>>;
 
 class LightStorage
 {
@@ -47,31 +47,31 @@ public:
 	void UpdateLight(const Timer& gt);
 
 public:
-	void AddLight(std::unique_ptr<LightProperty>& light);
+	void AddLight(std::shared_ptr<LightProperty>& light);
 
 	UINT NumDirectional() const;
 	UINT NumPoint() const;
 	UINT NumSpot() const;
 
-	void DelDirectional(int index);
-	void DelPoint(int index);
-	void DelSpot(int index);
-
 	void CopyDirectional(Light* lights);
 	void CopyPoint(Light* lights);
 	void CopySpot(Light* lights);
+
+	void DelLight(int nIndex);
 
 	LightVec* GetLightVec();
 	LightProperty* GetProperty(int nIndex);
 
 private:
-	void AddDirectional(std::unique_ptr<LightProperty>& light);
-	void AddPoint(std::unique_ptr<LightProperty>& light);
-	void AddSpot(std::unique_ptr<LightProperty>& light);
+	void AddDirectional(std::shared_ptr<LightProperty>& light);
+	void AddPoint(std::shared_ptr<LightProperty>& light);
+	void AddSpot(std::shared_ptr<LightProperty>& light);
+
+	void UpdateLight();
 
 private:
-	std::vector<std::unique_ptr<LightProperty>> mLights;
-	std::vector<Light*> mDirectionalLight;
-	std::vector<Light*> mPointLight;
-	std::vector<Light*> mSpotLight;
+	std::vector<std::shared_ptr<LightProperty>> mLights;
+	std::vector<std::weak_ptr<LightProperty>> mDirectionalLight;
+	std::vector<std::weak_ptr<LightProperty>> mPointLight;
+	std::vector<std::weak_ptr<LightProperty>> mSpotLight;
 };

@@ -49,7 +49,7 @@ void LightStorage::UpdateLight(const Timer & gt)
 	}
 }
 
-void LightStorage::AddLight(std::unique_ptr<LightProperty>& light)
+void LightStorage::AddLight(std::shared_ptr<LightProperty>& light)
 {
 	switch (light->Type)
 	{
@@ -67,22 +67,61 @@ void LightStorage::AddLight(std::unique_ptr<LightProperty>& light)
 	}
 }
 
-void LightStorage::AddDirectional(std::unique_ptr<LightProperty>& light)
+void LightStorage::AddDirectional(std::shared_ptr<LightProperty>& light)
 {
-	mDirectionalLight.push_back(&light->light);
+	std::weak_ptr<LightProperty> wlight(light);
+	mDirectionalLight.push_back(wlight);
 	mLights.push_back(std::move(light));
 }
 
-void LightStorage::AddPoint(std::unique_ptr<LightProperty>& light)
+void LightStorage::AddPoint(std::shared_ptr<LightProperty>& light)
 {
-	mPointLight.push_back(&light->light);
+	std::weak_ptr<LightProperty> wlight(light);
+	mPointLight.push_back(wlight);
 	mLights.push_back(std::move(light));
 }
 
-void LightStorage::AddSpot(std::unique_ptr<LightProperty>& light)
+void LightStorage::AddSpot(std::shared_ptr<LightProperty>& light)
 {
-	mSpotLight.push_back(&light->light);
+	std::weak_ptr<LightProperty> wlight(light);
+	mSpotLight.push_back(wlight);
 	mLights.push_back(std::move(light));
+}
+
+void LightStorage::UpdateLight()
+{
+	UINT i = 0;
+
+	for (auto & x : mDirectionalLight)
+	{
+		if (x.expired())
+		{
+			mDirectionalLight.erase(std::next(mDirectionalLight.begin(), i));
+		}
+		++i;
+	}
+
+	i = 0;
+
+	for (auto & x : mPointLight)
+	{
+		if (x.expired())
+		{
+			mPointLight.erase(std::next(mPointLight.begin(), i));
+		}
+		++i;
+	}
+
+	i = 0;
+
+	for (auto & x : mSpotLight)
+	{
+		if (x.expired())
+		{
+			mSpotLight.erase(std::next(mSpotLight.begin(), i));
+		}
+		++i;
+	}
 }
 
 UINT LightStorage::NumDirectional() const
@@ -100,28 +139,13 @@ UINT LightStorage::NumSpot() const
 	return (UINT)mSpotLight.size();
 }
 
-void LightStorage::DelDirectional(int index)
-{
-	mDirectionalLight.erase(std::next(mDirectionalLight.begin(), index));
-}
-
-void LightStorage::DelPoint(int index)
-{
-	mPointLight.erase(std::next(mPointLight.begin(), index));
-}
-
-void LightStorage::DelSpot(int index)
-{
-	mSpotLight.erase(std::next(mSpotLight.begin(), index));
-}
-
 void LightStorage::CopyDirectional(Light* lights)
 {
 	UINT i = 0;
 
 	for (auto& p = mDirectionalLight.begin(); p != mDirectionalLight.end(); ++p)
 	{
-		const Light& light = *(*p);
+		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));
 	}
 }
@@ -132,7 +156,7 @@ void LightStorage::CopyPoint(Light* lights)
 
 	for (auto& p = mPointLight.begin(); p != mPointLight.end(); ++p)
 	{
-		const Light& light = *(*p);
+		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));
 	}
 }
@@ -143,9 +167,15 @@ void LightStorage::CopySpot(Light* lights)
 
 	for (auto& p = mSpotLight.begin(); p != mSpotLight.end(); ++p)
 	{
-		const Light& light = *(*p);
+		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));
 	}
+}
+
+void LightStorage::DelLight(int nIndex)
+{
+	mLights.erase(std::next(mLights.begin(), nIndex));
+	UpdateLight();
 }
 
 LightVec * LightStorage::GetLightVec()
