@@ -351,6 +351,24 @@ public:
 	}
 };
 
+struct OutputData
+{
+	SceneInfo SceneInfo;
+
+	std::wstring Version;
+	std::wstring Filename;
+
+	std::vector<Tangent> Binormals;
+
+	std::vector<OutVertex> Vertices;
+	std::vector<OutSkinned> SkinnedVertices;
+
+	std::vector<ZXCMaterial> Materials;
+	std::vector<std::uint32_t> Indices;
+	std::vector<Subset> Subsets;
+	std::vector<OutputObject> OutObjects;
+};
+
 class BinaryIO
 {
 public:

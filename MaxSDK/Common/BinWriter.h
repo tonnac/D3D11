@@ -5,15 +5,8 @@ template<typename X = OutVertex>
 class BinWriter : public Writer
 {
 public:
-	BinWriter(const std::wstring& ExporterVersion,
-		const std::wstring& Filename,
-		const std::vector<ZXCMaterial>& material,
-		const std::vector<OutputObject>& object,
-		const std::vector<X>& vertices,
-		const std::vector<std::uint32_t>& indices,
-		const std::vector<Subset>& subsets,
-		const std::vector<D3D_MATRIX>& offsets)
-		: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices), mOffsets(offsets)
+	BinWriter(const OutputData& outData, const std::vector<X>& vertices)
+		: Writer(outData), mVertices(vertices)
 	{
 		mNumVertices = (UINT)vertices.size();
 	}
@@ -83,5 +76,4 @@ protected:
 
 private:
 	const std::vector<X>& mVertices;
-	const std::vector<D3D_MATRIX>& mOffsets;
 };

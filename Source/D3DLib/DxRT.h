@@ -19,6 +19,7 @@ public:
 	bool Render(ID3D11DeviceContext* context, Mesh* mesh, DxObj* dxobj);
 
 	ID3D11ShaderResourceView** GetSRV();
+	ID3D11ShaderResourceView** GetDSSrv();
 	ID3D11ShaderResourceView* ShaderResourceView();
 	ID3D11RenderTargetView** RenderTargetView();
 	ID3D11DepthStencilView* DepthStencilView();
@@ -34,7 +35,9 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRenderTargetView = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDepthStencilView = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pDSSrv = nullptr;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pTexture = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_DepthStencil = nullptr;
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC m_DepthStencilDesc;
 	D3D11_TEXTURE2D_DESC m_TexDesc;

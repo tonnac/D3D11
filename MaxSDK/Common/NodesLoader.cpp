@@ -2,11 +2,9 @@
 
 void NodesLoader::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 	std::vector<std::unique_ptr<ZXCObject>>& ObjectList,
-	std::vector<D3D_MATRIX>& offsets,
 	std::unordered_map<std::wstring, size_t>& nodeIndex)
 {
 	ObjectList.resize(nodeIndex.size());
-	offsets.resize(nodeIndex.size());
 
 	for (auto& x : nodes)
 	{
@@ -16,7 +14,7 @@ void NodesLoader::LoadObject(std::unordered_map<std::wstring, INode*>& nodes,
 		INode* parent = x.second->GetParentNode();
 
 		// InputOffsets
-		InputOffsets(x.second, offsets[objIndex]);
+//		InputOffsets(x.second, offsets[objIndex]);
 
 		maxObj->mParentName = std::make_pair(L"NONE", -1);
 		if (parent != nullptr && (!parent->IsRootNode()))
@@ -128,7 +126,7 @@ void NodesLoader::LoadMesh(INode* node, ZXCObject* o)
 			{
 				o->mTriangles[i].mSubMtrl = -2;
 			}
-			else if ((int)mExporter->mOutputMaterial[o->mMaterialRef].SubMaterial.size() == 0)
+			else if ((int)mExporter->mOutData.Materials[o->mMaterialRef].SubMaterial.size() == 0)
 			{
 				o->mTriangles[i].mSubMtrl = -1;
 			}
@@ -213,7 +211,7 @@ void NodesLoader::LoadMesh(INode* node, ZXCObject* o)
 			{
 				o->mSkinTri[i].mSubMtrl = -2;
 			}
-			else if ((int)mExporter->mOutputMaterial[o->mMaterialRef].SubMaterial.size() == 0)
+			else if ((int)mExporter->mOutData.Materials[o->mMaterialRef].SubMaterial.size() == 0)
 			{
 				o->mSkinTri[i].mSubMtrl = -1;
 			}
@@ -382,11 +380,11 @@ int NodesLoader::GetMaterialRef(Mtl * mtl)
 	return -1;
 }
 
-void NodesLoader::InputOffsets(INode * node, D3D_MATRIX & matrix)
-{
-	Matrix3 oM = Inverse(node->GetNodeTM(mExporter->mInterval.Start()));
-	MaxUtil::ConvertMatrix(oM, matrix);
-}
+//void NodesLoader::InputOffsets(INode * node, D3D_MATRIX & matrix)
+//{
+//	Matrix3 oM = Inverse(node->GetNodeTM(mExporter->mInterval.Start()));
+//	MaxUtil::ConvertMatrix(oM, matrix);
+//}
 
 
 void NodesLoader::LoadBipedInfo(INode * node, std::vector<BipedVertex>& bipedes, const std::wstring& name)

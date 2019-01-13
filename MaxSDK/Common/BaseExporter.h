@@ -35,29 +35,15 @@ protected:
 	Interface*	mMaxInterface = nullptr;
 	INode*		mRootNode = nullptr;
 	Interval	mInterval;
-
-	SceneInfo	mSceneInfo;
+	
+	std::queue<INode*> mQueue;
 
 	std::vector<Mtl*> mMaxMaterial;
 	std::unordered_map<std::wstring, INode*> mMaxObject;
-	std::queue<INode*> mQueue;
-
 	std::vector<std::unique_ptr<ZXCObject>> mObjects;
 	std::unordered_map<std::wstring, size_t> mNodeIndex;
-	std::vector<D3D_MATRIX> mOffsets;
 
-	std::wstring mVersion;
-	std::wstring mFilename;
-
-	std::vector<Tangent> mBinormals;
-
-	std::vector<OutVertex> mVertices;
-	std::vector<OutSkinned> mSkinnedVertices;
-
-	std::vector<ZXCMaterial> mOutputMaterial;
-	std::vector<std::uint32_t> mIndices;
-	std::vector<Subset> mSubsets;
-	std::vector<OutputObject> mOutObjects;
+	OutputData mOutData;
 
 	std::unique_ptr<Writer> mWriter = nullptr;
 	std::unique_ptr<NodesLoader> mNodesLoader = nullptr;

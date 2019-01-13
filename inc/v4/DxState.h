@@ -12,6 +12,7 @@ enum class E_DSS : unsigned char
 	Default = 0,
 	Disable,
 	Greater,
+	Stencil,
 	Count
 };
 

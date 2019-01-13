@@ -6,15 +6,15 @@
 void SkinExporter::LoadObjects()
 {
 	mNodesLoader = std::make_unique<NodesLoader>(this, true);
-	mNodesLoader->LoadObject(mMaxObject, mObjects, mOffsets, mNodeIndex);
+	mNodesLoader->LoadObject(mMaxObject, mObjects, mNodeIndex);
 }
 
 void SkinExporter::CreateWriter()
 {
 	if(mIsBinary)
-		mWriter = std::make_unique<BinWriter<OutSkinned>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets, mOffsets);
+		mWriter = std::make_unique<BinWriter<OutSkinned>>(mOutData, mOutData.SkinnedVertices);
 	else
-		mWriter = std::make_unique<SkinWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mSkinnedVertices, mIndices, mSubsets, mOffsets);
+		mWriter = std::make_unique<SkinWriter>(mOutData);
 }
        
 void SkinExporter::BuildSubset()
@@ -35,7 +35,7 @@ void SkinExporter::BuildSubset()
 				subset.FaceStart = mNumIndices;
 				mNumVertices += subset.VertexCount;
 				mNumIndices += subset.FaceCount;
-				mSubsets.push_back(subset);
+				mOutData.Subsets.push_back(subset);
 			}
 		}
 	}
@@ -80,8 +80,8 @@ void SkinExporter::BuildVBIB()
 			}
 		}
 
-		auto & vertices = mSkinnedVertices;
-		auto & Indices = mIndices;
+		auto & vertices = mOutData.SkinnedVertices;
+		auto & Indices = mOutData.Indices;
 
 		for (auto &x : mesh->mSkinVertices)
 		{
@@ -94,8 +94,7 @@ void SkinExporter::BuildVBIB()
 					k.Tangent *= -1;
 				}
 
-				OutSkinned oV(k);
-				vertices.push_back(oV);
+				vertices.push_back(OutSkinned(k));
 			}
 		}
 

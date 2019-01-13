@@ -8,12 +8,7 @@ struct SkinMesh;
 class Writer
 {
 public:
-	Writer(const std::wstring& ExporterVersion,
-		const std::wstring& Filename,
-		const std::vector<ZXCMaterial>& material,
-		const std::vector<OutputObject>& object, 
-		const std::vector<std::uint32_t>& indices,
-		const std::vector<Subset>& subsets);
+	Writer(const OutputData& outData);
 public:
 	virtual bool Savefile() = 0;
 

@@ -2,16 +2,10 @@
 #include "NodesLoader.h"
 
 ZXCWriter::ZXCWriter(
-	const std::wstring & ExporterVersion,
-	const std::wstring & Filename,
-	const std::vector<ZXCMaterial>& material,
-	const std::vector<OutputObject>& object,
-	const std::vector<OutVertex>& vertices,
-	const std::vector<std::uint32_t>& indices,
-	const std::vector<Subset>& subsets)
-	: Writer(ExporterVersion, Filename, material, object, indices, subsets), mVertices(vertices)
+	const OutputData& outData)
+	: Writer(outData), mVertices(outData.Vertices)
 {
-	mNumVertices = (UINT)vertices.size();
+	mNumVertices = (UINT)mVertices.size();
 }
 
 bool ZXCWriter::Savefile()
@@ -21,18 +15,12 @@ bool ZXCWriter::Savefile()
 
 	if (!os.is_open()) return false;
 
-	UINT numMaterials = (UINT)mMaterial.size();
-	UINT numVertices = (UINT)mVertices.size();
-	UINT numTriangles = (UINT)((mIndices.size() / 3));
-	UINT numNodes = (UINT)mObjects.size();
-	UINT numSubsets = (UINT)mSubsets.size();
-
 	std::wstring info =
-		L"#Materials " + std::to_wstring(numMaterials) +
-		L"\n#Nodes " + std::to_wstring(numNodes) +
-		L"\n#Vertices " + std::to_wstring(numVertices) +
-		L"\n#Triangles " + std::to_wstring(numTriangles) +
-		L"\n#Subset " + std::to_wstring(numSubsets);
+		L"#Materials " + std::to_wstring(mNumMaterials) +
+		L"\n#Nodes " + std::to_wstring(mNumNodes) +
+		L"\n#Vertices " + std::to_wstring(mNumVertices) +
+		L"\n#Triangles " + std::to_wstring(mNumTriangles) +
+		L"\n#Subset " + std::to_wstring(mNumSubsets);
 
 	std::wstring header = L"**********ZXCS_Header**********\n#" + mExporterVersion + L"\n#" + MaxUtil::nowtime();
 	os << header << info;

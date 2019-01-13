@@ -24,7 +24,7 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 bool Sample::Init()
 {
 	auto* l = LightStorage::getLight();
-	std::unique_ptr<LightProperty> l0 = std::make_unique<LightProperty>();
+	std::shared_ptr<LightProperty> l0 = std::make_unique<LightProperty>();
 	l0->Type = LightType::Directional;
 	l0->light.Direction = XMFLOAT3(-1.0f, -1.0f, -1.0f);
 	l0->light.Strength = XMFLOAT3(1.0f, 1.0f, 1.0f);

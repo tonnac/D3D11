@@ -5,18 +5,13 @@
 
 using namespace std::chrono;
 
-Writer::Writer(const std::wstring& ExporterVersion,
-	const std::wstring& Filename,
-	const std::vector<ZXCMaterial>& material,
-	const std::vector<OutputObject>& object,
-	const std::vector<std::uint32_t>& indices,
-	const std::vector<Subset>& subsets)
-	: mExporterVersion(ExporterVersion),
-	mFilename(Filename),
-	mMaterial(material),
-	mObjects(object),
-	mIndices(indices),
-	mSubsets(subsets)
+Writer::Writer(const OutputData& outData)
+	: mExporterVersion(outData.Version),
+	mFilename(outData.Filename),
+	mMaterial(outData.Materials),
+	mObjects(outData.OutObjects),
+	mIndices(outData.Indices),
+	mSubsets(outData.Subsets)
 {
 	mNumMaterials = (UINT)mMaterial.size();
 	mNumTriangles = (UINT)(mIndices.size() / 3);

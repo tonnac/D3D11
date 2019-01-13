@@ -45,6 +45,27 @@ void DxState::InitDepthStencliState(ID3D11Device* pd3dDevice)
 	ThrowifFailed(pd3dDevice->CreateDepthStencilState(&dsDesc, DSS.GetAddressOf()));
 	m_DSS[(int)E_DSS::Greater] = DSS;
 
+	DSS.Reset();
+	D3D11_DEPTH_STENCIL_DESC sDesc;
+	ZeroMemory(&sDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	sDesc.DepthEnable = TRUE;
+	sDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	sDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	sDesc.StencilEnable = TRUE;
+	sDesc.StencilReadMask = 0xff;
+	sDesc.StencilWriteMask = 0xff;
+	D3D11_DEPTH_STENCILOP_DESC Front;
+	Front.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	Front.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+	Front.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	Front.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+
+	sDesc.FrontFace = Front;
+	Front.StencilFunc = D3D11_COMPARISON_NEVER;
+	sDesc.BackFace = Front;
+	ThrowifFailed(pd3dDevice->CreateDepthStencilState(&sDesc, DSS.GetAddressOf()));
+	m_DSS[(int)E_DSS::Stencil] = DSS;
 }
 
 void DxState::InitRasterizerState(ID3D11Device* pd3dDevice)

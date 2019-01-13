@@ -9,13 +9,13 @@ bool BaseExporter::Initialize(Interface* maxinterface, const MCHAR* Filename, co
 {
 	mMaxInterface = maxinterface;
 	mRootNode = mMaxInterface->GetRootNode();
-	mVersion = Longdesc;
+	mOutData.Version = Longdesc;
 	mIsBinary = isBinary;
 
 	if (mRootNode == nullptr && maxinterface == nullptr) return false;
 
-	mFilename = Filename;
-	mFilename.assign(mFilename, mFilename.find_last_of('\\') + 1, mFilename.length());
+	mOutData.Filename = Filename;
+	mOutData.Filename.assign(mOutData.Filename, mOutData.Filename.find_last_of('\\') + 1, mOutData.Filename.length());
 	mInterval = mMaxInterface->GetAnimRange();
 
 	return true;
@@ -41,10 +41,12 @@ bool BaseExporter::Run()
 
 void BaseExporter::LoadScene()
 {
-	mSceneInfo.FrameSpeed = GetFrameRate();
-	mSceneInfo.TickperFrame = GetTicksPerFrame();
-	mSceneInfo.FirstFrame = mInterval.Start() / mSceneInfo.TickperFrame;
-	mSceneInfo.LastFrame = mInterval.End() / mSceneInfo.TickperFrame;
+	auto & x = mOutData.SceneInfo;
+
+	x.FrameSpeed = GetFrameRate();
+	x.TickperFrame = GetTicksPerFrame();
+	x.FirstFrame = mInterval.Start() / x.TickperFrame;
+	x.LastFrame = mInterval.End() / x.TickperFrame;
 }
 
 void BaseExporter::LoadNode(INode * node)
@@ -122,22 +124,22 @@ void BaseExporter::BuildOutObjects()
 	for (const auto& p : mObjects)
 	{
 		OutputObject oO = *p;
-		mOutObjects.push_back(oO);
+		mOutData.OutObjects.push_back(oO);
 	}
 }
 
 void BaseExporter::LoadObjects()
 {
 	mNodesLoader = std::make_unique<NodesLoader>(this);
-	mNodesLoader->LoadObject(mMaxObject, mObjects, mOffsets, mNodeIndex);
+	mNodesLoader->LoadObject(mMaxObject, mObjects, mNodeIndex);
 }
 
 void BaseExporter::CreateWriter()
 {
 	if (mIsBinary)
-		mWriter = std::make_unique<BinWriter<>>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets, mOffsets);
+		mWriter = std::make_unique<BinWriter<>>(mOutData, mOutData.Vertices);
 	else
-		mWriter = std::make_unique<ZXCWriter>(mVersion, mFilename, mOutputMaterial, mOutObjects, mVertices, mIndices, mSubsets);
+		mWriter = std::make_unique<ZXCWriter>(mOutData);
 }
 
 void BaseExporter::BuildSubset()
@@ -158,7 +160,7 @@ void BaseExporter::BuildSubset()
 				subset.FaceStart = mNumIndices;
 				mNumVertices += subset.VertexCount;
 				mNumIndices += subset.FaceCount;
-				mSubsets.push_back(subset);
+				mOutData.Subsets.push_back(subset);
 			}
 		}
 	}
@@ -203,8 +205,8 @@ void BaseExporter::BuildVBIB()
 			}
 		}
 
-		auto & vertices = mVertices;
-		auto & Indices = mIndices;
+		auto & vertices = mOutData.Vertices;
+		auto & Indices = mOutData.Indices;
 
 		for (auto &x : mesh->mVertices)
 		{
@@ -217,8 +219,7 @@ void BaseExporter::BuildVBIB()
 					k.Tangent *= -1;
 				}
 
-				OutVertex oV = k;
-				vertices.push_back(oV);
+				vertices.push_back(OutVertex(k));
 			}
 		}
 
@@ -318,7 +319,7 @@ void BaseExporter::LoadMaterial()
 		{
 			LoadTexture(outMtl, mtl);
 		}
-		mOutputMaterial.push_back(outMtl);
+		mOutData.Materials.push_back(outMtl);
 	}
 }
 
