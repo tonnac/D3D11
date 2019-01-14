@@ -62,7 +62,7 @@ void BoneAnimation::Interpoloate(int t, XMFLOAT4X4& M)const
 	XMMATRIX finalScale = ScaleInv * Scale * ScaleRot;
 	XMMATRIX F = finalScale * Rot * Trans;
 
-	XMStoreFloat4x4(&M, finalScale * Rot * Trans);
+	XMStoreFloat4x4(&M, F);
 }
 
 int AnimationClip::GetClipStartTime()const
@@ -155,7 +155,6 @@ void SkinnedData::GetFinalTransforms(const std::wstring& clipName, int timePos,
 
 		XMStoreFloat4x4(&toRootTransforms[p], toRoot);
 	}
-
 
 	for (UINT i = 0; i < numBones; ++i)
 	{

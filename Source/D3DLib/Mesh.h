@@ -1,29 +1,32 @@
 #pragma once
 
+#include "Object.h"
 #include "ZXCBinLoader.h"
 #include "ClipBinLoader.h"
-#include "Shape.h"
 #include "FrameResource.h"
 #include <cstdarg>
 
-class Mesh : public Shape
+class Mesh : public Object
 {
 public:
 	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath = std::tstring(), ID3D11Device * device = nullptr);
 
-	bool Frame();
-	bool DebugRender(ID3D11DeviceContext* context);
-	bool Render(ID3D11DeviceContext* context);
-	void SetWorld(DirectX::FXMMATRIX world);
-	void SetWorld(const DirectX::XMFLOAT4X4& world);
+	virtual bool Frame()override;
+	virtual bool Render(ID3D11DeviceContext* context)override;
+	virtual void SetWorld(DirectX::FXMMATRIX world)override;
+	virtual void SetWorld(const DirectX::XMFLOAT4X4& world)override;
 
-	bool Intersects(DirectX::FXMVECTOR& origin, DirectX::FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin);
+	virtual bool Intersects(DirectX::FXMVECTOR& origin, DirectX::FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)override;
+
+	bool DebugRender(ID3D11DeviceContext* context);
 
 private:
 	bool LoadZXC(const std::tstring& filename, const std::tstring& texfilepath);
-	bool LoadSkin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadZXCBin(const std::tstring& filename, const std::tstring& texfilepath);
+
+	bool LoadSkin(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadSkinBin(const std::tstring& filename, const std::tstring& texfilepath);
+
 	bool LoadClip(const std::tstring& filename, const std::tstring& texfilepath);
 	bool LoadClipBin(const std::tstring& filename, const std::tstring& texfilepath);
 
@@ -81,10 +84,4 @@ private:
 	std::unique_ptr<SkinnedData> mSkinInfo = nullptr;
 	std::unique_ptr<SkinnedModelInstance> mSkinnedInst = nullptr;
 	SkinnedConstants mSkinnedConstants;
-
-	DirectX::BoundingBox mBoundingBox;
-
-	DirectX::XMFLOAT4X4 mWorld = MathHelper::Identity4x4();
-
-	UINT numDrawItem = 0;
 };

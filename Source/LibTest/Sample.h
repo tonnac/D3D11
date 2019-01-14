@@ -22,7 +22,7 @@ private:
 	PassConstants mMainPassCB;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mPassCB = nullptr;
 
-	PlaneShape m_Plane;
+//	PlaneShape m_Plane;
 	LineShape m_line;
 	BoxShape m_Box;
 };

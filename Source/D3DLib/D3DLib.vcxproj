@@ -183,6 +183,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Minimap.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectStd.h" />
     <ClInclude Include="RenderItemStorage.h" />
     <ClInclude Include="ShaderStorage.h" />
@@ -217,6 +218,7 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
     <ClCompile Include="MathHelper.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Minimap.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="PlaneShape.cpp" />
     <ClCompile Include="RenderItemStorage.cpp" />
     <ClCompile Include="ShaderStorage.cpp" />

@@ -8,19 +8,8 @@ LineShape::LineShape()
 	
 }
 
-void LineShape::BuildRenderItem(const std::tstring & textureFile)
+void LineShape::BuildRenderItem()
 {
-	if (S_Geometry[L"Line"] != nullptr)
-	{
-		mGeometry = S_Geometry[L"Line"];
-		return;
-	}
-
-	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
-	geo->Name = L"Line";
-	mGeometry = geo.get();
-	S_Geometry.SaveGeometry(geo);
-
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
 	rItem->Mat = nullptr;
@@ -37,6 +26,17 @@ void LineShape::BuildRenderItem(const std::tstring & textureFile)
 
 void LineShape::BuildGeometry()
 {
+	if (S_Geometry[L"Line"] != nullptr)
+	{
+		mGeometry = S_Geometry[L"Line"];
+		return;
+	}
+
+	std::unique_ptr<MeshGeometry> geo = std::make_unique<MeshGeometry>();
+	geo->Name = L"Line";
+	mGeometry = geo.get();
+	S_Geometry.SaveGeometry(geo);
+
 	std::vector<VertexC> vertices;
 	std::vector<DWORD> indices;
 
@@ -143,7 +143,7 @@ void DirectionShape::BuildGeometry()
 	mGeometry->DrawArgs[L"direction"] = sub;
 }
 
-void DirectionShape::BuildRenderItem(const std::tstring & textureFile)
+void DirectionShape::BuildRenderItem()
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
@@ -157,4 +157,9 @@ void DirectionShape::BuildRenderItem(const std::tstring & textureFile)
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(ObjectConstants), rItem->ConstantBuffer.GetAddressOf());
 	mRenderItem = rItem.get();
 	S_RItem.SaveMiscItem(rItem);
+}
+
+void DirectionShape::BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex)
+{
+	return;
 }

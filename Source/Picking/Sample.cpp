@@ -37,17 +37,17 @@ bool Sample::Init()
 	mSobelFilter = std::make_unique<Computeshader>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, L"shaders\\StencilCompute.hlsl");
 	mOffRT = std::make_unique<DxRT>(m_pd3dDevice.Get(), g_ClientWidth, g_ClientHeight);
 
-	mesh.LoadFile(L"shinbi.sbi", L"..\\..\\data\\tex\\shinbi\\", m_pd3dDevice.Get());
+//	mesh.LoadFile(L"shinbi.sbi", L"..\\..\\data\\tex\\shinbi\\", m_pd3dDevice.Get());
 	XMMATRIX S = XMMatrixScaling(0.05f, 0.05f, 0.05f);
 
-	mesh.SetWorld(S);
+//	mesh.SetWorld(S);
 
 	return true;
 }
 
 bool Sample::Frame()
 {
-	mesh.Frame();
+//	mesh.Frame();
 
 	if (S_Input.getKeyState(DIK_G) == Input::KEYSTATE::KEY_PUSH)
 	{
@@ -61,27 +61,27 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	if (isPicking)
-	{
-		mOffRT->Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::SKINNED].get());
-		ID3D11ShaderResourceView** srv = mOffRT->GetDSSrv();
-		ID3D11ShaderResourceView** srv0 = mOffRT->GetSRV();
-		mSobelFilter->Execute(m_pImmediateContext.Get(), srv);
-		ID3D11ShaderResourceView** sobelView = mSobelFilter->ShaderResrouceView();
+	//if (isPicking)
+	//{
+	//	mOffRT->Render(m_pImmediateContext.Get(), &mesh, mDxObj[DxType::SKINNED].get());
+	//	ID3D11ShaderResourceView** srv = mOffRT->GetDSSrv();
+	//	ID3D11ShaderResourceView** srv0 = mOffRT->GetSRV();
+	//	mSobelFilter->Execute(m_pImmediateContext.Get(), srv);
+	//	ID3D11ShaderResourceView** sobelView = mSobelFilter->ShaderResrouceView();
 
-		m_pImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
-		m_pImmediateContext->RSSetViewports(1, &m_Viewport);
+	//	m_pImmediateContext->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), m_pDepthStencilView.Get());
+	//	m_pImmediateContext->RSSetViewports(1, &m_Viewport);
 
-		mDxObj[DxType::COMPOSITE]->SetResource(m_pImmediateContext.Get());
-		m_pImmediateContext->PSSetShaderResources(0, 1, srv0);
-		m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
-		m_pImmediateContext->DrawInstanced(6, 1, 0, 0);
-	}
-	else
-	{
-		mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
-		mesh.Render(m_pImmediateContext.Get());
-	}
+	//	mDxObj[DxType::COMPOSITE]->SetResource(m_pImmediateContext.Get());
+	//	m_pImmediateContext->PSSetShaderResources(0, 1, srv0);
+	//	m_pImmediateContext->PSSetShaderResources(1, 1, sobelView);
+	//	m_pImmediateContext->DrawInstanced(6, 1, 0, 0);
+	//}
+	//else
+	//{
+	//	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	//	mesh.Render(m_pImmediateContext.Get());
+	//}
 
 
 	return true;
@@ -101,7 +101,7 @@ void Sample::Pick(int sx, int sy)
 	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(V), V);
 
 	float tmin = 0.0f;
-	isPicking = mesh.Intersects(rayOrigin, rayDir, invView, tmin);
+	//isPicking = mesh.Intersects(rayOrigin, rayDir, invView, tmin);
 }
 
 void Sample::OnResize()

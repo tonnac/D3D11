@@ -54,6 +54,26 @@ bool Mesh::LoadZXC(const std::tstring& filename, const std::tstring& texfilepath
 	return true;
 }
 
+bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfilepath)
+{
+	ZXCBinLoader loader;
+
+	std::tstring file(filename, 0, filename.find_last_of(L"."));
+
+	std::vector<Vertex> vertices;
+	std::vector<DWORD> indices;
+	std::vector<ZXCLoader::Subset> subsets;
+	std::vector<ZXCSMaterial> materials;
+	std::vector<MeshNode> nodes;
+
+	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, mBoundingBox))
+		return false;
+
+	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
+
+	return true;
+}
+
 bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepath)
 {
 	ZXCLoader loader;
@@ -81,26 +101,6 @@ bool Mesh::LoadSkin(const std::tstring& filename, const std::tstring& texfilepat
 	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
 
 	d3dUtil::CreateConstantBuffer(m_pDevice, 1, sizeof(SkinnedConstants), mConstantbuffer.GetAddressOf());
-
-	return true;
-}
-
-bool Mesh::LoadZXCBin(const std::tstring & filename, const std::tstring & texfilepath)
-{
-	ZXCBinLoader loader;
-
-	std::tstring file(filename, 0, filename.find_last_of(L"."));
-
-	std::vector<Vertex> vertices;
-	std::vector<DWORD> indices;
-	std::vector<ZXCLoader::Subset> subsets;
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-
-	if (!loader.LoadBinary(filename, vertices, indices, subsets, materials, nodes, mBoundingBox))
-		return false;
-
-	Initialize(vertices, indices, subsets, materials, nodes, filename, texfilepath);
 
 	return true;
 }
@@ -320,11 +320,6 @@ bool Mesh::Frame()
 
 	mSkinnedConstants.BoneTransforms[0] = MathHelper::Identity4x4();
 
-	if (S_Input.getKeyState(DIK_K) == Input::KEYSTATE::KEY_PUSH)
-	{
-		numDrawItem = (numDrawItem + 1) % (UINT)mDrawItem.size();
-	}
-
 	return true;
 }
 
@@ -360,28 +355,18 @@ bool Mesh::Render(ID3D11DeviceContext * context)
 	context->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
 	context->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 
-	UINT i = 0;
-
 	for (auto&x : mDrawItem)
 	{
-		//if (i != numDrawItem)
-		//{
-		//	++i;
-		//	continue;
-		//}
 		context->IASetPrimitiveTopology(x->PrimitiveType);
 		x->Mat->SetResource(context);
 		context->VSSetConstantBuffers(1, 1, x->ConstantBuffer.GetAddressOf());
 		context->DrawIndexedInstanced(x->IndexCount, 1, x->StartIndexLocation, x->BaseVertexLocation, 0);
-		++i;
 	}
-	
 	return true;
 }
 
 void Mesh::SetWorld(FXMMATRIX world)
 {
-	XMStoreFloat4x4(&mWorld, world);
 	if (!mDrawItem.empty())
 	{
 		for (auto&x : mDrawItem)
@@ -393,7 +378,6 @@ void Mesh::SetWorld(FXMMATRIX world)
 
 void Mesh::SetWorld(const XMFLOAT4X4 & world)
 {
-	mWorld = world;
 	if (!mDrawItem.empty())
 	{
 		for (auto&x : mDrawItem)
@@ -405,7 +389,7 @@ void Mesh::SetWorld(const XMFLOAT4X4 & world)
 
 bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)
 {
-	XMMATRIX W = XMLoadFloat4x4(&mWorld);
+	XMMATRIX W = XMLoadFloat4x4(&mDrawItem[0]->World);
 	XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
 
 	XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);

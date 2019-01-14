@@ -25,7 +25,7 @@ protected:
 private:
 	std::unique_ptr<Computeshader> mSobelFilter = nullptr;
 	std::unique_ptr<DxRT> mOffRT = nullptr;
-	Mesh mesh;
+//	Mesh mesh;
 
 	bool isPicking = false;
 };

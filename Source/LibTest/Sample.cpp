@@ -37,7 +37,7 @@ void Sample::FramePassCB()
 bool Sample::Init()
 {
 	d3dUtil::CreateConstantBuffer(m_pd3dDevice.Get(), 1, sizeof(PassConstants), mPassCB.GetAddressOf());
-	m_Plane.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/effect/Particle3.dds");
+//	m_Plane.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/effect/Particle3.dds");
 	m_Box.Create(m_pd3dDevice.Get(), L"shape.hlsl", L"../../data/effect/Particle3.dds");
 	return true;
 }
@@ -83,18 +83,18 @@ bool Sample::Render()
 	XMFLOAT4X4 bWorld;
 	XMStoreFloat4x4(&bWorld, Rot);
 
-	m_Box.SetMatrix(&bWorld);
-	m_line.SetMatrix();
-	m_Dir.SetMatrix();
+	//m_Box.SetMatrix(&bWorld);
+	//m_line.SetMatrix();
+	//m_Dir.SetMatrix();
 
-	XMMATRIX Move = XMMatrixTranslation(5, 0, 0);
-	
-	XMFLOAT4X4 Wd;
-	XMStoreFloat4x4(&Wd, Move);
-	m_Plane.SetMatrix(&Wd);
+	//XMMATRIX Move = XMMatrixTranslation(5, 0, 0);
+	//
+	//XMFLOAT4X4 Wd;
+	//XMStoreFloat4x4(&Wd, Move);
+	//m_Plane.SetMatrix(&Wd);
 
 	m_Box.Render(m_pImmediateContext.Get());
-	m_Plane.Render(m_pImmediateContext.Get());
+//	m_Plane.Render(m_pImmediateContext.Get());
 	return true;
 }
 

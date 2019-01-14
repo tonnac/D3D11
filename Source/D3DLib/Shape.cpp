@@ -3,62 +3,6 @@
 
 using namespace DirectX;
 
-Shape::Shape()
-{
-}
-
-void Shape::Create(ID3D11Device* pDevice, const std::tstring& textureFile, const std::tstring& normalTex)
- {
-	m_pDevice = pDevice;
-
-	BuildGeometry();
-	BuildMaterials(textureFile, normalTex);
-	BuildRenderItem(textureFile);
-}
-
-void Shape::BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride)
-{
-	D3DCreateBlob(vbByteSize, mGeometry->VertexBufferCPU.GetAddressOf());
-	CopyMemory(mGeometry->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
-
-	D3DCreateBlob(ibByteSize, mGeometry->IndexBufferCPU.GetAddressOf());
-	CopyMemory(mGeometry->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
-
-	mGeometry->VertexBufferByteSize = vbByteSize;
-	mGeometry->VertexByteStride = vertexStride;
-	mGeometry->IndexBufferByteSize = ibByteSize;
-	mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
-
-	d3dUtil::CreateVertexBuffer(m_pDevice,
-		mGeometry->VertexBufferByteSize,
-		mGeometry->VertexBufferCPU->GetBufferPointer(),
-		mGeometry->VertexBuffer.GetAddressOf());
-
-	d3dUtil::CreateIndexBuffer(m_pDevice,
-		mGeometry->IndexBufferByteSize,
-		mGeometry->IndexBufferCPU->GetBufferPointer(),
-		mGeometry->IndexBuffer.GetAddressOf());
-}
-
-bool Shape::Frame()
-{
-	return true;
-}
-
-bool Shape::Render(ID3D11DeviceContext* pContext)
-{
-	UINT Offset = 0;
-	pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
-	pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
-
-	pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
-	mRenderItem->Mat->SetResource(pContext);
-	pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
-	pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
-
-	return true;
-}
-
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 {
 }
@@ -166,7 +110,7 @@ void BoxShape::BuildMaterials(const std::tstring& textureFile, const std::tstrin
 	storage->StoreMaterial(mat);
 }
 
-void BoxShape::BuildRenderItem(const std::tstring & textureFile)
+void BoxShape::BuildRenderItem()
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
@@ -197,19 +141,14 @@ void SkyBox::BuildGeometry()
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
 
-	struct Vertex_
-	{
-		XMFLOAT3 Pos;
-	};
-
 	GeometryGenerator geoMesh;
 	GeometryGenerator::MeshData sphere = geoMesh.CreateSphere(0.5f, 20, 20);
 
-	std::vector<Vertex_> vertices;
+	std::vector<VertexP> vertices;
 	for (UINT i = 0; i < (UINT)sphere.Vertices.size(); ++i)
 	{
-		Vertex_ v;
-		v.Pos = sphere.Vertices[i].Position;
+		VertexP v;
+		v.p = sphere.Vertices[i].Position;
 		vertices.push_back(v);
 	}
 
@@ -219,10 +158,10 @@ void SkyBox::BuildGeometry()
 		indices.push_back(sphere.Indices32[i]);
 	}
 
-	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex_);
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(VertexP);
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(DWORD);
 
-	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(Vertex_));
+	BuildVBIB(vertices.data(), indices.data(), vbByteSize, ibByteSize, sizeof(VertexP));
 
 	SubmeshGeometry sub;
 	sub.IndexCount = (UINT)indices.size();
@@ -231,7 +170,7 @@ void SkyBox::BuildGeometry()
 	mGeometry->DrawArgs[L"sphere"] = sub;
 }
 
-void SkyBox::BuildRenderItem(const std::tstring & textureFile)
+void SkyBox::BuildRenderItem()
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
@@ -325,7 +264,7 @@ void GridShape::BuildGeometry()
 	mGeometry->Name = L"Grid";
 }
 
-void GridShape::BuildRenderItem(const std::tstring & textureFile)
+void GridShape::BuildRenderItem()
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
@@ -409,7 +348,7 @@ void SphereShape::BuildGeometry()
 	mGeometry->DrawArgs[L"sphere"] = sub;
 }
 
-void SphereShape::BuildRenderItem(const std::tstring & textureFile)
+void SphereShape::BuildRenderItem()
 {
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;

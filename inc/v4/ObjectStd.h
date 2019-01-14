@@ -15,6 +15,11 @@ struct VertexC
 	}
 };
 
+struct VertexP
+{
+	DirectX::XMFLOAT3 p;
+};
+
 struct Vertex
 {
 	DirectX::XMFLOAT3 p;
