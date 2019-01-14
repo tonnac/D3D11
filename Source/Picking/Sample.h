@@ -16,7 +16,7 @@ protected:
 	virtual bool Init()override;
 	virtual bool Frame()override;
 	virtual bool Render()override;
-
+	
 	void Pick(int sx, int sy);
 
 	virtual void OnResize()override;

@@ -59,15 +59,15 @@ public:
 			DWORD i1 = indices[i * 3 + 1];
 			DWORD i2 = indices[i * 3 + 2];
 
-			XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
-			XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
-			XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
+			//XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
+			//XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
+			//XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
 
-			if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
-			{
-				tmin = t;
-				return true;
-			}
+			//if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
+			//{
+			//	tmin = t;
+			//	return true;
+			//}
 		}
 		return false;
 	}
