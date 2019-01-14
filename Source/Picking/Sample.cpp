@@ -113,7 +113,7 @@ void Sample::OnResize()
 		mSobelFilter->OnResize(g_ClientWidth, g_ClientHeight);
 }
 
-void Sample::OnMouseDblClk(WPARAM btnState, int x, int y)
+void Sample::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	if ((btnState & MK_LBUTTON) != 0)
 	{

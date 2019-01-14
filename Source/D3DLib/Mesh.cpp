@@ -415,7 +415,7 @@ bool Mesh::Intersects(FXMVECTOR& origin, FXMVECTOR& dir, DirectX::CXMMATRIX& inv
 
 	rayDir = XMVector3Normalize(rayDir);
 
-	auto vertices = (Vertex*)mGeometry->VertexBufferCPU->GetBufferPointer();
+	auto vertices = (SkinnedVertex*)mGeometry->VertexBufferCPU->GetBufferPointer();
 	const auto& indices = (DWORD*)mGeometry->IndexBufferCPU->GetBufferPointer();
 	UINT triCount = mGeometry->IndexBufferByteSize / sizeof(DWORD) / 3;
 

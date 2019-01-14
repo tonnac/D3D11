@@ -30,7 +30,7 @@ protected:
 	void			CalculateFrame();
 	void			FramePassCB();
 
-	virtual void	OnMouseDblClk(WPARAM btnState, int x, int y) {}
+	virtual void	OnMouseDown(WPARAM btnState, int x, int y) {}
 private:
 	bool			GameFrame();
 	bool			PreRender();

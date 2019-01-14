@@ -181,7 +181,7 @@ LRESULT Core::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		OnMouseDblClk(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	}
 
@@ -342,18 +342,6 @@ XMFLOAT4 Core::OnKeyboardInput()
 		m_bFrameinfo = !m_bFrameinfo;
 	}
 
-	//if (S_Input.getKeyState(DIK_1) == KEYSTATE::KEY_PUSH)
-	//{
-	//	if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Wireframe)
-	//	{
-	//		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Default;
-	//	}
-	//	else if (mDxObj[DxType::SKINNED]->m_RasterizerState == E_RSS::Default)
-	//	{
-	//		mDxObj[DxType::SKINNED]->m_RasterizerState = E_RSS::Wireframe;
-	//	}	
-	//}
-
 	if (S_Input.getKeyState(DIK_2) == KEYSTATE::KEY_PUSH)
 	{
 		if (mDxObj[DxType::DEFAULT]->m_RasterizerState == E_RSS::Wireframe)
@@ -365,11 +353,6 @@ XMFLOAT4 Core::OnKeyboardInput()
 			mDxObj[DxType::DEFAULT]->m_RasterizerState = E_RSS::Wireframe;
 		}
 	}
-
-	//if (S_Input.getKeyState(DIK_3) == KEYSTATE::KEY_PUSH)
-	//{
-	//	IncreaseEnum(m_BlendState);
-	//}
 
 	if (S_Input.getKeyState(DIK_A) == KEYSTATE::KEY_HOLD)
 	{

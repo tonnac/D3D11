@@ -17,13 +17,10 @@ protected:
 	virtual bool Frame()override;
 	virtual bool Render()override;
 
-	void BuildBuffer();
-	void BuildView();
-
 	void Pick(int sx, int sy);
 
 	virtual void OnResize()override;
-	virtual void OnMouseDblClk(WPARAM btnState, int x, int y)override;
+	virtual void OnMouseDown(WPARAM btnState, int x, int y)override;
 
 private:
 	std::unique_ptr<Computeshader> mSobelFilter = nullptr;
