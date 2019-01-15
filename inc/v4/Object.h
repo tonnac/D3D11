@@ -5,14 +5,22 @@
 #include "RenderItemStorage.h"
 #include "GeometryGenerator.h"
 
+template<typename X>
 class Object
 {
 public:
-	Object() = default;
-	virtual ~Object() = default;
+	Object() {};
+	virtual ~Object() {};
 
 public:
-	virtual void Create(ID3D11Device* pDevice, const std::tstring& textureFile = std::tstring(), const std::tstring& normalTex = std::tstring());
+	virtual void Create(ID3D11Device* pDevice, const std::tstring& textureFile = std::tstring(), const std::tstring& normalTex = std::tstring())
+	{
+		m_pDevice = pDevice;
+
+		BuildGeometry();
+		BuildMaterials(textureFile, normalTex);
+		BuildRenderItem();
+	}
 
 	virtual bool Frame() = 0;
 	virtual bool Render(ID3D11DeviceContext* pContext) = 0;
@@ -28,7 +36,29 @@ protected:
 	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex) {};
 	virtual void BuildMaterials() {};
 
-	virtual void BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex));
+	virtual void BuildVBIB(LPVOID vertices, LPVOID indices, const UINT vbByteSize, const UINT ibByteSize, UINT vertexStride = sizeof(Vertex))
+	{
+		D3DCreateBlob(vbByteSize, mGeometry->VertexBufferCPU.GetAddressOf());
+		CopyMemory(mGeometry->VertexBufferCPU->GetBufferPointer(), vertices, vbByteSize);
+
+		D3DCreateBlob(ibByteSize, mGeometry->IndexBufferCPU.GetAddressOf());
+		CopyMemory(mGeometry->IndexBufferCPU->GetBufferPointer(), indices, ibByteSize);
+
+		mGeometry->VertexBufferByteSize = vbByteSize;
+		mGeometry->VertexByteStride = vertexStride;
+		mGeometry->IndexBufferByteSize = ibByteSize;
+		mGeometry->IndexFormat = DXGI_FORMAT_R32_UINT;
+		
+		d3dUtil::CreateVertexBuffer(m_pDevice,
+			mGeometry->VertexBufferByteSize,
+			mGeometry->VertexBufferCPU->GetBufferPointer(),
+			mGeometry->VertexBuffer.GetAddressOf());
+
+		d3dUtil::CreateIndexBuffer(m_pDevice,
+			mGeometry->IndexBufferByteSize,
+			mGeometry->IndexBufferCPU->GetBufferPointer(),
+			mGeometry->IndexBuffer.GetAddressOf());
+	}
 
 protected:
 	ID3D11Device* m_pDevice = nullptr;

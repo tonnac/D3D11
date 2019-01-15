@@ -6,7 +6,7 @@
 #include "FrameResource.h"
 #include <cstdarg>
 
-class Mesh : public Object
+class Mesh : public Object<Vertex>
 {
 public:
 	bool LoadFile(const std::tstring& filename, const std::tstring& texfilepath = std::tstring(), ID3D11Device * device = nullptr);

@@ -1,12 +1,13 @@
 #pragma once
 #include "Object.h"
+#include "GeometryStroage.h"
 
 template<typename X>
-class Shape : public Object
+class Shape : public Object<X>
 {
 public:
-	Shape() = default;
-	virtual ~Shape() = default;
+	Shape() {};
+	virtual ~Shape() {};
 
 public:
 	virtual bool Frame()override
@@ -15,15 +16,16 @@ public:
 	}
 	virtual bool Render(ID3D11DeviceContext* pContext)
 	{
+		MeshGeometry * geo = Object<X>::mGeometry;
 		UINT Offset = 0;
-		pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
-		pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
-
+		pContext->IASetVertexBuffers(0, 1, geo->VertexBuffer.GetAddressOf(), &geo->VertexByteStride, &Offset);
+		pContext->IASetIndexBuffer(geo->IndexBuffer.Get(), geo->IndexFormat, 0);
+		
 		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
 		mRenderItem->Mat->SetResource(pContext);
 		pContext->VSSetConstantBuffers(1, 1, mRenderItem->ConstantBuffer.GetAddressOf());
 		pContext->DrawIndexedInstanced(mRenderItem->IndexCount, 1, mRenderItem->StartIndexLocation, mRenderItem->BaseVertexLocation, 0);
-
+		
 		return true;
 	}
 
@@ -33,23 +35,25 @@ public:
 	}
 	virtual void SetWorld(const DirectX::XMFLOAT4X4& world)override
 	{
+		
 		mRenderItem->World = world;
 	}
-
 	virtual bool Intersects(DirectX::FXMVECTOR& origin, DirectX::FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)override
 	{
-		XMMATRIX W = XMLoadFloat4x4(&mRenderItem->World);
-		XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
+		MeshGeometry * geo = Object<X>::mGeometry;
 
-		XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
+		DirectX::XMMATRIX W = XMLoadFloat4x4(&mRenderItem->World);
+		DirectX::XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
 
-		XMVECTOR rayOrigin = XMVector3TransformCoord(origin, toLocal);
-		XMVECTOR rayDir = XMVector3TransformNormal(dir, toLocal);
+		DirectX::XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
 
-		auto vertices = (X*)mGeometry->VertexBufferCPU->GetBufferPointer();
-		auto indices = (DWORD*)mGeometry->IndexBufferCPU->GetBufferPointer();
+		DirectX::XMVECTOR rayOrigin = XMVector3TransformCoord(origin, toLocal);
+		DirectX::XMVECTOR rayDir = XMVector3TransformNormal(dir, toLocal);
 
-		UINT triSize = mGeometry->IndexBufferByteSize / sizeof(DWORD) / 3;
+		auto vertices = (X*)geo->VertexBufferCPU->GetBufferPointer();
+		auto indices = (DWORD*)geo->IndexBufferCPU->GetBufferPointer();
+
+		UINT triSize = geo->IndexBufferByteSize / sizeof(DWORD) / 3;
 
 		float t = MathHelper::Infinity;
 
@@ -59,21 +63,22 @@ public:
 			DWORD i1 = indices[i * 3 + 1];
 			DWORD i2 = indices[i * 3 + 2];
 
-			//XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
-			//XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
-			//XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
+			DirectX::XMVECTOR v0 = XMLoadFloat3(&vertices[i0].p);
+			DirectX::XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
+			DirectX::XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
 
-			//if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
-			//{
-			//	tmin = t;
-			//	return true;
-			//}
+			if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
+			{
+				tmin = t;
+				return true;
+			}
 		}
 		return false;
 	}
 
 protected:
 	RenderItem* mRenderItem = nullptr;
+
 };
 
 class BoxShape : public Shape<Vertex>

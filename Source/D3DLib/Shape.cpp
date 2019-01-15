@@ -3,6 +3,7 @@
 
 using namespace DirectX;
 
+
 BoxShape::BoxShape(bool isDice) : mIsDice(isDice)
 {
 }
@@ -19,7 +20,7 @@ void BoxShape::BuildGeometry()
 	geo->Name = L"Box";
 	mGeometry = geo.get();
 	S_Geometry.SaveGeometry(geo);
-
+	
 	std::vector<Vertex> vertices;
 
 	GeometryGenerator geomesh;
@@ -353,10 +354,7 @@ void SphereShape::BuildRenderItem()
 	std::unique_ptr<RenderItem> rItem = std::make_unique<RenderItem>();
 	rItem->Geo = mGeometry;
 
-	XMMATRIX W = XMMatrixScaling(40.0f, 40.0f, 40.0f);
-	XMMATRIX T = XMMatrixTranslation(0.0f, 15.0f, -45.0f);
-	XMStoreFloat4x4(&rItem->World, W * T);
-//	rItem->World = MathHelper::Identity4x4();
+	rItem->World = MathHelper::Identity4x4();
 	rItem->TexTransform = MathHelper::Identity4x4();
 	rItem->Mat = MaterialStorage::GetStorage()->GetMaterial(L"Sphere");
 	rItem->IndexCount = rItem->Geo->DrawArgs[L"sphere"].IndexCount;
