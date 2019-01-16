@@ -2,7 +2,7 @@
 #include "ZXCLoader.h"
 #include "SkinnedData.h"
 
-class Mesh;
+//class Mesh<X>;
 
 class ClipLoader
 {

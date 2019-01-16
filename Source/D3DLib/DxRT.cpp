@@ -41,19 +41,6 @@ void DxRT::OnResize(UINT width, UINT height)
 	}
 }
 
-bool DxRT::Render(ID3D11DeviceContext * context, Mesh* mesh, DxObj* dxobj)
-{
-	Begin(context, DirectX::Colors::Black);
-	dxobj->SetResource(context);
-
-	auto t = DxState::m_DSS[(int)E_DSS::Stencil];
-	context->OMSetDepthStencilState(t.Get(), 1);
-	mesh->Render(context);
-
-	End(context);
-	return true;
-}
-
 ID3D11ShaderResourceView ** DxRT::GetSRV()
 {
 	return m_pShaderResourceView.GetAddressOf();

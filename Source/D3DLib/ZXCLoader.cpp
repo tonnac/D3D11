@@ -4,58 +4,25 @@
 
 using namespace DirectX;
 
-bool ZXCLoader::LoadZXC(
-	const std::wstring & FileName,
-	std::vector<Vertex>& vertices,
-	std::vector<DWORD>& indices,
-	std::vector<Subset>& subsets,
-	std::vector<ZXCSMaterial>& materials,
-	std::vector<MeshNode>& nodes,
-	DirectX::BoundingBox& box)
+ZXCLoader::ZXCLoader(FileInfo & fileInfo)
+	: mFileinfo(fileInfo)
 {
-	std::wifstream fp(FileName.c_str());
+}
 
-	if (!fp.is_open())
-	{
-		std::wstring message = FileName + L" Not Found.";
-		MessageBox(nullptr, message.c_str(), 0, 0);
-		return false;
-	}
-
-	ReadCommon(fp, subsets, materials, nodes, box);
-	ReadVertex(fp, vertices);
-	ReadIndices(fp, indices);
-
+bool ZXCLoader::LoadZXC()
+{
+	LoadCommon();
 	return true;
 }
 
-bool ZXCLoader::LoadSkin(
-	const std::wstring & FileName,
-	std::vector<SkinnedVertex>& vertices,
-	std::vector<DWORD>& indices,
-	std::vector<Subset>& subsets,
-	std::vector<ZXCSMaterial>& materials,
-	std::vector<MeshNode>& nodes,
-	DirectX::BoundingBox& box,
-	SkinnedData* skinInfo)
+bool ZXCLoader::LoadSkin()
 {
-	std::wifstream fp(FileName.c_str());
-
-	if (!fp.is_open())
-	{
-		std::wstring message = FileName + L"Not Found.";
-		MessageBox(nullptr, message.c_str(), 0, 0);
-		return false;
-	}
-
-	ReadCommon(fp, subsets, materials, nodes, box);
-	ReadVertex(fp, vertices);
-	ReadIndices(fp, indices);
-	BuildDefaultAnimaions(skinInfo, nodes);
+	LoadCommon<SkinnedVertex>();
+	BuildDefaultAnimaions();
 	return true;
 }
 
-void ZXCLoader::ReadCommon(std::wifstream& fp, std::vector<Subset>& subsets, std::vector<ZXCSMaterial>& materials, std::vector<MeshNode>& nodes, DirectX::BoundingBox & box)
+void ZXCLoader::ReadCommon(std::wifstream& fp)
 {
 	std::wstring ignore;
 
@@ -69,22 +36,27 @@ void ZXCLoader::ReadCommon(std::wifstream& fp, std::vector<Subset>& subsets, std
 	fp >> ignore >> mNumTriangles;
 	fp >> ignore >> mNumSubSet;
 
-	materials.resize(mNumMaterials);
-	nodes.resize(mNumNodes);
+	mFileinfo.Materials.resize(mNumMaterials);
+	mFileinfo.Nodes.resize(mNumNodes);
+	mFileinfo.Subsets.resize(mNumSubSet);
+	mFileinfo.Vertices.resize(mNumVertices);
+	mFileinfo.Indices.resize(mNumTriangles * 3);
 
-	ReadMaterial(fp, materials);
-	ReadNodes(fp, nodes);
-	ReadSubsetTable(fp, subsets);
-	ReadBoundingBox(fp, box);
+	ReadMaterial(fp);
+	ReadNodes(fp);
+	ReadSubsetTable(fp);
+	ReadBoundingBox(fp);
 }
 
-void ZXCLoader::ReadMaterial(std::wifstream& fp, std::vector<ZXCSMaterial>& materials)
+void ZXCLoader::ReadMaterial(std::wifstream& fp)
 {
 	std::wstring ignore;
 	fp >> ignore;
 
 	for (UINT i = 0; i < mNumMaterials; ++i)
 	{
+		auto& materials = mFileinfo.Materials;
+
 		UINT rootMapNum;
 		UINT subMtlNum;
 		fp >> ignore >> materials[i].Name;
@@ -126,13 +98,15 @@ void ZXCLoader::ReadMaterial(std::wifstream& fp, std::vector<ZXCSMaterial>& mate
 	}
 }
 
-void ZXCLoader::ReadNodes(std::wifstream& fp, std::vector<MeshNode>& nodes)
+void ZXCLoader::ReadNodes(std::wifstream& fp)
 {
 	std::wstring ignore;
 
 	fp >> ignore;
 	for (UINT i = 0; i < mNumNodes; ++i)
 	{
+		auto& nodes = mFileinfo.Nodes;
+
 		UINT Index;
 		UINT ParentNum;
 
@@ -175,60 +149,10 @@ void ZXCLoader::ReadNodes(std::wifstream& fp, std::vector<MeshNode>& nodes)
 	}
 }
 
-void ZXCLoader::ReadVertex(std::wifstream & fp, std::vector<Vertex>& vertices)
+void ZXCLoader::ReadIndices(std::wifstream & fp)
 {
-	std::wstring ignore;
-	fp >> ignore;
+	auto& indices = mFileinfo.Indices;
 
-	vertices.resize(mNumVertices);
-	for (UINT i = 0; i < mNumVertices; ++i)
-	{
-		fp >> ignore >> vertices[i].p.x >> vertices[i].p.y >> vertices[i].p.z;
-		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
-		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
-		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
-		fp >> ignore >> vertices[i].Tangent.x >> vertices[i].Tangent.y >> vertices[i].Tangent.z;
-	}
-}
-
-void ZXCLoader::ReadVertex(std::wifstream& fp, std::vector<SkinnedVertex>& vertices)
-{
-	std::wstring ignore;
-	fp >> ignore;
-
-	vertices.resize(mNumVertices);
-	for (UINT i = 0; i < mNumVertices; ++i)
-	{
-		float weights[4] = { 0.0f };
-		int boneIndices[4] = {0,};
-
-		fp >> ignore >> vertices[i].p.x >> vertices[i].p.y >> vertices[i].p.z;
-		fp >> ignore >> vertices[i].n.x >> vertices[i].n.y >> vertices[i].n.z;
-		fp >> ignore >> vertices[i].c.x >> vertices[i].c.y >> vertices[i].c.z >> vertices[i].c.w;
-		fp >> ignore >> vertices[i].t.x >> vertices[i].t.y;
-		fp >> ignore >> vertices[i].Tangent.x >> vertices[i].Tangent.y >> vertices[i].Tangent.z;
-		fp >> ignore >> weights[3];
-
-		for (int k = 0; k < (int)weights[3]; ++k)
-		{
-			if (k == 3)
-			{
-				fp >> ignore >> boneIndices[k] >> ignore;
-				break;
-			}
-			fp >> ignore >> boneIndices[k] >> weights[k];
-		}
-		vertices[i].BoneWeights = XMFLOAT4(weights);
-
-		vertices[i].BoneIndices[0] = (BYTE)boneIndices[0];
-		vertices[i].BoneIndices[1] = (BYTE)boneIndices[1];
-		vertices[i].BoneIndices[2] = (BYTE)boneIndices[2];
-		vertices[i].BoneIndices[3] = (BYTE)boneIndices[3];
-	}
-}
-
-void ZXCLoader::ReadIndices(std::wifstream & fp, std::vector<DWORD>& indices)
-{
 	std::wstring ignore;
 	fp >> ignore;
 	indices.resize(mNumTriangles * 3);
@@ -238,28 +162,29 @@ void ZXCLoader::ReadIndices(std::wifstream & fp, std::vector<DWORD>& indices)
 	}
 }
 
-void ZXCLoader::ReadSubsetTable(std::wifstream & fp, std::vector<Subset>& subsets)
+void ZXCLoader::ReadSubsetTable(std::wifstream & fp)
 {
+	auto & subsets = mFileinfo.Subsets;
+
 	std::wstring ignore;
 	fp >> ignore;
 
 	for (UINT i = 0; i < mNumSubSet; ++i)
 	{
-		Subset subset;
-		fp >> ignore >> ignore >> subset.NodeIndex;
-		fp >> ignore >> subset.MtrlRef;
-		fp >> ignore >> subset.SubMtlID;
-		fp >> ignore >> subset.VertexStart;
-		fp >> ignore >> subset.VertexCount;
-		fp >> ignore >> subset.FaceStart;
-		fp >> ignore >> subset.FaceCount;
-
-		subsets.push_back(subset);
+		fp >> ignore >> ignore >> subsets[i].NodeIndex;
+		fp >> ignore >> subsets[i].MtrlRef;
+		fp >> ignore >> subsets[i].SubMtlID;
+		fp >> ignore >> subsets[i].VertexStart;
+		fp >> ignore >> subsets[i].VertexCount;
+		fp >> ignore >> subsets[i].FaceStart;
+		fp >> ignore >> subsets[i].FaceCount;
 	}
 }
 
-void ZXCLoader::ReadBoundingBox(std::wifstream & fp, DirectX::BoundingBox & box)
+void ZXCLoader::ReadBoundingBox(std::wifstream & fp)
 {
+	auto& box = mFileinfo.Box;
+
 	std::wstring ignore;
 
 	fp >> ignore;
@@ -303,30 +228,30 @@ void ZXCLoader::BuildInitPos(std::vector<DirectX::XMFLOAT4X4>& initPos, const st
 	}
 }
 
-void ZXCLoader::BuildDefaultAnimaions(SkinnedData* skinInfo, std::vector<MeshNode>& nodes)
+void ZXCLoader::BuildDefaultAnimaions()
 {
 	AnimationClip clip;
-	clip.BoneAnimations.resize((UINT)nodes.size());
+	clip.BoneAnimations.resize((UINT)mFileinfo.Nodes.size());
 
 	std::vector<int> boneHierarchy;
 	std::vector<XMFLOAT4X4> initPos;
 	std::vector<XMFLOAT4X4> boneOffsets;
 	std::unordered_map<std::wstring, AnimationClip> animations;
 
-	boneHierarchy.resize((UINT)nodes.size());
-	initPos.resize((UINT)nodes.size());
-	boneOffsets.resize((UINT)nodes.size());
+	boneHierarchy.resize((UINT)mFileinfo.Nodes.size());
+	initPos.resize((UINT)mFileinfo.Nodes.size());
+	boneOffsets.resize((UINT)mFileinfo.Nodes.size());
 	
 	animations[L"default"] = clip;
-	BuildInitPos(initPos, nodes);
+	BuildInitPos(initPos, mFileinfo.Nodes);
 
 //	ReadOffsets(fp, boneOffsets);
-	SetBoneOffsets(boneOffsets, nodes);
+	SetBoneOffsets(boneOffsets, mFileinfo.Nodes);
 	for (UINT i = 0; i < (UINT)boneHierarchy.size(); ++i)
 	{
-		boneHierarchy[i] = nodes[i].ParentIndex;
+		boneHierarchy[i] = mFileinfo.Nodes[i].ParentIndex;
 	}
-	skinInfo->Set(boneHierarchy, boneOffsets, initPos, animations);
+	mFileinfo.skinInfo->Set(boneHierarchy, boneOffsets, initPos, animations);
 }
 
 void ZXCLoader::SetBoneOffsets(std::vector<DirectX::XMFLOAT4X4>& boneOffsets, const std::vector<MeshNode>& nodes)

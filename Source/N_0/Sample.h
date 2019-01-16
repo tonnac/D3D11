@@ -3,7 +3,7 @@
 #include "Core.h"
 #include "Minimap.h"
 #include "Frustum.h"
-#include "Mesh.h"
+#include "SkinnedMesh.h"
 #include "GeometryGenerator.h"
 #include "SobelFilter.h"
 
@@ -19,5 +19,7 @@ protected:
 
 
 private:
+	std::unique_ptr<SkinnedMesh> mesh;
+//	std::unique_ptr<Mesh<>> mesh;
 };
 

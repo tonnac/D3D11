@@ -4,34 +4,39 @@
 
 using namespace DirectX;
 
-void ZXCBinLoader::LoadMaterials(std::ifstream & fin, std::vector<ZXCSMaterial>& materials)
+ZXCBinLoader::ZXCBinLoader(FileInfo & fileInfo)
+	: ZXCLoader(fileInfo)
 {
-	for (UINT i = 0; i < (UINT)materials.size(); ++i)
+}
+
+void ZXCBinLoader::LoadMaterials(std::ifstream & fin)
+{
+	for (UINT i = 0; i < (UINT)mFileinfo.Materials.size(); ++i)
 	{
-		ReadMaterial(fin, materials[i]);
+		ReadMaterial(fin, mFileinfo.Materials[i]);
 	}
 }
 
-void ZXCBinLoader::LoadNodes(std::ifstream & fin, std::vector<MeshNode>& nodes)
+void ZXCBinLoader::LoadNodes(std::ifstream & fin)
 {
-	for (UINT i = 0; i < (UINT)nodes.size(); ++i)
+	for (UINT i = 0; i < (UINT)mFileinfo.Nodes.size(); ++i)
 	{
-		ReadNodes(fin, nodes[i]);
+		ReadNodes(fin, mFileinfo.Nodes[i]);
 	}
 }
 
-void ZXCBinLoader::LoadSubsets(std::ifstream & fin, std::vector<Subset>& subsets)
+void ZXCBinLoader::LoadSubsets(std::ifstream & fin)
 {
-	ReadBinary(fin, subsets.data(), (UINT)(sizeof(Subset) * subsets.size()));
+	ReadBinary(fin, mFileinfo.Subsets.data(), (UINT)(sizeof(Subset) * mFileinfo.Subsets.size()));
 }
 
 
-void ZXCBinLoader::LoadIndices(std::ifstream & fin, std::vector<DWORD>& indices)
+void ZXCBinLoader::LoadIndices(std::ifstream & fin)
 {
-	ReadBinary(fin, indices.data(), (UINT)(sizeof(std::uint32_t) * indices.size()));
+	ReadBinary(fin, mFileinfo.Indices.data(), (UINT)(sizeof(std::uint32_t) * mFileinfo.Indices.size()));
 }
 
-void ZXCBinLoader::LoadBoundingBox(std::ifstream & fin, DirectX::BoundingBox & box)
+void ZXCBinLoader::LoadBoundingBox(std::ifstream & fin)
 {
-	ReadBinary(fin, box);
+	ReadBinary(fin, mFileinfo.Box);
 }

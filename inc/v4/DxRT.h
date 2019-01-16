@@ -16,8 +16,6 @@ public:
 
 	void OnResize(UINT width, UINT height);
 
-	bool Render(ID3D11DeviceContext* context, Mesh* mesh, DxObj* dxobj);
-
 	ID3D11ShaderResourceView** GetSRV();
 	ID3D11ShaderResourceView** GetDSSrv();
 

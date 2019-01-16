@@ -1,21 +1,16 @@
 #pragma once
 #include "ZXCLoader.h"
 
-class ZXCBinLoader : public ZXCLoader
+class ZXCBinLoader : private ZXCLoader
 {
 public:
+	ZXCBinLoader(FileInfo& fileInfo);
+
+public:
 	template<class T = Vertex>
-	bool LoadBinary(
-		const std::wstring & FileName,
-		std::vector<T>& vertices,
-		std::vector<DWORD>& indices,
-		std::vector<Subset>& subsets,
-		std::vector<ZXCSMaterial>& materials,
-		std::vector<MeshNode>& nodes,
-		DirectX::BoundingBox& box,
-		SkinnedData * skinInfo = nullptr)
+	bool LoadBinary(bool isSkinned = true)
 	{
-		std::ifstream fin(FileName.c_str(), std::ios::binary);
+		std::ifstream fin(mFileinfo.FileName.c_str(), std::ios::binary);
 
 		if (!fin.is_open()) return false;
 
@@ -33,20 +28,23 @@ public:
 		UINT numNodes = CompositeNum[3];
 		UINT numSubsets = CompositeNum[4];
 
-		materials.resize(numMaterials);
-		nodes.resize(numNodes);
-		subsets.resize(numSubsets);
-		vertices.resize(numVertices);
-		indices.resize(numTriangles * 3);
+		mFileinfo.Materials.resize(numMaterials);
+		mFileinfo.Nodes.resize(numNodes);
+		mFileinfo.Subsets.resize(numSubsets);
+		if (isSkinned)
+			mFileinfo.SkinVertices.resize(numVertices);
+		else
+			mFileinfo.Vertices.resize(numVertices);
+		mFileinfo.Indices.resize(numTriangles * 3);
 
-		LoadMaterials(fin, materials);
-		LoadNodes(fin, nodes);
-		LoadSubsets(fin, subsets);
-		LoadBoundingBox(fin, box);
-		LoadVertices(fin, vertices);
-		LoadIndices(fin, indices);
-		if (skinInfo != nullptr)
-			BuildDefaultAnimaions(skinInfo, nodes);
+		LoadIndices(fin);
+		LoadMaterials(fin);
+		LoadNodes(fin);
+		LoadSubsets(fin);
+		LoadBoundingBox(fin);
+		LoadVertices<T>(fin);
+		if (mFileinfo.skinInfo != nullptr)
+			BuildDefaultAnimaions();
 
 		return true;
 	}
@@ -75,16 +73,21 @@ public:
 	}
 
 private:
-	void LoadMaterials(std::ifstream& fin, std::vector<ZXCSMaterial>& materials);
-	void LoadNodes(std::ifstream&fin, std::vector<MeshNode>& nodes);
-	void LoadSubsets(std::ifstream&fin, std::vector<Subset>& subsets);
+	void LoadMaterials(std::ifstream& fin);
+	void LoadNodes(std::ifstream&fin);
+	void LoadSubsets(std::ifstream&fin);
 	template<class T>
-	void LoadVertices(std::ifstream&fin, std::vector<T>& vertices)
+	void LoadVertices(std::ifstream&fin)
 	{
-		ReadBinary(fin, vertices.data(), (UINT)(sizeof(T) * vertices.size()));
+		ReadBinary(fin, mFileinfo.Vertices.data(), (UINT)(sizeof(T) * mFileinfo.Vertices.size()));
 	}
-	void LoadIndices(std::ifstream&fin, std::vector<DWORD>& indices);
-	void LoadBoundingBox(std::ifstream&fin, DirectX::BoundingBox& box);
+	template<>
+	void LoadVertices<SkinnedVertex>(std::ifstream&fin)
+	{
+		ReadBinary(fin, mFileinfo.SkinVertices.data(), (UINT)(sizeof(SkinnedVertex) * mFileinfo.SkinVertices.size()));
+	}
+	void LoadIndices(std::ifstream&fin);
+	void LoadBoundingBox(std::ifstream&fin);
 
 private:
 	void ReadPair(std::ifstream& fin, std::pair<int, std::wstring> pair)

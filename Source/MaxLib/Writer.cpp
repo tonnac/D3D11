@@ -5,7 +5,7 @@
 
 using namespace std::chrono;
 
-Writer::Writer(const OutputData& outData)
+Writer::Writer(OutputData& outData)
 	: mOutData(outData)
 {
 	mNumMaterials = (UINT)mOutData.Materials.size();

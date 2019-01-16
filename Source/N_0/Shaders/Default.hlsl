@@ -75,6 +75,8 @@ float4 PS(VertexOut vOut) : SV_Target
 	float4 texColor = vOut.c;
 
 	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
+
+	return gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 	vOut.n = normalize(vOut.n);
 
 	float4 normalMapSample = gNormalMap.Sample(g_samAnisotropicWrap, vOut.t);

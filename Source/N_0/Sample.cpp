@@ -9,11 +9,6 @@ using namespace std::chrono;
 
 using namespace DirectX;
 
-struct Data
-{
-	XMFLOAT3 v1;
-	XMFLOAT2 v2;
-};
 
 Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName)
 	: Core(hInstance, Width, Height, WindowName)
@@ -23,17 +18,22 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 
 bool Sample::Init()
 {
+	mesh = std::make_unique<SkinnedMesh>(m_pd3dDevice.Get());
+	mesh->LoadFile(L"ship.sbi", L"..\\..\\data\\tex\\");
+	
 	return true;
 }
 
 bool Sample::Frame()
 {
+	mesh->Frame();
 	return true;
 }
 
 bool Sample::Render()
 {
-
+	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	mesh->Render(m_pImmediateContext.Get());
 	return true;
 }
 

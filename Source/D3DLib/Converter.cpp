@@ -1,50 +1,19 @@
 #include "Converter.h"
-#include "ZXCBinLoader.h"
 
 bool Converter::ConverttoSBI(const std::wstring & FileName)
 {
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-	std::vector<Subset> subsets;
-	std::vector<SkinnedVertex> vertices;
-	std::vector<DWORD> indices;
-	DirectX::BoundingBox box;
+	FileInfo fileInfo;
+	fileInfo.FileName = FileName;
 
-	std::wifstream fp(FileName.c_str());
-	std::wstring ignore;
+	ZXCLoader loader(fileInfo);
+
+	if (!loader.LoadSkin())
+		return false;
+
 	std::wstring ExporterVersion;
 
 	auto time = std::chrono::system_clock::now();
 	time_t nowTime = std::chrono::system_clock::to_time_t(time);
-
-	if (!fp.is_open())
-	{
-		std::wstring message = FileName + L"Not Found.";
-		MessageBox(nullptr, message.c_str(), 0, 0);
-		return false;
-	}
-
-	std::getline(fp, ignore);
-	std::getline(fp, ExporterVersion);
-	std::getline(fp, ignore);
-
-	fp >> ignore >> mNumMaterials;
-	fp >> ignore >> mNumNodes;
-	fp >> ignore >> mNumVertices;
-	fp >> ignore >> mNumTriangles;
-	fp >> ignore >> mNumSubSet;
-
-	materials.resize(mNumMaterials);
-	nodes.resize(mNumNodes);
-
-	ReadMaterial(fp, materials);
-	ReadNodes(fp, nodes);
-	ReadSubsetTable(fp, subsets);
-	ReadBoundingBox(fp, box);
-	ReadVertex(fp, vertices);
-	ReadIndices(fp, indices);
-
-	fp.close();
 	
 	std::wstring file = FileName;
 
@@ -53,41 +22,39 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 
 	std::ofstream fin(file.c_str(), std::ios::binary);
 
+	fileInfo.Materials.size();
+
 	std::array<UINT, 5> CompositeNum =
 	{
-		mNumMaterials,
-		mNumVertices,
-		mNumTriangles,
-		mNumNodes,
-		mNumSubSet
+		(UINT)fileInfo.Materials.size(),
+		(UINT)fileInfo.SkinVertices.size(),
+		(UINT)(fileInfo.Indices.size() / 3),
+		(UINT)fileInfo.Nodes.size(),
+		(UINT)fileInfo.Subsets.size()
 	};
 
 	BinaryIO::WriteBinary(fin, nowTime);
 	BinaryIO::WriteString(fin, ExporterVersion);
 	BinaryIO::WriteBinary(fin, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
-	SaveMaterial(fin, materials);
-	SaveNodes(fin, nodes);
-	SaveSubset(fin, subsets);
-	SaveBoundingBox(fin, box);
-	SaveVertices(fin, vertices);
-	SaveIndices(fin, indices);
+	SaveMaterial(fin, fileInfo.Materials);
+	SaveNodes(fin, fileInfo.Nodes);
+	SaveSubset(fin, fileInfo.Subsets);
+	SaveBoundingBox(fin, fileInfo.Box);
+	SaveVertices(fin, fileInfo.SkinVertices);
+	SaveIndices(fin, fileInfo.Indices);
 
 	return true;
 }
 
 bool Converter::ConverttoSKN(const std::wstring & FileName)
 {
-	ZXCBinLoader loader;
+	FileInfo fileInfo;
+	fileInfo.FileName = FileName;
 
-	std::vector<SkinnedVertex> vertices;
-	std::vector<DWORD> indices;
-	std::vector<ZXCLoader::Subset> subsets;
-	std::vector<ZXCSMaterial> materials;
-	std::vector<MeshNode> nodes;
-	DirectX::BoundingBox box;
+	ZXCBinLoader loader(fileInfo);
 
-	if (!loader.LoadBinary(FileName, vertices, indices, subsets, materials, nodes, box))
+	if (!loader.LoadBinary())
 		return false;
 
 	std::wstring file = FileName;
@@ -100,11 +67,11 @@ bool Converter::ConverttoSKN(const std::wstring & FileName)
 
 	if (!os.is_open()) return false;
 
-	UINT numaterialss = (UINT)materials.size();
-	UINT numVertices = (UINT)vertices.size();
-	UINT numTriangles = (UINT)((indices.size() / 3));
-	UINT numNodes = (UINT)nodes.size();
-	UINT numSubsets = (UINT)subsets.size();
+	UINT numaterialss = (UINT)fileInfo.Materials.size();
+	UINT numVertices = (UINT)fileInfo.Vertices.size();
+	UINT numTriangles = (UINT)((fileInfo.Indices.size() / 3));
+	UINT numNodes = (UINT)fileInfo.Nodes.size();
+	UINT numSubsets = (UINT)fileInfo.Subsets.size();
 
 	std::wstring info =
 		L"#Materials " + std::to_wstring(numaterialss) +
@@ -119,12 +86,12 @@ bool Converter::ConverttoSKN(const std::wstring & FileName)
 	std::wstring header = L"**********ZXCS_Header**********\n#" + exporterversion + L"\n#" + nowtime;
 	os << header << info;
 
-	SaveMaterial(os, materials);
-	SaveNodes(os, nodes);
-	SaveSubset(os, subsets);
-	SaveBoundingBox(os, box);
-	SaveVertices(os, vertices);
-	SaveIndices(os, indices);
+	SaveMaterial(os, fileInfo.Materials);
+	SaveNodes(os, fileInfo.Nodes);
+	SaveSubset(os, fileInfo.Subsets);
+	SaveBoundingBox(os, fileInfo.Box);
+	SaveVertices(os, fileInfo.SkinVertices);
+	SaveIndices(os, fileInfo.Indices);
 
 
 	return true;

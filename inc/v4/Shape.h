@@ -9,17 +9,28 @@ public:
 	Shape() {};
 	virtual ~Shape() {};
 
+	using Object<X>::mGeometry;
+	using Object<X>::m_pDevice;
+
 public:
+	void Create(ID3D11Device* pDevice, const std::tstring& textureFile = std::tstring(), const std::tstring& normalTex = std::tstring())
+	{
+		m_pDevice = pDevice;
+
+		BuildGeometry();
+		BuildMaterials(textureFile, normalTex);
+		BuildRenderItem();
+	}
+
 	virtual bool Frame()override
 	{
 		return true;
 	}
-	virtual bool Render(ID3D11DeviceContext* pContext)
+	virtual bool Render(ID3D11DeviceContext* pContext)override
 	{
-		MeshGeometry * geo = Object<X>::mGeometry;
 		UINT Offset = 0;
-		pContext->IASetVertexBuffers(0, 1, geo->VertexBuffer.GetAddressOf(), &geo->VertexByteStride, &Offset);
-		pContext->IASetIndexBuffer(geo->IndexBuffer.Get(), geo->IndexFormat, 0);
+		pContext->IASetVertexBuffers(0, 1, mGeometry->VertexBuffer.GetAddressOf(), &mGeometry->VertexByteStride, &Offset);
+		pContext->IASetIndexBuffer(mGeometry->IndexBuffer.Get(), mGeometry->IndexFormat, 0);
 		
 		pContext->IASetPrimitiveTopology(mRenderItem->PrimitiveType);
 		mRenderItem->Mat->SetResource(pContext);
@@ -40,20 +51,20 @@ public:
 	}
 	virtual bool Intersects(DirectX::FXMVECTOR& origin, DirectX::FXMVECTOR& dir, DirectX::CXMMATRIX& invView, float& tmin)override
 	{
-		MeshGeometry * geo = Object<X>::mGeometry;
+		DirectX::XMMATRIX W = DirectX::XMLoadFloat4x4(&mRenderItem->World);
+		DirectX::XMMATRIX invWorld = DirectX::XMMatrixInverse(&XMMatrixDeterminant(W), W);
 
-		DirectX::XMMATRIX W = XMLoadFloat4x4(&mRenderItem->World);
-		DirectX::XMMATRIX invWorld = XMMatrixInverse(&XMMatrixDeterminant(W), W);
+		DirectX::XMMATRIX toLocal = DirectX::XMMatrixMultiply(invView, invWorld);
 
-		DirectX::XMMATRIX toLocal = XMMatrixMultiply(invView, invWorld);
+		DirectX::XMVECTOR rayOrigin = DirectX::XMVector3TransformCoord(origin, toLocal);
+		DirectX::XMVECTOR rayDir = DirectX::XMVector3TransformNormal(dir, toLocal);
 
-		DirectX::XMVECTOR rayOrigin = XMVector3TransformCoord(origin, toLocal);
-		DirectX::XMVECTOR rayDir = XMVector3TransformNormal(dir, toLocal);
+		rayDir = DirectX::XMVector3Normalize(rayDir);
 
-		auto vertices = (X*)geo->VertexBufferCPU->GetBufferPointer();
-		auto indices = (DWORD*)geo->IndexBufferCPU->GetBufferPointer();
+		const auto vertices = (X*)mGeometry->VertexBufferCPU->GetBufferPointer();
+		const auto indices = (DWORD*)mGeometry->IndexBufferCPU->GetBufferPointer();
 
-		UINT triSize = geo->IndexBufferByteSize / sizeof(DWORD) / 3;
+		UINT triSize = mGeometry->IndexBufferByteSize / sizeof(DWORD) / 3;
 
 		float t = MathHelper::Infinity;
 
@@ -67,7 +78,7 @@ public:
 			DirectX::XMVECTOR v1 = XMLoadFloat3(&vertices[i1].p);
 			DirectX::XMVECTOR v2 = XMLoadFloat3(&vertices[i2].p);
 
-			if (TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
+			if (DirectX::TriangleTests::Intersects(rayOrigin, rayDir, v0, v1, v2, t))
 			{
 				tmin = t;
 				return true;
@@ -75,6 +86,11 @@ public:
 		}
 		return false;
 	}
+
+protected:
+	virtual void BuildGeometry() = 0;
+	virtual void BuildRenderItem() = 0;
+	virtual void BuildMaterials(const std::tstring& textureFile, const std::tstring& normalTex) {};
 
 protected:
 	RenderItem* mRenderItem = nullptr;
@@ -105,8 +121,8 @@ protected:
 	virtual void	BuildGeometry()override;
 
 public:
-	virtual	bool Render(ID3D11DeviceContext* pContext)override;
-	bool		 Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
+	virtual	bool	Render(ID3D11DeviceContext* pContext)override;
+	bool			Draw(ID3D11DeviceContext* pContext, DirectX::XMFLOAT3 vStart, DirectX::XMFLOAT3 vEnd, DirectX::XMFLOAT4 vColor);
 
 protected:
 	std::array<VertexC, 2> m_LineVertexList;

@@ -8,7 +8,7 @@ struct SkinMesh;
 class Writer
 {
 public:
-	Writer(const OutputData& outData);
+	Writer(OutputData& outData);
 public:
 	virtual bool Savefile();
 
@@ -21,7 +21,7 @@ protected:
 	void SaveIndices(std::wofstream& os);
 
 protected:
-	const OutputData& mOutData;
+	OutputData& mOutData;
 
 	UINT mNumMaterials = 0;
 	UINT mNumVertices = 0;

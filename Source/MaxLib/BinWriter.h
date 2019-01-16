@@ -4,7 +4,7 @@
 class BinWriter : public Writer
 {
 public:
-	BinWriter(const OutputData& outData)
+	BinWriter(OutputData& outData)
 		: Writer(outData)
 	{
 
@@ -35,12 +35,12 @@ public:
 		BinaryIO::WriteString(os, mOutData.Version);
 		BinaryIO::WriteBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
+		SaveIndices(os);
 		SaveMaterial(os);
 		SaveNodes(os);
 		SaveSubset(os);
 		SaveBoundingBox(os);
 		SaveVertices(os);
-		SaveIndices(os);
 
 		return true;
 	}

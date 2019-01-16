@@ -1,8 +1,9 @@
 #pragma once
 
 #include "BinaryIO.h"
+#include "ZXCBinLoader.h"
 
-class Converter : private ZXCLoader
+class Converter
 {
 public:
 	bool ConverttoSBI(
@@ -30,10 +31,10 @@ private:
 	{
 		BinaryIO::WriteBinary(os, subsets.data(), (UINT)(sizeof(Subset) * subsets.size()));
 	}
-	template<typename X>
-	void SaveVertices(std::ofstream & os, const std::vector<X>& vertices)
+
+	void SaveVertices(std::ofstream & os, const std::vector<SkinnedVertex>& vertices)
 	{
-		BinaryIO::WriteBinary(os, vertices.data(), (UINT)(sizeof(X) * vertices.size()));
+		BinaryIO::WriteBinary(os, vertices.data(), (UINT)(sizeof(SkinnedVertex) * vertices.size()));
 	}
 	void SaveIndices(std::ofstream& os, const std::vector<DWORD>& indices)
 	{
