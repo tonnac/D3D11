@@ -3,14 +3,21 @@
 
 class ZXCBinLoader : private ZXCLoader
 {
+	enum class VertexType
+	{
+		Vertex,
+		SkinnedVertex
+	};
+
 public:
 	ZXCBinLoader(FileInfo& fileInfo);
 
 public:
-	template<class T = Vertex>
 	bool LoadBinary(bool isSkinned = true)
 	{
-		std::ifstream fin(mFileinfo.FileName.c_str(), std::ios::binary);
+		std::string FileName = std::string(mFileinfo.FileName.begin(), mFileinfo.FileName.end());
+
+		std::ifstream fin(FileName.c_str(), std::ios::binary);
 
 		if (!fin.is_open()) return false;
 
@@ -32,17 +39,28 @@ public:
 		mFileinfo.Nodes.resize(numNodes);
 		mFileinfo.Subsets.resize(numSubsets);
 		if (isSkinned)
+		{
 			mFileinfo.SkinVertices.resize(numVertices);
+		}
 		else
+		{
 			mFileinfo.Vertices.resize(numVertices);
+		}
 		mFileinfo.Indices.resize(numTriangles * 3);
 
-		LoadIndices(fin);
 		LoadMaterials(fin);
 		LoadNodes(fin);
 		LoadSubsets(fin);
 		LoadBoundingBox(fin);
-		LoadVertices<T>(fin);
+		if (isSkinned)
+		{
+			LoadVertices(fin, VertexType::SkinnedVertex);
+		}
+		else
+		{
+			LoadVertices(fin, VertexType::Vertex);
+		}
+		LoadIndices(fin);
 		if (mFileinfo.skinInfo != nullptr)
 			BuildDefaultAnimaions();
 
@@ -76,15 +94,19 @@ private:
 	void LoadMaterials(std::ifstream& fin);
 	void LoadNodes(std::ifstream&fin);
 	void LoadSubsets(std::ifstream&fin);
-	template<class T>
-	void LoadVertices(std::ifstream&fin)
+	void LoadVertices(std::ifstream&fin, VertexType type)
 	{
-		ReadBinary(fin, mFileinfo.Vertices.data(), (UINT)(sizeof(T) * mFileinfo.Vertices.size()));
-	}
-	template<>
-	void LoadVertices<SkinnedVertex>(std::ifstream&fin)
-	{
-		ReadBinary(fin, mFileinfo.SkinVertices.data(), (UINT)(sizeof(SkinnedVertex) * mFileinfo.SkinVertices.size()));
+		switch (type)
+		{
+		case ZXCBinLoader::VertexType::Vertex:
+			ReadBinary(fin, mFileinfo.Vertices.data(), (UINT)(sizeof(Vertex) * mFileinfo.Vertices.size()));
+			break;
+		case ZXCBinLoader::VertexType::SkinnedVertex:
+			ReadBinary(fin, mFileinfo.SkinVertices.data(), (UINT)(sizeof(SkinnedVertex) * mFileinfo.SkinVertices.size()));
+			break;
+		default:
+			break;
+		}
 	}
 	void LoadIndices(std::ifstream&fin);
 	void LoadBoundingBox(std::ifstream&fin);

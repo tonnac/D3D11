@@ -188,7 +188,7 @@ bool Mesh<X>::LoadZXCBin(const std::tstring & filename, const std::tstring & tex
 
 	ZXCBinLoader loader(fileInfo);
 
-	if (!loader.LoadBinary())
+	if (!loader.LoadBinary(false))
 		return false;
 
 	Initialize(fileInfo);

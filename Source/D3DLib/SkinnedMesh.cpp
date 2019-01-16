@@ -71,7 +71,7 @@ bool SkinnedMesh::LoadSkinBin(const std::tstring & filename, const std::tstring 
 
 	ZXCBinLoader loader(fileInfo);
 
-	if (!loader.LoadBinary<SkinnedVertex>())
+	if (!loader.LoadBinary())
 		return false;
 
 	mSkinnedInst = std::make_unique<SkinnedModelInstance>();
