@@ -35,12 +35,12 @@ public:
 		BinaryIO::WriteString(os, mOutData.Version);
 		BinaryIO::WriteBinary(os, CompositeNum.data(), (UINT)(CompositeNum.size() * sizeof(UINT)));
 
-		SaveIndices(os);
 		SaveMaterial(os);
 		SaveNodes(os);
 		SaveSubset(os);
 		SaveBoundingBox(os);
 		SaveVertices(os);
+		SaveIndices(os);
 
 		return true;
 	}
@@ -67,7 +67,7 @@ protected:
 
 	void SaveVertices(std::ofstream & os)
 	{
-		BinaryIO::WriteBinary(os, mOutData.Vertices.data(), (UINT)(sizeof(Vertex) * mOutData.Vertices.size()));
+		BinaryIO::WriteBinary(os, mOutData.Vertices.data(), (UINT)(sizeof(OutVertex) * mOutData.Vertices.size()));
 	}
 	void SaveIndices(std::ofstream& os)
 	{

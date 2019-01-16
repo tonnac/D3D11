@@ -34,6 +34,8 @@ bool SkinnedMesh::Frame()
 		std::end(mSkinnedInst->FinalTransforms),
 		&mSkinnedConstants.BoneTransforms[0]
 	);
+
+//	mSkinnedConstants.BoneTransforms[0] = MathHelper::Identity4x4();
 	return true;
 }
 

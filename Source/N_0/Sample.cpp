@@ -19,8 +19,10 @@ Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring&
 bool Sample::Init()
 {
 	mesh = std::make_unique<SkinnedMesh>(m_pd3dDevice.Get());
-	mesh->LoadFile(L"ship.sbi", L"..\\..\\data\\tex\\");
+	mesh->LoadFile(L"LeiShen.sbi", L"..\\..\\data\\tex\\leishen\\");
 	
+	mesh->LoadFile(L"LeiShen_CustomSpell04.clb");
+
 	return true;
 }
 
@@ -33,6 +35,7 @@ bool Sample::Frame()
 bool Sample::Render()
 {
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
+	m_pImmediateContext->OMSetBlendState(DxState::m_BSS[(int)E_BSS::No].Get(),0,-1);
 	mesh->Render(m_pImmediateContext.Get());
 	return true;
 }
