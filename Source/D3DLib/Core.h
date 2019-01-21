@@ -59,6 +59,6 @@ protected:
 	MaterialStorage * MatStorage = MaterialStorage::GetStorage();
 
 
-	DirectX::XMFLOAT4 mBackColor = DirectX::XMFLOAT4(0.501960814f, 0.501960814f, 0.501960814f, 1.000000000f);
+	DirectX::XMFLOAT4 mBackColor = DirectX::XMFLOAT4(0.647058845f, 0.164705887f, 0.164705887f, 1.0f);
 	bool misSkybox = true;
 };
