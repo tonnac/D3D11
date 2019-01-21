@@ -64,7 +64,7 @@ bool Sample::Init()
 	LightStorage::getLight()->AddLight(light);
 
 	mesh0 = std::make_unique<SkinnedMesh>(m_pd3dDevice.Get());
-	mesh0->LoadFile(L"Character\\Jaina.sbi", L"tex\\Jaina\\");
+	mesh0->LoadFile(L"Character\\Jaina.sbi", L"..\\..\\data\\tex\\Jaina\\");
 	
 	mesh0->LoadFile(L"Character\\Animation\\Jaina\\SpellCastDirected.clb");
 	mesh0->LoadFile(L"Character\\Animation\\Jaina\\ChannelCastDirected.clb");
@@ -77,7 +77,7 @@ bool Sample::Init()
 	mesh0->SetWorld(R);
 
 	mesh1 = std::make_unique<SkinnedMesh>(m_pd3dDevice.Get());
-	mesh1->LoadFile(L"Character\\shinbi.sbi", L"tex\\shinbi\\");
+	mesh1->LoadFile(L"Character\\shinbi.sbi", L"..\\..\\data\\tex\\shinbi\\");
 
 	mesh1->LoadFile(L"Character\\Animation\\Shinbi\\LevelStart.clb");
 	mesh1->LoadFile(L"Character\\Animation\\Shinbi\\Recall.clb");

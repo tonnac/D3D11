@@ -28,7 +28,7 @@ private:
 	bool LoadClipBin(const std::tstring& filename, const std::tstring& texfilepath);
 
 	virtual FileInfo CreateFileInfo(const std::tstring& filename, const std::tstring& texfilepath)override;
-
+	
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> mConstantbuffer = nullptr;
 
