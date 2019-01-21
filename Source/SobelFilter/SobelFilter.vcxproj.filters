@@ -33,5 +33,6 @@
   <ItemGroup>
     <FxCompile Include="SobelFilter.hlsl" />
     <FxCompile Include="composite.hlsl" />
+    <FxCompile Include="Shaders\SobelFilter.hlsl" />
   </ItemGroup>
 </Project>

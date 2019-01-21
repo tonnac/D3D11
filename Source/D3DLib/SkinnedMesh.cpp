@@ -100,7 +100,7 @@ bool SkinnedMesh::LoadClip(const std::tstring & filename, const std::tstring & t
 	{
 		name = x.first;
 
-		auto& p = std::make_pair(x.first, x.second);
+		auto p = std::make_pair(x.first, x.second);
 		mSkinInfo->AddAnimation(p);
 		mSkinnedInst->Animations.push_back(name);
 	}
@@ -121,7 +121,7 @@ bool SkinnedMesh::LoadClipBin(const std::tstring & filename, const std::tstring 
 	{
 		name = x.first;
 
-		auto& p = std::make_pair(name, x.second);
+		auto p = std::make_pair(name, x.second);
 		mSkinInfo->AddAnimation(p);
 		mSkinnedInst->Animations.push_back(name);
 	}

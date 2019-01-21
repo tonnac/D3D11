@@ -24,4 +24,10 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\Default.hlsl" />
+    <FxCompile Include="Shaders\DefaultwNormal.hlsl" />
+    <FxCompile Include="Shaders\SobelFilter.hlsl" />
+    <FxCompile Include="Shaders\composite.hlsl" />
+  </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@ void SobelCS( uint3 DTid : SV_DispatchThreadID )
 
 	float4 mag = sqrt(Gx * Gx + Gy * Gy);
 
-//	mag = 1.0f - saturate(CalcLuminance(mag.rgb));
+	mag = 1.0f - saturate(CalcLuminance(mag.rgb));
 
-	gOutput[DTid.xy] = mag * float4(1.0f, 1.0f, 0.0f, 1.0f);
+	gOutput[DTid.xy] = mag;
 }

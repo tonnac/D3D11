@@ -17,9 +17,16 @@ protected:
 	virtual bool Frame()override;
 	virtual bool Render()override;
 
+	virtual void OnResize()override;
 
 private:
-	std::unique_ptr<SkinnedMesh> mesh;
+	std::unique_ptr<SkinnedMesh> mesh0;
+	std::unique_ptr<SkinnedMesh> mesh1;
+	std::unique_ptr<SobelFilter> mSobelfilter;
+	std::unique_ptr<DxRT> mDxRT;
+	GridShape grid;
 //	std::unique_ptr<Mesh<>> mesh;
+
+	bool misSobel = false;
 };
 

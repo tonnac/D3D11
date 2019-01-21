@@ -72,17 +72,16 @@ VertexOut VS(VertexIn vIn)
 float4 PS(VertexOut vOut) : SV_Target
 {
 	const float3 ambientLight = float3(0.25f, 0.25f, 0.35f);
-	float4 texColor = vOut.c;
+	float4 texColor = gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 
-	texColor *= gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
-
-	return gTextureMap.Sample(g_samAnisotropicWrap, vOut.t);
 	vOut.n = normalize(vOut.n);
 
 	float4 normalMapSample = gNormalMap.Sample(g_samAnisotropicWrap, vOut.t);
 	float3 bumpedNormalW = NormalSampleToWorldSpace(normalMapSample.rgb, vOut.n, vOut.TangentW);
 
-	//bumpedNormalW = vOut.n;
+#ifndef NORMALMAP
+	bumpedNormalW = vOut.n;
+#endif
 
 	float3 toEyeW = normalize(gEyePos - vOut.PosW);
 
@@ -95,5 +94,5 @@ float4 PS(VertexOut vOut) : SV_Target
 
 	litColor += ambient; 
 
-	return float4(litColor, 1.0f);
+	return float4(litColor, texColor.a);
 }

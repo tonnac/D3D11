@@ -4,6 +4,8 @@ bool Converter::ConverttoSBI(const std::wstring & FileName)
 {
 	FileInfo fileInfo;
 	fileInfo.FileName = FileName;
+	std::unique_ptr<SkinnedData> skin = std::make_unique<SkinnedData>();
+	fileInfo.skinInfo = skin.get();
 
 	ZXCLoader loader(fileInfo);
 

@@ -86,6 +86,17 @@ void ShaderStorage::Initialize(ID3D11Device * Device)
 		mVertexShader[L"skinned"] = std::move(vertexShader);
 		mInputlayout[L"skinned"] = std::move(inputLayout);
 	}
+
+	{
+		const D3D_SHADER_MACRO defines[] =
+		{
+			"NORMALMAP", "1",
+			NULL, NULL
+		};
+
+		d3dUtil::LoadPixelShaderFile(Device, L"shaders\\Default.hlsl", defines, pixelShader.GetAddressOf());
+		mPixelShader[L"bump"] = std::move(pixelShader);
+	}
 }
 
 ID3D11InputLayout * ShaderStorage::getInputLayout(const std::wstring & name)

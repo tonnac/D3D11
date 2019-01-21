@@ -28,7 +28,9 @@ enum class DxType
 	SKY,
 	NOTEX,
 	NORMAL,
-	COMPOSITE
+	COMPOSITE,
+	SKINBUMP,
+	BUMP
 };
 
 struct DxObjStorage

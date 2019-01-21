@@ -143,7 +143,7 @@ void LightStorage::CopyDirectional(Light* lights)
 {
 	UINT i = 0;
 
-	for (auto& p = mDirectionalLight.begin(); p != mDirectionalLight.end(); ++p)
+	for (auto p = mDirectionalLight.begin(); p != mDirectionalLight.end(); ++p)
 	{
 		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));
@@ -154,7 +154,7 @@ void LightStorage::CopyPoint(Light* lights)
 {
 	UINT i = (UINT)mDirectionalLight.size();
 
-	for (auto& p = mPointLight.begin(); p != mPointLight.end(); ++p)
+	for (auto p = mPointLight.begin(); p != mPointLight.end(); ++p)
 	{
 		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));
@@ -165,7 +165,7 @@ void LightStorage::CopySpot(Light* lights)
 {
 	UINT i = (UINT)(mDirectionalLight.size() + mPointLight.size());
 
-	for (auto& p = mSpotLight.begin(); p != mSpotLight.end(); ++p)
+	for (auto p = mSpotLight.begin(); p != mSpotLight.end(); ++p)
 	{
 		const Light& light = p->lock()->light;
 		CopyMemory(&lights[i++], &light, sizeof(Light));

@@ -67,5 +67,19 @@ std::unordered_map<DxType, std::unique_ptr<DxObj>> DxObjStorage::GetDxobjList()
 	dxobj->m_pInputLayout = storage->getInputLayout(L"skinned");
 	_DxObj[DxType::NORMAL] = std::move(dxobj);
 
+	dxobj = std::make_unique<DxObj>();
+	dxobj->m_pVertexShader = storage->getVertexShader(L"skinned");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"bump");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"skinned");
+
+	_DxObj[DxType::SKINBUMP] = std::move(dxobj);
+
+	dxobj = std::make_unique<DxObj>();
+	dxobj->m_pVertexShader = storage->getVertexShader(L"default");
+	dxobj->m_pPixelShader = storage->getPixelShader(L"bump");
+	dxobj->m_pInputLayout = storage->getInputLayout(L"default");
+
+	_DxObj[DxType::BUMP] = std::move(dxobj);
+
 	return _DxObj;
 }

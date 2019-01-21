@@ -1,7 +1,7 @@
 #pragma once
 #pragma warning(disable : 4819)
 
-//#define SKINNED
+#define SKINNED
 
 #include <istdplug.h>
 #include <iparamb2.h>

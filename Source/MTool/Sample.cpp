@@ -82,7 +82,7 @@ bool Sample::Frame()
 
 bool Sample::Render()
 {
-	mDxObj[DxType::DEFAULT]->SetResource(m_pImmediateContext.Get());
+	mDxObj[DxType::BUMP]->SetResource(m_pImmediateContext.Get());
 	grid.Render(m_pImmediateContext.Get());
 
 	mDxObj[DxType::SKINNED]->SetResource(m_pImmediateContext.Get());
