@@ -62,7 +62,7 @@ bool Mesh<X>::LoadFile(const std::tstring & filename, const std::tstring & texfi
 	{
 		return LoadZXC(filename, texfilepath);
 	}
-	else if (Ext == L"BIN")
+	else if (Ext == L"ZBI")
 	{
 		return LoadZXCBin(filename, texfilepath);
 	}
