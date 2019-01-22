@@ -15,7 +15,7 @@ struct KeyFrame
 {
 	KeyFrame() {}
 	~KeyFrame() {}
-
+	
 	int Tick;
 	DirectX::XMFLOAT3 Translations;
 	DirectX::XMFLOAT3 Scale;

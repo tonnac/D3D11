@@ -166,8 +166,8 @@ copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
       <AdditionalLibraryDirectories>$(SolutionDir)../Dx/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <PostBuildEvent>
-      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)../lib/v4"
-copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/v4"</Command>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)../lib/release/"
+copy "$(ProjectDir)*.h" "$(SolutionDir)../inc/release/"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

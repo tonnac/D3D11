@@ -9,12 +9,6 @@ using namespace std::chrono;
 
 using namespace DirectX;
 
-struct Data
-{
-	XMFLOAT3 v1;
-	XMFLOAT2 v2;
-};
-
 Sample::Sample(HINSTANCE hInstance, UINT Width, UINT Height, const std::tstring& WindowName)
 	: Core(hInstance, Width, Height, WindowName)
 {
